@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,15 +8,20 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export function LoginForm() {
+// Create a separate component that uses search params
+function LoginFormWithRedirect() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, signInWithGoogle } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Get the redirectedFrom parameter if it exists
+  const redirectPath = searchParams.get('redirectedFrom') || '/dashboard';
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +30,8 @@ export function LoginForm() {
 
     try {
       await signIn(email, password);
-      router.push("/dashboard");
+      // Redirect to the original destination or dashboard if none
+      router.push(redirectPath);
     } catch (error: any) {
       setError(error.message || "Incorrect email or password");
     } finally {
@@ -36,7 +42,7 @@ export function LoginForm() {
   const handleGoogleSignIn = async () => {
     setError(null);
     try {
-      await signInWithGoogle();
+      await signInWithGoogle(redirectPath);
       // Redirect happens automatically with OAuth
     } catch (error: any) {
       setError(error.message || "An error occurred with Google sign in");
@@ -138,5 +144,33 @@ export function LoginForm() {
         </p>
       </CardFooter>
     </Card>
+  );
+}
+
+// Loader component to show while the LoginFormWithRedirect is loading
+function LoginFormFallback() {
+  return (
+    <Card className="w-full max-w-md mx-auto">
+      <CardHeader>
+        <CardTitle>Log In</CardTitle>
+        <CardDescription>
+          Loading login form...
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-center p-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0084FF]"></div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Main exported component with Suspense boundary
+export function LoginForm() {
+  return (
+    <Suspense fallback={<LoginFormFallback />}>
+      <LoginFormWithRedirect />
+    </Suspense>
   );
 }

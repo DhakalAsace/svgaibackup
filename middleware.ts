@@ -7,6 +7,8 @@ import type { NextRequest } from 'next/server'
 // SVG generation and download are accessible without authentication
 const protectedPaths = ['/dashboard', '/settings'];
 const authPaths = ['/login', '/signup'];
+// Paths that should be excluded from auth checks completely
+const publicPaths = ['/auth/callback', '/_next', '/api', '/favicon.ico', '/site.webmanifest'];
 
 // Static asset file extensions that should get cache headers
 const STATIC_EXTENSIONS = ['.js', '.css', '.svg', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.woff', '.woff2'];
@@ -34,6 +36,12 @@ export async function middleware(request: NextRequest) {
     
     response.headers.set('Cache-Control', `public, max-age=${maxAge}, stale-while-revalidate=86400`);
     return response;
+  }
+  
+  // Skip middleware for auth callback endpoint - this is critical
+  if (publicPaths.some(path => pathname.startsWith(path))) {
+    console.log(`[Middleware] Bypassing middleware for public path: ${pathname}`);
+    return NextResponse.next();
   }
   
   // Create a response object that we'll modify and return
