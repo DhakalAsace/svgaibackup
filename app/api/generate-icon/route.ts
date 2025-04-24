@@ -56,7 +56,7 @@ const ALLOWED_DOMAINS = [
   'storage.googleapis.com',
 ];
 
-const DAILY_LIMIT = 100;
+const DAILY_LIMIT = 10;
 
 function createApiError(status: number, message: string) {
   return new Response(JSON.stringify({ error: message }), {
