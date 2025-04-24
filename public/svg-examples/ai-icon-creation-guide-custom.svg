@@ -1,0 +1,45 @@
+<svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="600" height="300" fill="#f0f1ff" rx="10" ry="10" />
+  
+  <!-- Title -->
+  <text x="300" y="50" font-family="Arial" font-size="24" font-weight="bold" fill="#333" text-anchor="middle">Complete Guide to AI Icon Creation</text>
+  
+  <!-- Icon Grid -->
+  <g transform="translate(70, 90)">
+    <!-- Row 1 -->
+    <rect x="0" y="0" width="60" height="60" rx="8" ry="8" fill="#4c6ef5" />
+    <circle cx="30" cy="30" r="20" fill="white" />
+    <path d="M20 30 L27 37 L40 23" stroke="#4c6ef5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    
+    <rect x="80" y="0" width="60" height="60" rx="8" ry="8" fill="#ff6b6b" />
+    <circle cx="110" cy="30" r="15" fill="white" />
+    <path d="M102 30 A 8 8 0 1 0 118 30 A 8 8 0 1 0 102 30 Z" fill="#ff6b6b" />
+    
+    <rect x="160" y="0" width="60" height="60" rx="8" ry="8" fill="#51cf66" />
+    <path d="M190 15 L175 35 L185 35 L175 45" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    
+    <!-- Row 2 -->
+    <rect x="0" y="80" width="60" height="60" rx="8" ry="8" fill="#fab005" />
+    <path d="M20 110 L40 110 M30 100 L30 120" stroke="white" stroke-width="3" stroke-linecap="round" />
+    
+    <rect x="80" y="80" width="60" height="60" rx="8" ry="8" fill="#22b8cf" />
+    <path d="M100 100 L120 120 M100 120 L120 100" stroke="white" stroke-width="3" stroke-linecap="round" />
+    
+    <rect x="160" y="80" width="60" height="60" rx="8" ry="8" fill="#cc5de8" />
+    <circle cx="190" cy="110" r="12" fill="white" />
+    <circle cx="180" cy="100" r="4" fill="white" />
+  </g>
+  
+  <!-- Example Prompts -->
+  <g transform="translate(350, 100)">
+    <text x="0" y="0" font-family="Arial" font-size="16" font-weight="bold" fill="#333">Example Prompts:</text>
+    <text x="0" y="30" font-family="Arial" font-size="14" fill="#495057">• Elegant music note icon</text>
+    <text x="0" y="60" font-family="Arial" font-size="14" fill="#495057">• Modern icon for productivity timer app</text>
+    <text x="0" y="90" font-family="Arial" font-size="14" fill="#495057">• Minimalist shopping bag icon</text>
+    <text x="0" y="120" font-family="Arial" font-size="14" fill="#495057">• Playful game controller icon</text>
+  </g>
+  
+  <!-- Footer -->
+  <text x="300" y="270" font-family="Arial" font-size="14" fill="#6c757d" text-anchor="middle">Master the art of creating professional icons with AI</text>
+</svg>

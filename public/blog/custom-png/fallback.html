@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fallback Image Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+    .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 600px; margin: 0 auto; text-align: center; }
+    h1 { color: #333; }
+    p { color: #666; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Image Loading Issue</h1>
+    <p>The original SVG image is not loading properly. This is a fallback image to prevent a broken layout.</p>
+    <p><strong>Expected path:</strong> <span id="path">unknown</span></p>
+    <p>Please check the server logs and image paths configuration.</p>
+  </div>
+  <script>
+    // Get the image path from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const path = urlParams.get('path') || 'unknown';
+    document.getElementById('path').textContent = path;
+    
+    // Take a screenshot (you'd need to manually do this)
+  </script>
+</body>
+</html>

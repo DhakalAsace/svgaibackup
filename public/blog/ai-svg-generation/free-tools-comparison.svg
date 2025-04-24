@@ -1,0 +1,11 @@
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="400" fill="#f0f9ff"/>
+  <g transform="translate(300, 200)">
+    <text dominant-baseline="middle" text-anchor="middle" font-size="36" font-family="Arial, sans-serif" font-weight="bold" fill="#0369a1">
+      AI SVG Tools
+    </text>
+    <text y="50" dominant-baseline="middle" text-anchor="middle" font-size="24" font-family="Arial, sans-serif" fill="#0284c7">
+      2025 Comparison Guide
+    </text>
+  </g>
+</svg>

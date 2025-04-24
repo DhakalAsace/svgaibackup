@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#dbeafe" />
+    </linearGradient>
+    
+    <!-- Pixelated effect for raster image -->
+    <pattern id="pixelated" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="#4b5563" opacity="0.1"/>
+      <rect width="7" height="7" fill="#6b7280" opacity="0.1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bg-gradient)" />
+  
+  <!-- Title -->
+  <text x="400" y="50" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1e40af">Raster vs. Vector Comparison</text>
+  
+  <!-- Small size comparison -->
+  <g transform="translate(100, 120)">
+    <text x="0" y="-10" font-family="Arial, sans-serif" font-size="16" fill="#374151">Small Size</text>
+    
+    <!-- Raster image (pixelated) -->
+    <rect x="0" y="0" width="100" height="100" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <text x="50" y="50" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#374151">PNG</text>
+    
+    <!-- Vector image (crisp) -->
+    <rect x="150" y="0" width="100" height="100" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <text x="200" y="50" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1e40af">SVG</text>
+  </g>
+  
+  <!-- Medium size comparison -->
+  <g transform="translate(400, 120)">
+    <text x="0" y="-10" font-family="Arial, sans-serif" font-size="16" fill="#374151">Medium Size</text>
+    
+    <!-- Raster image (slightly pixelated) -->
+    <rect x="0" y="0" width="150" height="150" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <rect x="0" y="0" width="150" height="150" fill="url(#pixelated)" opacity="0.3" />
+    <text x="75" y="75" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#374151">PNG</text>
+    
+    <!-- Vector image (crisp) -->
+    <rect x="200" y="0" width="150" height="150" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <text x="275" y="75" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1e40af">SVG</text>
+  </g>
+  
+  <!-- Large size comparison -->
+  <g transform="translate(250, 280)">
+    <text x="0" y="-10" font-family="Arial, sans-serif" font-size="16" fill="#374151">Large Size</text>
+    
+    <!-- Raster image (very pixelated) -->
+    <rect x="0" y="0" width="200" height="100" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <rect x="0" y="0" width="200" height="100" fill="url(#pixelated)" opacity="0.8" />
+    <text x="100" y="50" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#374151">PNG</text>
+    
+    <!-- Vector image (still crisp) -->
+    <rect x="250" y="0" width="200" height="100" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <text x="350" y="50" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1e40af">SVG</text>
+  </g>
+  
+  <!-- File size indicator -->
+  <g transform="translate(400, 390)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#4b5563">Scalable at any size with smaller file size</text>
+  </g>
+</svg>

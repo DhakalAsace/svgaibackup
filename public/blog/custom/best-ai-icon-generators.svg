@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="630" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="600" y="80" font-family="Arial, sans-serif" font-size="42" font-weight="bold" text-anchor="middle" fill="#333">
+    7 Best AI Icon Generators Compared
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="130" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#666">
+    Find Your Perfect Tool
+  </text>
+  
+  <!-- Comparison table illustration -->
+  <rect x="150" y="180" width="900" height="300" rx="10" fill="#fff" stroke="#ddd" stroke-width="2"/>
+  
+  <!-- Table headers -->
+  <rect x="150" y="180" width="900" height="60" rx="10" fill="#f0f0f0" stroke="#ddd" stroke-width="2"/>
+  <text x="200" y="220" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333">Tool</text>
+  <text x="350" y="220" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333">SVG Support</text>
+  <text x="500" y="220" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333">Pricing</text>
+  <text x="650" y="220" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333">No Signup</text>
+  <text x="800" y="220" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333">Best For</text>
+  <text x="950" y="220" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333">Rating</text>
+  
+  <!-- Row dividers -->
+  <line x1="150" y1="240" x2="1050" y2="240" stroke="#ddd" stroke-width="1"/>
+  <line x1="150" y1="300" x2="1050" y2="300" stroke="#ddd" stroke-width="1"/>
+  <line x1="150" y1="360" x2="1050" y2="360" stroke="#ddd" stroke-width="1"/>
+  <line x1="150" y1="420" x2="1050" y2="420" stroke="#ddd" stroke-width="1"/>
+  
+  <!-- Column dividers -->
+  <line x1="280" y1="180" x2="280" y2="480" stroke="#ddd" stroke-width="1"/>
+  <line x1="430" y1="180" x2="430" y2="480" stroke="#ddd" stroke-width="1"/>
+  <line x1="580" y1="180" x2="580" y2="480" stroke="#ddd" stroke-width="1"/>
+  <line x1="730" y1="180" x2="730" y2="480" stroke="#ddd" stroke-width="1"/>
+  <line x1="880" y1="180" x2="880" y2="480" stroke="#ddd" stroke-width="1"/>
+  
+  <!-- First row - SVGAI.org -->
+  <g transform="translate(215, 270)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FF7043">SVGAI.org</text>
+  </g>
+  <g transform="translate(355, 270)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">✓</text>
+  </g>
+  <g transform="translate(505, 270)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">Free</text>
+  </g>
+  <g transform="translate(655, 270)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">✓</text>
+  </g>
+  <g transform="translate(805, 270)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">Easy Access</text>
+  </g>
+  <g transform="translate(930, 270)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333">★★★★★</text>
+  </g>
+  
+  <!-- Second row - IconifyAI -->
+  <g transform="translate(215, 330)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">IconifyAI</text>
+  </g>
+  <g transform="translate(355, 330)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">✗</text>
+  </g>
+  <g transform="translate(505, 330)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">Paid</text>
+  </g>
+  <g transform="translate(655, 330)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">✗</text>
+  </g>
+  <g transform="translate(805, 330)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">App Icons</text>
+  </g>
+  <g transform="translate(930, 330)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">★★★★☆</text>
+  </g>
+  
+  <!-- Third row - Adobe Firefly -->
+  <g transform="translate(215, 390)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">Adobe Firefly</text>
+  </g>
+  <g transform="translate(355, 390)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">✓</text>
+  </g>
+  <g transform="translate(505, 390)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">Subscription</text>
+  </g>
+  <g transform="translate(655, 390)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">✗</text>
+  </g>
+  <g transform="translate(805, 390)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">Adobe Users</text>
+  </g>
+  <g transform="translate(930, 390)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">★★★★☆</text>
+  </g>
+  
+  <!-- Fourth row - Recraft -->
+  <g transform="translate(215, 450)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">Recraft</text>
+  </g>
+  <g transform="translate(355, 450)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">✓</text>
+  </g>
+  <g transform="translate(505, 450)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">Freemium</text>
+  </g>
+  <g transform="translate(655, 450)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">✗</text>
+  </g>
+  <g transform="translate(805, 450)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">Icon Sets</text>
+  </g>
+  <g transform="translate(930, 450)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" fill="#333">★★★★☆</text>
+  </g>
+  
+  <!-- SVGAI.org Highlight -->
+  <g transform="translate(600, 550)">
+    <rect x="-200" y="-40" width="400" height="80" rx="10" fill="#FF7043" opacity="0.1" stroke="#FF7043" stroke-width="2"/>
+    <text x="0" y="-10" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">
+      Our Pick: SVGAI.org
+    </text>
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#666">
+      Free SVG icons, no signup, best-in-class usability
+    </text>
+  </g>
+  
+  <!-- Footer -->
+  <text x="600" y="610" font-family="Arial, sans-serif" font-size="14" fill="#666" text-anchor="middle">
+    SVGAI.org - Compare the top AI icon generators to find your perfect tool (2025)
+  </text>
+</svg>

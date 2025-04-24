@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="300" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#dbeafe" />
+    </linearGradient>
+    
+    <!-- Arrow marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="300" fill="url(#bg-gradient)" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#1e40af">Text to Vector Conversion</text>
+  
+  <!-- Regular font text -->
+  <g transform="translate(100, 120)">
+    <rect x="0" y="0" width="250" height="100" rx="5" ry="5" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <text x="125" y="40" font-family="Arial, sans-serif" font-size="28" text-anchor="middle" fill="#374151">SVGAI</text>
+    <text x="125" y="80" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#6b7280">Regular Font Text</text>
+  </g>
+  
+  <!-- Arrow -->
+  <line x1="380" y1="150" x2="420" y2="150" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowhead)" />
+  
+  <!-- Vector outline text -->
+  <g transform="translate(450, 120)">
+    <rect x="0" y="0" width="250" height="100" rx="5" ry="5" fill="white" stroke="#d1d5db" stroke-width="1" />
+    
+    <!-- SVG path representation of text (simplified for illustration) -->
+    <path d="M60,40 l10,-15 l10,15 l-5,0 l0,15 l-10,0 l0,-15 Z" fill="#1e40af" />
+    <path d="M85,55 c0,-15 30,-15 30,0 c0,15 -30,15 -30,0 Z" fill="#1e40af" />
+    <path d="M125,40 l0,30 l15,0 l0,-30 Z" fill="#1e40af" />
+    <path d="M150,40 l15,0 l5,15 l5,-15 l15,0 l-12.5,30 l-15,0 Z" fill="#1e40af" />
+    <path d="M195,40 l0,30 l15,0 l0,-30 Z" fill="#1e40af" />
+    
+    <text x="125" y="80" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#6b7280">Vector Outlines</text>
+  </g>
+  
+  <!-- Benefits list -->
+  <g transform="translate(400, 240)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#4b5563">✓ No font dependencies</text>
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#4b5563">✓ Consistent appearance</text>
+    <text x="0" y="40" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#4b5563">✓ Editable as shapes</text>
+  </g>
+</svg>

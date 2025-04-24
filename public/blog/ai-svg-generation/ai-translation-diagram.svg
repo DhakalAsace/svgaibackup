@@ -1,0 +1,57 @@
+<svg width="800" height="200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="200" fill="#f3f4f6" rx="8" ry="8" />
+  
+  <!-- Text Prompt Box -->
+  <rect x="50" y="70" width="150" height="60" fill="#e5e7eb" stroke="#6b7280" stroke-width="1" rx="5" ry="5" />
+  <text x="125" y="95" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#4b5563">
+    Text Prompt
+  </text>
+  <text x="125" y="115" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#6b7280">
+    ("happy robot")
+  </text>
+  
+  <!-- Arrow 1 -->
+  <line x1="210" y1="100" x2="260" y2="100" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrowhead)" />
+  
+  <!-- NLP Analysis Box -->
+  <rect x="270" y="70" width="160" height="60" fill="#dbeafe" stroke="#3b82f6" stroke-width="1" rx="5" ry="5" />
+  <text x="350" y="95" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1e40af">
+    NLP Analysis
+  </text>
+  <text x="350" y="115" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1d4ed8">
+    (keywords, style)
+  </text>
+  
+  <!-- Arrow 2 -->
+  <line x1="440" y1="100" x2="490" y2="100" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrowhead)" />
+  
+  <!-- Vector Calculation Box -->
+  <rect x="500" y="70" width="150" height="60" fill="#d1fae5" stroke="#10b981" stroke-width="1" rx="5" ry="5" />
+  <text x="575" y="95" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#059669">
+    Vector Calculation
+  </text>
+  <text x="575" y="115" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#047857">
+    (paths, shapes)
+  </text>
+  
+  <!-- Arrow 3 -->
+  <line x1="660" y1="100" x2="710" y2="100" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- SVG Output Icon -->
+  <text x="745" y="105" font-family="monospace" font-size="30" text-anchor="middle" fill="#dc2626">
+    &lt;SVG/&gt;
+  </text>
+
+  <!-- Arrowhead Definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#9ca3af" />
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="400" y="30" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#4b5563">
+    How AI Translates Text to SVG
+  </text>
+</svg>

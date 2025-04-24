@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#f8fafc" />
+  
+  <!-- Background Pattern -->
+  <g opacity="0.2">
+    <path d="M0 0 L1200 0 L1200 630 L0 630 Z" fill="#4f46e5" opacity="0.05" />
+    <circle cx="100" cy="100" r="50" fill="#4f46e5" opacity="0.1" />
+    <circle cx="1100" cy="100" r="50" fill="#4f46e5" opacity="0.1" />
+    <circle cx="100" cy="530" r="50" fill="#4f46e5" opacity="0.1" />
+    <circle cx="1100" cy="530" r="50" fill="#4f46e5" opacity="0.1" />
+    <rect x="200" y="50" width="800" height="530" rx="20" ry="20" stroke="#4f46e5" stroke-width="2" stroke-opacity="0.3" fill="none" />
+  </g>
+
+  <!-- Title Background -->
+  <rect x="100" y="50" width="1000" height="100" rx="10" ry="10" fill="#4f46e5" opacity="0.1" />
+  
+  <!-- Main Content Area - 4 quadrants -->
+  <g transform="translate(600, 315)" opacity="0.95">
+    <!-- Quadrant 1: Planning & Design -->
+    <g transform="translate(-240, -120)">
+      <rect x="-100" y="-100" width="200" height="200" rx="15" ry="15" fill="#f0f9ff" stroke="#4f46e5" stroke-width="2" />
+      <circle cx="0" cy="-40" r="40" fill="#e0e7ff" />
+      <text x="0" y="-40" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4338ca">1</text>
+      <text x="0" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">Planning</text>
+      <path d="M-30 60 L30 60 M0 45 L0 75" stroke="#4338ca" stroke-width="2" />
+    </g>
+    
+    <!-- Quadrant 2: Prompt Writing -->
+    <g transform="translate(240, -120)">
+      <rect x="-100" y="-100" width="200" height="200" rx="15" ry="15" fill="#f0f9ff" stroke="#4f46e5" stroke-width="2" />
+      <circle cx="0" cy="-40" r="40" fill="#e0e7ff" />
+      <text x="0" y="-40" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4338ca">2</text>
+      <text x="0" y="10" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">Prompt</text>
+      <text x="0" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">Engineering</text>
+      <path d="M-30 60 C-20 50, 20 70, 30 60" stroke="#4338ca" stroke-width="2" fill="none" />
+    </g>
+    
+    <!-- Quadrant 3: AI Generation -->
+    <g transform="translate(-240, 120)">
+      <rect x="-100" y="-100" width="200" height="200" rx="15" ry="15" fill="#f0f9ff" stroke="#4f46e5" stroke-width="2" />
+      <circle cx="0" cy="-40" r="40" fill="#e0e7ff" />
+      <text x="0" y="-40" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4338ca">3</text>
+      <text x="0" y="10" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">AI</text>
+      <text x="0" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">Generation</text>
+      <path d="M-30 60 C-15 75, 15 45, 30 60" stroke="#4338ca" stroke-width="2" fill="none" />
+    </g>
+    
+    <!-- Quadrant 4: Refinement -->
+    <g transform="translate(240, 120)">
+      <rect x="-100" y="-100" width="200" height="200" rx="15" ry="15" fill="#f0f9ff" stroke="#4f46e5" stroke-width="2" />
+      <circle cx="0" cy="-40" r="40" fill="#e0e7ff" />
+      <text x="0" y="-40" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4338ca">4</text>
+      <text x="0" y="10" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">Refinement</text>
+      <text x="0" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">and  Export</text>
+      <path d="M-30 60 L0 70 L30 60" stroke="#4338ca" stroke-width="2" fill="none" />
+    </g>
+    
+    <!-- Central Icon -->
+    <circle cx="0" cy="0" r="60" fill="#4f46e5" fill-opacity="0.2" stroke="#4f46e5" stroke-width="3" />
+    <text x="0" y="-10" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4338ca">AI</text>
+    <text x="0" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4338ca">ICON</text>
+    
+    <!-- Connecting Lines -->
+    <line x1="-130" y1="-130" x2="-60" y2="-60" stroke="#4f46e5" stroke-width="2" stroke-dasharray="5,5" />
+    <line x1="130" y1="-130" x2="60" y2="-60" stroke="#4f46e5" stroke-width="2" stroke-dasharray="5,5" />
+    <line x1="-130" y1="130" x2="-60" y2="60" stroke="#4f46e5" stroke-width="2" stroke-dasharray="5,5" />
+    <line x1="130" y1="130" x2="60" y2="60" stroke="#4f46e5" stroke-width="2" stroke-dasharray="5,5" />
+  </g>
+  
+  <!-- Title -->
+  <text x="600" y="110" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="#1e293b">The Complete Guide to AI Icon Creation</text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="550" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#64748b">Tools, Tips, and Techniques</text>
+  
+  <!-- Logo -->
+  <text x="1100" y="600" text-anchor="end" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#4f46e5">SVGAI.org</text>
+</svg>

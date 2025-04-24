@@ -1,0 +1,67 @@
+<svg width="800" height="250" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="250" fill="#f8fafc" rx="8" ry="8" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#334155">
+    Performance Impact of SVG Optimization
+  </text>
+  
+  <!-- Chart -->
+  <g transform="translate(100, 200)">
+    <!-- X and Y Axes -->
+    <line x1="0" y1="0" x2="600" y2="0" stroke="#94a3b8" stroke-width="2" />
+    <line x1="0" y1="0" x2="0" y2="-150" stroke="#94a3b8" stroke-width="2" />
+    
+    <!-- X-Axis Labels -->
+    <text x="150" y="20" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#64748b">
+      Unoptimized
+    </text>
+    <text x="300" y="20" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#64748b">
+      Basic Optimization
+    </text>
+    <text x="450" y="20" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#64748b">
+      Advanced Optimization
+    </text>
+    
+    <!-- Y-Axis Labels -->
+    <text x="-10" y="0" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#64748b">
+      0ms
+    </text>
+    <text x="-10" y="-50" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#64748b">
+      100ms
+    </text>
+    <text x="-10" y="-100" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#64748b">
+      200ms
+    </text>
+    <text x="-10" y="-150" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="#64748b">
+      300ms
+    </text>
+    
+    <!-- Bars -->
+    <rect x="100" y="-140" width="100" height="140" fill="#ef4444" opacity="0.8" />
+    <rect x="250" y="-70" width="100" height="70" fill="#f97316" opacity="0.8" />
+    <rect x="400" y="-30" width="100" height="30" fill="#22c55e" opacity="0.8" />
+    
+    <!-- Data Labels -->
+    <text x="150" y="-150" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#334155">
+      280ms
+    </text>
+    <text x="300" y="-80" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#334155">
+      140ms
+    </text>
+    <text x="450" y="-40" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#334155">
+      60ms
+    </text>
+    
+    <!-- Y-Axis Title -->
+    <text x="-50" y="-75" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#334155" transform="rotate(-90 -50 -75)">
+      Page Load Time
+    </text>
+  </g>
+  
+  <!-- Caption -->
+  <text x="400" y="230" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#64748b">
+    Optimized SVGs can significantly improve page load times
+  </text>
+</svg>

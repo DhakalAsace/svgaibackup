@@ -1,0 +1,61 @@
+<svg width="800" height="250" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="250" fill="#f8fafc" rx="8" ry="8" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#0f172a">
+    Logo Design Principles
+  </text>
+  
+  <!-- Principles in circles -->
+  <g transform="translate(100, 120)">
+    <!-- Simplicity -->
+    <circle cx="0" cy="0" r="50" fill="#e0f2fe" />
+    <text x="0" y="5" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0369a1">
+      Simplicity
+    </text>
+  </g>
+  
+  <g transform="translate(250, 120)">
+    <!-- Memorability -->
+    <circle cx="0" cy="0" r="50" fill="#dbeafe" />
+    <text x="0" y="5" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#2563eb">
+      Memorability
+    </text>
+  </g>
+  
+  <g transform="translate(400, 120)">
+    <!-- Versatility -->
+    <circle cx="0" cy="0" r="50" fill="#c7d2fe" />
+    <text x="0" y="5" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#4f46e5">
+      Versatility
+    </text>
+  </g>
+  
+  <g transform="translate(550, 120)">
+    <!-- Relevance -->
+    <circle cx="0" cy="0" r="50" fill="#e0e7ff" />
+    <text x="0" y="5" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#4338ca">
+      Relevance
+    </text>
+  </g>
+  
+  <g transform="translate(700, 120)">
+    <!-- Uniqueness -->
+    <circle cx="0" cy="0" r="50" fill="#ede9fe" />
+    <text x="0" y="5" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#6d28d9">
+      Uniqueness
+    </text>
+  </g>
+  
+  <!-- Connecting lines -->
+  <line x1="150" y1="120" x2="200" y2="120" stroke="#94a3b8" stroke-width="2" />
+  <line x1="300" y1="120" x2="350" y2="120" stroke="#94a3b8" stroke-width="2" />
+  <line x1="450" y1="120" x2="500" y2="120" stroke="#94a3b8" stroke-width="2" />
+  <line x1="600" y1="120" x2="650" y2="120" stroke="#94a3b8" stroke-width="2" />
+  
+  <!-- Subtitle -->
+  <text x="400" y="210" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#64748b">
+    Guide your AI prompts with these principles for better results
+  </text>
+</svg>

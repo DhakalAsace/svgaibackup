@@ -1,0 +1,79 @@
+<svg width="800" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdfa" />
+      <stop offset="100%" stop-color="#99f6e4" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="300" fill="url(#bg-gradient)" rx="8" ry="8" />
+  
+  <!-- Title -->
+  <text x="400" y="70" font-family="Arial, sans-serif" font-size="36" font-weight="bold" text-anchor="middle" fill="#0f766e">
+    AI SVG Icon Generator
+  </text>
+  
+  <!-- AI Interface Mockup -->
+  <rect x="100" y="100" width="280" height="160" rx="8" ry="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" />
+  
+  <!-- Prompt Input -->
+  <rect x="120" y="120" width="240" height="40" rx="4" ry="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+  <text x="130" y="145" font-family="monospace" font-size="14" fill="#64748b">
+    "Minimalist line icons, 2px..."
+  </text>
+  
+  <!-- Generate Button -->
+  <rect x="220" y="170" width="100" height="30" rx="4" ry="4" fill="#14b8a6" />
+  <text x="270" y="190" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">
+    Generate
+  </text>
+  
+  <!-- Icon Results -->
+  <g transform="translate(430, 100)">
+    <!-- Icon Grid -->
+    <rect x="0" y="0" width="270" height="160" rx="8" ry="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" />
+    
+    <!-- Row 1 -->
+    <g transform="translate(30, 30)">
+      <!-- Home Icon -->
+      <circle cx="0" cy="0" r="25" fill="#ccfbf1" stroke="#0d9488" stroke-width="1" />
+      <path d="M -10 10 L -10 0 L 0 -10 L 10 0 L 10 10 L 5 10 L 5 5 L -5 5 L -5 10 Z" fill="none" stroke="#0d9488" stroke-width="2" />
+      
+      <!-- User Icon -->
+      <circle cx="70" cy="0" r="25" fill="#ccfbf1" stroke="#0d9488" stroke-width="1" />
+      <circle cx="70" cy="-5" r="8" fill="none" stroke="#0d9488" stroke-width="2" />
+      <path d="M 55 10 C 55 0 85 0 85 10" fill="none" stroke="#0d9488" stroke-width="2" />
+      
+      <!-- Settings Icon -->
+      <circle cx="140" cy="0" r="25" fill="#ccfbf1" stroke="#0d9488" stroke-width="1" />
+      <circle cx="140" cy="0" r="5" fill="none" stroke="#0d9488" stroke-width="2" />
+      <path d="M 140 -15 L 140 -8 M 140 8 L 140 15 M 155 0 L 148 0 M 132 0 L 125 0 M 150 -10 L 145 -5 M 135 5 L 130 10 M 150 10 L 145 5 M 135 -5 L 130 -10" stroke="#0d9488" stroke-width="2" />
+    </g>
+    
+    <!-- Row 2 -->
+    <g transform="translate(30, 100)">
+      <!-- Search Icon -->
+      <circle cx="0" cy="0" r="25" fill="#ccfbf1" stroke="#0d9488" stroke-width="1" />
+      <circle cx="-5" cy="-5" r="10" fill="none" stroke="#0d9488" stroke-width="2" />
+      <line x1="2" y1="2" x2="12" y2="12" stroke="#0d9488" stroke-width="2" />
+      
+      <!-- Mail Icon -->
+      <circle cx="70" cy="0" r="25" fill="#ccfbf1" stroke="#0d9488" stroke-width="1" />
+      <rect x="55" y="-10" width="30" height="20" fill="none" stroke="#0d9488" stroke-width="2" />
+      <path d="M 55 -10 L 70 0 L 85 -10" fill="none" stroke="#0d9488" stroke-width="2" />
+      
+      <!-- Heart Icon -->
+      <circle cx="140" cy="0" r="25" fill="#ccfbf1" stroke="#0d9488" stroke-width="1" />
+      <path d="M 140 10 C 130 0 125 -15 140 -5 C 155 -15 150 0 140 10" fill="none" stroke="#0d9488" stroke-width="2" />
+    </g>
+  </g>
+  
+  <!-- Arrow connecting prompt to results -->
+  <line x1="380" y1="140" x2="410" y2="140" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5" />
+  <polygon points="410,140 405,135 405,145" fill="#94a3b8" />
+  
+  <!-- Subtitle -->
+  <text x="400" y="280" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#0f766e">
+    Create Consistent Icon Sets in Minutes
+  </text>
+</svg>

@@ -1,0 +1,73 @@
+<svg width="800" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f1f5f9" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+  </defs>
+  <rect width=" 800" height="300" fill="url(#bg-gradient)" rx="8" ry="8" />
+  
+  <!-- Title -->
+  <text x="400" y="70" font-family="Arial, sans-serif" font-size="36" font-weight="bold" text-anchor="middle" fill="#334155">
+    SVG Optimization Guide
+  </text>
+  
+  <!-- Before and After Comparison -->
+  <g transform="translate(150, 150)">
+    <!-- Before Box -->
+    <rect x="-120" y="-50" width="240" height="100" rx="8" ry="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2" />
+    <text x="0" y="-25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#475569">
+      Before Optimization
+    </text>
+    <text x="0" y="0" font-family="monospace" font-size="12" text-anchor="middle" fill="#64748b">
+      &lt;svg width="100" height="100"&gt;
+    </text>
+    <text x="0" y="20" font-family="monospace" font-size="12" text-anchor="middle" fill="#64748b">
+      &lt;!-- Adobe Illustrator SVG --&gt;
+    </text>
+    <text x="0" y="40" font-family="monospace" font-size="12" text-anchor="middle" fill="#64748b">
+      ... 500+ lines of code ...
+    </text>
+    
+    <!-- File Size Indicator -->
+    <rect x="-60" y="60" width="120" height="30" rx="4" ry="4" fill="#f87171" />
+    <text x="0" y="80" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">
+      45.2 KB
+    </text>
+  </g>
+  
+  <!-- Arrow -->
+  <g transform="translate(400, 150)">
+    <line x1="-30" y1="0" x2="30" y2="0" stroke="#64748b" stroke-width="3" />
+    <polygon points="30,0 20,-10 20,10" fill="#64748b" />
+  </g>
+  
+  <g transform="translate(650, 150)">
+    <!-- After Box -->
+    <rect x="-120" y="-50" width="240" height="100" rx="8" ry="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2" />
+    <text x="0" y="-25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#475569">
+      After Optimization
+    </text>
+    <text x="0" y="0" font-family="monospace" font-size="12" text-anchor="middle" fill="#64748b">
+      &lt;svg viewBox="0 0 100 100"&gt;
+    </text>
+    <text x="0" y="20" font-family="monospace" font-size="12" text-anchor="middle" fill="#64748b">
+      &lt;path d="M10,10L90,90"...&gt;
+    </text>
+    <text x="0" y="40" font-family="monospace" font-size="12" text-anchor="middle" fill="#64748b">
+      ... 15 lines of clean code ...
+    </text>
+    
+    <!-- File Size Indicator -->
+    <rect x="-60" y="60" width="120" height="30" rx="4" ry="4" fill="#4ade80" />
+    <text x="0" y="80" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">
+      5.8 KB
+    </text>
+  </g>
+  
+  <!-- Subtitle -->
+  <text x="400" y="250" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#475569">
+    Boost Web Performance with Optimized Vector Graphics
+  </text>
+</svg>

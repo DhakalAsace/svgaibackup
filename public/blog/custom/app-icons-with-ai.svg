@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#f8fafc" />
+  
+  <!-- Background pattern -->
+  <g opacity="0.1">
+    <rect x="50" y="50" width="100" height="100" rx="20" fill="#4f46e5" />
+    <rect x="1050" y="50" width="100" height="100" rx="20" fill="#4f46e5" />
+    <rect x="50" y="480" width="100" height="100" rx="20" fill="#4f46e5" />
+    <rect x="1050" y="480" width="100" height="100" rx="20" fill="#4f46e5" />
+    
+    <!-- Grid pattern -->
+    <g opacity="0.5">
+      <path d="M200 50 L1000 50" stroke="#4f46e5" stroke-width="1" />
+      <path d="M200 580 L1000 580" stroke="#4f46e5" stroke-width="1" />
+      <path d="M200 50 L200 580" stroke="#4f46e5" stroke-width="1" />
+      <path d="M1000 50 L1000 580" stroke="#4f46e5" stroke-width="1" />
+    </g>
+  </g>
+
+  <!-- Title background -->
+  <rect x="200" y="50" width="800" height="90" rx="10" fill="#4f46e5" fill-opacity="0.1" />
+  
+  <!-- Content area for app icon design process -->
+  <g transform="translate(600, 300)">
+    <!-- Main process container -->
+    <rect x="-450" y="-120" width="900" height="240" rx="20" fill="#f0f9ff" stroke="#4f46e5" stroke-width="2" />
+    
+    <!-- Process steps -->
+    <!-- Step 1: Concept -->
+    <g transform="translate(-337.5, 0)">
+      <rect x="-75" y="-90" width="150" height="180" rx="15" fill="white" stroke="#4f46e5" stroke-width="2" />
+      <circle cx="0" cy="-50" r="30" fill="#e0e7ff" />
+      <text x="0" y="-50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4338ca">1</text>
+      <text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1e293b">CONCEPT</text>
+      
+      <!-- Mobile app icon concept sketch -->
+      <g transform="translate(0, 40)">
+        <rect x="-30" y="-30" width="60" height="60" rx="15" fill="#e0e7ff" stroke="#4338ca" stroke-width="2" />
+        <circle cx="0" cy="0" r="15" fill="#4f46e5" fill-opacity="0.3" />
+        <path d="M-10 -10 L10 10 M-10 10 L10 -10" stroke="#4338ca" stroke-width="2" />
+      </g>
+    </g>
+    
+    <!-- Step 2: Prompt -->
+    <g transform="translate(-112.5, 0)">
+      <rect x="-75" y="-90" width="150" height="180" rx="15" fill="white" stroke="#4f46e5" stroke-width="2" />
+      <circle cx="0" cy="-50" r="30" fill="#e0e7ff" />
+      <text x="0" y="-50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4338ca">2</text>
+      <text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1e293b">PROMPT</text>
+      
+      <!-- Prompt text representation -->
+      <g transform="translate(0, 40)">
+        <rect x="-30" y="-22" width="60" height="44" rx="5" fill="#e0e7ff" stroke="#4338ca" stroke-width="2" />
+        <line x1="-20" y1="-12" x2="20" y2="-12" stroke="#4338ca" stroke-width="2" />
+        <line x1="-20" y1="0" x2="10" y2="0" stroke="#4338ca" stroke-width="2" />
+        <line x1="-20" y1="12" x2="15" y2="12" stroke="#4338ca" stroke-width="2" />
+      </g>
+    </g>
+    
+    <!-- Step 3: Generate -->
+    <g transform="translate(112.5, 0)">
+      <rect x="-75" y="-90" width="150" height="180" rx="15" fill="white" stroke="#4f46e5" stroke-width="2" />
+      <circle cx="0" cy="-50" r="30" fill="#e0e7ff" />
+      <text x="0" y="-50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4338ca">3</text>
+      <text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1e293b">GENERATE</text>
+      
+      <!-- AI generation symbol -->
+      <g transform="translate(0, 40)">
+        <rect x="-30" y="-30" width="60" height="60" rx="15" fill="#e0e7ff" stroke="#4338ca" stroke-width="2" />
+        <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#4338ca">AI</text>
+        <path d="M-20 -20 L-20 -15 L-15 -15 M20 -20 L20 -15 L15 -15 M-20 20 L-20 15 L-15 15 M20 20 L20 15 L15 15" stroke="#4338ca" stroke-width="2" fill="none" />
+      </g>
+    </g>
+    
+    <!-- Step 4: Export -->
+    <g transform="translate(337.5, 0)">
+      <rect x="-75" y="-90" width="150" height="180" rx="15" fill="white" stroke="#4f46e5" stroke-width="2" />
+      <circle cx="0" cy="-50" r="30" fill="#e0e7ff" />
+      <text x="0" y="-50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4338ca">4</text>
+      <text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1e293b">EXPORT</text>
+      
+      <!-- SVG export symbol -->
+      <g transform="translate(0, 40)">
+        <rect x="-30" y="-30" width="60" height="60" rx="15" fill="#e0e7ff" stroke="#4338ca" stroke-width="2" />
+        <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#4338ca">SVG</text>
+        <path d="M-15 -15 L15 15 M15 -15 L-15 15" stroke="#4338ca" stroke-width="1" stroke-opacity="0.3" />
+      </g>
+    </g>
+    
+    <!-- Process arrows -->
+    <line x1="-250" y1="0" x2="-200" y2="0" stroke="#4338ca" stroke-width="2" />
+    <polygon points="-200,0 -210,5 -210,-5" fill="#4338ca" />
+    
+    <line x1="-25" y1="0" x2="25" y2="0" stroke="#4338ca" stroke-width="2" />
+    <polygon points="25,0 15,5 15,-5" fill="#4338ca" />
+    
+    <line x1="200" y1="0" x2="250" y2="0" stroke="#4338ca" stroke-width="2" />
+    <polygon points="250,0 240,5 240,-5" fill="#4338ca" />
+  </g>
+  
+  <!-- Example App Icons -->
+  <g transform="translate(300, 475)">
+    <rect x="-100" y="-50" width="100" height="100" rx="20" fill="#9a8dff" />
+    <text x="-50" y="0" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="white">A</text>
+  </g>
+  
+  <g transform="translate(600, 475)">
+    <rect x="-100" y="-50" width="100" height="100" rx="20" fill="#4f46e5" />
+    <circle cx="-50" cy="0" r="30" fill="white" fill-opacity="0.8" />
+    <path d="M-60 0 L-50 10 L-40 -5" stroke="white" stroke-width="3" fill="none" />
+  </g>
+  
+  <g transform="translate(900, 475)">
+    <rect x="-100" y="-50" width="100" height="100" rx="20" fill="#c4b5fd" />
+    <path d="M-65 -15 L-65 15 M-50 -15 L-50 15 M-35 -15 L-35 15" stroke="white" stroke-width="4" />
+  </g>
+  
+  <!-- Title -->
+  <text x="600" y="105" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#1e293b">How to Create Perfect App Icons with AI</text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="580" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#64748b">Step-by-Step Tutorial</text>
+  
+  <!-- Logo -->
+  <text x="1100" y="600" text-anchor="end" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#4f46e5">SVGAI.org</text>
+</svg>

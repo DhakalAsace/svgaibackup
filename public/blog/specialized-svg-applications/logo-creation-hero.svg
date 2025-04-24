@@ -1,0 +1,62 @@
+<svg width="800" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="300" fill="url(#bg-gradient)" rx="8" ry="8" />
+  
+  <!-- Title -->
+  <text x="400" y="70" font-family="Arial, sans-serif" font-size="36" font-weight="bold" text-anchor="middle" fill="#0369a1">
+    Creating SVG Logos with AI
+  </text>
+  
+  <!-- AI Interface Mockup -->
+  <rect x="100" y="100" width="300" height="160" rx="8" ry="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" />
+  
+  <!-- Prompt Input -->
+  <rect x="120" y="120" width="260" height="40" rx="4" ry="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+  <text x="130" y="145" font-family="monospace" font-size="14" fill="#64748b">
+    "Minimalist tech logo, blue..."
+  </text>
+  
+  <!-- Generate Button -->
+  <rect x="220" y="170" width="100" height="30" rx="4" ry="4" fill="#0ea5e9" />
+  <text x="270" y="190" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">
+    Generate
+  </text>
+  
+  <!-- Logo Results -->
+  <g transform="translate(450, 100)">
+    <!-- Logo 1 -->
+    <rect x="0" y="0" width="70" height="70" rx="8" ry="8" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="1" />
+    <path d="M 20 35 L 35 20 L 50 35 L 35 50 Z" fill="#0284c7" />
+    
+    <!-- Logo 2 -->
+    <rect x="90" y="0" width="70" height="70" rx="35" ry="35" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="1" />
+    <path d="M 125 20 L 140 35 L 125 50 L 110 35 Z" fill="#0284c7" />
+    
+    <!-- Logo 3 -->
+    <rect x="180" y="0" width="70" height="70" rx="0" ry="0" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="1" />
+    <circle cx="215" cy="35" r="15" fill="#0284c7" />
+    
+    <!-- Logo 4 -->
+    <rect x="45" y="90" width="70" height="70" rx="8" ry="8" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="1" />
+    <rect x="65" y="110" width="30" height="30" fill="#0284c7" />
+    
+    <!-- Logo 5 -->
+    <rect x="135" y="90" width="70" height="70" rx="8" ry="8" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="1" />
+    <path d="M 150 110 L 170 110 L 190 130 L 170 150 L 150 150 L 170 130 Z" fill="#0284c7" />
+  </g>
+  
+  <!-- Arrow connecting prompt to results -->
+  <line x1="400" y1="140" x2="430" y2="140" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5" />
+  <polygon points="430,140 425,135 425,145" fill="#94a3b8" />
+  
+  <!-- SVG Code Snippet -->
+  <text x="400" y="250" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0c4a6e">
+    Professional SVG Logos from Text Prompts
+  </text>
+</svg>

@@ -1,0 +1,40 @@
+import Replicate from "replicate"
+
+// Initialize Replicate client with API token
+export const getReplicateClient = () => {
+  const apiToken = process.env.REPLICATE_API_TOKEN
+
+  if (!apiToken) {
+    throw new Error("REPLICATE_API_TOKEN is not defined")
+  }
+
+  return new Replicate({
+    auth: apiToken,
+  })
+}
+
+// Generate SVG using Recraft AI model
+export async function generateSvg(prompt: string, options = {}) {
+  try {
+    const replicate = getReplicateClient()
+
+    const defaultOptions = {
+      style: "any",
+      size: "1024x1024",
+      aspect_ratio: "Not set",
+    }
+
+    const input = {
+      prompt,
+      ...defaultOptions,
+      ...options,
+    }
+
+    const output = await replicate.run("recraft-ai/recraft-v3-svg", { input })
+
+    return { success: true, svg: output }
+  } catch (error) {
+    console.error("Error generating SVG:", error)
+    return { success: false, error: "Failed to generate SVG" }
+  }
+}

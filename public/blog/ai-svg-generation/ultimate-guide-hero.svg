@@ -1,0 +1,25 @@
+<svg width="800" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="ultimate-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#eef2ff" />
+      <stop offset="100%" stop-color="#c7d2fe" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="300" fill="url(#ultimate-grad)" rx="8" ry="8" />
+
+  <!-- Main Text -->
+  <text x="400" y="110" font-family="Arial, sans-serif" font-size="40" font-weight="bold" text-anchor="middle" fill="#4338ca">
+    The Ultimate Guide to
+  </text>
+  <text x="400" y="160" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="#4f46e5">
+    AI SVG Generation
+  </text>
+
+  <!-- Decorative Elements - Techy feel -->
+  <path d="M 50 200 L 100 150 L 150 200 L 100 250 Z" fill="#a5b4fc" opacity="0.6" />
+  <path d="M 650 50 L 700 100 L 750 50 L 700 0 Z" fill="#818cf8" opacity="0.7" />
+  <circle cx="200" cy="80" r="25" stroke="#6366f1" stroke-width="3" fill="none" opacity="0.5"/>
+  <rect x="580" y="200" width="50" height="50" stroke="#4f46e5" stroke-width="2" fill="#c7d2fe" opacity="0.7" transform="rotate(15 605 225)"/>
+  <line x1="150" y1="250" x2="650" y2="50" stroke="#a5b4fc" stroke-width="2" stroke-dasharray="5, 5" opacity="0.4"/>
+</svg>

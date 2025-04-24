@@ -1,0 +1,76 @@
+<svg width="800" height="250" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="250" fill="#f8fafc" rx="8" ry="8" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#0f172a">
+    Icon Design Principles
+  </text>
+  
+  <!-- Principles -->
+  <g transform="translate(100, 100)">
+    <!-- Clarity -->
+    <circle cx="0" cy="0" r="40" fill="#ccfbf1" />
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0f766e">
+      Clarity
+    </text>
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#134e4a">
+      Instantly recognizable
+    </text>
+  </g>
+  
+  <g transform="translate(250, 100)">
+    <!-- Simplicity -->
+    <circle cx="0" cy="0" r="40" fill="#cffafe" />
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0e7490">
+      Simplicity
+    </text>
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#155e75">
+      Less is more
+    </text>
+  </g>
+  
+  <g transform="translate(400, 100)">
+    <!-- Consistency -->
+    <circle cx="0" cy="0" r="40" fill="#bfdbfe" />
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1d4ed8">
+      Consistency
+    </text>
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1e40af">
+      Unified style
+    </text>
+  </g>
+  
+  <g transform="translate(550, 100)">
+    <!-- Scalability -->
+    <circle cx="0" cy="0" r="40" fill="#dbeafe" />
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#2563eb">
+      Scalability
+    </text>
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1e40af">
+      Works at any size
+    </text>
+  </g>
+  
+  <g transform="translate(700, 100)">
+    <!-- Metaphor -->
+    <circle cx="0" cy="0" r="40" fill="#e0f2fe" />
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0369a1">
+      Metaphor
+    </text>
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#075985">
+      Familiar symbols
+    </text>
+  </g>
+  
+  <!-- Connecting lines -->
+  <line x1="140" y1="100" x2="210" y2="100" stroke="#94a3b8" stroke-width="1" />
+  <line x1="290" y1="100" x2="360" y2="100" stroke="#94a3b8" stroke-width="1" />
+  <line x1="440" y1="100" x2="510" y2="100" stroke="#94a3b8" stroke-width="1" />
+  <line x1="590" y1="100" x2="660" y2="100" stroke="#94a3b8" stroke-width="1" />
+  
+  <!-- Subtitle -->
+  <text x="400" y="200" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#64748b">
+    These principles apply to both AI-generated and human-designed icons
+  </text>
+</svg>

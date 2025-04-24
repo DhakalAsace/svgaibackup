@@ -1,0 +1,192 @@
+[Windsurf Docs home page](https://codeium.com)
+- [Feature Request](https://codeium.canny.io/feature-requests/)
+- [Download](https://codeium.com/download)
+- [Download](https://codeium.com/download)
+[Feature Request](https://codeium.canny.io/feature-requests/)
+[Download](https://codeium.com/download)
+[Download](https://codeium.com/download)
+[Windsurf](https://docs.windsurf.com/windsurf/getting-started)
+[Windsurf Plugins](https://docs.windsurf.com/plugins/getting-started)
+[Discord Community](https://discord.com/invite/3XFf78nAx5)
+[Windsurf Blog](https://codeium.com/blog)
+[Support](https://codeium.com/support)
+
+##### Get Started
+- [Getting Started](https://docs.windsurf.com/windsurf/getting-started)
+- [Authentication (Enterprise)](https://docs.windsurf.com/getstarted/sso-scim)
+[Getting Started](https://docs.windsurf.com/windsurf/getting-started)
+[Authentication (Enterprise)](https://docs.windsurf.com/getstarted/sso-scim)
+
+##### Cascade
+- [Overview](https://docs.windsurf.com/windsurf/cascade)
+- [Usage](https://docs.windsurf.com/windsurf/usage)
+- [App Deploys](https://docs.windsurf.com/windsurf/app-deploys)
+- [Image Upload](https://docs.windsurf.com/windsurf/image-upload)
+- [Web Search](https://docs.windsurf.com/windsurf/web-search)
+- [Memories & Rules](https://docs.windsurf.com/windsurf/memories)
+- [Model Context Protocol (MCP)](https://docs.windsurf.com/windsurf/mcp)
+[Overview](https://docs.windsurf.com/windsurf/cascade)
+[Usage](https://docs.windsurf.com/windsurf/usage)
+[App Deploys](https://docs.windsurf.com/windsurf/app-deploys)
+[Image Upload](https://docs.windsurf.com/windsurf/image-upload)
+[Web Search](https://docs.windsurf.com/windsurf/web-search)
+[Memories & Rules](https://docs.windsurf.com/windsurf/memories)
+[Model Context Protocol (MCP)](https://docs.windsurf.com/windsurf/mcp)
+
+##### Windsurf Editor
+- [Models](https://docs.windsurf.com/windsurf/models)
+- [Tab](https://docs.windsurf.com/tab/overview)
+- [Command](https://docs.windsurf.com/command/windsurf-overview)
+- [Code Lenses](https://docs.windsurf.com/command/windsurf-related-features)
+- [Terminal](https://docs.windsurf.com/windsurf/terminal)
+- [Previews (Beta)](https://docs.windsurf.com/windsurf/previews)
+- [AI Commit Messages](https://docs.windsurf.com/windsurf/ai-commit-message)
+- [Advanced](https://docs.windsurf.com/windsurf/advanced)
+[Models](https://docs.windsurf.com/windsurf/models)
+[Tab](https://docs.windsurf.com/tab/overview)
+[Command](https://docs.windsurf.com/command/windsurf-overview)
+[Code Lenses](https://docs.windsurf.com/command/windsurf-related-features)
+[Terminal](https://docs.windsurf.com/windsurf/terminal)
+[Previews (Beta)](https://docs.windsurf.com/windsurf/previews)
+[AI Commit Messages](https://docs.windsurf.com/windsurf/ai-commit-message)
+[Advanced](https://docs.windsurf.com/windsurf/advanced)
+
+##### Context Awareness
+- [Overview](https://docs.windsurf.com/context-awareness/overview)
+- [Local Indexing](https://docs.windsurf.com/context-awareness/local-indexing)
+- [Remote Indexing (Enterprise)](https://docs.windsurf.com/context-awareness/remote-indexing)
+[Overview](https://docs.windsurf.com/context-awareness/overview)
+[Local Indexing](https://docs.windsurf.com/context-awareness/local-indexing)
+[Remote Indexing (Enterprise)](https://docs.windsurf.com/context-awareness/remote-indexing)
+
+##### Troubleshooting
+- [Common Issues](https://docs.windsurf.com/troubleshooting/windsurf-common-issues)
+- [Gathering Logs](https://docs.windsurf.com/troubleshooting/windsurf-gathering-logs)
+[Common Issues](https://docs.windsurf.com/troubleshooting/windsurf-common-issues)
+[Gathering Logs](https://docs.windsurf.com/troubleshooting/windsurf-gathering-logs)
+
+##### Security
+- [Reporting](https://docs.windsurf.com/security/reporting)
+[Reporting](https://docs.windsurf.com/security/reporting)
+
+# Model Context Protocol (MCP)
+
+MCP (Model Context Protocol) is a protocol that enables LLMs to access custom tools and services.
+An MCP client (Cascade, in this case) can make requests to MCP servers to access tools that they provide.
+Cascade now natively integrates with MCP, allowing you to bring your own selection of MCP servers for Cascade to use.
+See the [official MCP docs](https://modelcontextprotocol.io/) for more information.
+
+## ​Configuring MCP
+​
+To set up MCP with Cascade, navigate to Windsurf - Settings > Advanced Settings or Command Palette > Open Windsurf Settings Page.
+Scroll down to the Cascade section and you will find the option to add a new server, view existing servers, and a button to view the raw JSON config file at mcp_config.json.
+
+```
+mcp_config.json
+```
+
+Windsurf supports two [transport types](https://modelcontextprotocol.io/docs/concepts/transports) for MCP servers: stdio and /sse.
+
+```
+stdio
+```
+
+
+```
+/sse
+```
+
+
+```
+/sse
+```
+
+
+```
+https://<your-server-url>/sse
+```
+
+## ​Adding a new server
+​
+To add a new server, press the “Add Server” button in the Cascade settings. You can then easily choose between some pre-populated servers that we’ve found to be the most helpful and popular. Alternatively, you can click “Add custom server +” to add your own server directly in mcp_config.json.
+
+```
+mcp_config.json
+```
+
+Currently, the number of tools that a user can have access to from the MCP servers at one time is limited to 50.
+If you add a new server that has enough tools to exceed the limit, you will need to remove a server from the list in order to add the new one.
+
+## ​mcp_config.json
+​
+The ~/.codeium/windsurf/mcp_config.json file is a JSON file that contains a list of servers that Cascade can connect to.
+
+```
+~/.codeium/windsurf/mcp_config.json
+```
+
+The JSON should follow the same schema as the config file for Claude Desktop.
+Here’s an example configuration, which sets up a single server for Google Maps:
+
+```
+{
+  "mcpServers": {
+    "google-maps": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-google-maps"
+      ],
+      "env": {
+        "GOOGLE_MAPS_API_KEY": "<YOUR_API_KEY>"
+      }
+    }
+  }
+}
+```
+
+
+```
+{
+  "mcpServers": {
+    "google-maps": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-google-maps"
+      ],
+      "env": {
+        "GOOGLE_MAPS_API_KEY": "<YOUR_API_KEY>"
+      }
+    }
+  }
+}
+```
+
+Be sure to provide the required arguments and environment variables for the servers that you want to use.
+See the official MCP server reference repository or [OpenTools](https://opentools.com/) for some example servers.
+
+## ​Notes
+​
+- Since MCP tool calls can invoke code written by arbitrary server implementers, we do not assume liability
+for MCP tool call failures. To reiterate:
+MCP tool calls will consume credits regardless of success or failure.
+- We currently only support tools, not prompts nor [resources](https://modelcontextprotocol.io/docs/concepts/resources).
+In other words, Cascade will be able to request and use a server’s tools, but not the other endpoints that a server exposes.
+- We do not support tools that output images.
+[tools](https://modelcontextprotocol.io/docs/concepts/tools)
+[prompts](https://modelcontextprotocol.io/docs/concepts/prompts)
+[resources](https://modelcontextprotocol.io/docs/concepts/resources)
+[Memories & Rules](https://docs.windsurf.com/windsurf/memories)
+[Models](https://docs.windsurf.com/windsurf/models)
+[twitter](https://x.com/codeiumdev)
+[discord](https://discord.com/invite/3XFf78nAx5)
+[Powered by Mintlify](https://mintlify.com/preview-request?utm_campaign=poweredBy&utm_medium=docs&utm_source=docs.windsurf.com)
+- Configuring MCP
+- Adding a new server
+- mcp_config.json
+- Notes
+Configuring MCP
+Adding a new server
+mcp_config.json
+Notes

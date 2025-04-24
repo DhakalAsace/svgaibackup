@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+    
+    <!-- Code background -->
+    <linearGradient id="code-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    
+    <!-- SVG element style -->
+    <style>
+      .code-text { font-family: monospace; font-size: 12px; fill: #e2e8f0; }
+      .svg-element { fill: none; stroke: #3b82f6; stroke-width: 2; }
+      .svg-element-highlight { fill: none; stroke: #f97316; stroke-width: 2; }
+      .svg-element-fill { fill: #3b82f6; fill-opacity: 0.2; stroke: #3b82f6; stroke-width: 2; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bg-gradient)" />
+  
+  <!-- Title -->
+  <text x="400" y="60" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#0c4a6e">SVG for Developers</text>
+  <text x="400" y="95" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#0369a1">Complete Implementation Guide</text>
+  
+  <!-- Left side: SVG code -->
+  <rect x="80" y="130" width="280" height="200" rx="8" fill="url(#code-bg)" />
+  <text x="100" y="155" class="code-text">&lt;svg viewBox="0 0 100 100"&gt;</text>
+  <text x="100" y="175" class="code-text">  &lt;circle cx="50" cy="50" r="40"</text>
+  <text x="100" y="195" class="code-text">          fill="#3b82f6" /&gt;</text>
+  <text x="100" y="215" class="code-text">  &lt;rect x="30" y="30" width="40"</text>
+  <text x="100" y="235" class="code-text">        height="40" fill="#f97316" /&gt;</text>
+  <text x="100" y="255" class="code-text">  &lt;path d="M20,80 L50,30 L80,80 Z"</text>
+  <text x="100" y="275" class="code-text">        fill="#10b981" /&gt;</text>
+  <text x="100" y="295" class="code-text">&lt;/svg&gt;</text>
+  
+  <!-- Right side: Visual SVG result -->
+  <rect x="440" y="130" width="280" height="200" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1" />
+  
+  <!-- The actual SVG elements -->
+  <g transform="translate(580, 230)">
+    <circle cx="0" cy="0" r="80" class="svg-element-fill" />
+    <rect x="-40" y="-40" width="80" height="80" fill="#f97316" fill-opacity="0.5" stroke="#f97316" stroke-width="2" />
+    <path d="M-60,60 L0,-40 L60,60 Z" fill="#10b981" fill-opacity="0.6" stroke="#10b981" stroke-width="2" />
+  </g>
+  
+  <!-- Connecting arrows -->
+  <line x1="370" y1="180" x2="430" y2="180" stroke="#64748b" stroke-width="2" stroke-dasharray="5,5" />
+  <line x1="370" y1="230" x2="430" y2="230" stroke="#64748b" stroke-width="2" stroke-dasharray="5,5" />
+  <line x1="370" y1="280" x2="430" y2="280" stroke="#64748b" stroke-width="2" stroke-dasharray="5,5" />
+  
+  <!-- Developer elements -->
+  <g transform="translate(400, 370)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#0c4a6e">Structure • Optimization • Animation • Accessibility • Framework Integration</text>
+  </g>
+</svg>

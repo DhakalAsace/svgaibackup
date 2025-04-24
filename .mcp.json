@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "dependencies": [
+    {
+      "name": "supabase",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_ae26024d690f05eb5ebe99ca55fd75daee613b50"
+      ]
+    }
+  ]
+}

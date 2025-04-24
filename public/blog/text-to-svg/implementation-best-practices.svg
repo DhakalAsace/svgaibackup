@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff"/>
+      <stop offset="100%" stop-color="#bae6fd"/>
+    </linearGradient>
+
+    <!-- Panel gradients -->
+    <linearGradient id="optimization-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#bfdbfe"/>
+    </linearGradient>
+    <linearGradient id="accessibility-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c7d2fe"/>
+      <stop offset="100%" stop-color="#a5b4fc"/>
+    </linearGradient>
+    <linearGradient id="responsive-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dcfce7"/>
+      <stop offset="100%" stop-color="#bbf7d0"/>
+    </linearGradient>
+    <linearGradient id="animation-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef9c3"/>
+      <stop offset="100%" stop-color="#fef08a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bg-gradient)"/>
+
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold"
+        text-anchor="middle" fill="#0c4a6e">
+    SVG Implementation Best Practices
+  </text>
+
+  <!-- ================== OPTIMIZATION ================== -->
+  <g transform="translate(200,120)">
+    <rect x="-150" y="0" width="300" height="160" rx="8" ry="8" fill="white" stroke="#94a3b8"/>
+    <rect x="-150" y="0" width="300" height="40" rx="8" ry="8" fill="#3b82f6"/>
+    <text x="0" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold"
+          text-anchor="middle" fill="white">Optimization</text>
+
+    <!-- Gradient content panel -->
+    <rect x="-130" y="50" width="260" height="100" rx="4" ry="4" fill="url(#optimization-gradient)"/>
+
+    <!-- Bullet list -->
+    <text x="-120" y="70"  font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Minify SVG code</text>
+    <text x="-120" y="90"  font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Remove unnecessary attributes</text>
+    <text x="-120" y="110" font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Simplify paths</text>
+    <text x="-120" y="130" font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Use SVGO or SVGOMG tools</text>
+  </g>
+
+  <!-- ================== ACCESSIBILITY ================== -->
+  <g transform="translate(600,120)">
+    <rect x="-150" y="0" width="300" height="160" rx="8" ry="8" fill="white" stroke="#94a3b8"/>
+    <rect x="-150" y="0" width="300" height="40" rx="8" ry="8" fill="#8b5cf6"/>
+    <text x="0" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold"
+          text-anchor="middle" fill="white">Accessibility</text>
+
+    <rect x="-130" y="50" width="260" height="100" rx="4" ry="4" fill="url(#accessibility-gradient)"/>
+
+    <text x="-120" y="70"  font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Add title and description</text>
+    <text x="-120" y="90"  font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Use ARIA attributes</text>
+    <text x="-120" y="110" font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Ensure sufficient contrast</text>
+    <text x="-120" y="130" font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Test with screen readers</text>
+  </g>
+
+  <!-- ================== RESPONSIVE ================== -->
+  <g transform="translate(200,320)">
+    <rect x="-150" y="0" width="300" height="160" rx="8" ry="8" fill="white" stroke="#94a3b8"/>
+    <rect x="-150" y="0" width="300" height="40" rx="8" ry="8" fill="#10b981"/>
+    <text x="0" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold"
+          text-anchor="middle" fill="white">Responsive Design</text>
+
+    <rect x="-130" y="50" width="260" height="100" rx="4" ry="4" fill="url(#responsive-gradient)"/>
+
+    <text x="-120" y="70"  font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Use viewBox attribute</text>
+    <text x="-120" y="90"  font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Set preserveAspectRatio</text>
+    <text x="-120" y="110" font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Use relative units</text>
+    <text x="-120" y="130" font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Test on multiple devices</text>
+  </g>
+
+  <!-- ================== ANIMATION ================== -->
+  <g transform="translate(600,320)">
+    <rect x="-150" y="0" width="300" height="160" rx="8" ry="8" fill="white" stroke="#94a3b8"/>
+    <rect x="-150" y="0" width="300" height="40" rx="8" ry="8" fill="#f59e0b"/>
+    <text x="0" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold"
+          text-anchor="middle" fill="white">Animation and Interactivity</text>
+
+    <rect x="-130" y="50" width="260" height="100" rx="4" ry="4" fill="url(#animation-gradient)"/>
+
+    <text x="-120" y="70"  font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Use CSS animations</text>
+    <text x="-120" y="90"  font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Consider SMIL for simple cases</text>
+    <text x="-120" y="110" font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• JavaScript for complex interactions</text>
+    <text x="-120" y="130" font-family="Arial, sans-serif" font-size="11" font-weight="bold"
+          text-anchor="start" fill="#0c4a6e">• Respect reduced motion preferences</text>
+  </g>
+</svg>

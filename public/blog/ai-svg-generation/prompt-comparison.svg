@@ -1,0 +1,42 @@
+<svg width="800" height="250" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="250" fill="#f5f3ff" rx="8" ry="8" />
+  
+  <!-- Split design with divider -->
+  <line x1="400" y1="50" x2="400" y2="200" stroke="#a78bfa" stroke-width="2" stroke-dasharray="5,5" />
+  
+  <!-- Left side - Basic prompt -->
+  <rect x="100" y="70" width="220" height="40" rx="5" ry="5" fill="#e9d5ff" />
+  <text x="210" y="95" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#7e22ce">
+    "bird"
+  </text>
+  <text x="210" y="140" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#9333ea">
+    Basic Prompt
+  </text>
+  <text x="210" y="170" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#a855f7" font-style="italic">
+    Generic results
+  </text>
+  
+  <!-- Right side - Detailed prompt -->
+  <rect x="480" y="70" width="220" height="80" rx="5" ry="5" fill="#ddd6fe" />
+  <text x="590" y="95" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#7e22ce">
+    "flat vector illustration of a
+  </text>
+  <text x="590" y="115" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#7e22ce">
+    bluebird perched on a branch,
+  </text>
+  <text x="590" y="135" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#7e22ce">
+    white background"
+  </text>
+  <text x="590" y="170" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#9333ea">
+    Detailed Prompt
+  </text>
+  <text x="590" y="195" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#a855f7" font-style="italic">
+    Specific, better results
+  </text>
+  
+  <!-- Title -->
+  <text x="400" y="30" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#6d28d9">
+    Prompt Comparison
+  </text>
+</svg>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#dbeafe" />
+    </linearGradient>
+    
+    <!-- Code background -->
+    <linearGradient id="code-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bg-gradient)" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#1e40af">SVG Embedding Methods</text>
+  
+  <!-- Method 1: Inline SVG -->
+  <g transform="translate(50, 80)">
+    <rect x="0" y="0" width="220" height="140" rx="5" ry="5" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <rect x="0" y="0" width="220" height="30" rx="5" ry="5" fill="#1e40af" />
+    <text x="110" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Inline SVG</text>
+    
+    <!-- Code example -->
+    <rect x="10" y="40" width="200" height="60" fill="url(#code-bg)" rx="3" ry="3" />
+    <text x="20" y="55" font-family="monospace" font-size="10" fill="#e2e8f0">&lt;svg width="100" height="100"&gt;</text>
+    <text x="20" y="70" font-family="monospace" font-size="10" fill="#e2e8f0">  &lt;circle cx="50" cy="50"</text>
+    <text x="20" y="85" font-family="monospace" font-size="10" fill="#e2e8f0">         r="40" fill="blue"/&gt;</text>
+    <text x="20" y="100" font-family="monospace" font-size="10" fill="#e2e8f0">&lt;/svg&gt;</text>
+    
+    <!-- Benefits -->
+    <text x="20" y="120" font-family="Arial, sans-serif" font-size="10" fill="#4b5563">✓ Full CSS/JS control</text>
+    <text x="20" y="135" font-family="Arial, sans-serif" font-size="10" fill="#4b5563">✓ No extra HTTP requests</text>
+  </g>
+  
+  <!-- Method 2: IMG Tag -->
+  <g transform="translate(290, 80)">
+    <rect x="0" y="0" width="220" height="140" rx="5" ry="5" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <rect x="0" y="0" width="220" height="30" rx="5" ry="5" fill="#10b981" />
+    <text x="110" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">IMG Tag</text>
+    
+    <!-- Code example -->
+    <rect x="10" y="40" width="200" height="60" fill="url(#code-bg)" rx="3" ry="3" />
+    <text x="20" y="55" font-family="monospace" font-size="10" fill="#e2e8f0">&lt;img</text>
+    <text x="20" y="70" font-family="monospace" font-size="10" fill="#e2e8f0">  src="icon.svg"</text>
+    <text x="20" y="85" font-family="monospace" font-size="10" fill="#e2e8f0">  alt="Blue circle icon"</text>
+    <text x="20" y="100" font-family="monospace" font-size="10" fill="#e2e8f0">/&gt;</text>
+    
+    <!-- Benefits -->
+    <text x="20" y="120" font-family="Arial, sans-serif" font-size="10" fill="#4b5563">✓ Caching</text>
+    <text x="20" y="135" font-family="Arial, sans-serif" font-size="10" fill="#4b5563">✓ Simple implementation</text>
+  </g>
+  
+  <!-- Method 3: CSS Background -->
+  <g transform="translate(530, 80)">
+    <rect x="0" y="0" width="220" height="140" rx="5" ry="5" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <rect x="0" y="0" width="220" height="30" rx="5" ry="5" fill="#8b5cf6" />
+    <text x="110" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">CSS Background</text>
+    
+    <!-- Code example -->
+    <rect x="10" y="40" width="200" height="60" fill="url(#code-bg)" rx="3" ry="3" />
+    <text x="20" y="55" font-family="monospace" font-size="10" fill="#e2e8f0">.icon {</text>
+    <text x="20" y="70" font-family="monospace" font-size="10" fill="#e2e8f0">  width: 100px;</text>
+    <text x="20" y="85" font-family="monospace" font-size="10" fill="#e2e8f0">  height: 100px;</text>
+    <text x="20" y="100" font-family="monospace" font-size="10" fill="#e2e8f0">  background: url(icon.svg);</text>
+    <text x="20" y="115" font-family="monospace" font-size="10" fill="#e2e8f0">}</text>
+    
+    <!-- Benefits -->
+    <text x="20" y="135" font-family="Arial, sans-serif" font-size="10" fill="#4b5563">✓ CSS control (size, position)</text>
+  </g>
+  
+  <!-- Method 4: Object/Embed -->
+  <g transform="translate(170, 240)">
+    <rect x="0" y="0" width="220" height="140" rx="5" ry="5" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <rect x="0" y="0" width="220" height="30" rx="5" ry="5" fill="#f59e0b" />
+    <text x="110" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Object Tag</text>
+    
+    <!-- Code example -->
+    <rect x="10" y="40" width="200" height="60" fill="url(#code-bg)" rx="3" ry="3" />
+    <text x="20" y="55" font-family="monospace" font-size="10" fill="#e2e8f0">&lt;object</text>
+    <text x="20" y="70" font-family="monospace" font-size="10" fill="#e2e8f0">  type="image/svg+xml"</text>
+    <text x="20" y="85" font-family="monospace" font-size="10" fill="#e2e8f0">  data="icon.svg"&gt;</text>
+    <text x="20" y="100" font-family="monospace" font-size="10" fill="#e2e8f0">&lt;/object&gt;</text>
+    
+    <!-- Benefits -->
+    <text x="20" y="120" font-family="Arial, sans-serif" font-size="10" fill="#4b5563">✓ External file + scripting</text>
+    <text x="20" y="135" font-family="Arial, sans-serif" font-size="10" fill="#4b5563">✓ Fallback content support</text>
+  </g>
+  
+  <!-- Method 5: Data URI -->
+  <g transform="translate(410, 240)">
+    <rect x="0" y="0" width="220" height="140" rx="5" ry="5" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <rect x="0" y="0" width="220" height="30" rx="5" ry="5" fill="#ef4444" />
+    <text x="110" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Data URI</text>
+    
+    <!-- Code example -->
+    <rect x="10" y="40" width="200" height="70" fill="url(#code-bg)" rx="3" ry="3" />
+    <text x="20" y="55" font-family="monospace" font-size="10" fill="#e2e8f0">&lt;img src="data:image/</text>
+    <text x="20" y="70" font-family="monospace" font-size="10" fill="#e2e8f0">svg+xml,%3Csvg...</text>
+    <text x="20" y="85" font-family="monospace" font-size="10" fill="#e2e8f0">...%3E%3C/svg%3E"</text>
+    <text x="20" y="100" font-family="monospace" font-size="10" fill="#e2e8f0">alt="Icon" /&gt;</text>
+    
+    <!-- Benefits -->
+    <text x="20" y="120" font-family="Arial, sans-serif" font-size="10" fill="#4b5563">✓ No extra HTTP requests</text>
+    <text x="20" y="135" font-family="Arial, sans-serif" font-size="10" fill="#4b5563">✓ Works with any img method</text>
+  </g>
+  
+  <!-- Recommendation -->
+  <g transform="translate(400, 390)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1e40af">Choose based on your specific needs: interactivity, caching, or simplicity</text>
+  </g>
+</svg>

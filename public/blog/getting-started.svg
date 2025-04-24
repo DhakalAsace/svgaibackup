@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="450px" viewBox="0 0 800 450" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Getting Started with SVG AI</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#6366F1" offset="0%"></stop>
+            <stop stop-color="#A855F7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect fill="url(#linearGradient-1)" x="0" y="0" width="800" height="450"></rect>
+        <g transform="translate(160, 90)">
+            <path d="M240,0 L480,270 L0,270 Z" fill="#FFFFFF" opacity="0.2"></path>
+            <path d="M240,30 L400,230 L80,230 Z" fill="#FFFFFF" opacity="0.4"></path>
+            <path d="M240,60 L330,190 L150,190 Z" fill="#FFFFFF" opacity="0.6"></path>
+        </g>
+        <circle cx="480" cy="150" r="60" fill="#FFFFFF" opacity="0.2"></circle>
+        <circle cx="480" cy="150" r="40" fill="#FFFFFF" opacity="0.4"></circle>
+        <path d="M480,120 Q490,110 500,120 Q510,130 520,120 Q530,110 540,120 Q550,130 560,120 L560,180 Q550,170 540,180 Q530,190 520,180 Q510,170 500,180 Q490,190 480,180 Z" fill="#FFFFFF" opacity="0.6"></path>
+        <text font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#FFFFFF" text-anchor="middle" x="400" y="340">
+            Getting Started with SVG AI
+        </text>
+    </g>
+</svg>

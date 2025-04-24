@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#dbeafe" />
+    </linearGradient>
+    
+    <!-- Patterns for different tracing qualities -->
+    <pattern id="noisy-trace" width="4" height="4" patternUnits="userSpaceOnUse">
+      <path d="M1,1 L3,3 M3,1 L1,3" stroke="#6b7280" stroke-width="0.5" />
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bg-gradient)" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#1e40af">AI vs. Traditional SVG Conversion</text>
+  
+  <!-- Original Image (simplified representation) -->
+  <g transform="translate(320, 80)">
+    <rect x="0" y="0" width="160" height="100" rx="5" ry="5" fill="white" stroke="#d1d5db" stroke-width="1" />
+    <circle cx="80" cy="50" r="30" fill="#3b82f6" />
+    <rect x="65" y="35" width="30" height="30" fill="#ef4444" />
+    <text x="80" y="120" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#374151">Original Image</text>
+  </g>
+  
+  <!-- Traditional Auto-Trace -->
+  <g transform="translate(100, 220)">
+    <rect x="0" y="0" width="160" height="100" rx="5" ry="5" fill="white" stroke="#d1d5db" stroke-width="1" />
+    
+    <!-- Jagged, less accurate tracing -->
+    <path d="M80,20 L75,25 L70,22 L65,25 L60,30 L55,35 L50,45 L50,55 L55,65 L60,70 L65,75 L75,80 L85,80 L95,75 L100,70 L105,65 L110,55 L110,45 L105,35 L100,30 L95,25 L90,22 L85,25 Z" fill="#3b82f6" stroke="#3b82f6" stroke-width="1" />
+    <path d="M65,35 L95,35 L95,65 L65,65 Z" fill="#ef4444" stroke="#ef4444" stroke-width="1" />
+    
+    <text x="80" y="120" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#374151">Traditional Auto-Trace</text>
+    
+    <!-- Characteristics -->
+    <text x="80" y="140" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#6b7280">• Jagged edges</text>
+    <text x="80" y="155" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#6b7280">• Inaccurate shapes</text>
+    <text x="80" y="170" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#6b7280">• Needs manual cleanup</text>
+  </g>
+  
+  <!-- AI-Powered Conversion -->
+  <g transform="translate(540, 220)">
+    <rect x="0" y="0" width="160" height="100" rx="5" ry="5" fill="white" stroke="#d1d5db" stroke-width="1" />
+    
+    <!-- Smooth, accurate tracing -->
+    <circle cx="80" cy="50" r="30" fill="#3b82f6" stroke="#3b82f6" stroke-width="0.5" />
+    <rect x="65" y="35" width="30" height="30" fill="#ef4444" stroke="#ef4444" stroke-width="0.5" />
+    
+    <text x="80" y="120" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#374151">AI-Powered Conversion</text>
+    
+    <!-- Characteristics -->
+    <text x="80" y="140" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#6b7280">• Smooth curves</text>
+    <text x="80" y="155" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#6b7280">• Accurate shapes</text>
+    <text x="80" y="170" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#6b7280">• Minimal manual work</text>
+  </g>
+  
+  <!-- Arrows -->
+  <line x1="320" y1="130" x2="220" y2="220" stroke="#6b7280" stroke-width="2" stroke-dasharray="5,5" />
+  <line x1="480" y1="130" x2="580" y2="220" stroke="#6b7280" stroke-width="2" stroke-dasharray="5,5" />
+  
+  <!-- Efficiency comparison -->
+  <g transform="translate(400, 360)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#1e40af">AI conversion can be up to 5x faster with better results</text>
+  </g>
+</svg>

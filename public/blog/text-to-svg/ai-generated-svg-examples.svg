@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+    
+    <!-- Card gradients -->
+    <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dbeafe" />
+      <stop offset="100%" stop-color="#bfdbfe" />
+    </linearGradient>
+    
+    <linearGradient id="icon-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c7d2fe" />
+      <stop offset="100%" stop-color="#a5b4fc" />
+    </linearGradient>
+    
+    <linearGradient id="illustration-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dcfce7" />
+      <stop offset="100%" stop-color="#bbf7d0" />
+    </linearGradient>
+    
+    <!-- Logo gradients -->
+    <linearGradient id="fox-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+    
+    <linearGradient id="mountain-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0ea5e9" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    
+    <linearGradient id="leaf-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22c55e" />
+      <stop offset="100%" stop-color="#16a34a" />
+    </linearGradient>
+    
+    <!-- Icon gradients -->
+    <linearGradient id="home-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </linearGradient>
+    
+    <linearGradient id="user-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ec4899" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+    
+    <linearGradient id="settings-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+    
+    <!-- Illustration gradients -->
+    <linearGradient id="landscape-gradient-sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#0ea5e9" />
+    </linearGradient>
+    
+    <linearGradient id="landscape-gradient-mountains" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+    
+    <linearGradient id="landscape-gradient-ground" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#65a30d" />
+      <stop offset="100%" stop-color="#4d7c0f" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bg-gradient)" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#0c4a6e">AI-Generated SVG Examples</text>
+  <text x="400" y="70" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#0c4a6e">From Text Prompts to Vector Graphics</text>
+  
+  <!-- Logo Examples Section -->
+  <g transform="translate(133, 180)">
+    <rect x="-120" y="-80" width="240" height="280" rx="8" ry="8" fill="white" stroke="#94a3b8" stroke-width="1" />
+    <rect x="-120" y="-80" width="240" height="40" rx="8" ry="8" fill="#3b82f6" />
+    <text x="0" y="-55" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Logo Examples</text>
+    
+    <rect x="-100" y="-30" width="200" height="220" rx="4" ry="4" fill="url(#logo-gradient)" />
+    
+    <!-- Fox Logo -->
+    <g transform="translate(-65, 0)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Stylized fox -->
+      <path d="M-10,-5 L-5,-15 L5,-15 L10,-5 L15,10 L0,15 L-15,10 Z" fill="url(#fox-gradient)" />
+      <circle cx="-5" cy="-8" r="2" fill="white" />
+      <circle cx="5" cy="-8" r="2" fill="white" />
+      <path d="M-3,-3 L0,-1 L3,-3" fill="none" stroke="white" stroke-width="1" stroke-linecap="round" />
+    </g>
+    
+    <!-- Mountain Logo -->
+    <g transform="translate(0, 0)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Stylized mountains -->
+      <path d="M-15,15 L-5,-10 L0,0 L5,-15 L15,15 Z" fill="url(#mountain-gradient)" />
+      <path d="M-15,15 L-10,5 L-5,10 L0,5 L5,10 L10,5 L15,15 Z" fill="white" opacity="0.3" />
+    </g>
+    
+    <!-- Leaf Logo -->
+    <g transform="translate(65, 0)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Stylized leaf -->
+      <path d="M0,-15 C15,-15 15,15 0,15 C-15,15 -15,-15 0,-15 Z" fill="url(#leaf-gradient)" />
+      <path d="M0,-15 C0,15 0,15 0,15" fill="none" stroke="white" stroke-width="2" />
+    </g>
+    
+    <!-- Prompt Examples -->
+    <text x="-65" y="35" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#1e40af">"Minimalist fox logo"</text>
+    <text x="0" y="35" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#1e40af">"Mountain peak logo"</text>
+    <text x="65" y="35" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#1e40af">"Eco leaf logo"</text>
+    
+    <!-- More Examples -->
+    <g transform="translate(-65, 80)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Abstract logo -->
+      <path d="M-10,-10 L10,-10 L10,10 L-10,10 Z" fill="#3b82f6" opacity="0.7" />
+      <circle cx="0" cy="0" r="10" fill="#2563eb" />
+      <path d="M-15,-15 L15,15 M-15,15 L15,-15" stroke="#1d4ed8" stroke-width="3" stroke-linecap="round" />
+    </g>
+    
+    <g transform="translate(0, 80)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Letter logo -->
+      <text x="0" y="8" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#3b82f6">A</text>
+      <circle cx="0" cy="0" r="18" fill="none" stroke="#3b82f6" stroke-width="2" />
+    </g>
+    
+    <g transform="translate(65, 80)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Wave logo -->
+      <path d="M-15,0 C-10,-10 -5,10 0,0 C5,-10 10,10 15,0" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" />
+      <circle cx="0" cy="0" r="5" fill="#3b82f6" />
+    </g>
+    
+    <text x="-65" y="115" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#1e40af">"Abstract tech logo"</text>
+    <text x="0" y="115" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#1e40af">"Letter A logo"</text>
+    <text x="65" y="115" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#1e40af">"Wave sound logo"</text>
+  </g>
+  
+  <!-- Icon Examples Section -->
+  <g transform="translate(400, 180)">
+    <rect x="-120" y="-80" width="240" height="280" rx="8" ry="8" fill="white" stroke="#94a3b8" stroke-width="1" />
+    <rect x="-120" y="-80" width="240" height="40" rx="8" ry="8" fill="#8b5cf6" />
+    <text x="0" y="-55" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Icon Examples</text>
+    
+    <rect x="-100" y="-30" width="200" height="220" rx="4" ry="4" fill="url(#icon-gradient)" />
+    
+    <!-- Home Icon -->
+    <g transform="translate(-65, 0)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Stylized home -->
+      <path d="M-15,5 L0,-15 L15,5 L15,15 L-15,15 Z" fill="url(#home-gradient)" />
+      <rect x="-5" y="5" width="10" height="10" fill="white" />
+    </g>
+    
+    <!-- User Icon -->
+    <g transform="translate(0, 0)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Stylized user -->
+      <circle cx="0" cy="-5" r="8" fill="url(#user-gradient)" />
+      <path d="M-12,15 C-12,5 12,5 12,15" fill="url(#user-gradient)" />
+    </g>
+    
+    <!-- Settings Icon -->
+    <g transform="translate(65, 0)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Stylized gear -->
+      <circle cx="0" cy="0" r="8" fill="url(#settings-gradient)" />
+      <path d="M0,-15 L0,-10 M0,10 L0,15 M-15,0 L-10,0 M10,0 L15,0 M-10,-10 L-7,-7 M-10,10 L-7,7 M10,-10 L7,-7 M10,10 L7,7" 
+            stroke="url(#settings-gradient)" stroke-width="3" stroke-linecap="round" />
+    </g>
+    
+    <!-- Prompt Examples -->
+    <text x="-65" y="35" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#4c1d95">"Home icon"</text>
+    <text x="0" y="35" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#4c1d95">"User profile icon"</text>
+    <text x="65" y="35" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#4c1d95">"Settings gear icon"</text>
+    
+    <!-- More Examples -->
+    <g transform="translate(-65, 80)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Search icon -->
+      <circle cx="-3" cy="-3" r="10" fill="none" stroke="#8b5cf6" stroke-width="3" />
+      <path d="M5,5 L12,12" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round" />
+    </g>
+    
+    <g transform="translate(0, 80)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Bell icon -->
+      <path d="M0,-10 C10,-10 10,5 10,5 L-10,5 C-10,5 -10,-10 0,-10 Z" fill="#8b5cf6" />
+      <circle cx="0" cy="10" r="3" fill="#8b5cf6" />
+      <path d="M0,-15 C0,-15 0,-10 0,-10" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" />
+    </g>
+    
+    <g transform="translate(65, 80)">
+      <circle cx="0" cy="0" r="25" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Heart icon -->
+      <path d="M0,10 C-10,-5 -20,0 -10,10 C-10,10 0,15 0,15 C0,15 10,10 10,10 C20,0 10,-5 0,10 Z" fill="#8b5cf6" />
+    </g>
+    
+    <text x="-65" y="115" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#4c1d95">"Search icon"</text>
+    <text x="0" y="115" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#4c1d95">"Notification bell"</text>
+    <text x="65" y="115" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#4c1d95">"Heart like icon"</text>
+  </g>
+  
+  <!-- Illustration Examples Section -->
+  <g transform="translate(667, 180)">
+    <rect x="-120" y="-80" width="240" height="280" rx="8" ry="8" fill="white" stroke="#94a3b8" stroke-width="1" />
+    <rect x="-120" y="-80" width="240" height="40" rx="8" ry="8" fill="#10b981" />
+    <text x="0" y="-55" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Illustration Examples</text>
+    
+    <rect x="-100" y="-30" width="200" height="220" rx="4" ry="4" fill="url(#illustration-gradient)" />
+    
+    <!-- Landscape Illustration -->
+    <g transform="translate(0, -5) scale(0.9)">
+      <rect x="-90" y="-15" width="180" height="70" rx="4" ry="4" fill="url(#landscape-gradient-sky)" />
+      
+      <!-- Sun -->
+      <circle cx="60" cy="-5" r="10" fill="#fde047" />
+      
+      <!-- Clouds -->
+      <circle cx="-60" cy="-5" r="8" fill="white" opacity="0.8" />
+      <circle cx="-50" cy="-5" r="10" fill="white" opacity="0.8" />
+      <circle cx="-40" cy="-5" r="8" fill="white" opacity="0.8" />
+      
+      <!-- Mountains -->
+      <path d="M-90,55 L-70,20 L-50,40 L-30,10 L-10,30 L10,0 L30,25 L50,5 L70,30 L90,55 Z" fill="url(#landscape-gradient-mountains)" />
+      
+      <!-- Ground -->
+      <rect x="-90" y="55" width="180" height="30" fill="url(#landscape-gradient-ground)" />
+      
+      <!-- Trees -->
+      <g transform="translate(-60, 55)">
+        <rect x="-2" y="-15" width="4" height="15" fill="#7c2d12" />
+        <path d="M-10,-15 L0,-30 L10,-15 Z" fill="#16a34a" />
+        <path d="M-8,-10 L0,-25 L8,-10 Z" fill="#16a34a" />
+      </g>
+      
+      <g transform="translate(30, 55)">
+        <rect x="-2" y="-20" width="4" height="20" fill="#7c2d12" />
+        <path d="M-12,-20 L0,-40 L12,-20 Z" fill="#16a34a" />
+        <path d="M-10,-15 L0,-35 L10,-15 Z" fill="#16a34a" />
+        <path d="M-8,-10 L0,-30 L8,-10 Z" fill="#16a34a" />
+      </g>
+    </g>
+    
+    <text x="0" y="75" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#166534">"Mountain landscape with trees"</text>
+    
+    <!-- Character Illustration -->
+    <g transform="translate(0, 120)">
+      <circle cx="0" cy="0" r="35" fill="white" stroke="#e2e8f0" stroke-width="1" />
+      
+      <!-- Simple character -->
+      <circle cx="0" cy="-10" r="15" fill="#fda4af" />
+      <rect x="-15" y="5" width="30" height="25" rx="2" ry="2" fill="#0ea5e9" />
+      <rect x="-12" y="30" width="8" height="15" fill="#1e3a8a" />
+      <rect x="4" y="30" width="8" height="15" fill="#1e3a8a" />
+      <circle cx="-5" cy="-12" r="2" fill="black" />
+      <circle cx="5" cy="-12" r="2" fill="black" />
+      <path d="M-5,-5 C-5,0 5,0 5,-5" fill="none" stroke="black" stroke-width="1" stroke-linecap="round" />
+    </g>
+    
+    <text x="0" y="165" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#166534">"Simple cartoon character"</text>
+  </g>
+  
+  <!-- Benefits Section -->
+  <g transform="translate(400, 500)">
+    <rect x="-350" y="-30" width="700" height="110" rx="8" ry="8" fill="white" stroke="#94a3b8" stroke-width="1" />
+    
+    <!-- Title -->
+    <text x="0" y="-10" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#0c4a6e">Benefits of AI-Generated SVGs</text>
+    
+    <!-- Benefits -->
+    <g transform="translate(-230, 30)">
+      <circle cx="0" cy="0" r="15" fill="#3b82f6" opacity="0.2" />
+      <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="#1e40af">1</text>
+      <text x="30" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" dominant-baseline="middle" fill="#0c4a6e">Speed</text>
+      <text x="30" y="20" font-family="Arial, sans-serif" font-size="12" dominant-baseline="middle" fill="#334155">Generate in seconds</text>
+    </g>
+    
+    <g transform="translate(0, 30)">
+      <circle cx="0" cy="0" r="15" fill="#8b5cf6" opacity="0.2" />
+      <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="#5b21b6">2</text>
+      <text x="30" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" dominant-baseline="middle" fill="#0c4a6e">Accessibility</text>
+      <text x="30" y="20" font-family="Arial, sans-serif" font-size="12" dominant-baseline="middle" fill="#334155">No design skills needed</text>
+    </g>
+    
+    <g transform="translate(230, 30)">
+      <circle cx="0" cy="0" r="15" fill="#10b981" opacity="0.2" />
+      <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="#047857">3</text>
+      <text x="30" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" dominant-baseline="middle" fill="#0c4a6e">Variety</text>
+      <text x="30" y="20" font-family="Arial, sans-serif" font-size="12" dominant-baseline="middle" fill="#334155">Endless design options</text>
+    </g>
+  </g>
+</svg>

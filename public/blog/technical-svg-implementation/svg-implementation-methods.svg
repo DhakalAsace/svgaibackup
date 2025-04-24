@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="500" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+    
+    <!-- Code background -->
+    <linearGradient id="code-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    
+    <!-- Element styles -->
+    <style>
+      .method-box { fill: white; stroke: #94a3b8; stroke-width: 1; rx: 8; ry: 8; }
+      .method-title { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #0c4a6e; }
+      .method-desc { font-family: Arial, sans-serif; font-size: 12px; fill: #334155; }
+      .code-block { fill: url(#code-bg); rx: 4; ry: 4; }
+      .code-text { font-family: monospace; font-size: 12px; fill: #e2e8f0; }
+      .pro { font-family: Arial, sans-serif; font-size: 12px; fill: #15803d; }
+      .con { font-family: Arial, sans-serif; font-size: 12px; fill: #b91c1c; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bg-gradient)" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#0c4a6e">SVG Implementation Methods</text>
+  
+  <!-- Method 1: Inline SVG -->
+  <rect x="50" y="70" width="220" height="190" class="method-box" />
+  <rect x="50" y="70" width="220" height="40" fill="#0ea5e9" rx="8" ry="8" />
+  <text x="160" y="95" text-anchor="middle" class="method-title" fill="white">Inline SVG</text>
+  
+  <rect x="60" y="120" width="200" height="80" class="code-block" />
+  <text x="70" y="140" class="code-text">&lt;svg viewBox="0 0 100 100"&gt;</text>
+  <text x="70" y="160" class="code-text">  &lt;circle cx="50" cy="50"</text>
+  <text x="70" y="180" class="code-text">          r="40" fill="blue"/&gt;</text>
+  <text x="70" y="200" class="code-text">&lt;/svg&gt;</text>
+  
+  <text x="70" y="225" class="pro">✓ Full CSS/JS control</text>
+  <text x="70" y="245" class="pro">✓ No extra HTTP requests</text>
+  <text x="70" y="265" class="con">✗ Bloats HTML, not cached</text>
+  
+  <!-- Method 2: IMG Tag -->
+  <rect x="290" y="70" width="220" height="190" class="method-box" />
+  <rect x="290" y="70" width="220" height="40" fill="#10b981" rx="8" ry="8" />
+  <text x="400" y="95" text-anchor="middle" class="method-title" fill="white">IMG Tag</text>
+  
+  <rect x="300" y="120" width="200" height="80" class="code-block" />
+  <text x="310" y="140" class="code-text">&lt;img</text>
+  <text x="310" y="160" class="code-text">  src="icon.svg"</text>
+  <text x="310" y="180" class="code-text">  alt="Blue circle icon"</text>
+  <text x="310" y="200" class="code-text">/&gt;</text>
+  
+  <text x="310" y="225" class="pro">✓ Simple, semantic</text>
+  <text x="310" y="245" class="pro">✓ Browser caching</text>
+  <text x="310" y="265" class="con">✗ Limited CSS/JS control</text>
+  
+  <!-- Method 3: CSS Background -->
+  <rect x="530" y="70" width="220" height="190" class="method-box" />
+  <rect x="530" y="70" width="220" height="40" fill="#8b5cf6" rx="8" ry="8" />
+  <text x="640" y="95" text-anchor="middle" class="method-title" fill="white">CSS Background</text>
+  
+  <rect x="540" y="120" width="200" height="80" class="code-block" />
+  <text x="550" y="140" class="code-text">.icon {</text>
+  <text x="550" y="160" class="code-text">  width: 100px;</text>
+  <text x="550" y="180" class="code-text">  height: 100px;</text>
+  <text x="550" y="200" class="code-text">  background: url(icon.svg);</text>
+  <text x="550" y="220" class="code-text">}</text>
+  
+  <text x="550" y="245" class="pro">✓ CSS control (size, position)</text>
+  <text x="550" y="265" class="con">✗ No semantic meaning</text>
+  
+  <!-- Method 4: Object/Embed -->
+  <rect x="170" y="280" width="220" height="190" class="method-box" />
+  <rect x="170" y="280" width="220" height="40" fill="#f59e0b" rx="8" ry="8" />
+  <text x="280" y="305" text-anchor="middle" class="method-title" fill="white">Object Tag</text>
+  
+  <rect x="180" y="330" width="200" height="80" class="code-block" />
+  <text x="190" y="350" class="code-text">&lt;object</text>
+  <text x="190" y="370" class="code-text">  type="image/svg+xml"</text>
+  <text x="190" y="390" class="code-text">  data="icon.svg"&gt;</text>
+  <text x="190" y="410" class="code-text">&lt;/object&gt;</text>
+  
+  <text x="190" y="435" class="pro">✓ External file + scripting</text>
+  <text x="190" y="455" class="pro">✓ Fallback content support</text>
+  <text x="190" y="475" class="con">✗ More complex, less consistent</text>
+  
+  <!-- Method 5: SVG Sprites -->
+  <rect x="410" y="280" width="220" height="190" class="method-box" />
+  <rect x="410" y="280" width="220" height="40" fill="#ef4444" rx="8" ry="8" />
+  <text x="520" y="305" text-anchor="middle" class="method-title" fill="white">SVG Sprites</text>
+  
+  <rect x="420" y="330" width="200" height="100" class="code-block" />
+  <text x="430" y="350" class="code-text">&lt;svg style="display:none"&gt;</text>
+  <text x="430" y="370" class="code-text">  &lt;symbol id="icon-1"&gt;...&lt;/symbol&gt;</text>
+  <text x="430" y="390" class="code-text">  &lt;symbol id="icon-2"&gt;...&lt;/symbol&gt;</text>
+  <text x="430" y="410" class="code-text">&lt;/svg&gt;</text>
+  <text x="430" y="430" class="code-text">&lt;svg&gt;&lt;use xlink:href="#icon-1"/&gt;&lt;/svg&gt;</text>
+  
+  <text x="430" y="455" class="pro">✓ Reduces HTTP requests</text>
+  <text x="430" y="475" class="con">✗ More complex setup</text>
+</svg>

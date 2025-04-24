@@ -1,0 +1,78 @@
+<svg width="800" height="250" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="250" fill="#f8fafc" rx="8" ry="8" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#0f172a">
+    Logo Formats for Different Applications
+  </text>
+  
+  <!-- Master SVG Logo -->
+  <g transform="translate(350, 100)">
+    <circle cx="50" cy="50" r="40" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2" />
+    <path d="M 50 25 L 75 50 L 50 75 L 25 50 Z" fill="#0369a1" />
+    <text x="50" y="105" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0c4a6e">
+      Master SVG
+    </text>
+  </g>
+  
+  <!-- Web Format -->
+  <g transform="translate(150, 100)">
+    <rect x="0" y="0" width="80" height="80" rx="8" ry="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1" />
+    <text x="40" y="45" font-family="monospace" font-size="14" text-anchor="middle" fill="#1e40af">
+      &lt;svg&gt;
+    </text>
+    <text x="40" y="105" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1e40af">
+      Web (SVG)
+    </text>
+    
+    <!-- Arrow from master to web -->
+    <line x1="90" y1="50" x2="300" y2="50" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,5" />
+    <polygon points="300,50 295,45 295,55" fill="#94a3b8" />
+  </g>
+  
+  <!-- Print Format -->
+  <g transform="translate(150, 100)">
+    <rect x="400" y="0" width="80" height="80" rx="8" ry="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="1" />
+    <text x="440" y="45" font-family="monospace" font-size="14" text-anchor="middle" fill="#5b21b6">
+      .PDF
+    </text>
+    <text x="440" y="105" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#5b21b6">
+      Print (PDF)
+    </text>
+    
+    <!-- Arrow from master to print -->
+    <line x1="300" y1="50" x2="390" y2="50" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,5" />
+    <polygon points="390,50 385,45 385,55" fill="#94a3b8" />
+  </g>
+  
+  <!-- Social Media Format -->
+  <g transform="translate(350, 100)">
+    <rect x="0" y="-80" width="80" height="80" rx="8" ry="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1" />
+    <text x="40" y="-35" font-family="monospace" font-size="14" text-anchor="middle" fill="#166534">
+      .PNG
+    </text>
+    <text x="40" y="15" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#166534">
+      Social Media
+    </text>
+    
+    <!-- Arrow from master to social -->
+    <line x1="50" y1="40" x2="50" y2="-10" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,5" />
+    <polygon points="50,-10 45,-15 55,-15" fill="#94a3b8" />
+  </g>
+  
+  <!-- Mobile Format -->
+  <g transform="translate(350, 100)">
+    <rect x="0" y="80" width="80" height="80" rx="8" ry="8" fill="#fff7ed" stroke="#ea580c" stroke-width="1" />
+    <text x="40" y="125" font-family="monospace" font-size="14" text-anchor="middle" fill="#9a3412">
+      .SVG/.XML
+    </text>
+    <text x="40" y="175" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#9a3412">
+      Mobile Apps
+    </text>
+    
+    <!-- Arrow from master to mobile -->
+    <line x1="50" y1="60" x2="50" y2="110" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,5" />
+    <polygon points="50,110 45,105 55,105" fill="#94a3b8" />
+  </g>
+</svg>

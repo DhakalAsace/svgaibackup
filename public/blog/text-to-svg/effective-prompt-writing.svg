@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="500" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+    
+    <!-- Prompt box gradients -->
+    <linearGradient id="poor-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fecaca" />
+      <stop offset="100%" stop-color="#fee2e2" />
+    </linearGradient>
+    
+    <linearGradient id="good-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#bbf7d0" />
+      <stop offset="100%" stop-color="#dcfce7" />
+    </linearGradient>
+    
+    <!-- Code background -->
+    <linearGradient id="code-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bg-gradient)" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#0c4a6e">Effective Prompt Writing for SVG Generation</text>
+  
+  <!-- Poor Prompt Example -->
+  <g transform="translate(100, 100)">
+    <rect x="0" y="0" width="250" height="350" rx="8" ry="8" fill="white" stroke="#94a3b8" stroke-width="1" />
+    <rect x="0" y="0" width="250" height="40" rx="8" ry="8" fill="#ef4444" />
+    <text x="125" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Poor Prompt</text>
+    
+    <rect x="20" y="60" width="210" height="60" rx="4" ry="4" fill="url(#poor-gradient)" />
+    <text x="30" y="85" font-family="monospace" font-size="14" fill="#7f1d1d">"Make a logo"</text>
+    
+    <text x="125" y="140" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0c4a6e">Problems:</text>
+    
+    <g transform="translate(30, 160)">
+      <circle cx="0" cy="0" r="4" fill="#ef4444" />
+      <text x="10" y="5" font-family="Arial, sans-serif" font-size="12" fill="#334155">Too vague</text>
+    </g>
+    
+    <g transform="translate(30, 185)">
+      <circle cx="0" cy="0" r="4" fill="#ef4444" />
+      <text x="10" y="5" font-family="Arial, sans-serif" font-size="12" fill="#334155">No subject specified</text>
+    </g>
+    
+    <g transform="translate(30, 210)">
+      <circle cx="0" cy="0" r="4" fill="#ef4444" />
+      <text x="10" y="5" font-family="Arial, sans-serif" font-size="12" fill="#334155">No style guidance</text>
+    </g>
+    
+    <g transform="translate(30, 235)">
+      <circle cx="0" cy="0" r="4" fill="#ef4444" />
+      <text x="10" y="5" font-family="Arial, sans-serif" font-size="12" fill="#334155">No color information</text>
+    </g>
+    
+    <text x="125" y="270" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0c4a6e">Likely Result:</text>
+    <text x="125" y="290" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">Generic, random logo</text>
+    <text x="125" y="310" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">Unpredictable style</text>
+    <text x="125" y="330" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">Multiple iterations needed</text>
+  </g>
+  
+  <!-- Good Prompt Example -->
+  <g transform="translate(450, 100)">
+    <rect x="0" y="0" width="250" height="350" rx="8" ry="8" fill="white" stroke="#94a3b8" stroke-width="1" />
+    <rect x="0" y="0" width="250" height="40" rx="8" ry="8" fill="#10b981" />
+    <text x="125" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">Good Prompt</text>
+    
+    <rect x="20" y="60" width="210" height="100" rx="4" ry="4" fill="url(#good-gradient)" />
+    <text x="30" y="80" font-family="monospace" font-size="12" fill="#166534">"Minimalist vector logo</text>
+    <text x="30" y="100" font-family="monospace" font-size="12" fill="#166534">for a coffee shop, with</text>
+    <text x="30" y="120" font-family="monospace" font-size="12" fill="#166534">a stylized coffee bean,</text>
+    <text x="30" y="140" font-family="monospace" font-size="12" fill="#166534">brown and beige colors"</text>
+    
+    <text x="125" y="180" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0c4a6e">Key Elements:</text>
+    
+    <g transform="translate(30, 200)">
+      <rect x="-5" y="-10" width="50" height="20" rx="4" ry="4" fill="#10b981" fill-opacity="0.2" />
+      <text x="20" y="5" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#0c4a6e">Style</text>
+      <text x="80" y="5" font-family="Arial, sans-serif" font-size="12" fill="#334155">Minimalist vector</text>
+    </g>
+    
+    <g transform="translate(30, 230)">
+      <rect x="-5" y="-10" width="50" height="20" rx="4" ry="4" fill="#3b82f6" fill-opacity="0.2" />
+      <text x="20" y="5" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#0c4a6e">Subject</text>
+      <text x="80" y="5" font-family="Arial, sans-serif" font-size="12" fill="#334155">Coffee shop logo</text>
+    </g>
+    
+    <g transform="translate(30, 260)">
+      <rect x="-5" y="-10" width="50" height="20" rx="4" ry="4" fill="#8b5cf6" fill-opacity="0.2" />
+      <text x="20" y="5" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#0c4a6e">Element</text>
+      <text x="80" y="5" font-family="Arial, sans-serif" font-size="12" fill="#334155">Coffee bean</text>
+    </g>
+    
+    <g transform="translate(30, 290)">
+      <rect x="-5" y="-10" width="50" height="20" rx="4" ry="4" fill="#ec4899" fill-opacity="0.2" />
+      <text x="20" y="5" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#0c4a6e">Colors</text>
+      <text x="80" y="5" font-family="Arial, sans-serif" font-size="12" fill="#334155">Brown and beige</text>
+    </g>
+    
+    <text x="125" y="330" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0c4a6e">Result:</text>
+    <text x="125" y="350" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">Targeted, relevant design</text>
+  </g>
+  
+  <!-- Prompt Template -->
+  <g transform="translate(400, 470)">
+    <rect x="-350" y="-20" width="700" height="40" rx="5" ry="5" fill="url(#code-bg)" />
+    <text x="0" y="5" font-family="monospace" font-size="14" font-weight="bold" text-anchor="middle" fill="#e2e8f0">[Style] vector [Type] for [Subject], featuring [Element], [Colors]</text>
+  </g>
+</svg>

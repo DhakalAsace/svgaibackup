@@ -1,0 +1,9 @@
+<svg width="800" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="200" fill="#f0fff4"/>
+  <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-size="32" font-family="Arial, sans-serif" font-weight="bold" fill="#047857">
+    AI SVG Generation
+  </text>
+  <text x="50%" y="70%" dominant-baseline="middle" text-anchor="middle" font-size="24" font-family="Arial, sans-serif" fill="#059669">
+    Transform Text to Vector Graphics ✨
+  </text>
+</svg>

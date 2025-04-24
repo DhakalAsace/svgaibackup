@@ -1,0 +1,40 @@
+'use client';
+
+import { exampleSVGs, SVGExample } from '@/lib/svg-examples';
+import { useEffect, useState } from 'react';
+
+// Client component that provides SVG examples data
+export function SVGExamples() {
+  return (
+    <div id="svg-examples-data" 
+         data-examples={JSON.stringify(exampleSVGs)}
+         className="hidden">
+      {/* This component doesn't render anything visible */}
+    </div>
+  );
+}
+
+// Helper function to extract SVG examples data on the client side
+export function useSVGExamples(): SVGExample[] {
+  const [examples, setExamples] = useState<SVGExample[]>([]);
+  
+  useEffect(() => {
+    // Try to get examples from the data element
+    const dataElement = document.getElementById('svg-examples-data');
+    if (dataElement) {
+      try {
+        const parsedExamples = JSON.parse(dataElement.getAttribute('data-examples') || '[]');
+        setExamples(parsedExamples);
+      } catch (e) {
+        console.error('Error parsing SVG examples data:', e);
+        // Fallback to the imported examples if parsing fails
+        setExamples(exampleSVGs);
+      }
+    } else {
+      // Fallback to the imported examples if element doesn't exist
+      setExamples(exampleSVGs);
+    }
+  }, []);
+  
+  return examples;
+}

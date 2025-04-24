@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="500" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f9ff" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+    
+    <!-- Card gradients -->
+    <linearGradient id="css-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dbeafe" />
+      <stop offset="100%" stop-color="#bfdbfe" />
+    </linearGradient>
+    
+    <linearGradient id="smil-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c7d2fe" />
+      <stop offset="100%" stop-color="#a5b4fc" />
+    </linearGradient>
+    
+    <linearGradient id="js-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef9c3" />
+      <stop offset="100%" stop-color="#fef08a" />
+    </linearGradient>
+    
+    <!-- Code background -->
+    <linearGradient id="code-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    
+    <!-- Animations -->
+    <style type="text/css">
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      
+      @keyframes scale {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+      }
+      
+      @keyframes move {
+        0% { transform: translateX(-20px); }
+        100% { transform: translateX(20px); }
+      }
+      
+      .css-star {
+        animation: rotate 3s linear infinite;
+        transform-origin: center;
+      }
+      
+      .css-circle {
+        animation: scale 2s ease-in-out infinite;
+      }
+      
+      .css-rect {
+        animation: move 2s ease-in-out infinite alternate;
+      }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bg-gradient)" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#0c4a6e">SVG Animation Techniques Comparison</text>
+  
+  <!-- CSS Animation Section -->
+  <g transform="translate(133, 150)">
+    <rect x="-120" y="-80" width="240" height="280" rx="8" ry="8" fill="white" stroke="#94a3b8" stroke-width="1" />
+    <rect x="-120" y="-80" width="240" height="40" rx="8" ry="8" fill="#3b82f6" />
+    <text x="0" y="-55" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">CSS Animation</text>
+    
+    <!-- Animation Demo -->
+    <g transform="translate(0, 0)">
+      <rect x="-90" y="-30" width="180" height="120" rx="4" ry="4" fill="url(#css-gradient)" />
+      
+      <!-- Animated elements -->
+      <polygon class="css-star" points="0,0 18,36 -30,12 30,12 -18,36" fill="#3b82f6" transform="translate(0, 20)" />
+      <circle class="css-circle" cx="-40" cy="20" r="15" fill="#2563eb" />
+      <rect class="css-rect" x="20" y="5" width="30" height="30" rx="2" ry="2" fill="#1d4ed8" />
+    </g>
+    
+    <!-- Code snippet -->
+    <rect x="-100" y="100" width="200" height="80" rx="4" ry="4" fill="url(#code-bg)" />
+    <text x="-90" y="120" font-family="monospace" font-size="10" fill="#e2e8f0">.element {</text>
+    <text x="-90" y="135" font-family="monospace" font-size="10" fill="#e2e8f0">  animation: rotate 3s</text>
+    <text x="-90" y="150" font-family="monospace" font-size="10" fill="#e2e8f0">  linear infinite;</text>
+    <text x="-90" y="165" font-family="monospace" font-size="10" fill="#e2e8f0">}</text>
+  </g>
+  
+  <!-- SMIL Animation Section -->
+  <g transform="translate(400, 150)">
+    <rect x="-120" y="-80" width="240" height="280" rx="8" ry="8" fill="white" stroke="#94a3b8" stroke-width="1" />
+    <rect x="-120" y="-80" width="240" height="40" rx="8" ry="8" fill="#8b5cf6" />
+    <text x="0" y="-55" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">SMIL Animation</text>
+    
+    <!-- Animation Demo -->
+    <g transform="translate(0, 0)">
+      <rect x="-90" y="-30" width="180" height="120" rx="4" ry="4" fill="url(#smil-gradient)" />
+      
+      <!-- Animated elements -->
+      <polygon points="0,0 18,36 -30,12 30,12 -18,36" fill="#8b5cf6" transform="translate(0, 20)">
+        <animateTransform 
+          attributeName="transform" 
+          type="rotate" 
+          from="0 0 20" 
+          to="360 0 20" 
+          dur="3s" 
+          repeatCount="indefinite" />
+      </polygon>
+      
+      <circle cx="-40" cy="20" r="15" fill="#7c3aed">
+        <animate 
+          attributeName="r" 
+          values="15;18;15" 
+          dur="2s" 
+          repeatCount="indefinite" />
+      </circle>
+      
+      <rect x="20" y="5" width="30" height="30" rx="2" ry="2" fill="#6d28d9">
+        <animate 
+          attributeName="x" 
+          values="0;40;0" 
+          dur="2s" 
+          repeatCount="indefinite" />
+      </rect>
+    </g>
+    
+    <!-- Code snippet -->
+    <rect x="-100" y="100" width="200" height="80" rx="4" ry="4" fill="url(#code-bg)" />
+    <text x="-90" y="120" font-family="monospace" font-size="10" fill="#e2e8f0">&lt;circle&gt;</text>
+    <text x="-90" y="135" font-family="monospace" font-size="10" fill="#e2e8f0">  &lt;animate</text>
+    <text x="-90" y="150" font-family="monospace" font-size="10" fill="#e2e8f0">    attributeName="r"</text>
+    <text x="-90" y="165" font-family="monospace" font-size="10" fill="#e2e8f0">    values="15;18;15"/&gt;</text>
+  </g>
+  
+  <!-- JavaScript Animation Section -->
+  <g transform="translate(667, 150)">
+    <rect x="-120" y="-80" width="240" height="280" rx="8" ry="8" fill="white" stroke="#94a3b8" stroke-width="1" />
+    <rect x="-120" y="-80" width="240" height="40" rx="8" ry="8" fill="#f59e0b" />
+    <text x="0" y="-55" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">JavaScript Animation</text>
+    
+    <!-- Animation Demo -->
+    <g transform="translate(0, 0)">
+      <rect x="-90" y="-30" width="180" height="120" rx="4" ry="4" fill="url(#js-gradient)" />
+      
+      <!-- Static elements (JS animation would happen at runtime) -->
+      <polygon points="0,0 18,36 -30,12 30,12 -18,36" fill="#f59e0b" transform="translate(0, 20)" />
+      <circle cx="-40" cy="20" r="15" fill="#d97706" />
+      <rect x="20" y="5" width="30" height="30" rx="2" ry="2" fill="#b45309" />
+    </g>
+    
+    <!-- Code snippet -->
+    <rect x="-100" y="100" width="200" height="80" rx="4" ry="4" fill="url(#code-bg)" />
+    <text x="-90" y="120" font-family="monospace" font-size="10" fill="#e2e8f0">gsap.to(".element", {</text>
+    <text x="-90" y="135" font-family="monospace" font-size="10" fill="#e2e8f0">  rotation: 360,</text>
+    <text x="-90" y="150" font-family="monospace" font-size="10" fill="#e2e8f0">  duration: 3,</text>
+    <text x="-90" y="165" font-family="monospace" font-size="10" fill="#e2e8f0">  repeat: -1</text>
+    <text x="-90" y="180" font-family="monospace" font-size="10" fill="#e2e8f0">});</text>
+  </g>
+  
+  <!-- Comparison Table -->
+  <g transform="translate(400, 400)">
+    <rect x="-350" y="-30" width="700" height="100" rx="8" ry="8" fill="white" stroke="#94a3b8" stroke-width="1" />
+    
+    <!-- Table Headers -->
+    <text x="-300" y="-5" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#0c4a6e">Technique</text>
+    <text x="-100" y="-5" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#0c4a6e">Pros</text>
+    <text x="150" y="-5" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#0c4a6e">Cons</text>
+    
+    <!-- CSS Row -->
+    <text x="-300" y="20" font-family="Arial, sans-serif" font-size="12" fill="#334155">CSS</text>
+    <text x="-100" y="20" font-family="Arial, sans-serif" font-size="12" fill="#334155">• Simple syntax</text>
+    <text x="-100" y="40" font-family="Arial, sans-serif" font-size="12" fill="#334155">• Hardware acceleration</text>
+    <text x="150" y="20" font-family="Arial, sans-serif" font-size="12" fill="#334155">• Limited control</text>
+    <text x="150" y="40" font-family="Arial, sans-serif" font-size="12" fill="#334155">• No dynamic changes</text>
+    
+    <!-- SMIL Row -->
+    <text x="-300" y="60" font-family="Arial, sans-serif" font-size="12" fill="#334155">SMIL</text>
+    <text x="-100" y="60" font-family="Arial, sans-serif" font-size="12" fill="#334155">• Native to SVG</text>
+    <text x="-100" y="80" font-family="Arial, sans-serif" font-size="12" fill="#334155">• No external dependencies</text>
+    <text x="150" y="60" font-family="Arial, sans-serif" font-size="12" fill="#334155">• Limited browser support</text>
+    <text x="150" y="80" font-family="Arial, sans-serif" font-size="12" fill="#334155">• Deprecated in some browsers</text>
+  </g>
+</svg>

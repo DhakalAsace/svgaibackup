@@ -1,0 +1,59 @@
+<svg width="800" height="250" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="250" fill="#f8fafc" rx="8" ry="8" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#0f172a">
+    Creating Consistent Icon Sets
+  </text>
+  
+  <!-- Style Parameters Box -->
+  <rect x="50" y="80" width="200" height="150" rx="8" ry="8" fill="#f0fdfa" stroke="#14b8a6" stroke-width="1" />
+  <text x="150" y="100" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#0f766e">
+    Style Parameters
+  </text>
+  
+  <!-- Style List -->
+  <text x="70" y="125" font-family="Arial, sans-serif" font-size="12" fill="#134e4a">• Style: Line art</text>
+  <text x="70" y="145" font-family="Arial, sans-serif" font-size="12" fill="#134e4a">• Stroke: 2px</text>
+  <text x="70" y="165" font-family="Arial, sans-serif" font-size="12" fill="#134e4a">• Corners: Rounded</text>
+  <text x="70" y="185" font-family="Arial, sans-serif" font-size="12" fill="#134e4a">• Color: #0d9488</text>
+  <text x="70" y="205" font-family="Arial, sans-serif" font-size="12" fill="#134e4a">• Complexity: Minimal</text>
+  
+  <!-- Arrow -->
+  <line x1="270" y1="150" x2="310" y2="150" stroke="#94a3b8" stroke-width="2" />
+  <polygon points="310,150 305,145 305,155" fill="#94a3b8" />
+  
+  <!-- Consistent Icon Set -->
+  <rect x="330" y="80" width="420" height="150" rx="8" ry="8" fill="#f0fdfa" stroke="#14b8a6" stroke-width="1" />
+  <text x="540" y="100" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#0f766e">
+    Consistent Icon Set
+  </text>
+  
+  <!-- Icon Row -->
+  <g transform="translate(370, 150)">
+    <!-- Home Icon -->
+    <circle cx="0" cy="0" r="25" fill="#ccfbf1" stroke="#0d9488" stroke-width="1" />
+    <path d="M -10 10 L -10 0 L 0 -10 L 10 0 L 10 10 L 5 10 L 5 5 L -5 5 L -5 10 Z" fill="none" stroke="#0d9488" stroke-width="2" stroke-linejoin="round" />
+    
+    <!-- User Icon -->
+    <circle cx="85" cy="0" r="25" fill="#ccfbf1" stroke="#0d9488" stroke-width="1" />
+    <circle cx="85" cy="-5" r="8" fill="none" stroke="#0d9488" stroke-width="2" />
+    <path d="M 70 10 C 70 0 100 0 100 10" fill="none" stroke="#0d9488" stroke-width="2" stroke-linejoin="round" />
+    
+    <!-- Settings Icon -->
+    <circle cx="170" cy="0" r="25" fill="#ccfbf1" stroke="#0d9488" stroke-width="1" />
+    <circle cx="170" cy="0" r="5" fill="none" stroke="#0d9488" stroke-width="2" />
+    <path d="M 170 -15 L 170 -8 M 170 8 L 170 15 M 185 0 L 178 0 M 162 0 L 155 0 M 180 -10 L 175 -5 M 165 5 L 160 10 M 180 10 L 175 5 M 165 -5 L 160 -10" stroke="#0d9488" stroke-width="2" stroke-linecap="round" />
+    
+    <!-- Search Icon -->
+    <circle cx="255" cy="0" r="25" fill="#ccfbf1" stroke="#0d9488" stroke-width="1" />
+    <circle cx="250" cy="-5" r="10" fill="none" stroke="#0d9488" stroke-width="2" />
+    <line x1="257" y1="2" x2="267" y2="12" stroke="#0d9488" stroke-width="2" stroke-linecap="round" />
+    
+    <!-- Mail Icon -->
+    <circle cx="340" cy="0" r="25" fill="#ccfbf1" stroke="#0d9488" stroke-width="1" />
+    <rect x="325" y="-10" width="30" height="20" rx="2" ry="2" fill="none" stroke="#0d9488" stroke-width="2" />
+    <path d="M 325 -10 L 340 0 L 355 -10" fill="none" stroke="#0d9488" stroke-width="2" />
+  </g>
+</svg>

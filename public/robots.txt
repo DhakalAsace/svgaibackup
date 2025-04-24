@@ -1,0 +1,17 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /results/
+Disallow: /generate/
+Disallow: /settings/
+
+# Host
+Host: https://svgai.org
+
+# Sitemaps
+Sitemap: https://svgai.org/sitemap.xml

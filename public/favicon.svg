@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Star‑burst icon for SVGai - Enlarged for better visibility -->
+  <path d="M32 2
+           l8 24 24 6
+           -24 6 -8 24
+           -8-24-24-6
+           24-6Z"
+        fill="#FF7043"/>
+</svg>

@@ -1,0 +1,51 @@
+<svg width="800" height="250" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="250" fill="#f8fafc" rx="8" ry="8" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#0f172a">
+    Crafting Effective Logo Prompts
+  </text>
+  
+  <!-- Prompt Structure Diagram -->
+  <g transform="translate(50, 100)">
+    <!-- Base prompt box -->
+    <rect x="0" y="0" width="700" height="60" rx="8" ry="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1" />
+    
+    <!-- Style section -->
+    <rect x="10" y="10" width="120" height="40" rx="4" ry="4" fill="#dbeafe" />
+    <text x="70" y="35" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#1e40af">
+      Style
+    </text>
+    
+    <!-- Subject section -->
+    <rect x="140" y="10" width="120" height="40" rx="4" ry="4" fill="#e0f2fe" />
+    <text x="200" y="35" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0369a1">
+      Subject
+    </text>
+    
+    <!-- Colors section -->
+    <rect x="270" y="10" width="120" height="40" rx="4" ry="4" fill="#bae6fd" />
+    <text x="330" y="35" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0c4a6e">
+      Colors
+    </text>
+    
+    <!-- Brand section -->
+    <rect x="400" y="10" width="120" height="40" rx="4" ry="4" fill="#7dd3fc" />
+    <text x="460" y="35" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0c4a6e">
+      Brand Name
+    </text>
+    
+    <!-- Industry section -->
+    <rect x="530" y="10" width="160" height="40" rx="4" ry="4" fill="#38bdf8" />
+    <text x="610" y="35" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#0c4a6e">
+      Industry/Purpose
+    </text>
+  </g>
+  
+  <!-- Example -->
+  <rect x="100" y="180" width="600" height="40" rx="8" ry="8" fill="#f0f9ff" stroke="#0ea5e9" stroke-width="1" />
+  <text x="400" y="205" font-family="monospace" font-size="14" text-anchor="middle" fill="#0c4a6e">
+    "Minimalist geometric wolf head, forest green and silver, for TechWolf software"
+  </text>
+</svg>
