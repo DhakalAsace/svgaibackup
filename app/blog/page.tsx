@@ -18,7 +18,7 @@ const customPosts = [
     slug: 'ai-icon-maker-vs-traditional-design',
     metadata: {
       title: 'AI Icon Maker vs Traditional Design: Which Delivers Better Results?',
-      description: 'AI icon maker vs traditional design: which is better? Compare speed, cost, customization, and quality. See when to use AI (like SVG AI for free SVGs) and when traditional methods shine.',
+      description: 'AI icon maker vs traditional design: which is better? Compare speed, cost, customization, and quality. See when to use AI (like SVGAI.org for free SVGs) and when traditional methods shine.',
       image: '/blog/custom/ai-vs-traditional-design.svg',
       date: new Date().toISOString(),
       tags: ['AI Icon Maker', 'Traditional Design', 'SVG']
