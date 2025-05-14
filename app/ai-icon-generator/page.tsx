@@ -54,7 +54,7 @@ const iconPageKeywords = [
 
 export const metadata: Metadata = {
   // Meta Title (optimized based on keyword research)
-  title: "AI Icon Generator: Create Free SVG Icons Instantly - SVGai.org",
+  title: "AI Icon Generator: Create Free SVG Icons Instantly - SVG AI",
   
   // Meta Description (optimized to include keywords and value proposition)
   description: "Generate professional SVG icons in seconds with our free AI icon generator. No signup, unlimited downloads, perfect for apps, websites, and designs. Try now!",
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   
   // Open Graph Tags (optimized for social sharing)
   openGraph: {
-    title: 'AI Icon Generator: Create Free SVG Icons Instantly - SVGai.org',
+    title: 'AI Icon Generator: Create Free SVG Icons Instantly - SVG AI',
     description: 'Generate professional SVG icons in seconds with our free AI icon generator. No signup required!',
     url: '/ai-icon-generator',
     type: 'website',

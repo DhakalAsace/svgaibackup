@@ -18,7 +18,7 @@ const customPosts = [
     slug: 'ai-icon-maker-vs-traditional-design',
     metadata: {
       title: 'AI Icon Maker vs Traditional Design: Which Delivers Better Results?',
-      description: 'AI icon maker vs traditional design: which is better? Compare speed, cost, customization, and quality. See when to use AI (like SVGAI.org for free SVGs) and when traditional methods shine.',
+      description: 'AI icon maker vs traditional design: which is better? Compare speed, cost, customization, and quality. See when to use AI (like SVG AI for free SVGs) and when traditional methods shine.',
       image: '/blog/custom/ai-vs-traditional-design.svg',
       date: new Date().toISOString(),
       tags: ['AI Icon Maker', 'Traditional Design', 'SVG']
@@ -28,7 +28,7 @@ const customPosts = [
     slug: 'how-to-create-app-icons-with-ai',
     metadata: {
       title: 'How to Create Perfect App Icons with AI: Step-by-Step Tutorial',
-      description: 'Learn how to create perfect app icons with an AI App Icon Generator! Step-by-step guide covering prompts, styles, platform rules & using tools like SVGAI.org for free SVG icons.',
+      description: 'Learn how to create perfect app icons with an AI App Icon Generator! Step-by-step guide covering prompts, styles, platform rules & using tools like SVG AI for free SVG icons.',
       image: '/svg-examples/app-icons-with-ai-custom.svg',
       date: new Date().toISOString(),
       tags: ['App Icons', 'AI Generation', 'SVG']
@@ -38,7 +38,7 @@ const customPosts = [
     slug: 'guide-ai-icon-creation',
     metadata: {
       title: 'The Complete Guide to AI Icon Creation: Tools, Tips, and Techniques',
-      description: 'Master AI icon creation! This complete guide covers tools, advanced prompt techniques, styles, refining SVG icons (with SVGAI.org), and future trends. Elevate your design process!',
+      description: 'Master AI icon creation! This complete guide covers tools, advanced prompt techniques, styles, refining SVG icons (with SVG AI), and future trends. Elevate your design process!',
       image: '/svg-examples/ai-icon-creation-guide-custom.svg',
       date: new Date().toISOString(),
       tags: ['AI Icon Creation', 'Prompt Engineering', 'SVG']
