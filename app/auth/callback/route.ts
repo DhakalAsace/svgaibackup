@@ -27,8 +27,16 @@ export async function GET(request: NextRequest) {
       
       console.log("[Auth Callback] Session established successfully:", data.session ? "Session present" : "No session");
       
-      // Redirect to dashboard after successful authentication
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      // Default redirect URL
+      let finalRedirectUrl = "/dashboard";
+      
+      // For OAuth flows, we store the redirect path in localStorage
+      // This is retrieved client-side after redirect
+      // Note: We can't access localStorage in route handlers, so the client
+      // will handle the final redirect based on stored path
+      
+      // Redirect to the appropriate page after successful authentication
+      return NextResponse.redirect(new URL(finalRedirectUrl, request.url));
     } else {
       console.error("[Auth Callback] No code parameter in callback URL");
       return NextResponse.redirect(new URL("/login?error=no_code", request.url));

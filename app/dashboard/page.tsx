@@ -7,6 +7,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/database.types";
+import { AuthRedirectHandler } from "@/components/auth/auth-redirect-handler";
 
 
 // Dynamically import the dashboard component to reduce initial JS bundle size
@@ -44,21 +45,24 @@ type SvgDesign = {
 
 export default async function DashboardPage() {
   // Fix the cookies implementation to match Supabase's expected Promise<ReadonlyRequestCookies> type
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const cookieStore = cookies();
+  const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
   
-  // Get the user session
-  const { data: { session } } = await supabase.auth.getSession();
+  // Get the authenticated user - this validates the session with Supabase Auth server
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
   
-  // If no session, redirect to login
-  if (!session) {
+  // If no user or auth error, redirect to login
+  if (!user || authError) {
     redirect("/login?redirectedFrom=/dashboard");
   }
 
   // TypeScript narrowing: After the redirect, we know userId exists and is a string
-  const userId = session.user.id;
+  const userId = user.id;
 
-  // Load user's SVGs - use a try/catch to handle the case where session might exist but data fetch fails
+  // Load user's SVGs and profile - use a try/catch to handle the case where session might exist but data fetch fails
   let svgs: SvgDesign[] = [];
+  let userProfile = null;
+  
   try {
     // Fetch the user's SVG designs
     // Using a direct filter object instead of .eq() method to avoid TypeScript issues
@@ -70,29 +74,43 @@ export default async function DashboardPage() {
     
     if (error) throw error;
     svgs = designs || [];
+    
+    // Fetch user profile for subscription info and credit data
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('subscription_tier, subscription_status, lifetime_credits_granted, lifetime_credits_used, monthly_credits, monthly_credits_used, credits_reset_at, subscription_interval, stripe_customer_id')
+      .eq('id', userId)
+      .single();
+      
+    userProfile = profile;
   } catch (error) {
-    console.error("Error fetching SVGs:", error);
+    console.error("Error fetching data:", error);
     // Don't redirect - just show an empty dashboard
   }
 
   return (
-    <div className="container py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <div className="flex gap-2">
-          <Button asChild size="sm" variant="outline">
-            <Link href="/ai-icon-generator">
-              <Plus className="mr-2 h-4 w-4" /> Create Icons
-            </Link>
-          </Button>
-          <Button asChild size="sm">
-            <Link href="/">
-              <Plus className="mr-2 h-4 w-4" /> Create SVG
-            </Link>
-          </Button>
+    <>
+      <AuthRedirectHandler />
+      <div className="container py-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <div className="flex gap-2">
+            {/* Temporary sync button for testing */}
+            {/* SyncSubscriptionButton removed for end users */}
+            <Button asChild size="sm" variant="outline">
+              <Link href="/ai-icon-generator">
+                <Plus className="mr-2 h-4 w-4" /> Create Icons
+              </Link>
+            </Button>
+            <Button asChild size="sm">
+              <Link href="/">
+                <Plus className="mr-2 h-4 w-4" /> Create SVG
+              </Link>
+            </Button>
+          </div>
         </div>
+        <Dashboard initialSvgs={svgs} userId={userId} userProfile={userProfile || undefined} />
       </div>
-      <Dashboard initialSvgs={svgs} userId={userId} />
-    </div>
+    </>
   );
 }

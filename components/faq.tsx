@@ -16,7 +16,7 @@ export default function Faq() {
     {
       question: "What file formats can I download?",
       answer:
-        "Free users can download SVG and PNG formats. Pro and Team users get access to additional formats including React JSX components, optimized SVG code, and high-resolution PNGs.",
+        "All users can download SVG and PNG formats.",
     },
     {
       question: "Can I use the generated SVGs commercially?",
@@ -26,7 +26,7 @@ export default function Faq() {
     {
       question: "Is there a limit to how many SVGs I can generate?",
       answer:
-        "Free users can generate up to 5 SVGs per day. Pro users get unlimited generations, and Team plans include higher volume capabilities for collaborative work.",
+        "Free users can try 1 generation without signup. Sign up for a free account to get 3 total generations per month. Starter plan offers 100 credits per month for $12, and Pro plan includes 350 credits per month for $29.",
     },
     {
       question: "How accurate is the AI at interpreting my descriptions?",

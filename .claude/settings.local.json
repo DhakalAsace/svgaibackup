@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__supabase__list_projects",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__apply_migration",
+      "mcp__stripe__create_product",
+      "mcp__stripe__create_price",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "mcp__supabase__execute_sql",
+      "Bash(npm run lint:*)",
+      "mcp__stripe__list_customers",
+      "mcp__stripe__list_subscriptions",
+      "mcp__stripe__list_payment_intents",
+      "mcp__stripe__list_products",
+      "mcp__stripe__list_prices",
+      "Bash(mkdir:*)",
+      "Bash(npx supabase db dump:*)",
+      "Bash(sudo apt-get:*)",
+      "Bash(sudo apt-get install:*)",
+      "Bash(chmod:*)",
+      "mcp__supabase__get_project",
+      "Bash(ls:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run:*)",
+      "Bash(rm:*)",
+      "mcp__supabase__search_docs"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase",
+    "stripe"
+  ]
+}

@@ -1,59 +1,133 @@
-import { Check } from "lucide-react"
+"use client"
+
+import { Check, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from 'next/navigation'
+import { toast } from '@/components/ui/use-toast'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export default function Pricing() {
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'annual'>('monthly');
+  const [loading, setLoading] = useState<string | null>(null);
+  const router = useRouter();
+  const supabase = createClientComponentClient();
+  
   const plans = [
     {
       name: "Free",
       price: "$0",
       period: "forever",
-      description: "Perfect for trying out our AI SVG generator",
+      description: "Perfect for trying out our AI tools",
       features: [
-        "5 SVG generations per day",
-        "Basic style customization",
-        "Standard resolution exports",
-        "SVG and PNG downloads",
-        "Community support",
+        "6 one-time credits on signup",
+        <span key="free-icons">Create 3 SVGs or 6 <Link href="/ai-icon-generator" className="underline" target="_blank" rel="noopener noreferrer">icons</Link></span>,
+        "All 11 icon styles & 5 SVG styles",
       ],
       cta: "Start Creating Free",
       highlighted: false,
+      showBillingToggle: false,
+    },
+    {
+      name: "Starter",
+      price: { monthly: "$12", annual: "$119" },
+      period: { monthly: "per month", annual: "per year" },
+      savings: "Save $25/year",
+      description: "For individuals and small projects",
+      features: [
+        "100 credits per month",
+        <span key="starter-icons">Create 50 SVGs or 100 <Link href="/ai-icon-generator" className="underline" target="_blank" rel="noopener noreferrer">icons</Link></span>,
+        "7-day generation history",
+        "Email support",
+        "All 11 icon styles & 5 SVG styles",
+      ],
+      cta: "Subscribe Now",
+      highlighted: false,
+      tier: 'starter' as const,
+      showBillingToggle: true,
     },
     {
       name: "Pro",
-      price: "$12",
-      period: "per month",
-      description: "For designers and creative professionals",
+      price: { monthly: "$29", annual: "$289" },
+      period: { monthly: "per month", annual: "per year" },
+      savings: "Save $59/year",
+      description: "For professionals and businesses",
       features: [
-        "Unlimited AI SVG generations",
-        "Advanced style controls",
-        "High-resolution exports",
-        "All file formats (SVG, PNG, JSX)",
-        "Remove background",
-        "Priority support",
-        "Save generation history",
+        "350 credits per month",
+        <span key="pro-icons">Create 175 SVGs or 350 <Link href="/ai-icon-generator" className="underline" target="_blank" rel="noopener noreferrer">icons</Link></span>,
+        "30-day extended history",
+        "Priority email support",
+        "All 11 icon styles & 5 SVG styles",
       ],
-      cta: "Upgrade to Pro",
+      cta: "Subscribe Now",
       highlighted: true,
-    },
-    {
-      name: "Team",
-      price: "$49",
-      period: "per month",
-      description: "For design teams and agencies",
-      features: [
-        "Everything in Pro",
-        "5 team members",
-        "Team workspace",
-        "Shared asset library",
-        "Brand kit integration",
-        "API access",
-        "Dedicated support",
-        "Admin controls",
-      ],
-      cta: "Contact Sales",
-      highlighted: false,
+      tier: 'pro' as const,
+      showBillingToggle: true,
     },
   ]
+
+  const handleSubscribe = async (tier?: 'starter' | 'pro') => {
+    const interval = billingInterval === 'annual' ? 'annual' : 'monthly';
+    // Check if user is logged in
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      // Redirect to login with return URL
+      router.push(`/login?returnUrl=/pricing&plan=${tier || 'free'}`);
+      return;
+    }
+
+    if (!tier) {
+      // Free plan - just redirect to dashboard
+      router.push('/dashboard');
+      return;
+    }
+
+    setLoading(tier);
+
+    try {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tier, interval }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        // If the server indicates the user already has a subscription, send them to the portal/ dashboard
+        if (data.portal) {
+          toast({
+            title: 'You already have an active subscription',
+            description: 'Redirecting to manage your existing plan…',
+          });
+          // Small delay so the toast is visible
+          setTimeout(() => router.push('/dashboard'), 1500);
+          return;
+        }
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+
+      const { url } = await response.json();
+      
+      if (url) {
+        // Redirect to Stripe Checkout
+        window.location.href = url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (error) {
+      console.error('Subscription error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start subscription process. Please try again.",
+        variant: "destructive",
+      });
+      setLoading(null);
+    }
+  };
 
   return (
     <section id="pricing" className="py-16 md:py-24 bg-white">
@@ -63,11 +137,38 @@ export default function Pricing() {
             Pricing Plans
           </div>
           <h2 className="mt-4 text-3xl md:text-4xl font-extrabold text-gray-800">
-            Flexible Pricing for Our AI SVG Generator
+            Simple, Transparent Pricing
           </h2>
           <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-            Choose the right text to SVG AI plan for your creative needs, from casual use to professional design teams.
+            Choose the right text to SVG AI plan for your creative needs. Start free, upgrade when you need more.
           </p>
+        </div>
+        
+        {/* Billing toggle */}
+        <div className="flex justify-center mb-8">
+          <div className="bg-gray-100 p-1 rounded-lg inline-flex">
+            <button
+              onClick={() => setBillingInterval('monthly')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                billingInterval === 'monthly' 
+                  ? 'bg-white text-gray-900 shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingInterval('annual')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                billingInterval === 'annual' 
+                  ? 'bg-white text-gray-900 shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Annual
+              <span className="ml-1 text-xs text-[#00B894]">Save 17%</span>
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -75,17 +176,30 @@ export default function Pricing() {
             <div
               key={index}
               className={`bg-white rounded-xl overflow-hidden shadow-sm border flex flex-col ${
-                plan.highlighted ? "border-[#0084FF] shadow-lg" : "border-gray-200/80 hover:shadow-md transition-shadow duration-300"
+                plan.highlighted ? "border-[#FF7043] shadow-lg scale-105" : "border-gray-200/80 hover:shadow-md transition-shadow duration-300"
               }`}
             >
               {plan.highlighted && (
-                <div className="bg-[#0084FF] text-gray-900 text-center py-2 text-sm font-medium">Most Popular</div>
+                <div className="bg-[#FF7043] text-white text-center py-2 text-sm font-medium">Most Popular</div>
               )}
               <div className="p-6 flex flex-col flex-grow">
                 <h3 className="text-xl font-bold text-gray-800 mb-2">{plan.name}</h3>
-                <div className="flex items-baseline mb-4">
-                  <span className="text-3xl font-bold text-gray-800">{plan.price}</span>
-                  <span className="text-gray-500 ml-1">/{plan.period}</span>
+                <div className="mb-4">
+                  <div className="flex items-baseline">
+                    <span className="text-3xl font-bold text-gray-800">
+                      {plan.showBillingToggle && typeof plan.price === 'object' 
+                        ? plan.price[billingInterval] 
+                        : plan.price as string}
+                    </span>
+                    <span className="text-gray-500 ml-1">
+                      /{plan.showBillingToggle && typeof plan.period === 'object' 
+                        ? plan.period[billingInterval] 
+                        : plan.period as string}
+                    </span>
+                  </div>
+                  {plan.showBillingToggle && billingInterval === 'annual' && plan.savings && (
+                    <p className="text-sm text-[#00B894] mt-1">{plan.savings}</p>
+                  )}
                 </div>
                 <p className="text-gray-600 mb-6 text-sm flex-grow">{plan.description}</p>
 
@@ -95,7 +209,12 @@ export default function Pricing() {
                       ? "bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white hover:opacity-90 transition-opacity"
                       : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors"
                   }`}
+                  onClick={() => handleSubscribe(plan.tier)}
+                  disabled={loading !== null}
                 >
+                  {loading === plan.tier ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : null}
                   {plan.cta}
                 </Button>
 

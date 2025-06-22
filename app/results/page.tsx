@@ -8,6 +8,9 @@ import Link from "next/link"
 import Image from "next/image"
 import { SafeSvgDisplay } from "@/components/safe-svg-display"
 import { sanitizeSvg } from "@/lib/svg-sanitizer"
+import { GenerationUpsell, UpgradeModal } from "@/components/generation-upsells"
+import { GenerationSignupModal } from "@/components/auth/generation-signup-modal"
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 // SECURITY: Only allow SVGs from trusted domains
 const ALLOWED_DOMAINS = [
@@ -44,6 +47,16 @@ function ResultsContent() {
   const [isLoading, setIsLoading] = useState(true)
   const [downloadSuccess, setDownloadSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  
+  // User subscription state
+  const [userProfile, setUserProfile] = useState<any>(null)
+  const supabase = createClientComponentClient()
+  
+  // Modal states
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [showSignupModal, setShowSignupModal] = useState(false)
+  const [showTimedUpgradeModal, setShowTimedUpgradeModal] = useState(false)
+  const [isSoftPrompt, setIsSoftPrompt] = useState(false)
   
   // Process SVG content to ensure it fits properly in the container and is secure
   const processSvgContent = (content: string): string => {
@@ -147,6 +160,13 @@ function ResultsContent() {
     if (typeof window !== 'undefined') { // Check if on client
       urlFromStorage = sessionStorage.getItem('resultSvgUrl');
       console.log('[ResultsPage] Retrieved SVG URL from sessionStorage:', urlFromStorage); // DEBUG LOG
+      
+      // Check if we should show signup modal for anonymous users
+      const shouldShowSignup = sessionStorage.getItem('showSignupModal');
+      if (shouldShowSignup === 'true') {
+        sessionStorage.removeItem('showSignupModal'); // Clear flag
+        setTimeout(() => setShowSignupModal(true), 500); // Show after brief delay
+      }
     }
     setSvgUrl(urlFromStorage); // Set state regardless for potential display
 
@@ -161,6 +181,50 @@ function ResultsContent() {
     }
 
   }, [searchParams]) // Re-run if searchParams change (e.g., prompt, remaining)
+  
+  // Fetch user profile for subscription status
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('subscription_tier, subscription_status, lifetime_credits_granted, lifetime_credits_used, monthly_credits, monthly_credits_used')
+          .eq('id', user.id)
+          .single();
+        
+        setUserProfile(profile);
+        
+        // Determine if the free user is out of credits
+        const isOutOfCredits =
+          profile &&
+          profile.subscription_status !== "active" &&
+          profile.lifetime_credits_used >= profile.lifetime_credits_granted;
+
+        // Show the immediate upgrade modal when totally out of credits
+        if (isOutOfCredits) {
+          setShowUpgradeModal(true);
+        }
+
+        // Otherwise (still have credits), show the timed encouragement modal
+        if (!isOutOfCredits && profile && profile.subscription_status !== "active") {
+          setTimeout(() => {
+            setShowTimedUpgradeModal(true);
+          }, 2000); // 2 seconds delay
+        }
+      } else {
+        // For anonymous users, show signup modal after 2 seconds
+        setTimeout(() => {
+          if (!showSignupModal) { // Don't show if signup modal is already showing
+            setShowSignupModal(true);
+            setIsSoftPrompt(true);
+          }
+        }, 2000); // 2 seconds
+      }
+    };
+    
+    fetchUserProfile();
+  }, [supabase]);
 
   // SECURITY: Ensure SVG is sanitized before download
   const downloadSvg = () => {
@@ -215,7 +279,7 @@ function ResultsContent() {
       <div className="max-w-3xl mx-auto">
         {/* Header with back button */}
         <div className="flex items-center justify-between mb-6">
-          <Link href={contentType === 'icon' ? "/ai-icon-generator" : "/"} className="flex items-center text-gray-600 text-sm font-medium hover:text-gray-900 transition-colors">
+          <Link href={contentType === 'icon' ? "/ai-icon-generator?preservePrompt=true" : "/?preservePrompt=true"} className="flex items-center text-gray-600 text-sm font-medium hover:text-gray-900 transition-colors">
             <ArrowLeft className="h-4 w-4 mr-1.5" />
             Back to {contentType === 'icon' ? 'Icon Generator' : 'Generator'}
           </Link>
@@ -245,18 +309,38 @@ function ResultsContent() {
           )}
         </div>
 
-        {/* Remaining generations alert */}
-        {remainingCount !== null && (
-          <div className="mb-6 bg-blue-50 rounded-lg border border-blue-100 p-4">
-            <div className="flex items-center">
-              <Info className="h-4 w-4 text-blue-500 mr-2.5 flex-shrink-0" />
-              <div>
-                <h3 className="text-sm font-medium text-blue-800">Generations Remaining</h3>
-                <p className="text-sm text-blue-700">
-                  You have <span className="font-bold">{remainingCount}</span> generation{remainingCount !== 1 ? 's' : ''} left today.
-                </p>
-              </div>
-            </div>
+        {/* Credit cost indicator */}
+        <div className="text-sm text-gray-700 flex items-center justify-center mt-2 mb-4">
+          <CheckCircle className="w-4 h-4 mr-1 text-green-600" />
+          <span>
+            This {contentType === 'icon' ? 'icon' : 'SVG'} cost {contentType === 'icon' ? '1 credit' : '2 credits'}. 
+            {userProfile && userProfile.subscription_status === 'active' ? (() => {
+              const remainingCredits = (userProfile.monthly_credits || 0) - (userProfile.monthly_credits_used || 0);
+              return `You have ${remainingCredits} ${remainingCredits === 1 ? 'credit' : 'credits'} left this month.`;
+            })() : ''}
+          </span>
+        </div>
+
+        {/* Generation Upsell Component */}
+        {userProfile ? (
+          <div className="mb-6">
+            <GenerationUpsell
+              creditsUsed={userProfile.lifetime_credits_used || userProfile.monthly_credits_used || 0}
+              creditLimit={userProfile.lifetime_credits_granted || userProfile.monthly_credits || 0}
+              isSubscribed={userProfile.subscription_status === 'active'}
+              limitType={userProfile.subscription_status === 'active' ? 'monthly' : 'lifetime'}
+              tier={userProfile.subscription_tier}
+            />
+          </div>
+        ) : (
+          <div className="mb-6">
+            <GenerationUpsell
+              creditsUsed={1}
+              creditLimit={1}
+              isSubscribed={false}
+              limitType="lifetime"
+              tier={null}
+            />
           </div>
         )}
 
@@ -334,69 +418,86 @@ function ResultsContent() {
 
           {/* Action Buttons */}
           {!isLoading && !error && svgContent && (
-            <div className="px-6 pb-6 pt-1 flex flex-wrap justify-center gap-3">
-              <button
-                onClick={downloadSvg}
-                className={`flex items-center justify-center px-5 py-2 rounded-full text-sm ${downloadSuccess ? 'bg-success' : 'bg-primary'} text-white font-medium transition-all`}
-              >
-                {downloadSuccess ? (
-                  <>
-                    <CheckCircle className="h-4 w-4 mr-1.5" />
-                    Downloaded
-                  </>
-                ) : (
-                  <>
-                    <Download className="h-4 w-4 mr-1.5" />
-                    Download SVG
-                  </>
-                )}
-              </button>
+            <div className="px-6 pb-6 pt-1">
+              <div className="flex flex-wrap justify-center gap-3 mb-4">
+                <button
+                  onClick={downloadSvg}
+                  className={`flex items-center justify-center px-5 py-2 rounded-full text-sm ${downloadSuccess ? 'bg-success' : 'bg-primary'} text-white font-medium transition-all`}
+                >
+                  {downloadSuccess ? (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-1.5" />
+                      Downloaded
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4 mr-1.5" />
+                      Download SVG
+                    </>
+                  )}
+                </button>
+                
+                <Link 
+                  href={contentType === 'icon' ? "/ai-icon-generator?preservePrompt=true" : "/?preservePrompt=true"}
+                  className="flex items-center justify-center px-5 py-2 rounded-full text-sm border border-gray-300 text-gray-700 font-medium transition-all hover:bg-gray-50"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-1.5" />
+                  Create Another
+                </Link>
+              </div>
               
-              <Link 
-                href={contentType === 'icon' ? "/ai-icon-generator" : "/"}
-                className="flex items-center justify-center px-5 py-2 rounded-full text-sm border border-gray-300 text-gray-700 font-medium transition-all hover:bg-gray-50"
-              >
-                <ArrowLeft className="h-4 w-4 mr-1.5" />
-                Create Another
-              </Link>
+              {/* Upgrade CTA for non-subscribed users */}
+              {(!userProfile || userProfile.subscription_status !== 'active') && (
+                <div className="bg-gradient-to-r from-[#FFF8F6] to-[#FFEDE7] p-4 rounded-lg border border-[#FFE0B2]">
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                      <h4 className="font-medium text-gray-900 text-sm mb-1">
+                        🎨 Love your {contentType === 'icon' ? 'icon' : 'SVG'}? Get more!
+                      </h4>
+                      <p className="text-xs text-gray-600">
+                        {contentType === 'icon' ? 'Get 100–350 icon generations/month' : 'Get 50–175 SVG generations/month'} • Plans from $12/month
+                      </p>
+                    </div>
+                    <Link
+                      href="/pricing"
+                      className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+                    >
+                      Upgrade Now
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
 
-        {/* What's Next Section */}
-        {!isLoading && !error && svgContent && (
-          <div>
-            <h2 className="text-lg font-medium text-gray-800 mb-4">What's Next?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-              <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                <h3 className="font-medium text-gray-800 mb-2 text-sm flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-[#0084FF]" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                  </svg>
-                  Edit in Vector Editor
-                </h3>
-                <p className="text-xs text-gray-600">Open this SVG in Adobe Illustrator, Inkscape, Figma, or other vector editors for further customization.</p>
-              </div>
-
-              <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                <h3 className="font-medium text-gray-800 mb-2 text-sm flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-[#0084FF]" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2a1 1 0 00-.553.894V17zM15.211 6.276a1 1 0 000-1.788l-4.764-2.382a1 1 0 00-.894 0L4.789 4.488a1 1 0 000 1.788l4.764 2.382a1 1 0 00.894 0l4.764-2.382zM4.447 8.342A1 1 0 003 9.236V15a1 1 0 00.553.894l4 2A1 1 0 009 17v-5.764a1 1 0 00-.553-.894l-4-2z" />
-                  </svg>
-                  Create More {contentType === 'icon' ? 'Icons' : 'SVGs'}
-                </h3>
-                <p className="text-xs text-gray-600 mb-3">Generate more {contentType === 'icon' ? 'icons' : 'SVGs'} with different prompts to expand your collection.</p>
-                <Link 
-                  href={contentType === 'icon' ? "/ai-icon-generator" : "/"} 
-                  className="inline-flex items-center text-xs font-medium text-primary hover:text-primary/80"
-                >
-                  <ArrowLeft className="mr-1 h-3 w-3" /> Back to {contentType === 'icon' ? 'Icon Generator' : 'Generator'}
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
+      
+      {/* Modals */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        triggerDelay={5000}
+        generationType={contentType as 'svg' | 'icon'}
+        isOutOfCredits={true}
+      />
+      
+      <GenerationSignupModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+        generationsUsed={1}
+        isSoftPrompt={isSoftPrompt}
+        isAuthenticated={false}
+        isSubscribed={false}
+      />
+      
+      <UpgradeModal
+        isOpen={showTimedUpgradeModal}
+        onClose={() => setShowTimedUpgradeModal(false)}
+        triggerDelay={0} // No delay, show immediately when state is set
+        generationType={contentType as 'svg' | 'icon'}
+        isOutOfCredits={false}
+      />
     </div>
   );
 }

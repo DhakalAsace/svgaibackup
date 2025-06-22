@@ -31,9 +31,9 @@ export async function checkAdminAuth(): Promise<AdminAuthResult> {
   try {
     // Get current session from cookies
     const supabase = createRouteHandlerClient<Database>({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
-    if (!session || !session.user) {
+    if (!user || authError) {
       return { isAuthenticated: false, isAdmin: false, user: null };
     }
     
@@ -42,14 +42,14 @@ export async function checkAdminAuth(): Promise<AdminAuthResult> {
     const ADMIN_USER_IDS = process.env.ADMIN_USER_IDS?.split(',') || [];
     
     // Check if user is in admin list
-    const isAdmin = ADMIN_USER_IDS.includes(session.user.id);
+    const isAdmin = ADMIN_USER_IDS.includes(user.id);
     
     return { 
       isAuthenticated: true, 
       isAdmin, 
       user: {
-        id: session.user.id,
-        email: session.user.email
+        id: user.id,
+        email: user.email
       }
     };
   } catch (error) {

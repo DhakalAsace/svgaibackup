@@ -11,6 +11,7 @@ import { createLogger } from '@/lib/logger'
 import { createErrorResponse, createSuccessResponse, successResponse, badRequest, tooManyRequests } from '@/lib/error-handler'
 import { sanitizeAndTrimText } from '@/lib/text-sanitizer'
 import { sanitizeData } from '@/lib/sanitize-utils'
+import { addWatermarkNode } from '@/lib/svg-watermark'
 
 // Add export config to enable Edge Runtime with 30s timeout instead of 10s
 export const runtime = 'edge';
@@ -56,19 +57,20 @@ const ALLOWED_DOMAINS = [
   'storage.googleapis.com',
 ];
 
-const DAILY_LIMIT = 10;
+const DAILY_LIMIT = 2; // Free tier: 2 generations per day without signup
 
 export async function POST(req: NextRequest) {
   try {
-    const supabaseUserClient = createRouteHandlerClient({ cookies }) // Pass cookies function directly
+    const cookieStore = cookies();
+    const supabaseUserClient = createRouteHandlerClient({ cookies: () => cookieStore });
 
-    const { data: { session } } = await supabaseUserClient.auth.getSession()
+    const { data: { user }, error: authError } = await supabaseUserClient.auth.getUser()
 
     let identifier: string
     let identifier_type: 'user_id' | 'ip_address'
 
-    if (session?.user?.id) {
-      identifier = session.user.id
+    if (user?.id && !authError) {
+      identifier = user.id
       identifier_type = 'user_id'
       logger.info('Authenticated user request', { userId: identifier })
     } else {
@@ -102,38 +104,55 @@ export async function POST(req: NextRequest) {
 
     const today = new Date().toISOString().split('T')[0]; // Get YYYY-MM-DD format
 
-    // To address race condition in rate limiting, we'll use the atomic function
-    // This function will check and increment in a single transaction
+    // Use the new credit system function
     const { data: limitResult, error: limitError } = await supabaseAdmin.rpc(
-      'check_and_increment_limit',
+      'check_credits_v3',
       {
+        p_user_id: user?.id || null,
         p_identifier: identifier,
         p_identifier_type: identifier_type,
-        p_generation_date: today,
-        p_limit: DAILY_LIMIT
+        p_generation_type: 'svg' // This endpoint generates SVGs
       }
     );
     
     if (limitError) {
-      logger.error('Error checking generation limit', { error: limitError })
+      logger.error('Error checking credit limit', { error: limitError })
       const { response, status } = createErrorResponse(
         limitError, 
-        'Error checking usage limit', 
+        'Error checking generation limit', 
         500
       );
       return Response.json(response, { status });
     }
     
     // If no result or limit reached
-    if (!limitResult || !limitResult[0]?.success) {
-      logger.info('Daily limit reached', { identifierType: identifier_type })
-      return tooManyRequests(`Daily generation limit of ${DAILY_LIMIT} reached.`);
+    if (!limitResult || limitResult.length === 0 || !limitResult[0].success) {
+      const remaining = limitResult?.[0]?.remaining_credits || 0;
+      const limitType = limitResult?.[0]?.limit_type || 'unknown';
+      
+      logger.info('Generation limit reached', { 
+        identifierType: identifier_type, 
+        limitType,
+        remaining 
+      });
+      
+      let errorMessage = '';
+      if (limitType === 'anonymous_daily') {
+        errorMessage = "You've used your free generation. Sign up to get 6 free credits!";
+      } else if (limitType === 'lifetime_credits') {
+        errorMessage = "You've used all your free credits. Upgrade to Pro for more!";
+      } else if (limitType === 'monthly_credits') {
+        errorMessage = `You've used all your monthly credits (${limitResult[0].current_count}). Upgrade your plan or wait for next month.`;
+      }
+      
+      return tooManyRequests(errorMessage);
     }
     
-    // Calculate remaining generations
-    const remainingGenerations = limitResult[0].remaining;
+    // Calculate remaining credits and subscription status
+    const remainingCredits = limitResult[0].remaining_credits || 0;
+    const isSubscribed = limitResult[0].is_subscribed || false;
 
-    logger.info('Usage count incremented', { identifierType: identifier_type, remainingGenerations })
+    logger.info('Usage count incremented', { identifierType: identifier_type, remainingCredits })
 
     // 3. Proceed with SVG generation
     const { prompt, style = "any", size = "1024x1024", aspect_ratio = "Not set" } = await req.json()
@@ -438,7 +457,7 @@ export async function POST(req: NextRequest) {
       // Return success with the data URL
       const result = createSuccessResponse({
         svgUrl: svgDataUrl,
-        remainingGenerations: remainingGenerations,
+        remainingGenerations: remainingCredits,
         modelInfo: 'recraft-ai/recraft-v3-svg',
         directContent: true // Flag to indicate this is direct content
       })
@@ -491,7 +510,10 @@ export async function POST(req: NextRequest) {
         }
         
         // Sanitize SVG content to prevent XSS attacks
-        const sanitizedSvgText = sanitizeSvg(rawSvgText);
+        let sanitizedSvgText = sanitizeSvg(rawSvgText);
+        
+        // Add watermark for non-subscribed users
+        sanitizedSvgText = addWatermarkNode(sanitizedSvgText, isSubscribed);
         
         // Sanitize the title derived from the prompt
         const svgTitle = sanitizeAndTrimText(prompt, 50) || 'Untitled SVG';
@@ -524,8 +546,10 @@ export async function POST(req: NextRequest) {
     const result = createSuccessResponse({
         svgUrl: svgUrl, // Can be null if directSvgContent is present
         svgContent: directSvgContent, // Can be null if svgUrl is present
-        remainingGenerations: remainingGenerations,
-        modelInfo: 'recraft-ai/recraft-20b-svg' // Or dynamically get model info if needed
+        remainingGenerations: remainingCredits, // Keep the same field name for compatibility
+        creditsUsed: 2, // SVG costs 2 credits
+        modelInfo: 'recraft-ai/recraft-v3-svg', // Recraft V3 for SVG generation
+        isSubscribed: isSubscribed
       });
     return successResponse(result);
 

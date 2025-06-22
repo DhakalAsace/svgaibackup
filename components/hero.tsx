@@ -11,6 +11,10 @@ import Image from "next/image"
 import { BrandLogo } from "@/components/brand-logo"
 import { useSVGExamples } from "./svg-examples"
 import Link from "next/link"
+import { GenerationSignupModal } from "@/components/auth/generation-signup-modal"
+import { UpgradeModal } from "@/components/generation-upsells"
+import { usePromptRestoration } from '@/hooks/use-prompt-restoration'
+import { useCredits } from '@/contexts/CreditContext'
 
 function formatStyleLabel(style: string) {
   return style
@@ -24,6 +28,10 @@ export default function Hero() {
   const [error, setError] = useState("")
   const [limitReachedError, setLimitReachedError] = useState("")
   const [userId, setUserId] = useState<string | null>(null)
+  const [showSignupModal, setShowSignupModal] = useState(false)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [isSoftPrompt, setIsSoftPrompt] = useState(false)
+  const [dailyGenerations, setDailyGenerations] = useState(0)
   const [showCustomize, setShowCustomize] = useState(false)
   const [size, setSize] = useState("1024x1024")
   const [style, setStyle] = useState("any")
@@ -32,6 +40,8 @@ export default function Hero() {
   const supabase = createClientComponentClient<Database>()
   const [activeSlide, setActiveSlide] = useState(0)
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
+  const [userGenerations, setUserGenerations] = useState<{used: number, limit: number} | null>(null)
+  const [isSubscribed, setIsSubscribed] = useState(false)
   // New state for preloaded images
   const [preloadedImages, setPreloadedImages] = useState<Record<string, string>>({});
   const isInitialLoad = useRef(true);
@@ -89,18 +99,74 @@ export default function Hero() {
     preloadSVGs();
   }, [featuredExamples]);
 
-  // Check for logged in user
+  // Use credit context
+  const { creditInfo, refreshCredits } = useCredits()
+
+  // Check for logged in user and their generation status
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUserId(session?.user?.id || null)
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      setUserId(user?.id || null)
+      
+      // If user is logged in and creditInfo is available, use it
+      if (user?.id && !authError && creditInfo) {
+        setUserGenerations({
+          used: creditInfo.creditsUsed,
+          limit: creditInfo.creditLimit
+        })
+        setIsSubscribed(creditInfo.isSubscribed)
+      }
     }
 
     checkUser()
-  }, [])
+  }, [creditInfo])
+
+  // Use prompt restoration hook
+  usePromptRestoration(setPrompt, setStyle, setSize, setAspectRatio);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return
+
+    // Persist prompt and settings so they can be restored later
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('pendingPrompt', prompt);
+      sessionStorage.setItem('pendingStyle', style);
+      sessionStorage.setItem('pendingSize', size);
+      sessionStorage.setItem('pendingAspectRatio', aspectRatio);
+    }
+
+    // NEW: Check if user is signed in BEFORE generating
+    if (!userId) {
+      // Store prompt in sessionStorage for preservation
+      sessionStorage.setItem('pendingPrompt', prompt);
+      sessionStorage.setItem('pendingStyle', style);
+      sessionStorage.setItem('pendingSize', size);
+      sessionStorage.setItem('pendingAspectRatio', aspectRatio);
+      
+      // Show signup modal immediately
+      setIsSoftPrompt(false);
+      setShowSignupModal(true);
+      return;
+    }
+
+    // For authenticated users, check credit balance
+    if (userGenerations) {
+      const requiredCredits = 2; // SVG generation cost
+      const remainingCredits = userGenerations.limit - userGenerations.used;
+      const hasEnoughCredits = remainingCredits >= requiredCredits;
+      
+      if (!hasEnoughCredits) {
+        // No credits remaining - show appropriate modal
+        if (!isSubscribed) {
+          // Free user out of credits - show upgrade modal
+          setShowUpgradeModal(true);
+        } else {
+          // Subscribed user out of monthly credits
+          setError("You've used all your monthly credits. They'll refresh at the start of your next billing period.");
+        }
+        return;
+      }
+    }
 
     setIsGenerating(true)
     setError("")
@@ -139,7 +205,20 @@ export default function Hero() {
       
       // Check for specific error codes first
       if (response.status === 429) {
-        setLimitReachedError(responseData.error || "You've reached your daily generation limit. Please try again tomorrow.")
+        const errorMessage = responseData.error || "";
+        
+        if (errorMessage.includes("Sign up to get")) {
+          // Anonymous user - show signup modal
+          setIsSoftPrompt(false);
+          setShowSignupModal(true);
+        } else if (errorMessage.includes("no credits remaining") || errorMessage.includes("lifetime credits")) {
+          // Free user out of credits - show upgrade modal
+          setShowUpgradeModal(true);
+        } else if (errorMessage.includes("monthly credits")) {
+          // Subscribed user out of credits
+          setError("You've used all your monthly credits. They'll refresh at the start of your next billing period.");
+        }
+        
         setIsGenerating(false)
         return
       }
@@ -164,11 +243,36 @@ export default function Hero() {
           
           // Construct query string without the SVG URL
           const queryParams = new URLSearchParams();
-          if (remainingGenerations !== undefined) {
-            queryParams.set('remaining', remainingGenerations.toString());
+          // Use optional chaining and nullish coalescing for safer null handling
+          const remainingStr = remainingGenerations?.toString() ?? '';
+          if (remainingStr) {
+            queryParams.set('remaining', remainingStr);
           }
           queryParams.set('prompt', prompt); // Pass prompt for context
 
+          // Update local storage for non-authenticated users
+          if (!userId) {
+            const totalGenerations = parseInt(localStorage.getItem('totalGenerations') || '0');
+            localStorage.setItem('totalGenerations', (totalGenerations + 1).toString());
+            
+            // Show soft prompt immediately after first generation for anonymous users
+            if (totalGenerations === 0) {
+              setIsSoftPrompt(true);
+              setShowSignupModal(true);
+              // Store in sessionStorage to show on results page
+              sessionStorage.setItem('showSignupModal', 'true');
+            }
+          } else if (userGenerations) {
+            // Update local state for signed-in users
+            setUserGenerations(prev => prev ? {...prev, used: prev.used + 2} : null) // SVG costs 2 credits
+            
+            // Dispatch event to trigger credit refresh
+            window.dispatchEvent(new Event('creditUsed'))
+            
+            // Also refresh credits directly
+            refreshCredits()
+          }
+          
           const pushPath = `/results?${queryParams.toString()}`;
           console.log('[Hero] Pushing path:', pushPath);
           router.push(pushPath);
@@ -208,6 +312,7 @@ export default function Hero() {
       }
     }
   }
+  
 
   // Auto-advance the slider every 5 seconds
   useEffect(() => {
@@ -330,7 +435,7 @@ export default function Hero() {
         </h1>
         
         <p className="text-center text-[#495057] text-lg md:text-xl max-w-2xl mx-auto mb-6">
-          Effortlessly convert text to SVG with AI. Generate unique vector <Link href="/ai-icon-generator" className="text-[#FF7043] hover:underline">icons</Link>, logos, and illustrations instantly.
+          Effortlessly convert text to SVG with AI. Generate unique vector <Link href="/ai-icon-generator" className="text-[#FF7043] hover:underline" target="_blank" rel="noopener noreferrer">icons</Link>, logos, and illustrations instantly.
         </p>
         
         {/* Breadcrumbs for better SEO and navigation */}
@@ -352,15 +457,27 @@ export default function Hero() {
           {/* Main input area - 3/5 width on desktop */}
           <div className="lg:col-span-3 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="p-6">
-              <textarea
-                id="prompt-input"
-                className="w-full rounded-lg border border-gray-200 bg-[#FAFAFA] py-4 px-4 text-base md:text-lg text-[#212529] placeholder-gray-400 focus:border-[#FF7043] focus:outline-none focus:ring-1 focus:ring-[#FF7043]/30 resize-none min-h-[140px] transition-all"
-                placeholder="Describe the SVG you want to create..."
-                value={prompt}
-                onChange={e => setPrompt(e.target.value)}
-                aria-label="Enter text prompt for AI SVG generation"
-                autoFocus
-              />
+              <div className="relative">
+                <Textarea
+                  id="prompt-input"
+                  className="w-full rounded-lg border border-gray-300 bg-[#FEFEFE] shadow-md py-4 px-4 text-base md:text-lg text-[#4E342E] placeholder-gray-400 caret-[#FF7043] focus:border-[#FF7043] focus:ring-2 focus:ring-[#FFA726]/50 focus:outline-none resize-none min-h-[100px] transition-all"
+                  placeholder="Try: a futuristic cityscape, a minimal logo, an abstract wave pattern..."
+                  value={prompt}
+                  onChange={e => setPrompt(e.target.value)}
+                  aria-label="Enter text prompt for SVG generation"
+                  autoFocus
+                />
+                {prompt && (
+                  <button
+                    type="button"
+                    onClick={() => setPrompt('')}
+                    className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-xs"
+                    aria-label="Clear prompt"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
               
               {/* Sample prompts */}
               <div className="mt-3 flex flex-wrap gap-2">
@@ -434,21 +551,79 @@ export default function Hero() {
                 </div>
               )}
               
-              {/* Generate button */}
-              <button
-                className="w-full mt-5 py-3.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium text-base rounded-lg shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
-                onClick={handleGenerate}
-                disabled={isGenerating || !prompt.trim()}
-              >
-                {isGenerating ? (
-                  <span className="flex items-center justify-center">
-                    <Loader className="animate-spin mr-2 h-5 w-5" />
-                    Creating your SVG (usually 15-30 seconds)...
-                  </span>
-                ) : (
-                  "Generate SVG"
+              {/* Credit cost indicator */}
+              <div className="mt-3 flex items-center justify-between text-sm">
+                <div className="flex items-center text-gray-600">
+                  <Sparkles className="w-4 h-4 mr-1.5 text-[#FF7043]" />
+                  <span>2 credits required</span>
+                </div>
+                {userGenerations && (
+                  <div className="text-right">
+                    <span className="text-gray-500">
+                      {Math.max(0, userGenerations.limit - userGenerations.used)} credits remaining
+                    </span>
+                  </div>
                 )}
-              </button>
+              </div>
+              
+              {/* Generate button */}
+              {userGenerations && (userGenerations.limit - userGenerations.used) < 2 ? (
+                <div className="mt-5 space-y-3">
+                  <button
+                    className="w-full py-3.5 bg-gray-100 text-gray-400 font-medium text-base rounded-lg cursor-not-allowed"
+                    disabled
+                  >
+                    Insufficient Credits
+                  </button>
+                  <Link
+                    href="/pricing"
+                    className="w-full inline-block text-center py-3.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium text-base rounded-lg hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 transition-all"
+                  >
+                    <span className="flex items-center justify-center">
+                      <Sparkles className="mr-2 h-5 w-5" />
+                      Get More Credits
+                    </span>
+                  </Link>
+                </div>
+              ) : (
+                <button
+                  className="w-full mt-5 py-3.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium text-base rounded-lg shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+                  onClick={handleGenerate}
+                  disabled={isGenerating || !prompt.trim()}
+                >
+                  {isGenerating ? (
+                    <span className="flex items-center justify-center">
+                      <Loader className="animate-spin mr-2 h-5 w-5" />
+                      Creating your SVG (usually 15-30 seconds)...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center">
+                      <Sparkles className="mr-2 h-5 w-5" />
+                      Generate My SVG Now
+                    </span>
+                  )}
+                </button>
+              )}
+              
+              {/* 20-second progress bar */}
+              {isGenerating && (
+                <div className="w-full h-1 bg-gray-200 rounded mt-3 overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-[#FF7043] to-[#FFA726] progress-animation" />
+                </div>
+              )}
+
+              {/* Local styles for progress animation */}
+              {isGenerating && (
+                <style>{`
+                  @keyframes progressBarFill {
+                    0% { width: 0%; }
+                    100% { width: 100%; }
+                  }
+                  .progress-animation {
+                    animation: progressBarFill 20s linear forwards;
+                  }
+                `}</style>
+              )}
               
               {/* Error message */}
               {(error || limitReachedError) && (
@@ -563,6 +738,27 @@ export default function Hero() {
           </div>
         </div>
       </div>
+      
+      {/* Signup Modal */}
+      <GenerationSignupModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+        generationsUsed={userId ? (userGenerations?.used || 0) : 1}
+        isSoftPrompt={isSoftPrompt}
+        onContinueAsGuest={undefined}
+        isAuthenticated={!!userId}
+        isSubscribed={isSubscribed}
+        preservePrompt={true}
+      />
+      
+      {/* Upgrade Modal for authenticated users who hit their limit */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        triggerDelay={0}
+        generationType="svg"
+        isOutOfCredits={true}
+      />
     </section>
   );
 }

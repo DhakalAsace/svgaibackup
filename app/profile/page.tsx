@@ -11,12 +11,12 @@ export const metadata: Metadata = {
 
 export default async function ProfilePage() {
   const supabase = createServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-  // If no session, redirect to login
-  if (!session) {
+  // If no user or auth error, redirect to login
+  if (!user || authError) {
     redirect("/login");
   }
 
-  return <Profile userId={session.user.id} user={session.user} />;
+  return <Profile userId={user.id} />;
 }

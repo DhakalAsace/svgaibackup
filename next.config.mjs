@@ -96,15 +96,23 @@ const nextConfig = {
     ];
   },
   
+  reactStrictMode: true,
   experimental: {
     // Temporarily disable experimental features that might cause build issues
-    // webpackBuildWorker: true,
-    // parallelServerBuildTraces: true,
+    // serverComponentsExternalPackages: ['sharp'],
     // parallelServerCompiles: true,
     mdxRs: true, // Enable the new Rust-based MDX compiler
   },
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
-  webpack: (config, { isServer }) => config,
+  webpack: (config, { isServer }) => {
+    // Add SVG support
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ['@svgr/webpack'],
+    });
+
+    return config;
+  },
 }
 
 if (userConfig) {
@@ -122,3 +130,13 @@ if (userConfig) {
 
 // Apply MDX configuration
 export default withMDX(nextConfig)
+
+// Enable hydration debugging in development
+if (process.env.NODE_ENV === 'development') {
+  nextConfig.onDemandEntries = {
+    // period (in ms) where the server will keep pages in the buffer
+    maxInactiveAge: 25 * 1000,
+    // number of pages that should be kept simultaneously without being disposed
+    pagesBufferLength: 2,
+  }
+}

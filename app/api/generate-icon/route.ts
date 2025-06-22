@@ -11,6 +11,7 @@ import { createLogger } from '@/lib/logger'
 import { createErrorResponse, createSuccessResponse, successResponse, badRequest, tooManyRequests } from '@/lib/error-handler'
 import { sanitizeAndTrimText } from '@/lib/text-sanitizer'
 import { sanitizeData } from '@/lib/sanitize-utils' // Import shared sanitizer
+import { addWatermarkNode } from '@/lib/svg-watermark'
 
 // Add export config to enable Edge Runtime with 30s timeout instead of 10s
 export const runtime = 'edge';
@@ -56,7 +57,7 @@ const ALLOWED_DOMAINS = [
   'storage.googleapis.com',
 ];
 
-const DAILY_LIMIT = 10;
+const DAILY_LIMIT = 2; // Free tier: 2 generations per day without signup
 
 function createApiError(status: number, message: string) {
   return new Response(JSON.stringify({ error: message }), {
@@ -67,15 +68,16 @@ function createApiError(status: number, message: string) {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabaseUserClient = createRouteHandlerClient({ cookies }) // Pass cookies function directly
+    const cookieStore = cookies();
+    const supabaseUserClient = createRouteHandlerClient({ cookies: () => cookieStore });
 
-    const { data: { session } } = await supabaseUserClient.auth.getSession()
+    const { data: { user }, error: authError } = await supabaseUserClient.auth.getUser()
 
     let identifier: string
     let identifier_type: 'user_id' | 'ip_address'
 
-    if (session?.user?.id) {
-      identifier = session.user.id
+    if (user?.id && !authError) {
+      identifier = user.id
       identifier_type = 'user_id'
       logger.info('Authenticated user request', { userId: identifier })
     } else {
@@ -118,20 +120,19 @@ export async function POST(req: NextRequest) {
       .eq('generation_date', today)
       .single()
 
-    // To address race condition in rate limiting, we'll switch to an atomic function
-    // This function will check and increment in a single transaction
+    // Use the new credit system function
     const { data: limitResult, error: limitRpcError } = await supabaseAdmin.rpc(
-      'check_and_increment_limit',
+      'check_credits_v3',
       {
+        p_user_id: user?.id || null,
         p_identifier: identifier,
         p_identifier_type: identifier_type,
-        p_generation_date: today,
-        p_limit: DAILY_LIMIT
+        p_generation_type: 'icon' // This endpoint generates icons
       }
     );
     
     if (limitRpcError) {
-      logger.error('Error checking generation limit', { error: limitRpcError })
+      logger.error('Error checking credit limit', { error: limitRpcError })
       const { response, status } = createErrorResponse(
         limitRpcError, 
         'Error checking usage limit', 
@@ -141,15 +142,33 @@ export async function POST(req: NextRequest) {
     }
     
     // If no result or limit reached
-    if (!limitResult || !limitResult[0]?.success) {
-      logger.info('Daily limit reached', { identifierType: identifier_type })
-      return tooManyRequests(`Daily generation limit of ${DAILY_LIMIT} reached.`);
+    if (!limitResult || limitResult.length === 0 || !limitResult[0].success) {
+      const remaining = limitResult?.[0]?.remaining_credits || 0;
+      const limitType = limitResult?.[0]?.limit_type || 'unknown';
+      
+      logger.info('Generation limit reached', { 
+        identifierType: identifier_type, 
+        limitType,
+        remaining 
+      });
+      
+      let errorMessage = '';
+      if (limitType === 'anonymous_daily') {
+        errorMessage = "You've used your free generation. Sign up to get 6 free credits!";
+      } else if (limitType === 'lifetime_credits') {
+        errorMessage = "You've used all your free credits. Upgrade to Pro for more!";
+      } else if (limitType === 'monthly_credits') {
+        errorMessage = `You've used all your monthly credits (${limitResult[0].current_count}). Upgrade your plan or wait for next month.`;
+      }
+      
+      return tooManyRequests(errorMessage);
     }
     
-    // Calculate remaining generations
-    const remainingGenerations = limitResult[0].remaining;
+    // Calculate remaining credits and subscription status
+    const remainingCredits = limitResult[0].remaining_credits || 0;
+    const isSubscribed = limitResult[0].is_subscribed || false;
 
-    logger.info('Usage count incremented', { identifierType: identifier_type, remainingGenerations })
+    logger.info('Usage count incremented', { identifierType: identifier_type, remainingCredits })
 
     // 3. Proceed with Icon SVG generation
     const { prompt, style = "icon", size = "1024x1024", aspect_ratio = "1:1" } = await req.json()
@@ -319,120 +338,87 @@ export async function POST(req: NextRequest) {
       
       logger.info('Extracted Icon URL', { url: svgUrl ? svgUrl.substring(0, 50) + '...' : 'None' });
 
-      // Save icon details for logged-in users
+      // Save icon details for logged-in users (best-effort)
       if (identifier_type === 'user_id' && svgUrl) {
         try {
           // Validate URL before fetching to prevent SSRF
           if (!isUrlSafe(svgUrl, ALLOWED_DOMAINS)) {
-            logger.error(`Blocked potentially unsafe URL`, { url: svgUrl });
+            logger.error('Blocked potentially unsafe URL', { url: svgUrl });
             throw new Error('Icon URL failed security validation');
           }
-          
-          // Fetch the actual SVG content from the URL
-          logger.info(`Fetching icon content from validated URL: ${svgUrl.substring(0, 50)}...`);
-          
-          // Add timeout to prevent hanging connections
-          const svgResponse = await fetch(svgUrl, { 
+
+          // Fetch the SVG content (with timeout) so we can sanitize & store it
+          const svgResponse = await fetch(svgUrl, {
             signal: AbortSignal.timeout(10000),
-            headers: {
-              'Accept': 'image/svg+xml, */*'
-            }
+            headers: { Accept: 'image/svg+xml, */*' },
           });
-          
+
           if (!svgResponse.ok) {
-            logger.error(`Failed to fetch icon content: ${svgResponse.status} ${svgResponse.statusText}`);
             throw new Error(`Failed to fetch icon content: ${svgResponse.status}`);
           }
-          
-          const contentType = svgResponse.headers.get('content-type');
-          logger.debug(`Icon response content type: ${contentType}`);
-          
+
           const rawSvgText = await svgResponse.text();
-          
-          // Basic validation
-          if (!rawSvgText || !rawSvgText.trim().toLowerCase().startsWith('<svg')) {
-            logger.error('Fetched content does not appear to be a valid SVG icon', {
-              contentStart: rawSvgText.substring(0, 100),
-              contentLength: rawSvgText.length
-            });
+
+          if (!rawSvgText.trim().toLowerCase().startsWith('<svg')) {
             throw new Error('Fetched content does not appear to be a valid SVG icon.');
           }
-          
-          // Sanitize SVG content to prevent XSS attacks
-          const sanitizedSvgText = sanitizeSvg(rawSvgText);
-          
-          // Sanitize the title derived from the prompt
+
+          // Sanitize & (optionally) watermark the SVG for free users
+          let sanitizedSvgText = sanitizeSvg(rawSvgText);
+          sanitizedSvgText = addWatermarkNode(sanitizedSvgText, isSubscribed);
+
           const svgTitle = sanitizeAndTrimText(prompt, 50) || 'Untitled Icon';
 
-          logger.info(`Inserting sanitized icon content for user`);
-          
-          // For authenticated users, use their own client with RLS protection when possible
-          // In this case we still need admin client since we're storing for their user_id
-          const { error: insertError } = await supabaseAdmin
-            .from('svg_designs')
-            .insert({
-              user_id: identifier,
-              prompt: prompt,
-              svg_content: sanitizedSvgText, // Store sanitized content
-              title: svgTitle, // Add sanitized title
-              tags: ['icon'] // Add icon tag to differentiate from regular SVGs
-            });
-
-          if (insertError) {
-            logger.error("Error saving icon design to database", { error: insertError });
-          } else {
-            logger.info(`Successfully inserted icon design`);
-          }
-        } catch (fetchSaveError) {
-          logger.error("Error processing icon", { error: fetchSaveError });
-          // Continue execution even if saving fails - we still want to return the URL
+          // Store the design (ignore errors – non-critical)
+          await supabaseAdmin.from('svg_designs').insert({
+            user_id: identifier,
+            prompt: prompt,
+            svg_content: sanitizedSvgText,
+            title: svgTitle,
+            tags: ['icon'],
+          });
+        } catch (saveErr) {
+          logger.error('Error saving icon design', {
+            error: saveErr instanceof Error ? saveErr.message : String(saveErr),
+          });
         }
       }
 
-      // Return the URL and remaining generations
-      const result = createSuccessResponse({
-          svgUrl: svgUrl, 
-          remainingGenerations: remainingGenerations, 
-          modelInfo: 'recraft-ai/recraft-20b-svg'
-        });
-      return successResponse(result);
+      // Return the URL and remaining credits
+      return successResponse(
+        createSuccessResponse({
+          svgUrl,
+          remainingGenerations: remainingCredits,
+          creditsUsed: 1,
+          modelInfo: 'recraft-ai/recraft-20b-svg',
+          isSubscribed,
+        }),
+      );
 
     } catch (error) {
-      // SECURITY: Sanitize error objects before logging to prevent token leakage
       const sanitizedError = sanitizeData(error);
-      
-      logger.error("Error generating SVG icon", { error: sanitizedError });
-      
-      // Use genericized error message for production to prevent information leakage
-      const errorMessage = process.env.NODE_ENV === 'production' 
-        ? "Failed to generate SVG icon" 
-        : (error instanceof Error ? error.message : "Unknown error");
-      
-      const { response, status } = createErrorResponse(
-        null, // Never pass the raw error object to prevent token leakage
-        errorMessage,
-        500
-      );
-      
+      logger.error('Error generating SVG icon', { error: sanitizedError });
+      const errorMessage =
+        process.env.NODE_ENV === 'production'
+          ? 'Failed to generate SVG icon'
+          : error instanceof Error
+          ? error.message
+          : 'Unknown error';
+
+      const { response, status } = createErrorResponse(null, errorMessage, 500);
       return Response.json(response, { status });
     }
   } catch (error) {
-    // SECURITY: Sanitize error objects before logging to prevent token leakage
     const sanitizedError = sanitizeData(error);
-    
-    logger.error("Error generating SVG icon", { error: sanitizedError });
-    
-    // Use genericized error message for production to prevent information leakage
-    const errorMessage = process.env.NODE_ENV === 'production' 
-      ? "Failed to generate SVG icon" 
-      : (error instanceof Error ? error.message : "Unknown error");
-    
-    const { response, status } = createErrorResponse(
-      null, // Never pass the raw error object to prevent token leakage
-      errorMessage,
-      500
-    );
-    
+    logger.error('Error generating SVG icon', { error: sanitizedError });
+    const errorMessage =
+      process.env.NODE_ENV === 'production'
+        ? 'Failed to generate SVG icon'
+        : error instanceof Error
+        ? error.message
+        : 'Unknown error';
+
+    const { response, status } = createErrorResponse(null, errorMessage, 500);
     return Response.json(response, { status });
   }
 }

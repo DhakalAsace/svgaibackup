@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async (redirectPath?: string) => {
     try {
-      // Store the redirectPath in localStorage if provided
+      // Store the redirect path in localStorage before OAuth redirect
       if (redirectPath && redirectPath !== '/dashboard') {
         localStorage.setItem('authRedirectPath', redirectPath);
       }

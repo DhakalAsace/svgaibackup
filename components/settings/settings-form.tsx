@@ -110,16 +110,18 @@ export function SettingsForm({ userId }: SettingsFormProps) {
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
     try {
-      // 0. Get the current session and access token
+      // 0. Get the current user and session for access token
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !sessionData?.session?.access_token || !sessionData?.session?.user?.id) {
-        console.error("Error getting session or access token:", sessionError);
+      
+      if (userError || !user || sessionError || !sessionData?.session?.access_token) {
+        console.error("Error getting user or session:", userError || sessionError);
         toast({ title: "Error", description: "Could not verify user session. Please try logging in again.", variant: "destructive" });
         setIsDeleting(false);
         return;
       }
       const accessToken = sessionData.session.access_token;
-      const currentUserId = sessionData.session.user.id; // Get user ID for client-side deletions
+      const currentUserId = user.id; // Get user ID from authenticated user
 
       // 1. Delete user's SVG designs (using ID from session)
       const { error: deleteDesignsError } = await supabase

@@ -9,6 +9,63 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          id: string
+          username: string | null
+          email: string
+          full_name: string | null
+          avatar_url: string | null
+          subscription_tier: string | null
+          subscription_status: string | null
+          lifetime_credits_granted: number
+          lifetime_credits_used: number
+          monthly_credits: number
+          monthly_credits_used: number
+          credits_reset_at: string
+          subscription_interval: string
+          stripe_customer_id: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          username?: string | null
+          email: string
+          full_name?: string | null
+          avatar_url?: string | null
+          subscription_tier?: string | null
+          subscription_status?: string | null
+          lifetime_credits_granted?: number
+          lifetime_credits_used?: number
+          monthly_credits?: number
+          monthly_credits_used?: number
+          credits_reset_at?: string
+          subscription_interval?: string
+          stripe_customer_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          username?: string | null
+          email?: string
+          full_name?: string | null
+          avatar_url?: string | null
+          subscription_tier?: string | null
+          subscription_status?: string | null
+          lifetime_credits_granted?: number
+          lifetime_credits_used?: number
+          monthly_credits?: number
+          monthly_credits_used?: number
+          credits_reset_at?: string
+          subscription_interval?: string
+          stripe_customer_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       svg_designs: {
         Row: {
           created_at: string
