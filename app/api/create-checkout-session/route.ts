@@ -2,22 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import Stripe from 'stripe';
+import { STRIPE_CONFIG } from '@/lib/stripe-config';
+import { logPaymentEvent } from '@/lib/payment-audit';
+import { rateLimiters } from '@/lib/rate-limit';
+import { createCheckoutSessionSchema, validateRequestBody } from '@/lib/validation-schemas';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-05-28.basil',
 });
 
-// Subscription price IDs (Stripe):
-//  Monthly Starter – $12   -> price_1RW8DSIe6gMo8ijpNM67JVAX (recurring monthly)
-//  Annual Starter  – $119  -> price_1RcNYUIe6gMo8ijpRtzAFayx (recurring annual)
-//  Monthly Pro     – $29   -> price_1RcNYcIe6gMo8ijpfeKA0bb4 (recurring monthly)
-//  Annual Pro      – $289  -> price_1RcNeTIe6gMo8ijpB0qJ85Cy (recurring yearly)
-  const PRICE_IDS = {
-    starter_monthly: 'price_1RW8DSIe6gMo8ijpNM67JVAX', // recurring monthly
-    starter_annual:  'price_1RcNYUIe6gMo8ijpRtzAFayx', // recurring annual payment
-    pro_monthly:     'price_1RcNYcIe6gMo8ijpfeKA0bb4', // recurring monthly
-    pro_annual:      'price_1RcNeTIe6gMo8ijpB0qJ85Cy', // recurring yearly
-  };
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,16 +22,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { tier, interval } = await req.json(); // Add interval parameter
-
-    // Validate inputs
-    if (!tier || !['starter', 'pro'].includes(tier)) {
-      return NextResponse.json({ error: 'Invalid tier' }, { status: 400 });
+    // Rate limiting check
+    const identifier = user.id;
+    const { success } = await rateLimiters.checkout.limit(identifier);
+    
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Too many requests, please try again later' },
+        { status: 429 }
+      );
     }
 
-    if (!interval || !['monthly', 'annual'].includes(interval)) {
-      return NextResponse.json({ error: 'Invalid interval' }, { status: 400 });
+    // Validate request body
+    const { data: validatedData, error: validationError } = await validateRequestBody(req, createCheckoutSessionSchema);
+    
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
     }
+    
+    const { tier, interval } = validatedData!;
 
     // Get user profile to check for existing Stripe customer
     const { data: profile } = await supabase
@@ -83,13 +85,15 @@ export async function POST(req: NextRequest) {
 
     // Get the correct price ID
     const priceKey = `${tier}_${interval}`;
-    const priceId = PRICE_IDS[priceKey as keyof typeof PRICE_IDS];
+    const priceId = STRIPE_CONFIG.prices[priceKey as keyof typeof STRIPE_CONFIG.prices];
 
     if (!priceId) {
       return NextResponse.json({ error: 'Invalid pricing selection' }, { status: 400 });
     }
 
-    // Create checkout session (always subscription)
+    // Create checkout session with idempotency key to prevent duplicate charges
+    const idempotencyKey = `checkout_${user.id}_${tier}_${interval}_${Date.now()}`;
+    
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       payment_method_types: ['card'],
@@ -107,7 +111,24 @@ export async function POST(req: NextRequest) {
         tier,
         interval,
       },
+    }, {
+      idempotencyKey,
     });
+
+    // Log payment event
+    try {
+      await logPaymentEvent(
+        supabase,
+        user.id,
+        'checkout_session_created',
+        { session_id: session.id, tier, interval },
+        undefined,
+        req
+      );
+    } catch (auditError) {
+      console.error('Payment audit logging failed:', auditError);
+      // Do not throw - audit failures should not block checkout
+    }
 
     return NextResponse.json({ url: session.url });
   } catch (error) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense, lazy } from "react";
+import { useState, useEffect, Suspense, lazy, useCallback } from "react";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/database.types';
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import Link from "next/link";
 import { toast } from "@/components/ui/use-toast";
 import { useCredits } from "@/contexts/CreditContext";
 import { ManageSubscriptionButton } from "@/components/manage-subscription-button";
+import { SafeSvgDisplay } from "@/components/safe-svg-display";
 
 // Dynamically import heavy components
 const Image = lazy(() => import("next/image"));
@@ -53,8 +54,6 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [svgContents, setSvgContents] = useState<Record<string, string>>({});
-  const [svgDataUrls, setSvgDataUrls] = useState<Record<string, string>>({});
-  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
   const [userProfile, setUserProfile] = useState(initialUserProfile);
   const router = useRouter();
   const { creditInfo, refreshCredits } = useCredits();
@@ -62,104 +61,19 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
   // Create the client inside the component
   const supabase = createClientComponentClient<Database>();
 
-  // Preload next page of SVGs
+
+
+  // Paginate SVGs
   useEffect(() => {
     const end = currentPage * PAGE_SIZE;
     const start = end - PAGE_SIZE;
     const pageSvgs = svgs.slice(start, end);
     setDisplayedSvgs(pageSvgs);
-    
-    // Prefetch next page SVGs
-    const nextPageSvgs = svgs.slice(end, end + PAGE_SIZE);
-    if (nextPageSvgs.length > 0) {
-      // Prefetch SVG data for next page
-      nextPageSvgs.forEach(svg => {
-        // Use requestIdleCallback if available, otherwise setTimeout
-        if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-          (window as any).requestIdleCallback(() => {
-            fetchSvgContent(svg);
-          });
-        } else {
-          setTimeout(() => fetchSvgContent(svg), 200);
-        }
-      });
-    }
   }, [svgs, currentPage]);
 
   // Load more SVGs
   const loadMore = () => {
     setCurrentPage(prev => prev + 1);
-  };
-
-  // Convert SVG content to data URL with optimization
-  const svgToDataUrl = (svgContent: string): string => {
-    try {
-      // Skip if empty content
-      if (!svgContent || svgContent.trim() === '') return '';
-      
-      // Optimize the SVG before converting (remove comments, unnecessary attributes)
-      let cleanSvg = svgContent.trim()
-        .replace(/<!--[\s\S]*?-->/g, '') // Remove comments
-        .replace(/\s+/g, ' ') // Consolidate whitespace
-        .replace(/>\s+</g, '><'); // Remove whitespace between tags
-        
-      // Convert to base64 data URL
-      const base64 = btoa(cleanSvg);
-      return `data:image/svg+xml;base64,${base64}`;
-    } catch (error) {
-      console.error("Error converting SVG to data URL:", error);
-      return "";
-    }
-  };
-
-  // Function to fetch SVG content for a single design with performance optimizations
-  const fetchSvgContent = async (svg: SvgDesign) => {
-    if (svgDataUrls[svg.id]) return; // Already converted to data URL
-    
-    setLoadingStates(prev => ({
-      ...prev,
-      [svg.id]: true
-    }));
-    
-    try {
-      // Store original SVG content
-      setSvgContents(prev => ({
-        ...prev,
-        [svg.id]: svg.svg_content
-      }));
-      
-      // Use a web worker or defer to next frame for heavy operations
-      const processInNextFrame = (callback: () => void) => {
-        if (typeof window !== 'undefined') {
-          window.requestAnimationFrame(() => {
-            window.requestAnimationFrame(callback);
-          });
-        } else {
-          callback();
-        }
-      };
-      
-      processInNextFrame(() => {
-        // Convert to data URL for efficient rendering
-        const dataUrl = svgToDataUrl(svg.svg_content);
-        setSvgDataUrls(prev => ({
-          ...prev,
-          [svg.id]: dataUrl
-        }));
-        
-        // Update loading state
-        setLoadingStates(prev => ({
-          ...prev,
-          [svg.id]: false
-        }));
-      });
-    } catch (error) {
-      console.error(`Error processing SVG for ${svg.id}:`, error);
-      setLoadingStates(prev => ({
-        ...prev,
-        [svg.id]: false
-      }));
-    }
   };
 
   // Function to download SVG
@@ -246,7 +160,7 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
   };
 
   // Function to refresh designs (can be called after navigation back to dashboard)
-  const refreshDesigns = async () => {
+  const refreshDesigns = useCallback(async () => {
     if (!userId) return;
     
     try {
@@ -258,32 +172,13 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
 
       if (error) throw error;
       setSvgs(data || []);
-      
-      // Prefetch SVG content for each design
-      data?.forEach(svg => {
-        fetchSvgContent(svg);
-      });
     } catch (error) {
       console.error("Error fetching designs:", error);
     }
-  };
+  }, [userId, supabase]);
 
   // Use effect to refetch designs if the session/user changes or when user navigates back to the page
   useEffect(() => {
-    // Initialize loading states for all SVGs
-    if (initialSvgs.length > 0) {
-      const initialLoadingStates: Record<string, boolean> = {};
-      initialSvgs.forEach(svg => {
-        initialLoadingStates[svg.id] = true;
-      });
-      setLoadingStates(initialLoadingStates);
-      
-      // Immediately start fetching SVG content for all designs
-      initialSvgs.forEach(svg => {
-        fetchSvgContent(svg);
-      });
-    }
-    
     // Initial fetch when component mounts
     refreshDesigns();
 
@@ -299,7 +194,7 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
     return () => {
       window.removeEventListener('focus', handleFocus);
     };
-  }, [userId]);
+  }, [userId, refreshDesigns]);
 
   // Set up real-time subscription for profile updates
   useEffect(() => {
@@ -587,37 +482,20 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
                 </CardHeader>
                 <CardContent className="p-3">
                   <div className="aspect-square bg-muted/20 rounded-md flex items-center justify-center overflow-hidden">
-                    {loadingStates[svg.id] ? (
-                      <div className="flex flex-col items-center justify-center text-gray-500 gap-2">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        <p className="text-xs">Loading SVG...</p>
-                      </div>
-                    ) : svgDataUrls[svg.id] ? (
+                    {svg.svg_content ? (
                       <Suspense fallback={<div className="flex items-center justify-center w-full h-full"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
                         <div className="w-full h-full p-3 flex items-center justify-center">
-                          <img 
-                            src={svgDataUrls[svg.id]}
+                          <SafeSvgDisplay 
+                            svgContent={svg.svg_content}
                             alt={svg.title}
-                            className="max-w-full max-h-full object-contain"
-                            loading="lazy"
-                            decoding="async"
-                            width={200}
-                            height={200}
+                            className="w-full h-full max-w-[200px] max-h-[200px] [&>svg]:w-full [&>svg]:h-full [&>svg]:object-contain"
                           />
                         </div>
                       </Suspense>
                     ) : (
                       <div className="flex flex-col items-center justify-center text-gray-500 gap-2">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        <p className="text-xs">Preparing your design...</p>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          onClick={() => fetchSvgContent(svg)}
-                          className="mt-1"
-                        >
-                          Try again
-                        </Button>
+                        <p className="text-xs">Loading SVG...</p>
                       </div>
                     )}
                   </div>

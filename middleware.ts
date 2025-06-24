@@ -38,6 +38,18 @@ export async function middleware(request: NextRequest) {
     return response;
   }
   
+  // Add security headers for payment endpoints
+  if (pathname.startsWith('/api/webhooks/stripe') || 
+      pathname.startsWith('/api/create-checkout-session') || 
+      pathname.startsWith('/api/create-portal-session')) {
+    const response = NextResponse.next();
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('X-Frame-Options', 'DENY');
+    response.headers.set('X-XSS-Protection', '1; mode=block');
+    response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    return response;
+  }
+  
   // Skip middleware for auth callback endpoint - this is critical
   if (publicPaths.some(path => pathname.startsWith(path))) {
     console.log(`[Middleware] Bypassing middleware for public path: ${pathname}`);

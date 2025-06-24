@@ -125,7 +125,7 @@ export function UserMenu() {
       clearInterval(intervalId);
       clearTimeout(timeoutId);
     };
-  }, [user?.id, fetchSubscriptionStatus, supabase]);
+  }, [user?.id, fetchSubscriptionStatus, supabase, creditInfo]);
   
   // Force refresh when dropdown opens
   useEffect(() => {

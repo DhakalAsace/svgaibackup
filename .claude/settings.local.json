@@ -29,7 +29,22 @@
       "Bash(npm run typecheck:*)",
       "Bash(npm run:*)",
       "Bash(rm:*)",
-      "mcp__supabase__search_docs"
+      "mcp__supabase__search_docs",
+      "Bash(touch:*)",
+      "Bash(for f in *.test.ts; do mv \"$f\" \"${f%.test.ts}.test.template.ts\"; done)",
+      "Bash(npm audit:*)",
+      "Bash(npm view:*)",
+      "Bash(task-master list:*)",
+      "Bash(task-master parse-prd:*)",
+      "Bash(task-master analyze-complexity:*)",
+      "Bash(task-master expand:*)",
+      "Bash(cp:*)",
+      "Bash(task-master generate:*)",
+      "Bash(task-master show:*)",
+      "Bash(task-master set-status:*)",
+      "Bash(curl:*)",
+      "Bash(task-master:*)",
+      "mcp__supabase__get_advisors"
     ]
   },
   "enableAllProjectMcpServers": true,

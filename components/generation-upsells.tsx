@@ -113,23 +113,23 @@ export function GenerationUpsell({
 export function GenerationLoadingMessage({ modelType }: { modelType: 'svg' | 'icon' }) {
   const [message, setMessage] = useState('');
   
-  const messages = {
-    svg: [
-      "🏆 Creating with #1 rated AI design technology...",
-      "✨ Generating with highest quality model...",
-      "🎯 72% better quality than alternatives...",
-      "📐 Creating infinitely scalable graphics...",
-    ],
-    icon: [
-      "⚡ Crafting with 20 billion parameter AI...",
-      "🎨 Designed specifically for icons...",
-      "✓ Creating perfectly scalable vectors...",
-      "💎 Professional icon generation in progress...",
-    ]
-  };
-  
   // Select a random message on client side only
   useEffect(() => {
+    const messages = {
+      svg: [
+        "🏆 Creating with #1 rated AI design technology...",
+        "✨ Generating with highest quality model...",
+        "🎯 72% better quality than alternatives...",
+        "📐 Creating infinitely scalable graphics...",
+      ],
+      icon: [
+        "⚡ Crafting with 20 billion parameter AI...",
+        "🎨 Designed specifically for icons...",
+        "✓ Creating perfectly scalable vectors...",
+        "💎 Professional icon generation in progress...",
+      ]
+    };
+    
     const randomMessage = messages[modelType][Math.floor(Math.random() * messages[modelType].length)];
     setMessage(randomMessage);
   }, [modelType]);

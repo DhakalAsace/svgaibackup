@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextRequest } from 'next/server'
+import { generateIconSchema, validateRequestBody } from '@/lib/validation-schemas'
 
 // Import security utilities
 import { sanitizeSvg } from '@/lib/svg-sanitizer'
@@ -170,12 +171,16 @@ export async function POST(req: NextRequest) {
 
     logger.info('Usage count incremented', { identifierType: identifier_type, remainingCredits })
 
-    // 3. Proceed with Icon SVG generation
-    const { prompt, style = "icon", size = "1024x1024", aspect_ratio = "1:1" } = await req.json()
-
-    if (!prompt) {
-      return badRequest("Prompt is required");
+    // 3. Validate request body
+    const { data: validatedData, error: validationError } = await validateRequestBody(req, generateIconSchema);
+    
+    if (validationError) {
+      logger.warn('Invalid request body', { error: validationError });
+      return badRequest(validationError);
     }
+    
+    // 4. Proceed with Icon SVG generation
+    const { prompt, style = "icon", size = "1024x1024", aspect_ratio = "1:1" } = validatedData!;
 
     // Initialize Replicate client with validated API token
     // SECURITY: Never directly embed environment variables in objects

@@ -8,8 +8,8 @@ import dynamic from 'next/dynamic'
 // React component you want, including components from
 // other libraries.
 
-export function useMDXComponents(components: MDXComponents): MDXComponents {
-  return {
+// Export the components directly for server components
+export const mdxComponentsMap: MDXComponents = {
     // Allows customizing built-in components, e.g. to add styling.
     h1: ({ children }) => <h1 className="text-4xl font-bold mt-8 mb-4">{children}</h1>,
     h2: ({ children }) => <h2 className="text-3xl font-bold mt-8 mb-4">{children}</h2>,
@@ -83,6 +83,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </strong>
     ),
+  }
+
+export function useMDXComponents(components: MDXComponents): MDXComponents {
+  return {
+    ...mdxComponentsMap,
     ...components,
   }
 }

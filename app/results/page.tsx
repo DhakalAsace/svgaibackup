@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, Suspense, useRef } from "react"
+import { useEffect, useState, Suspense, useRef, useCallback } from "react"
 import { useSearchParams } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Download, ArrowLeft, CheckCircle, XCircle, Loader2, Info, AlertTriangle } from "lucide-react"
@@ -67,7 +67,7 @@ function ResultsContent() {
   };
 
   // Fetch the SVG content from the URL
-  const fetchSvgContent = async (url: string) => {
+  const fetchSvgContent = useCallback(async (url: string) => {
     try {
       setIsLoading(true)
       setError(null); // Clear previous errors
@@ -132,7 +132,7 @@ function ResultsContent() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, []);
 
   useEffect(() => {
     setIsClient(true)
@@ -180,7 +180,7 @@ function ResultsContent() {
         setIsLoading(false);
     }
 
-  }, [searchParams]) // Re-run if searchParams change (e.g., prompt, remaining)
+  }, [searchParams, fetchSvgContent]) // Re-run if searchParams change (e.g., prompt, remaining)
   
   // Fetch user profile for subscription status
   useEffect(() => {
@@ -224,7 +224,7 @@ function ResultsContent() {
     };
     
     fetchUserProfile();
-  }, [supabase]);
+  }, [supabase, showSignupModal]);
 
   // SECURITY: Ensure SVG is sanitized before download
   const downloadSvg = () => {

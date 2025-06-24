@@ -85,16 +85,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        {/* Preload Montserrat font for LCP optimization */}
-        <link
-          rel="preload"
-          as="style"
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
-        />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
-        />
+        {/* Font loading moved to metadata */}
         
         {/* Using Next.js metadata API for icons, but adding explicit link tags for maximum compatibility */}
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

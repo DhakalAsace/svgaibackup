@@ -13,8 +13,9 @@ export async function generateStaticParams() {
 }
 
 // Generate metadata for the blog post
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = getBlogPostBySlug(params.slug)
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getBlogPostBySlug(slug)
   
   if (!post) {
     return {
@@ -34,11 +35,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  console.log(`[Single Slug Blog Page] Rendering blog post for slug: ${params.slug}`);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  console.log(`[Single Slug Blog Page] Rendering blog post for slug: ${slug}`);
   
   // Check if this is a nested slug that should be handled by [...slug]
-  if (params.slug.includes('/')) {
+  if (slug.includes('/')) {
     console.log(`[Single Slug Blog Page] Redirecting nested slug to [...slug] handler`);
     // This shouldn't happen with proper routing, but just in case
     notFound();
@@ -54,11 +56,11 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     'best-ai-icon-generators-compared'
   ];
   
-  const isCustomPost = customPosts.includes(params.slug);
+  const isCustomPost = customPosts.includes(slug);
   let post = null;
   
   if (isCustomPost) {
-    console.log(`[Single Slug Blog Page] Handling custom post: ${params.slug}`);
+    console.log(`[Single Slug Blog Page] Handling custom post: ${slug}`);
     // This is a custom page-based post
     // For these posts, we should've been redirected to the specific page already
     // by Next.js routing, but we'll handle it here just in case
@@ -66,10 +68,10 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     return null;
   } else {
     // Try to get post from MDX
-    post = getBlogPostBySlug(params.slug);
+    post = getBlogPostBySlug(slug);
     
     if (!post) {
-      console.log(`[Single Slug Blog Page] Post not found for slug: ${params.slug}`);
+      console.log(`[Single Slug Blog Page] Post not found for slug: ${slug}`);
       notFound();
       return null;
     }

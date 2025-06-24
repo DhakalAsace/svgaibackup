@@ -12,6 +12,7 @@ import { createErrorResponse, createSuccessResponse, successResponse, badRequest
 import { sanitizeAndTrimText } from '@/lib/text-sanitizer'
 import { sanitizeData } from '@/lib/sanitize-utils'
 import { addWatermarkNode } from '@/lib/svg-watermark'
+import { generateSvgSchema, validateRequestBody } from '@/lib/validation-schemas'
 
 // Add export config to enable Edge Runtime with 30s timeout instead of 10s
 export const runtime = 'edge';
@@ -154,12 +155,16 @@ export async function POST(req: NextRequest) {
 
     logger.info('Usage count incremented', { identifierType: identifier_type, remainingCredits })
 
-    // 3. Proceed with SVG generation
-    const { prompt, style = "any", size = "1024x1024", aspect_ratio = "Not set" } = await req.json()
-
-    if (!prompt) {
-      return badRequest("Prompt is required");
+    // 3. Validate request body
+    const { data: validatedData, error: validationError } = await validateRequestBody(req, generateSvgSchema);
+    
+    if (validationError) {
+      logger.warn('Invalid request body', { error: validationError });
+      return badRequest(validationError);
     }
+    
+    // 4. Proceed with SVG generation
+    const { prompt, style = "any", size = "1024x1024", aspect_ratio = "Not set" } = validatedData!;
 
     // Initialize Replicate client with validated API token
     // SECURITY: Never directly embed environment variables in objects

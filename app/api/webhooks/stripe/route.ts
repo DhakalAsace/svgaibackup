@@ -2,6 +2,10 @@ import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
+import { WebhookSecurity } from '@/lib/webhook-security';
+import { PRICE_TO_TIER } from '@/lib/stripe-config';
+import { logPaymentEvent } from '@/lib/payment-audit';
+import { rateLimiters } from '@/lib/rate-limit';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-05-28.basil',
@@ -19,15 +23,12 @@ const supabaseAdmin = createClient(
 );
 
 // Webhook secret from Stripe dashboard
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// Map price IDs to tiers and credits
-const PRICE_TO_TIER: Record<string, { tier: string; credits: number; interval: string }> = {
-  'price_1RW8DSIe6gMo8ijpNM67JVAX': { tier: 'starter', credits: 100, interval: 'monthly' }, // Starter $12/month
-  'price_1RcNYUIe6gMo8ijpRtzAFayx': { tier: 'starter', credits: 100, interval: 'annual' }, // Starter $119/year
-  'price_1RcNYcIe6gMo8ijpfeKA0bb4': { tier: 'pro', credits: 350, interval: 'monthly' }, // Pro $29/month
-  'price_1RcNeTIe6gMo8ijpB0qJ85Cy': { tier: 'pro', credits: 350, interval: 'annual' }, // Pro $289/year
-};
+// Validate webhook secret is configured
+if (!endpointSecret) {
+  console.error('STRIPE_WEBHOOK_SECRET is not configured');
+}
 
 // Default tier credits as fallback
 const TIER_CREDITS: Record<string, number> = {
@@ -104,6 +105,24 @@ async function findOrCreateUserFromCustomer(customerId: string): Promise<string 
 }
 
 export async function POST(req: NextRequest) {
+  // Check if webhook secret is configured
+  if (!endpointSecret) {
+    console.error('Webhook secret not configured');
+    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+  }
+
+  // Rate limiting check using IP address
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : req.headers.get('x-real-ip') || 'unknown';
+  const { success } = await rateLimiters.webhook.limit(ip);
+  
+  if (!success) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429 }
+    );
+  }
+
   const body = await req.text();
   const headersList = await headers();
   const sig = headersList.get('stripe-signature');
@@ -123,6 +142,35 @@ export async function POST(req: NextRequest) {
   }
 
   console.log(`Processing webhook event: ${event.type}`);
+
+  // Validate timestamp
+  if (!WebhookSecurity.validateTimestamp(event.created)) {
+    console.error('Webhook timestamp too old:', event.created);
+    return NextResponse.json({ error: 'Event too old' }, { status: 400 });
+  }
+  
+  // Check for duplicate processing
+  const idempotencyKey = WebhookSecurity.generateIdempotencyKey(event.id);
+  const { data: existingEvent } = await supabaseAdmin
+    .from('webhook_events')
+    .select('id')
+    .eq('stripe_event_id', event.id)
+    .single();
+    
+  if (existingEvent) {
+    console.log('Webhook already processed:', event.id);
+    return NextResponse.json({ received: true });
+  }
+  
+  // Store webhook event
+  await supabaseAdmin
+    .from('webhook_events')
+    .insert({
+      stripe_event_id: event.id,
+      event_type: event.type,
+      idempotency_key: idempotencyKey,
+      event_data: event
+    });
 
   try {
     switch (event.type) {
@@ -187,6 +235,22 @@ export async function POST(req: NextRequest) {
 
         if (subError) throw subError;
         
+        // Log payment event
+        await logPaymentEvent(
+          supabaseAdmin,
+          userId,
+          'checkout_completed',
+          { 
+            session_id: session.id,
+            subscription_id: subscription.id,
+            tier,
+            interval,
+            credits
+          },
+          event.id,
+          req
+        );
+        
         console.log(`Checkout completed for user ${userId}, tier: ${tier}`);
         break;
       }
@@ -243,6 +307,22 @@ export async function POST(req: NextRequest) {
           .eq('id', userId);
 
         if (profileError) throw profileError;
+        
+        // Log payment event
+        await logPaymentEvent(
+          supabaseAdmin,
+          userId,
+          event.type,
+          { 
+            subscription_id: subscription.id,
+            tier,
+            interval,
+            status: subscription.status,
+            credits
+          },
+          event.id,
+          req
+        );
         
         console.log(`Subscription ${event.type} for user ${userId}, tier: ${tier}, status: ${subscription.status}`);
         break;

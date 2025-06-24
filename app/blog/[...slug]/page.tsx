@@ -4,8 +4,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { compileMDX } from 'next-mdx-remote/rsc';
-import { useMDXComponents } from '@/mdx-components';
 import { BlogHeaderImage } from '@/components/client-wrappers';
+import { mdxComponentsMap } from '@/mdx-components';
 
 // Generate static params for all blog posts, including nested paths
 export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
@@ -16,8 +16,8 @@ export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
 }
 
 // Generate metadata for the blog post using the slug array
-export async function generateMetadata({ params }: { params: { slug: string[] } }): Promise<Metadata> {
-  const { slug } = params;
+export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }): Promise<Metadata> {
+  const { slug } = await params;
   const fullSlug = slug.join('/');
   const post = getBlogPostBySlug(fullSlug);
 
@@ -41,8 +41,8 @@ export async function generateMetadata({ params }: { params: { slug: string[] } 
 }
 
 // Page component accepting the slug array
-export default async function BlogPostPage({ params }: { params: { slug: string[] } }) {
-  const { slug } = params;
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string[] }> }) {
+  const { slug } = await params;
   const fullSlug = slug.join('/');
   
   // Filter out requests for SVG files
@@ -59,7 +59,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string[
   // Compile MDX content with custom components
   const { content } = await compileMDX({
     source: post.content!,
-    components: useMDXComponents({}),
+    components: mdxComponentsMap,
     options: {
       parseFrontmatter: true,
       mdxOptions: {

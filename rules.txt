@@ -1,4 +1,4 @@
-Title: Senior Engineer Task Execution Rule
+Title: Senior Engineer Task Execution Rules
 
 Applies to: All Tasks
 
