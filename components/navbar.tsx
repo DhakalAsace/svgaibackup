@@ -20,6 +20,11 @@ const navigationLinks = [
       key: "icon-generator"
     },
     {
+      href: "/animate",
+      label: "Animate",
+      key: "animate"
+    },
+    {
       href: "/pricing",
       label: "Pricing",
       key: "pricing"
@@ -38,6 +43,11 @@ const navigationLinks = [
       href: "/#how-it-works",
       label: "How It Works",
       key: "how-it-works"
+    },
+    {
+      href: "/learn",
+      label: "Learn",
+      key: "learn"
     },
     {
       href: "/blog",

@@ -1,12 +1,31 @@
-import { Zap, Download, Palette, Code, Layers, Share2, Lock, Sparkles } from "lucide-react"
+import { Zap, Download, Palette, Code, Layers, Share2, Lock, Sparkles, Play } from "lucide-react"
+import Link from "next/link"
+
+interface Feature {
+  icon: React.ReactNode
+  title: string
+  description: string
+  link?: string
+  linkText?: string
+  isNew?: boolean
+}
 
 export default function Features() {
-  const features = [
+  const features: Feature[] = [
     {
       icon: <Zap className="h-6 w-6 text-[#0084FF]" />,
       title: "Instant SVG Generation",
       description:
         "Our AI SVG generator transforms text descriptions into professional vector graphics in seconds with advanced AI technology.",
+    },
+    {
+      icon: <Play className="h-6 w-6 text-[#0084FF]" />,
+      title: "Free SVG Animation Tool",
+      description:
+        "Transform static SVGs into dynamic animations with our visual editor. No coding required!",
+      link: "/animate",
+      linkText: "Try Animation Tool",
+      isNew: true,
     },
     {
       icon: <Download className="h-6 w-6 text-[#0084FF]" />,
@@ -70,13 +89,29 @@ export default function Features() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col"
+              className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col relative"
             >
+              {feature.isNew && (
+                <span className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  NEW
+                </span>
+              )}
               <div className="rounded-full bg-[#0084FF]/10 w-12 h-12 flex items-center justify-center mb-4">
                 {feature.icon}
               </div>
               <h3 className="text-xl font-semibold text-[#2D3436] mb-2">{feature.title}</h3>
-              <p className="text-[#2D3436]/70">{feature.description}</p>
+              <p className="text-[#2D3436]/70 flex-grow">{feature.description}</p>
+              {feature.link && (
+                <Link
+                  href={feature.link}
+                  className="mt-4 inline-flex items-center text-[#0084FF] hover:text-[#0066CC] font-medium text-sm"
+                >
+                  {feature.linkText}
+                  <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              )}
             </div>
           ))}
         </div>
