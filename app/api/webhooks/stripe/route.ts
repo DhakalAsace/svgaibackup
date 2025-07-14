@@ -6,9 +6,12 @@ import { WebhookSecurity } from '@/lib/webhook-security';
 import { PRICE_TO_TIER } from '@/lib/stripe-config';
 import { logPaymentEvent } from '@/lib/payment-audit';
 import { rateLimiters } from '@/lib/rate-limit';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('stripe-webhook');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-05-28.basil',
+  apiVersion: '2025-06-30.basil',
 });
 
 const supabaseAdmin = createClient(
@@ -55,7 +58,7 @@ function getTierInfo(subscription: Stripe.Subscription): { tier: string; credits
   if (amount === 2900 || amount === 28900) return { tier: 'pro', credits: 350, interval };
   
   // Default to starter if unclear
-  console.warn(`Unknown price configuration for subscription ${subscription.id}`);
+  logger.warn(`Unknown price configuration for subscription ${subscription.id}`);
   return { tier: 'starter', credits: 100, interval: 'monthly' };
 }
 

@@ -1,0 +1,145 @@
+{
+  "redirects": [
+    {
+      "source": "/tools/:path*",
+      "destination": "/convert/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/converter/:path*",
+      "destination": "/convert/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/converters/:path*",
+      "destination": "/convert/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/svg-gallery",
+      "destination": "/gallery",
+      "permanent": true
+    },
+    {
+      "source": "/svg-gallery/:theme",
+      "destination": "/gallery/:theme",
+      "permanent": true
+    },
+    {
+      "source": "/galleries/:theme",
+      "destination": "/gallery/:theme",
+      "permanent": true
+    },
+    {
+      "source": "/docs/:path*",
+      "destination": "/learn/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials/:path*",
+      "destination": "/learn/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/guide/:path*",
+      "destination": "/learn/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/svg-editor",
+      "destination": "/tools/svg-editor",
+      "permanent": true
+    },
+    {
+      "source": "/svg-optimizer",
+      "destination": "/tools/svg-optimizer",
+      "permanent": true
+    },
+    {
+      "source": "/svg-animation",
+      "destination": "/animate",
+      "permanent": true
+    },
+    {
+      "source": "/animation-tool",
+      "destination": "/animate",
+      "permanent": true
+    },
+    {
+      "source": "/icon-generator",
+      "destination": "/ai-icon-generator",
+      "permanent": true
+    },
+    {
+      "source": "/generate-icon",
+      "destination": "/ai-icon-generator",
+      "permanent": true
+    },
+    {
+      "source": "/ai-icons",
+      "destination": "/ai-icon-generator",
+      "permanent": true
+    },
+    {
+      "source": "/convert/svg-conveter",
+      "destination": "/convert/svg-converter",
+      "permanent": true
+    },
+    {
+      "source": "/convert/svg-convertor",
+      "destination": "/convert/svg-converter",
+      "permanent": true
+    },
+    {
+      "source": "/svg-converter",
+      "destination": "/convert/svg-converter",
+      "permanent": true
+    },
+    {
+      "source": "/svg/converter",
+      "destination": "/convert/svg-converter",
+      "permanent": true
+    },
+    {
+      "source": "/svg/convert",
+      "destination": "/convert/svg-converter",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    }
+  ],
+  "functions": {
+    "app/not-found.tsx": {
+      "maxDuration": 10
+    },
+    "app/gone/page.tsx": {
+      "maxDuration": 10
+    }
+  }
+}

@@ -1,0 +1,1071 @@
+---
+title: "SVG CSS Animation: Transform Static Graphics Into Dynamic Experiences"
+date: "2025-06-25"
+description: "Master CSS animations for SVG elements. Learn keyframes, transforms, transitions, and advanced techniques for creating smooth, performant SVG animations."
+tags: ["svg css animation", "css svg animation", "animate svg css", "svg keyframes", "svg transitions"]
+author: "SVGAI Team"
+image: "/learn/svg-css-animation-hero.svg"
+featured: true
+---
+
+import { AnimationTutorial } from '@/components/keyword-components'
+import { TopLearnCTA, ValuePropCTA, EndActionCTA, ToolRecommendations, TryItYourselfSection, InlineToolLink, AnimationCTA, RelatedGuides } from '@/components/learn/learn-cta-components'
+import { FileImage, Code2, Palette, Video } from 'lucide-react'
+
+## Introduction: The Power of CSS-Animated SVGs
+
+CSS animations have revolutionized how we bring SVG graphics to life on the web. By combining the scalability and flexibility of SVG with the power of CSS animations, developers and designers can create stunning visual effects that are both performant and accessible across all modern browsers.
+
+This comprehensive guide explores every aspect of SVG CSS animation, from basic transitions to complex keyframe sequences. You'll learn how to create smooth, hardware-accelerated animations that enhance user experience without requiring JavaScript, making your animations more maintainable and performant.
+
+Whether you're animating icons, creating loading spinners, or building interactive illustrations, this guide provides the knowledge and techniques you need to master SVG CSS animation.
+
+<AnimationTutorial
+  title="Rotating SVG Icon Animation"
+  description="Learn how to create a smooth rotating animation for SVG icons using CSS keyframes."
+  svgCode={`<svg viewBox="0 0 100 100" class="rotating-icon">
+  <path d="M50,10 L70,40 L50,30 L30,40 Z" fill="#3498db"/>
+  <circle cx="50" cy="50" r="40" fill="none" stroke="#3498db" stroke-width="2"/>
+</svg>`}
+  cssCode={`.rotating-icon {
+  width: 100px;
+  height: 100px;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}`}
+  tips={[
+    "Use 'transform-origin: center' for centered rotation",
+    "Linear timing function creates smooth continuous rotation",
+    "Infinite iteration keeps the animation running",
+    "Consider using 'will-change: transform' for better performance"
+  ]}
+/>
+
+<AnimationCTA />
+
+## Understanding SVG and CSS Animation Fundamentals
+
+### Why CSS for SVG Animation?
+
+CSS animations offer several advantages for animating SVG:
+
+1. **Performance**: Hardware acceleration through GPU
+2. **Simplicity**: No JavaScript required for basic animations
+3. **Accessibility**: Respects user preferences (prefers-reduced-motion)
+4. **Maintainability**: Separation of presentation from structure
+5. **Browser Support**: Excellent compatibility across modern browsers
+
+<ValuePropCTA 
+  title="Create Animated SVGs Without Code"
+  description="Our visual animation tool lets you design stunning SVG animations with a simple interface. No CSS knowledge required!"
+  buttonText="Try Animation Tool"
+  href="/animate"
+/>
+
+### SVG Structure for CSS Animation
+
+To effectively animate SVG with CSS, understanding the document structure is crucial:
+
+```xml
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Group for organizing elements -->
+  <g class="animation-group">
+    <!-- Basic shapes with classes for targeting -->
+    <circle class="primary-circle" cx="100" cy="100" r="50" fill="#3498db" />
+    <rect class="secondary-rect" x="75" y="75" width="50" height="50" fill="#e74c3c" />
+    
+    <!-- Path elements for complex shapes -->
+    <path class="animated-path" d="M50,100 Q100,50 150,100" 
+          stroke="#2ecc71" stroke-width="3" fill="none" />
+  </g>
+  
+  <!-- Text elements -->
+  <text class="animated-text" x="100" y="100" text-anchor="middle">SVG</text>
+</svg>
+```
+
+### CSS Animation Properties
+
+Key CSS properties for SVG animation:
+
+```css
+/* Animation shorthand property */
+.element {
+  animation: name duration timing-function delay iteration-count direction fill-mode;
+}
+
+/* Individual properties */
+.animated-element {
+  animation-name: slide-in;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-delay: 0.5s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-fill-mode: both;
+  animation-play-state: running;
+}
+```
+
+## Transform Animations
+
+Transform animations are the foundation of most SVG CSS animations. Understanding how transforms work with SVG elements is essential.
+
+### Transform Origin
+
+SVG elements have different default transform origins than HTML elements:
+
+```css
+/* Setting transform origin for SVG elements */
+.svg-element {
+  /* Method 1: Using keywords */
+  transform-origin: center;
+  
+  /* Method 2: Using percentages */
+  transform-origin: 50% 50%;
+  
+  /* Method 3: Using absolute values */
+  transform-origin: 100px 100px;
+  
+  /* Method 4: Using transform-box for proper SVG behavior */
+  transform-box: fill-box;
+  transform-origin: center;
+}
+```
+
+### Rotation Animations
+
+```css
+/* Simple rotation */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotating-gear {
+  animation: rotate 3s linear infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+/* Complex rotation with scaling */
+@keyframes rotate-and-scale {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+```
+
+### Scale Animations
+
+```css
+/* Pulse effect */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.pulse-animation {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Bounce effect */
+@keyframes bounce-scale {
+  0%, 100% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.3);
+  }
+  60% {
+    transform: scale(0.9);
+  }
+  80% {
+    transform: scale(1.1);
+  }
+}
+```
+
+### Translation Animations
+
+```css
+/* Slide animation */
+@keyframes slide-horizontal {
+  0% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.floating-element {
+  animation: float 3s ease-in-out infinite;
+}
+```
+
+## Keyframe Animations
+
+Keyframes provide precise control over animation sequences:
+
+### Multi-Stage Animations
+
+```css
+@keyframes complex-motion {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  25% {
+    transform: translate(50px, 0) rotate(90deg) scale(1.2);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(50px, 50px) rotate(180deg) scale(1);
+    opacity: 1;
+  }
+  75% {
+    transform: translate(0, 50px) rotate(270deg) scale(0.8);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.complex-animation {
+  animation: complex-motion 4s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+```
+
+### Path-Based Animations
+
+Animating along SVG paths using offset-path:
+
+```css
+/* Modern approach using offset-path */
+.path-follower {
+  offset-path: path('M10,80 Q95,10 180,80');
+  animation: move-along-path 3s infinite;
+}
+
+@keyframes move-along-path {
+  0% {
+    offset-distance: 0%;
+  }
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+/* Alternative using motion path */
+.motion-path-element {
+  offset-path: url(#motionPath);
+  offset-rotate: auto;
+  animation: follow-path 5s linear infinite;
+}
+```
+
+## Fill and Stroke Animations
+
+Animating SVG-specific properties like fill and stroke:
+
+### Color Transitions
+
+```css
+/* Fill color animation */
+@keyframes color-shift {
+  0% {
+    fill: #3498db;
+  }
+  33% {
+    fill: #e74c3c;
+  }
+  66% {
+    fill: #2ecc71;
+  }
+  100% {
+    fill: #3498db;
+  }
+}
+
+.color-changing-shape {
+  animation: color-shift 6s ease-in-out infinite;
+}
+
+/* Gradient animation */
+@keyframes gradient-shift {
+  0% {
+    stop-color: #ff0000;
+  }
+  50% {
+    stop-color: #00ff00;
+  }
+  100% {
+    stop-color: #0000ff;
+  }
+}
+```
+
+### Stroke Animations
+
+```css
+/* Stroke dasharray animation for drawing effect */
+.draw-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 3s ease-in-out forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Animated stroke width */
+@keyframes pulse-stroke {
+  0%, 100% {
+    stroke-width: 2px;
+  }
+  50% {
+    stroke-width: 6px;
+  }
+}
+
+/* Complex stroke animation */
+.animated-stroke {
+  stroke-dasharray: 10 5;
+  animation: dash-move 20s linear infinite;
+}
+
+@keyframes dash-move {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+```
+
+## Advanced Animation Techniques
+
+### Morphing Shapes
+
+While true shape morphing requires SMIL or JavaScript, CSS can create morphing effects:
+
+```css
+/* Pseudo-morphing with opacity */
+.morph-container {
+  position: relative;
+}
+
+.shape-1, .shape-2 {
+  position: absolute;
+  animation: morph-opacity 3s ease-in-out infinite;
+}
+
+.shape-2 {
+  animation-delay: -1.5s;
+}
+
+@keyframes morph-opacity {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+```
+
+### 3D Transforms
+
+```css
+/* 3D rotation for SVG elements */
+@keyframes rotate-3d {
+  0% {
+    transform: perspective(200px) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(200px) rotateY(360deg);
+  }
+}
+
+.svg-3d {
+  animation: rotate-3d 4s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+```
+
+### Filter Animations
+
+```css
+/* Blur animation */
+@keyframes blur-focus {
+  0%, 100% {
+    filter: blur(0);
+  }
+  50% {
+    filter: blur(5px);
+  }
+}
+
+/* Shadow animation */
+@keyframes shadow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(0,0,0,0.6));
+  }
+}
+
+/* Combined filter effects */
+.filter-animated {
+  animation: 
+    blur-focus 3s ease-in-out infinite,
+    shadow-pulse 2s ease-in-out infinite;
+}
+```
+
+## Creating Practical SVG Animations
+
+<TryItYourselfSection
+  title="Animation Ideas to Try"
+  examples={[
+    {
+      prompt: "animated loading spinner with smooth rotation",
+      description: "Perfect for showing loading states in your app"
+    },
+    {
+      prompt: "pulsing heart icon with scale animation",
+      description: "Great for like buttons and health apps"
+    },
+    {
+      prompt: "waving flag animation with path morphing",
+      description: "Dynamic effect for country or team representations"
+    }
+  ]}
+/>
+
+### Loading Spinners
+
+```css
+/* Circular loading spinner */
+.spinner-circle {
+  transform-origin: center;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dots loading animation */
+.loading-dots circle {
+  animation: dot-pulse 1.4s ease-in-out infinite both;
+}
+
+.loading-dots circle:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots circle:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot-pulse {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+```
+
+### Icon Animations
+
+```css
+/* Menu to close icon transformation */
+.menu-icon line {
+  transform-origin: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.menu-icon.active line:nth-child(1) {
+  transform: rotate(45deg) translate(7px, 7px);
+}
+
+.menu-icon.active line:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-icon.active line:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* Heart beat animation */
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  14%, 28% {
+    transform: scale(1.3);
+  }
+  21%, 35% {
+    transform: scale(1);
+  }
+}
+
+.heart-icon {
+  animation: heartbeat 2s ease-in-out infinite;
+}
+```
+
+### Interactive Hover Effects
+
+```css
+/* Scale on hover with spring effect */
+.interactive-element {
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.interactive-element:hover {
+  transform: scale(1.1);
+}
+
+/* Fill animation on hover */
+.hover-fill {
+  fill: #3498db;
+  transition: fill 0.3s ease;
+}
+
+.hover-fill:hover {
+  fill: #2980b9;
+}
+
+/* Complex hover animation */
+.complex-hover {
+  cursor: pointer;
+}
+
+.complex-hover circle {
+  transform-origin: center;
+  transition: all 0.3s ease;
+}
+
+.complex-hover:hover circle {
+  transform: scale(1.2);
+  fill: #e74c3c;
+  stroke: #c0392b;
+  stroke-width: 3px;
+}
+```
+
+## Performance Optimization
+
+### Best Practices for Performant Animations
+
+1. **Use Transform and Opacity**
+```css
+/* Good - GPU accelerated */
+@keyframes slide-good {
+  from {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Avoid - causes reflow */
+@keyframes slide-bad {
+  from {
+    left: -100px;
+  }
+  to {
+    left: 0;
+  }
+}
+```
+
+2. **Will-Change Property**
+```css
+.will-animate {
+  will-change: transform, opacity;
+}
+
+/* Remove after animation */
+.animation-complete {
+  will-change: auto;
+}
+```
+
+3. **Hardware Acceleration**
+```css
+.gpu-accelerated {
+  transform: translateZ(0); /* Force GPU layer */
+  /* or */
+  will-change: transform;
+}
+```
+
+### Reducing Paint Operations
+
+```css
+/* Animate only compositing properties */
+.optimized-animation {
+  /* Good properties to animate */
+  transform: scale(1.1);
+  opacity: 0.8;
+  
+  /* Avoid animating these */
+  /* width, height, padding, margin - cause layout */
+  /* background-color, border - cause paint */
+}
+```
+
+## Browser Compatibility and Fallbacks
+
+### Feature Detection
+
+```css
+/* Basic animation support */
+@supports (animation: name 1s) {
+  .animated-element {
+    animation: slide-in 1s ease-out;
+  }
+}
+
+/* No animation fallback */
+@supports not (animation: name 1s) {
+  .animated-element {
+    /* Static positioning */
+    opacity: 1;
+    transform: none;
+  }
+}
+```
+
+### Vendor Prefixes
+
+```css
+/* Cross-browser animation */
+.cross-browser-animation {
+  -webkit-animation: rotate 2s linear infinite;
+  -moz-animation: rotate 2s linear infinite;
+  animation: rotate 2s linear infinite;
+}
+
+@-webkit-keyframes rotate {
+  to { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+```
+
+## Accessibility Considerations
+
+### Respecting User Preferences
+
+```css
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Alternative static styles */
+@media (prefers-reduced-motion: reduce) {
+  .animated-element {
+    /* Provide static alternative */
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+```
+
+### Pause Controls
+
+```css
+/* Pauseable animations */
+.animation-container[data-paused="true"] * {
+  animation-play-state: paused !important;
+}
+
+/* Play/pause button styling */
+.pause-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+```
+
+## Common Animation Patterns
+
+### Staggered Animations
+
+```css
+/* Stagger child elements */
+.stagger-container > * {
+  animation: fade-in 0.5s ease-out both;
+}
+
+.stagger-container > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-container > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-container > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-container > *:nth-child(4) { animation-delay: 0.4s; }
+
+/* Using CSS custom properties for dynamic staggering */
+.dynamic-stagger > * {
+  animation: slide-up 0.6s ease-out both;
+  animation-delay: calc(var(--index) * 0.1s);
+}
+```
+
+### Infinite Loops
+
+```css
+/* Seamless infinite animation */
+@keyframes seamless-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.infinite-rotation {
+  animation: seamless-rotate 20s linear infinite;
+}
+
+/* Wave effect */
+@keyframes wave {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.wave-element {
+  animation: wave 2s ease-in-out infinite;
+}
+```
+
+## Debugging and Testing
+
+### Browser DevTools
+
+```css
+/* Add visual debugging */
+.debug-animation {
+  outline: 2px solid red;
+  animation-duration: 10s; /* Slow down for debugging */
+}
+
+/* Animation timing visualization */
+.timing-debug {
+  animation-timing-function: steps(10, end);
+}
+```
+
+### Testing Different States
+
+```css
+/* Force animation states for testing */
+.test-start {
+  animation-play-state: paused;
+  animation-delay: 0s;
+}
+
+.test-middle {
+  animation-play-state: paused;
+  animation-delay: -1s; /* Half of 2s duration */
+}
+
+.test-end {
+  animation-play-state: paused;
+  animation-delay: -2s; /* Full duration */
+}
+```
+
+## Real-World Examples
+
+### Animated Logo
+
+```css
+/* Company logo animation */
+.logo-svg {
+  width: 200px;
+  height: 200px;
+}
+
+.logo-letter {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: logo-appear 0.6s ease-out forwards;
+}
+
+.logo-letter:nth-child(1) { animation-delay: 0s; }
+.logo-letter:nth-child(2) { animation-delay: 0.1s; }
+.logo-letter:nth-child(3) { animation-delay: 0.2s; }
+
+@keyframes logo-appear {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo-icon {
+  transform: scale(0) rotate(-180deg);
+  animation: logo-icon-appear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s forwards;
+}
+
+@keyframes logo-icon-appear {
+  to {
+    transform: scale(1) rotate(0deg);
+  }
+}
+```
+
+### Data Visualization
+
+```css
+/* Animated bar chart */
+.bar-chart rect {
+  transform-origin: bottom;
+  transform: scaleY(0);
+  animation: grow-bar 1s ease-out forwards;
+}
+
+.bar-chart rect:nth-child(1) { animation-delay: 0s; }
+.bar-chart rect:nth-child(2) { animation-delay: 0.1s; }
+.bar-chart rect:nth-child(3) { animation-delay: 0.2s; }
+
+@keyframes grow-bar {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* Pie chart animation */
+.pie-slice {
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0.8) rotate(-20deg);
+  animation: pie-appear 0.8s ease-out forwards;
+}
+
+@keyframes pie-appear {
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+```
+
+## Integration with Modern Frameworks
+
+### CSS Modules
+
+```css
+/* styles.module.css */
+.animatedIcon {
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+```
+
+### CSS-in-JS
+
+```javascript
+// Styled-components example
+const AnimatedSVG = styled.svg`
+  .circle {
+    animation: ${props => props.animated ? 'pulse 2s infinite' : 'none'};
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+`;
+```
+
+## Conclusion
+
+SVG CSS animations offer a powerful, performant way to bring graphics to life on the web. By mastering the techniques covered in this guide - from basic transforms to complex keyframe sequences - you can create engaging visual experiences that enhance user interfaces without sacrificing performance or accessibility.
+
+Remember to always consider performance implications, test across browsers, and respect user preferences for reduced motion. With these principles in mind, you're ready to create stunning SVG animations that delight users and elevate your web projects.
+
+<EndActionCTA />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Create SVG CSS Animations",
+  "description": "Learn to create smooth, performant SVG animations using CSS keyframes, transforms, and transitions",
+  "totalTime": "PT45M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "USD",
+    "value": "0"
+  },
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "SVG file or inline SVG code"
+    },
+    {
+      "@type": "HowToSupply",
+      "name": "CSS file or style tags"
+    }
+  ],
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "Text editor or IDE"
+    },
+    {
+      "@type": "HowToTool",
+      "name": "Web browser with developer tools"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Prepare SVG Structure",
+      "text": "Create or prepare an SVG with proper class names and IDs for CSS targeting",
+      "url": "https://svgai.org/learn/svg-css-animation#understanding-svg-and-css-animation-fundamentals"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Define Keyframes",
+      "text": "Create @keyframes rules defining the animation states",
+      "url": "https://svgai.org/learn/svg-css-animation#keyframe-animations"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Apply Animation Properties",
+      "text": "Use the animation property to apply keyframes to SVG elements",
+      "url": "https://svgai.org/learn/svg-css-animation#css-animation-properties"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Set Transform Origin",
+      "text": "Configure transform-origin and transform-box for proper rotation and scaling",
+      "url": "https://svgai.org/learn/svg-css-animation#transform-origin"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Optimize Performance",
+      "text": "Use GPU-accelerated properties and will-change for smooth animations",
+      "url": "https://svgai.org/learn/svg-css-animation#performance-optimization"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Add Accessibility Features",
+      "text": "Implement prefers-reduced-motion support and pause controls",
+      "url": "https://svgai.org/learn/svg-css-animation#accessibility-considerations"
+    }
+  ]
+}
+</script>
+
+<RelatedGuides
+  guides={[
+    {
+      title: "Check SVG Animation Guide",
+      href: "/learn/check-svg-animation",
+      description: "Learn how to test and validate SVG animations"
+    },
+    {
+      title: "React Native SVG Animation",
+      href: "/learn/react-native-svg-animation",
+      description: "Implement SVG animations in React Native apps"
+    },
+    {
+      title: "What is SVG? Complete Guide",
+      href: "/learn/what-is-svg",
+      description: "Understanding the fundamentals of SVG"
+    },
+    {
+      title: "SVG File Format Technical Guide",
+      href: "/learn/svg-file-format",
+      description: "Deep dive into SVG structure and syntax"
+    },
+    {
+      title: "Convert PNG to SVG",
+      href: "/learn/convert-png-to-svg",
+      description: "Transform raster images into animatable vectors"
+    },
+    {
+      title: "Best SVG Converters",
+      href: "/learn/best-svg-converters",
+      description: "Find the right tools for your SVG workflow"
+    }
+  ]}
+/>
+- [AI Icon Generator](/ai-icon-generator)
+- [SVG Animation Gallery](/gallery/animated-svgs)

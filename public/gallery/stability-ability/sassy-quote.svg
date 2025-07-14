@@ -1,0 +1,26 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sassy quote bubble -->
+  <!-- Speech bubble with attitude -->
+  <path d="M20 50 Q20 30 40 30 L140 30 Q160 30 160 50 L160 110 Q160 130 140 130 L60 130 L40 160 L45 130 L40 130 Q20 130 20 110 Z" 
+        fill="#ff6b6b" stroke="#000" stroke-width="4"/>
+  <!-- Inner shadow effect -->
+  <path d="M30 40 Q30 35 40 35 L140 35 Q150 35 150 45 L150 100 Q150 115 140 120 L60 120 L45 140 L48 120 L40 120 Q30 120 30 100 Z" 
+        fill="#ff5252" opacity="0.5"/>
+  <!-- Text -->
+  <text x="90" y="65" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#fff">
+    "I'm not arguing"
+  </text>
+  <text x="90" y="85" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#fff">
+    I'm just explaining
+  </text>
+  <text x="90" y="105" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#fff">
+    why I'm right
+  </text>
+  <!-- Decorative stars -->
+  <path d="M170 40 L172 45 L177 45 L173 48 L175 53 L170 50 L165 53 L167 48 L163 45 L168 45 Z" fill="#ffd93d" stroke="#000" stroke-width="1"/>
+  <path d="M25 140 L27 145 L32 145 L28 148 L30 153 L25 150 L20 153 L22 148 L18 145 L23 145 Z" fill="#ffd93d" stroke="#000" stroke-width="1"/>
+  <!-- Small attitude indicator -->
+  <circle cx="150" cy="115" r="3" fill="#000"/>
+  <circle cx="155" cy="120" r="2" fill="#000"/>
+  <circle cx="160" cy="125" r="1" fill="#000"/>
+</svg>

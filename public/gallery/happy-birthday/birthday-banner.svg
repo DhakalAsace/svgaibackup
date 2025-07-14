@@ -1,0 +1,14 @@
+<svg viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg">
+  <path d="M 10 30 L 40 60 L 70 30 L 100 60 L 130 30 L 160 60 L 190 30 L 220 60 L 250 30 L 280 60 L 290 50 L 290 10 L 10 10 Z" fill="#FF69B4"/>
+  <path d="M 10 70 L 40 100 L 70 70 L 100 100 L 130 70 L 160 100 L 190 70 L 220 100 L 250 70 L 280 100 L 290 90 L 290 50 L 280 60 L 250 30 L 220 60 L 190 30 L 160 60 L 130 30 L 100 60 L 70 30 L 40 60 L 10 30 Z" fill="#FFD700"/>
+  <path d="M 10 110 L 40 140 L 70 110 L 100 140 L 130 110 L 160 140 L 190 110 L 220 140 L 250 110 L 280 140 L 290 130 L 290 90 L 280 100 L 250 70 L 220 100 L 190 70 L 160 100 L 130 70 L 100 100 L 70 70 L 40 100 L 10 70 Z" fill="#87CEEB"/>
+  <circle cx="30" cy="30" r="5" fill="#FFF" opacity="0.7"/>
+  <circle cx="60" cy="30" r="5" fill="#FFF" opacity="0.7"/>
+  <circle cx="90" cy="30" r="5" fill="#FFF" opacity="0.7"/>
+  <circle cx="120" cy="30" r="5" fill="#FFF" opacity="0.7"/>
+  <circle cx="150" cy="30" r="5" fill="#FFF" opacity="0.7"/>
+  <circle cx="180" cy="30" r="5" fill="#FFF" opacity="0.7"/>
+  <circle cx="210" cy="30" r="5" fill="#FFF" opacity="0.7"/>
+  <circle cx="240" cy="30" r="5" fill="#FFF" opacity="0.7"/>
+  <circle cx="270" cy="30" r="5" fill="#FFF" opacity="0.7"/>
+</svg>

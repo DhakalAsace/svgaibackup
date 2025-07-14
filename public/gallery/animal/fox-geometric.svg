@@ -1,0 +1,32 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Geometric fox head -->
+  <defs>
+    <linearGradient id="foxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6347;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff8c00;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Main head triangle -->
+  <path d="M100 160 L40 80 L160 80 Z" fill="url(#foxGrad)" stroke="#000" stroke-width="3"/>
+  <!-- Ears -->
+  <path d="M40 80 L30 40 L60 60 Z" fill="#ff6347" stroke="#000" stroke-width="3"/>
+  <path d="M160 80 L170 40 L140 60 Z" fill="#ff6347" stroke="#000" stroke-width="3"/>
+  <!-- Inner ears -->
+  <path d="M45 70 L40 50 L55 60 Z" fill="#8b0000"/>
+  <path d="M155 70 L160 50 L145 60 Z" fill="#8b0000"/>
+  <!-- Face white area -->
+  <path d="M100 150 L70 100 L130 100 Z" fill="#fff"/>
+  <!-- Eyes -->
+  <path d="M70 90 L80 95 L70 100 Z" fill="#000"/>
+  <path d="M130 90 L120 95 L130 100 Z" fill="#000"/>
+  <!-- Nose -->
+  <path d="M95 130 L100 140 L105 130 Z" fill="#000"/>
+  <!-- Geometric patterns -->
+  <path d="M60 80 L80 100 L60 120 Z" fill="#ff4500" opacity="0.7"/>
+  <path d="M140 80 L120 100 L140 120 Z" fill="#ff4500" opacity="0.7"/>
+  <!-- Whisker dots -->
+  <circle cx="50" cy="110" r="2" fill="#000"/>
+  <circle cx="45" cy="120" r="2" fill="#000"/>
+  <circle cx="150" cy="110" r="2" fill="#000"/>
+  <circle cx="155" cy="120" r="2" fill="#000"/>
+</svg>

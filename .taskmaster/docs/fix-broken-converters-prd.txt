@@ -1,0 +1,89 @@
+# Fix Broken Converters PRD
+
+## Objective
+Fix all non-functional converters in SVG AI that currently show errors or don't work properly. Focus only on browser-compatible implementations.
+
+## Broken Converters to Fix
+
+### 1. PDF to SVG
+- Current: Shows "PDF conversion is not yet implemented"
+- Fix: Implement using PDF.js library (already available)
+- Expected: Convert PDF pages to SVG format
+
+### 2. SVG to GIF
+- Current: "sharp is not defined" error
+- Fix: Use gif.js library for client-side GIF creation
+- Expected: Animate SVG to GIF in browser
+
+### 3. SVG to BMP
+- Current: "sharp is not defined" error
+- Fix: Use Canvas API to create BMP format
+- Expected: Convert SVG to BMP bitmap
+
+### 4. AVIF to SVG
+- Current: Shows placeholder "Conversion available soon"
+- Fix: Decode AVIF using browser APIs if available, otherwise mark unsupported
+- Expected: Convert AVIF images to SVG vectors
+
+### 5. SVG to AVIF
+- Current: Outputs MP4 instead of AVIF
+- Fix: Check browser support, implement if possible
+- Expected: Encode SVG to AVIF format
+
+### 6. WebP to SVG
+- Current: "sharp is not defined" error
+- Fix: Decode WebP using Canvas API, then vectorize
+- Expected: Convert WebP to SVG vectors
+
+### 7. SVG to WebP
+- Current: "sharp is not defined" error
+- Fix: Use Canvas API toBlob with 'image/webp'
+- Expected: Convert SVG to WebP format
+
+### 8. SVG to EMF
+- Current: Shows "not yet available"
+- Fix: Implement EMF binary format writer
+- Expected: Create EMF files from SVG
+
+### 9. AI to SVG
+- Current: "File format pdf is not supported" when .ai uploaded
+- Fix: Fix file type detection for .ai files
+- Expected: Parse AI files using PDF.js
+
+### 10. DXF to SVG
+- Current: "No drawable entities found in DXF file"
+- Fix: Improve DXF parser to handle more entity types
+- Expected: Convert DXF CAD files to SVG
+
+### 11. SVG to ICO (Multi-size)
+- Current: "sharp is not defined" for 16x16 size
+- Fix: Use Canvas API for all icon sizes
+- Expected: Create multi-size ICO files
+
+### 12. Image to SVG Duplicates
+- Current: Two "image to svg" converters on /tools page
+- Fix: Remove duplicate, keep only one
+- Expected: Single image-to-svg converter
+
+## Converters to Remove (Not Browser Compatible)
+
+### 1. CDR to SVG
+- Reason: Proprietary format requires server-side tools
+- Action: Remove from supported converters list
+
+### 2. SVG to HEIC
+- Current: Outputs JPEG with misleading message
+- Action: Either remove or clearly label as "JPEG output only"
+
+## Success Criteria
+- All listed converters work in browser without errors
+- No "sharp is not defined" errors
+- No placeholder messages
+- Accurate file format outputs
+- No duplicates on /tools page
+
+## Implementation Notes
+- Use only browser-compatible libraries
+- Test each converter with sample files
+- Update converter config to mark unsupported ones as false
+- Remove or fix misleading error messages

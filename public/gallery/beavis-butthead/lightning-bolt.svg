@@ -1,0 +1,21 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Electric guitar lightning -->
+  <defs>
+    <linearGradient id="electricGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffff00;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ff9900;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff0000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Lightning bolt -->
+  <path d="M80 20 L60 80 L90 80 L70 120 L100 120 L50 180 L130 100 L100 100 L120 60 L90 60 L130 20 Z" 
+        fill="url(#electricGrad)" stroke="#000" stroke-width="3"/>
+  <!-- Electric sparks -->
+  <circle cx="70" cy="40" r="3" fill="#fff" opacity="0.8"/>
+  <circle cx="110" cy="50" r="2" fill="#fff" opacity="0.8"/>
+  <circle cx="90" cy="140" r="3" fill="#fff" opacity="0.8"/>
+  <circle cx="60" cy="100" r="2" fill="#fff" opacity="0.8"/>
+  <!-- Glow effect -->
+  <circle cx="90" cy="100" r="80" fill="none" stroke="#ffff00" stroke-width="1" opacity="0.3"/>
+  <circle cx="90" cy="100" r="70" fill="none" stroke="#ff9900" stroke-width="1" opacity="0.2"/>
+</svg>

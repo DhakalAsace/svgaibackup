@@ -1,0 +1,39 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="holyLight">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FFD700;stop-opacity:0.2" />
+    </radialGradient>
+  </defs>
+  <rect width="48" height="48" fill="#663399" opacity="0.1"/>
+  <g transform="translate(24, 26)">
+    <!-- Light from above -->
+    <ellipse cx="0" cy="-10" rx="20" ry="8" fill="url(#holyLight)" opacity="0.6"/>
+    <!-- Lion in prayer pose -->
+    <g>
+      <!-- Body -->
+      <ellipse cx="0" cy="4" rx="8" ry="6" fill="#FFA500" stroke="#8B4513" stroke-width="0.5"/>
+      <!-- Head bowed -->
+      <ellipse cx="0" cy="-2" rx="10" ry="8" fill="#FFD700" stroke="#8B4513" stroke-width="0.5" transform="rotate(15)"/>
+      <!-- Mane -->
+      <g stroke="#FFA500" stroke-width="1.5" fill="none" opacity="0.7">
+        <path d="M-10,-2 Q-12,-6 -10,-10 Q-6,-12 -2,-10"/>
+        <path d="M10,-2 Q12,-6 10,-10 Q6,-12 2,-10"/>
+        <path d="M-8,2 Q-10,0 -8,-4"/>
+        <path d="M8,2 Q10,0 8,-4"/>
+      </g>
+      <!-- Closed eyes (reverent) -->
+      <path d="M-4,-3 Q-3,-4 -2,-3" fill="none" stroke="#8B4513" stroke-width="0.8"/>
+      <path d="M4,-3 Q3,-4 2,-3" fill="none" stroke="#8B4513" stroke-width="0.8"/>
+      <!-- Nose -->
+      <circle cx="0" cy="0" r="0.8" fill="#8B4513"/>
+      <!-- Praying paws -->
+      <ellipse cx="-3" cy="6" rx="2" ry="3" fill="#FFA500" stroke="#8B4513" stroke-width="0.5" transform="rotate(-20 -3 6)"/>
+      <ellipse cx="3" cy="6" rx="2" ry="3" fill="#FFA500" stroke="#8B4513" stroke-width="0.5" transform="rotate(20 3 6)"/>
+    </g>
+    <!-- Light rays -->
+    <g stroke="#FFFFFF" stroke-width="1" opacity="0.4">
+      <path d="M0,-14 L0,-10 M-6,-12 L-4,-8 M6,-12 L4,-8"/>
+    </g>
+  </g>
+</svg>

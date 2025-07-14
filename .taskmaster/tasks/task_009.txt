@@ -1,0 +1,49 @@
+# Task ID: 9
+# Title: Optimize Performance for New Features
+# Status: done
+# Dependencies: 1, 2, 3, 4, 5, 6, 7, 8
+# Priority: high
+# Description: Implement essential performance optimizations focused on Core Web Vitals and SEO requirements for new converter and tool pages
+# Details:
+1. Ensure Core Web Vitals pass (LCP < 2.5s, INP < 200ms, CLS < 0.1)
+2. Implement lazy loading for gallery images
+3. Configure basic caching headers for static content
+4. Add simple loading states to prevent layout shift
+5. Focus on meeting Google's SEO requirements
+
+Agent: Main (optimization)
+
+# Test Strategy:
+Run Lighthouse audits focusing on Core Web Vitals, verify all metrics pass Google's thresholds, test lazy loading functionality, validate caching headers are properly set
+
+# Subtasks:
+## 1. Optimize for Core Web Vitals [done]
+### Dependencies: None
+### Description: Ensure all pages meet Google's Core Web Vitals thresholds for LCP, INP, and CLS
+### Details:
+Measure current Core Web Vitals using Lighthouse, identify and fix LCP issues (target < 2.5s), optimize interaction responsiveness (INP < 200ms), eliminate layout shifts (CLS < 0.1), focus on quick wins that impact SEO
+
+## 2. Implement lazy loading for gallery images [done]
+### Dependencies: None
+### Description: Add basic lazy loading to improve initial page load performance for image galleries
+### Details:
+Use native loading='lazy' attribute for images, implement intersection observer for galleries, ensure images below fold don't block initial render, add appropriate width/height attributes to prevent layout shift
+
+## 3. Configure basic caching headers [done]
+### Dependencies: None
+### Description: Set up simple caching headers for static assets to improve repeat visit performance
+### Details:
+Add Cache-Control headers for static assets (images, CSS, JS), use reasonable cache durations (e.g., 1 year for versioned assets), ensure proper cache invalidation on deployments, keep configuration simple and maintainable
+
+## 4. Add simple loading states [done]
+### Dependencies: None
+### Description: Implement basic loading states to prevent layout shift and improve perceived performance
+### Details:
+Add skeleton screens or placeholders for dynamic content, ensure consistent dimensions to prevent CLS, use CSS-only solutions where possible, focus on critical above-fold content
+
+## 5. Verify SEO performance requirements [done]
+### Dependencies: 9.1, 9.2, 9.3, 9.4
+### Description: Ensure all optimizations meet Google's SEO requirements and improve search visibility
+### Details:
+Run PageSpeed Insights on all key pages, verify Core Web Vitals pass in field data, check Google Search Console for any issues, document performance metrics for SEO team
+

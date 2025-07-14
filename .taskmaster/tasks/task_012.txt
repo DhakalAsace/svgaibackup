@@ -1,0 +1,55 @@
+# Task ID: 12
+# Title: Implement PostScript-Based Converters (EPS, AI, SVG to EPS)
+# Status: pending
+# Dependencies: 11
+# Priority: high
+# Description: Develop converters for EPS to SVG, AI to SVG, and SVG to EPS using PDF.js and custom PostScript parser
+# Details:
+Leverage existing PDF.js for PDF-compatible EPS/AI files. Implement basic PostScript interpreter for pure EPS files supporting moveto, lineto, curveto, closepath commands. Parse Adobe Illustrator specific metadata and convert to SVG attributes. For SVG to EPS, implement path command translator maintaining vector quality. Handle CMYK to RGB color conversion. Support embedded raster images as base64 data URIs. Implementation: /lib/converters/postscript/eps-parser.ts, /lib/converters/postscript/ai-handler.ts, /lib/converters/postscript/svg-to-eps.ts
+
+# Test Strategy:
+Test with sample EPS files from different sources (Illustrator, CorelDraw, Inkscape), validate path accuracy by comparing rendered output, test color space conversions, verify text handling, test with complex gradients and patterns
+
+# Subtasks:
+## 1. PDF.js integration for PDF-compatible EPS/AI files [pending]
+### Dependencies: None
+### Description: Integrate PDF.js library to handle PostScript files that are PDF-compatible, including EPS and AI formats
+### Details:
+Set up PDF.js as a dependency, create wrapper functions to extract vector paths from PDF-compatible PostScript files, handle page dimensions and viewbox calculations
+
+## 2. Custom PostScript parser for basic commands [pending]
+### Dependencies: None
+### Description: Build a PostScript parser to handle basic drawing commands like moveto, lineto, curveto, closepath
+### Details:
+Implement a stack-based interpreter for PostScript commands, parse path operations, handle graphics state stack (gsave/grestore), support basic transformations (translate, rotate, scale)
+
+## 3. Adobe Illustrator metadata parser and handler [pending]
+### Dependencies: 12.2
+### Description: Parse and extract Adobe Illustrator-specific metadata and settings from AI files
+### Details:
+Extract AI version information, parse layer data and artboard settings, handle AI-specific extensions and comments, preserve important metadata for SVG output
+
+## 4. SVG to PostScript path translator [pending]
+### Dependencies: 12.2
+### Description: Create bidirectional translator between PostScript path commands and SVG path data
+### Details:
+Convert PostScript moveto/lineto/curveto to SVG M/L/C commands, handle bezier curve conversions, maintain precision during translation, support compound paths and subpaths
+
+## 5. CMYK to RGB color space converter [pending]
+### Dependencies: 12.2
+### Description: Implement color space conversion from CMYK (common in PostScript) to RGB for web display
+### Details:
+Build CMYK to RGB conversion algorithm, handle spot colors and named colors, support various color profiles (sRGB default), maintain color accuracy within web limitations
+
+## 6. Embedded raster image handler [pending]
+### Dependencies: 12.1, 12.2
+### Description: Process and extract embedded raster images from PostScript files
+### Details:
+Decode inline image data (base64/hex), handle image positioning and transformations, convert to data URIs or external files, support common formats (JPEG, PNG)
+
+## 7. Comprehensive testing with various file sources [pending]
+### Dependencies: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6
+### Description: Test converter with diverse PostScript, EPS, and AI files from different sources
+### Details:
+Create test suite with files from Illustrator, InDesign, GhostScript, test edge cases (complex paths, gradients, patterns), validate output quality and accuracy, performance benchmarking
+

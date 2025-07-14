@@ -1,0 +1,31 @@
+# Task ID: 18
+# Title: Implement Modern Format Converters (HEIC to SVG, SVG to HEIC)
+# Status: pending
+# Dependencies: 11
+# Priority: low
+# Description: Develop converters for HEIC/HEIF format used by modern devices using heic2any
+# Details:
+Integrate heic2any for HEIC decoding to canvas, handling both single images and image sequences. Apply potrace vectorization with quality presets optimized for photos. For SVG to HEIC, first rasterize SVG at high resolution, then encode using available HEIC encoder or fallback to JPEG with metadata indicating original format. Handle EXIF data preservation where possible. Implementation: /lib/converters/modern/heic-handler.ts, /lib/converters/modern/heic-encoder.ts
+
+# Test Strategy:
+Test with HEIC files from various iOS devices, verify EXIF data handling, test with burst photos and live photos, validate quality settings, ensure fallback handling for unsupported browsers
+
+# Subtasks:
+## 1. Implement heic2any integration with browser compatibility handling [pending]
+### Dependencies: None
+### Description: Set up heic2any library for HEIC to PNG/JPG conversion with comprehensive browser compatibility checks and fallbacks
+### Details:
+Configure heic2any with browser feature detection, implement WebAssembly fallback for unsupported browsers, handle HEIC format variations (HEIF container), add error handling for invalid HEIC files, implement progress tracking for large files
+
+## 2. Create vectorization pipeline with photo-optimized settings [pending]
+### Dependencies: 18.1
+### Description: Develop specialized vectorization process optimized for photographic content typically found in HEIC files
+### Details:
+Configure potrace with photo-specific parameters (higher color depth, smooth curves), implement color quantization for photos, add edge detection preprocessing, create quality presets for different photo types (portraits, landscapes, objects), optimize for preserving photo details while maintaining reasonable file sizes
+
+## 3. Build SVG to HEIC encoding system with fallback strategies [pending]
+### Dependencies: 18.2
+### Description: Implement SVG to HEIC conversion with multiple fallback approaches for broad compatibility
+### Details:
+Research available JavaScript HEIC encoding libraries, implement Canvas-based SVG rendering for rasterization, create HEIC encoding pipeline or use server-side fallback, add format validation and error handling, implement alternative export formats (PNG/JPG) when HEIC encoding unavailable, ensure metadata preservation
+

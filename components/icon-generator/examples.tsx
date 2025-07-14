@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import LazyImage from "@/components/lazy-image"
 
 // Icon examples that showcase the capabilities of the model, organized by use case
 const iconExamplesByUseCase = {
@@ -176,11 +177,12 @@ export default function IconExamples() {
               visibleExamples.map((example, index) => (
                 <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                   <div className="p-6 flex flex-col items-center">
-                    <div className="w-40 h-40 flex items-center justify-center bg-[#FAFAFA] rounded-md mb-4">
-                      <img 
+                    <div className="w-40 h-40 flex items-center justify-center bg-[#FAFAFA] rounded-md mb-4 relative">
+                      <LazyImage 
                         src={example.src} 
                         alt={example.alt} 
-                        className="w-4/5 h-4/5 object-contain"
+                        className="w-4/5 h-4/5"
+                        placeholderClassName="bg-gray-100"
                       />
                     </div>
                     <h3 className="font-medium text-gray-800 mb-2">{example.title}</h3>

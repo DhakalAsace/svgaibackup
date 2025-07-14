@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <title>Hello Kitty with Heart</title>
+  <!-- Heart -->
+  <path d="M 24 38 C 24 38, 10 28, 10 20 C 10 16, 14 12, 18 12 C 21 12, 23 14, 24 16 C 25 14, 27 12, 30 12 C 34 12, 38 16, 38 20 C 38 28, 24 38, 24 38 Z" fill="#FF69B4" stroke="#FF1493" stroke-width="1"/>
+  
+  <!-- Face -->
+  <ellipse cx="24" cy="18" rx="14" ry="12" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  
+  <!-- Left ear -->
+  <path d="M 12 8 Q 10 6, 8 9 Q 6 12, 10 14 L 14 12 Z" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  
+  <!-- Right ear -->
+  <path d="M 36 8 Q 38 6, 40 9 Q 42 12, 38 14 L 34 12 Z" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  
+  <!-- Bow -->
+  <path d="M 30 6 Q 34 5, 36 7 Q 38 9, 36 11 Q 34 13, 30 11 Q 26 13, 24 11 Q 22 9, 24 7 Q 26 5, 30 6 Z" fill="#FF69B4" stroke="#000000" stroke-width="1"/>
+  <circle cx="30" cy="9" r="2" fill="#FF1493"/>
+  
+  <!-- Left eye with sparkle -->
+  <ellipse cx="18" cy="18" rx="1.5" ry="2.5" fill="#000000"/>
+  <circle cx="18.5" cy="17" r="0.5" fill="#ffffff"/>
+  
+  <!-- Right eye with sparkle -->
+  <ellipse cx="30" cy="18" rx="1.5" ry="2.5" fill="#000000"/>
+  <circle cx="30.5" cy="17" r="0.5" fill="#ffffff"/>
+  
+  <!-- Nose -->
+  <ellipse cx="24" cy="21" rx="2.5" ry="1.5" fill="#FFD700"/>
+  
+  <!-- Left whisker -->
+  <line x1="8" y1="17" x2="13" y2="18" stroke="#000000" stroke-width="1"/>
+  <line x1="8" y1="20" x2="13" y2="20" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Right whisker -->
+  <line x1="35" y1="18" x2="40" y2="17" stroke="#000000" stroke-width="1"/>
+  <line x1="35" y1="20" x2="40" y2="20" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Small hearts -->
+  <path d="M 6 30 C 6 30, 2 27, 2 25 C 2 24, 3 23, 4 23 C 4.5 23, 5 23.5, 6 24 C 7 23.5, 7.5 23, 8 23 C 9 23, 10 24, 10 25 C 10 27, 6 30, 6 30 Z" fill="#FFB6C1"/>
+  <path d="M 42 30 C 42 30, 38 27, 38 25 C 38 24, 39 23, 40 23 C 40.5 23, 41 23.5, 42 24 C 43 23.5, 43.5 23, 44 23 C 45 23, 46 24, 46 25 C 46 27, 42 30, 42 30 Z" fill="#FFB6C1"/>
+</svg>

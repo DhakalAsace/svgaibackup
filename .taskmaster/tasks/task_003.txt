@@ -1,0 +1,72 @@
+# Task ID: 3
+# Title: Build Core File Conversion Engine with Web Workers
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: Implement client-side file conversion supporting 40 converter types for comprehensive SEO coverage while keeping implementation simple and efficient
+# Details:
+1. Implement comprehensive converter support for 40 different file type combinations
+2. PNG/JPG/JPEG/WebP/AVIF to SVG using potrace library
+3. SVG to PNG/JPG/JPEG/WebP/PDF using Canvas API and appropriate libraries
+4. Format-to-format conversions using sharp and other simple libraries
+5. Placeholder 'coming soon' functionality for complex formats (EPS, AI, DXF, STL)
+6. Create SEO-optimized pages for each converter type
+7. Share conversion logic across similar format types
+8. Implement efficient file validation and error handling
+
+Agent: Parallel worktree (feature/converters)
+
+This task is ideal for development in a separate git worktree as the conversion engine can be built and tested independently once Task 1 is complete, then merged back when ready.
+
+# Test Strategy:
+Test all supported format conversions with sample files, verify placeholder behavior for unsupported formats, validate SEO page generation for all 40 converter types, test shared logic components across different converters. Test in isolation within the worktree before integration.
+
+# Subtasks:
+## 1. Basic Conversion Setup [done]
+### Dependencies: None
+### Description: Set up the foundational structure for simple client-side file conversions
+### Details:
+Install and configure potrace library for raster to SVG conversion. Set up Canvas API utilities for SVG to raster conversion. Create basic TypeScript interfaces for conversion options.
+
+## 2. Comprehensive Raster to SVG Converters [done]
+### Dependencies: 3.1
+### Description: Implement raster-to-SVG conversion for PNG/JPG/JPEG/WebP/AVIF using potrace
+### Details:
+Extend potrace integration to handle PNG, JPG, JPEG, WebP, and AVIF inputs. Create shared conversion logic with format-specific preprocessing. Implement consistent conversion options across all raster formats.
+
+## 3. Extended SVG to Raster/PDF Converters [done]
+### Dependencies: 3.1
+### Description: Build SVG conversion to PNG/JPG/JPEG/WebP/PDF using Canvas API and libraries
+### Details:
+Implement SVG to PNG/JPG/JPEG using Canvas API. Add WebP export using appropriate library. Integrate PDF generation library for SVG to PDF conversion. Create shared rendering pipeline for all output formats.
+
+## 4. Format-to-Format Image Converters [done]
+### Dependencies: 3.1
+### Description: Implement simple image format conversions using sharp library
+### Details:
+Set up sharp library for image format conversions. Implement PNG↔JPG, JPG↔WebP, PNG↔WebP, and other common format conversions. Create reusable conversion pipeline for similar format pairs.
+
+## 5. Placeholder Implementation for Complex Formats [done]
+### Dependencies: 3.1
+### Description: Create 'coming soon' functionality for unsupported formats
+### Details:
+Implement placeholder UI for EPS, AI, DXF, STL, and other complex formats. Add informative messages about future support. Consider external API integration points for future expansion.
+
+## 6. SEO Page Generation System [done]
+### Dependencies: 3.2, 3.3, 3.4, 3.5
+### Description: Create individual SEO-optimized pages for all 40 converter types
+### Details:
+Build dynamic route generation for each converter type. Create SEO-friendly URLs (e.g., /convert/png-to-svg). Implement meta tags, structured data, and content templates for each converter. Ensure shared conversion components across all pages.
+
+## 7. Unified Upload and Conversion Interface [done]
+### Dependencies: 3.6
+### Description: Create flexible UI that adapts to all 40 converter types
+### Details:
+Build adaptive file input that accepts relevant formats based on converter type. Implement dynamic conversion options UI. Create consistent download functionality across all output formats. Add clear conversion status and progress indicators.
+
+## 8. Comprehensive Validation and Error Handling [done]
+### Dependencies: 3.7
+### Description: Implement robust validation for all supported formats
+### Details:
+Create format-specific validation rules for all 40 converter types. Implement appropriate file size limits per format. Add detailed error messages for unsupported operations. Handle edge cases for each conversion type.
+

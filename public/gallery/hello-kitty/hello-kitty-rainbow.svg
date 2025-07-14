@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <title>Hello Kitty with Rainbow</title>
+  <!-- Rainbow -->
+  <path d="M 4 30 Q 24 10, 44 30" stroke="#FF0000" stroke-width="3" fill="none"/>
+  <path d="M 6 32 Q 24 14, 42 32" stroke="#FFA500" stroke-width="3" fill="none"/>
+  <path d="M 8 34 Q 24 18, 40 34" stroke="#FFFF00" stroke-width="3" fill="none"/>
+  <path d="M 10 36 Q 24 22, 38 36" stroke="#00FF00" stroke-width="3" fill="none"/>
+  <path d="M 12 38 Q 24 26, 36 38" stroke="#0000FF" stroke-width="3" fill="none"/>
+  <path d="M 14 40 Q 24 30, 34 40" stroke="#4B0082" stroke-width="3" fill="none"/>
+  <path d="M 16 42 Q 24 34, 32 42" stroke="#9400D3" stroke-width="3" fill="none"/>
+  
+  <!-- Cloud left -->
+  <ellipse cx="8" cy="38" rx="4" ry="3" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  <ellipse cx="5" cy="40" rx="3" ry="2.5" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  <ellipse cx="11" cy="40" rx="3" ry="2.5" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Cloud right -->
+  <ellipse cx="40" cy="38" rx="4" ry="3" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  <ellipse cx="37" cy="40" rx="3" ry="2.5" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  <ellipse cx="43" cy="40" rx="3" ry="2.5" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Face -->
+  <ellipse cx="24" cy="22" rx="12" ry="10" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+  
+  <!-- Left ear -->
+  <path d="M 14 12 Q 12 10, 10 13 Q 8 16, 12 18 L 16 16 Z" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+  
+  <!-- Right ear -->
+  <path d="M 34 12 Q 36 10, 38 13 Q 40 16, 36 18 L 32 16 Z" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+  
+  <!-- Rainbow bow -->
+  <path d="M 29 10 Q 32 9, 34 11 Q 36 13, 34 15 Q 32 17, 29 15 Q 26 17, 24 15 Q 22 13, 24 11 Q 26 9, 29 10 Z" fill="none" stroke="#000000" stroke-width="1"/>
+  <path d="M 29 10 Q 32 9, 34 11 Q 36 13, 34 15 Q 32 17, 29 15 Q 26 17, 24 15 Q 22 13, 24 11 Q 26 9, 29 10 Z" fill="url(#rainbow-gradient)" opacity="0.8"/>
+  <circle cx="29" cy="13" r="1.5" fill="#FFD700"/>
+  
+  <!-- Left eye -->
+  <ellipse cx="19" cy="22" rx="1" ry="2" fill="#000000"/>
+  <circle cx="19.5" cy="21" r="0.4" fill="#ffffff"/>
+  
+  <!-- Right eye -->
+  <ellipse cx="29" cy="22" rx="1" ry="2" fill="#000000"/>
+  <circle cx="29.5" cy="21" r="0.4" fill="#ffffff"/>
+  
+  <!-- Nose -->
+  <ellipse cx="24" cy="25" rx="2" ry="1" fill="#FFD700"/>
+  
+  <!-- Happy mouth -->
+  <path d="M 20 26 Q 24 28, 28 26" stroke="#000000" stroke-width="0.8" fill="none"/>
+  
+  <!-- Left whisker -->
+  <line x1="10" y1="21" x2="14" y2="22" stroke="#000000" stroke-width="0.8"/>
+  <line x1="10" y1="24" x2="14" y2="24" stroke="#000000" stroke-width="0.8"/>
+  
+  <!-- Right whisker -->
+  <line x1="34" y1="22" x2="38" y2="21" stroke="#000000" stroke-width="0.8"/>
+  <line x1="34" y1="24" x2="38" y2="24" stroke="#000000" stroke-width="0.8"/>
+  
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="rainbow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF0000"/>
+      <stop offset="16.66%" style="stop-color:#FFA500"/>
+      <stop offset="33.33%" style="stop-color:#FFFF00"/>
+      <stop offset="50%" style="stop-color:#00FF00"/>
+      <stop offset="66.66%" style="stop-color:#0000FF"/>
+      <stop offset="83.33%" style="stop-color:#4B0082"/>
+      <stop offset="100%" style="stop-color:#9400D3"/>
+    </linearGradient>
+  </defs>
+</svg>

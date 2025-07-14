@@ -11,6 +11,9 @@ import { sanitizeSvg } from "@/lib/svg-sanitizer"
 import { GenerationUpsell, UpgradeModal } from "@/components/generation-upsells"
 import { GenerationSignupModal } from "@/components/auth/generation-signup-modal"
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createLogger } from '@/lib/logger'
+
+const logger = createLogger('results-page')
 
 // SECURITY: Only allow SVGs from trusted domains
 const ALLOWED_DOMAINS = [
@@ -150,7 +153,7 @@ function ResultsContent() {
       } else {
         // SECURITY: Only log in development, use safe output
         if (process.env.NODE_ENV === 'development') {
-          console.warn("Could not parse 'remaining' parameter");
+          logger.warn("Could not parse 'remaining' parameter");
         }
       }
     }

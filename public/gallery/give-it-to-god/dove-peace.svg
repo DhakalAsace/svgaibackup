@@ -1,0 +1,35 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="doveGrad">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#87CEEB;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  <rect width="48" height="48" fill="#87CEEB" opacity="0.15"/>
+  <g transform="translate(24, 22)">
+    <!-- Dove body -->
+    <ellipse cx="0" cy="0" rx="12" ry="8" fill="url(#doveGrad)" stroke="#663399" stroke-width="0.5"/>
+    <!-- Head -->
+    <circle cx="-8" cy="-2" r="5" fill="#FFFFFF" stroke="#663399" stroke-width="0.5"/>
+    <!-- Eye -->
+    <circle cx="-9" cy="-2" r="1" fill="#663399"/>
+    <!-- Beak with olive branch -->
+    <path d="M-13,-2 L-16,-1" stroke="#FFA500" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Olive branch -->
+    <g transform="translate(-16, -1)">
+      <path d="M0,0 L-4,2" stroke="#8B4513" stroke-width="1"/>
+      <ellipse cx="-2" cy="1" rx="2" ry="1" fill="#90EE90" transform="rotate(-30 -2 1)"/>
+      <ellipse cx="-4" cy="2" rx="2" ry="1" fill="#90EE90" transform="rotate(-30 -4 2)"/>
+    </g>
+    <!-- Wing -->
+    <path d="M0,-4 Q8,-8 12,-2 Q8,0 0,2" fill="#FFFFFF" stroke="#663399" stroke-width="0.5"/>
+    <!-- Wing details -->
+    <path d="M4,-3 L8,-2 M4,-1 L8,0" stroke="#87CEEB" stroke-width="0.5"/>
+    <!-- Tail -->
+    <path d="M10,0 L14,2 L12,0 L14,-2 Z" fill="#FFFFFF" stroke="#663399" stroke-width="0.5"/>
+  </g>
+  <!-- Light rays -->
+  <g transform="translate(24, 10)" opacity="0.6">
+    <path d="M0,0 L0,-6 M-4,2 L-8,0 M4,2 L8,0" stroke="#FFD700" stroke-width="1" stroke-linecap="round"/>
+  </g>
+</svg>

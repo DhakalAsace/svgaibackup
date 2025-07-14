@@ -1,0 +1,55 @@
+# Task ID: 17
+# Title: Implement Legacy Windows Metafile Converters (EMF/WMF to SVG)
+# Status: pending
+# Dependencies: 11
+# Priority: low
+# Description: Create parsers and converters for Windows Enhanced Metafile and Windows Metafile formats
+# Details:
+Implement binary parser for EMF/WMF format reading record headers and GDI commands. Map GDI drawing commands (MoveTo, LineTo, Rectangle, Ellipse, etc.) to SVG equivalents. Handle GDI objects (pens, brushes, fonts) and maintain state machine. Support both EMF (32-bit) and WMF (16-bit) coordinate systems. For SVG to EMF/WMF, reverse the mapping maintaining compatibility with Windows applications. Implementation: /lib/converters/metafile/emf-parser.ts, /lib/converters/metafile/wmf-parser.ts, /lib/converters/metafile/gdi-to-svg.ts
+
+# Test Strategy:
+Test with metafiles from various Windows applications, verify GDI command interpretation, test coordinate system conversions, validate output in Windows metafile viewers, test edge cases like clipping regions
+
+# Subtasks:
+## 1. Binary format parser for EMF/WMF headers and records [pending]
+### Dependencies: None
+### Description: Implement parsers for Windows Metafile binary formats including EMF (Enhanced Metafile) and WMF (Windows Metafile) headers, record structures, and data types
+### Details:
+Parse EMF header (EMR_HEADER), WMF header (WMFHEAD), handle little-endian byte ordering, implement record enumeration with EMR_* record types for EMF and META_* for WMF, handle variable-length records, parse RECTL structures, SIZE structures, and POINTL arrays
+
+## 2. GDI command interpreter and state machine [pending]
+### Dependencies: 17.1
+### Description: Build a Graphics Device Interface (GDI) command interpreter that maintains drawing state and executes metafile records in sequence
+### Details:
+Implement GDI device context state tracking, handle playback of metafile records in order, maintain transformation matrix stack, track current position, implement save/restore DC operations (SaveDC/RestoreDC), handle SelectObject operations for switching drawing tools
+
+## 3. GDI to SVG command mapping system [pending]
+### Dependencies: 17.2
+### Description: Create mapping layer that translates GDI drawing commands to equivalent SVG elements and attributes
+### Details:
+Map GDI primitives: LineTo→<line>, Rectangle→<rect>, Ellipse→<ellipse>, Arc/Chord/Pie→<path>, PolyLine→<polyline>, PolyPolygon→<path>, TextOut→<text>. Handle GDI paths (BeginPath/EndPath/StrokePath/FillPath) to SVG <path> elements with proper fill-rule
+
+## 4. Object management (pens, brushes, fonts) [pending]
+### Dependencies: 17.2
+### Description: Implement GDI object table management for pens, brushes, fonts, and other drawing objects with proper selection and deletion
+### Details:
+Manage object handle table, implement CreatePen/CreateBrushIndirect/CreateFontIndirect parsers, map GDI pen styles (PS_SOLID, PS_DASH) to SVG stroke attributes, convert GDI brushes (solid, hatched, pattern) to SVG fill patterns, handle font mapping from LOGFONT to SVG font properties
+
+## 5. Coordinate system handlers for 16-bit and 32-bit formats [pending]
+### Dependencies: 17.1, 17.2
+### Description: Handle coordinate transformations between WMF 16-bit integers, EMF 32-bit coordinates, and SVG coordinate space
+### Details:
+Implement viewport/window transformations (SetViewportOrg/SetWindowExt), handle mapping modes (MM_TEXT, MM_LOMETRIC, MM_HIMETRIC), support world transforms for EMF (SetWorldTransform), convert between device units and logical units, handle coordinate overflow from 16-bit WMF to SVG
+
+## 6. Clipping region and advanced GDI features [pending]
+### Dependencies: 17.3, 17.4, 17.5
+### Description: Support complex clipping operations, raster operations, and advanced GDI features like gradients and transparency
+### Details:
+Implement clipping regions (SelectClipRgn, IntersectClipRect), handle complex regions with CombineRgn operations, support BitBlt/StretchBlt for embedded bitmaps, implement ternary raster operations (ROPs), handle EMF+ records for gradients and alpha blending, manage clip paths in SVG
+
+## 7. Reverse conversion for SVG to EMF/WMF [pending]
+### Dependencies: 17.3, 17.4, 17.5
+### Description: Implement reverse converter that generates valid EMF/WMF files from SVG input, handling format limitations
+### Details:
+Parse SVG DOM and map elements to GDI commands, handle SVG features without GDI equivalents (gradients→solid fills, filters→none), generate proper EMF/WMF headers with bounds calculation, write binary records with correct structure, handle text metrics and font embedding, manage color space conversions
+

@@ -1,0 +1,18 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <title>Graduation Cap with Diploma</title>
+  <!-- Mortarboard top -->
+  <polygon points="24,6 4,16 24,26 44,16" fill="#000" stroke="none"/>
+  <!-- Mortarboard edge -->
+  <rect x="4" y="16" width="40" height="4" fill="#000"/>
+  <!-- Cap button -->
+  <circle cx="24" cy="16" r="2" fill="#FFD700"/>
+  <!-- Diploma scroll -->
+  <g transform="translate(16,28)">
+    <rect x="0" y="0" width="16" height="12" fill="#FFF5E6" stroke="#000" stroke-width="1"/>
+    <!-- Rolled edges -->
+    <ellipse cx="0" cy="6" rx="2" ry="6" fill="#FFF5E6" stroke="#000" stroke-width="1"/>
+    <ellipse cx="16" cy="6" rx="2" ry="6" fill="#FFF5E6" stroke="#000" stroke-width="1"/>
+    <!-- Ribbon -->
+    <rect x="6" y="10" width="4" height="4" fill="#0066CC"/>
+  </g>
+</svg>

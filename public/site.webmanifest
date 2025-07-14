@@ -3,6 +3,7 @@
   "short_name": "SVG AI",
   "description": "Transform ideas into SVG graphics with AI",
   "start_url": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "/favicon.svg",
@@ -23,5 +24,19 @@
   ],
   "theme_color": "#FFFFFF",
   "background_color": "#FFFFFF",
-  "display": "standalone"
+  "display": "standalone",
+  "orientation": "any",
+  "categories": ["productivity", "utilities", "graphics"],
+  "screenshots": [
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png"
+    },
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png"
+    }
+  ]
 }

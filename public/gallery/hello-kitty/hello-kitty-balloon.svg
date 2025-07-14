@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <title>Hello Kitty with Balloons</title>
+  <!-- Balloon strings -->
+  <line x1="16" y1="30" x2="12" y2="12" stroke="#000000" stroke-width="0.8"/>
+  <line x1="24" y1="32" x2="24" y2="10" stroke="#000000" stroke-width="0.8"/>
+  <line x1="32" y1="30" x2="36" y2="12" stroke="#000000" stroke-width="0.8"/>
+  
+  <!-- Balloons -->
+  <ellipse cx="12" cy="8" rx="5" ry="7" fill="#FF69B4" stroke="#000000" stroke-width="1"/>
+  <path d="M 12 14 L 11 16 L 13 16 Z" fill="#FF69B4"/>
+  
+  <ellipse cx="24" cy="6" rx="5" ry="7" fill="#FFD700" stroke="#000000" stroke-width="1"/>
+  <path d="M 24 12 L 23 14 L 25 14 Z" fill="#FFD700"/>
+  
+  <ellipse cx="36" cy="8" rx="5" ry="7" fill="#87CEEB" stroke="#000000" stroke-width="1"/>
+  <path d="M 36 14 L 35 16 L 37 16 Z" fill="#87CEEB"/>
+  
+  <!-- Face -->
+  <ellipse cx="24" cy="28" rx="12" ry="10" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  
+  <!-- Left ear -->
+  <path d="M 14 18 Q 12 16, 10 19 Q 8 22, 12 24 L 16 22 Z" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  
+  <!-- Right ear -->
+  <path d="M 34 18 Q 36 16, 38 19 Q 40 22, 36 24 L 32 22 Z" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  
+  <!-- Bow -->
+  <path d="M 29 16 Q 32 15, 34 17 Q 36 19, 34 21 Q 32 23, 29 21 Q 26 23, 24 21 Q 22 19, 24 17 Q 26 15, 29 16 Z" fill="#FF69B4" stroke="#000000" stroke-width="1"/>
+  <circle cx="29" cy="19" r="1.5" fill="#FF1493"/>
+  
+  <!-- Left eye (happy) -->
+  <ellipse cx="19" cy="28" rx="1" ry="2" fill="#000000"/>
+  <circle cx="19.5" cy="27" r="0.4" fill="#ffffff"/>
+  
+  <!-- Right eye (happy) -->
+  <ellipse cx="29" cy="28" rx="1" ry="2" fill="#000000"/>
+  <circle cx="29.5" cy="27" r="0.4" fill="#ffffff"/>
+  
+  <!-- Nose -->
+  <ellipse cx="24" cy="31" rx="2" ry="1" fill="#FFD700"/>
+  
+  <!-- Big smile -->
+  <path d="M 18 33 Q 24 36, 30 33" stroke="#000000" stroke-width="1" fill="none"/>
+  
+  <!-- Left whisker -->
+  <line x1="10" y1="27" x2="14" y2="28" stroke="#000000" stroke-width="0.8"/>
+  <line x1="10" y1="30" x2="14" y2="30" stroke="#000000" stroke-width="0.8"/>
+  
+  <!-- Right whisker -->
+  <line x1="34" y1="28" x2="38" y2="27" stroke="#000000" stroke-width="0.8"/>
+  <line x1="34" y1="30" x2="38" y2="30" stroke="#000000" stroke-width="0.8"/>
+  
+  <!-- Confetti -->
+  <rect x="6" y="38" width="2" height="4" fill="#FF69B4" transform="rotate(45 7 40)"/>
+  <rect x="40" y="36" width="2" height="4" fill="#FFD700" transform="rotate(-30 41 38)"/>
+  <rect x="20" y="40" width="2" height="4" fill="#87CEEB" transform="rotate(15 21 42)"/>
+  <rect x="28" y="40" width="2" height="4" fill="#FF1493" transform="rotate(-45 29 42)"/>
+</svg>

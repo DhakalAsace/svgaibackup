@@ -37,8 +37,17 @@ import {
 import { useRouter } from "next/navigation"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
+// Animation preset type
+interface AnimationPreset {
+  name: string
+  category: string
+  keyframes: string
+  animation: string
+  setup?: string
+}
+
 // Animation presets
-const ANIMATION_PRESETS = {
+const ANIMATION_PRESETS: Record<string, AnimationPreset> = {
   // Entrance animations
   "fade-in": {
     name: "Fade In",
@@ -298,19 +307,19 @@ export default function AnimationTool() {
     }
 
     setAnimations([...animations, newAnimation])
-  }
+  };
 
   // Update animation property
   const updateAnimation = (id: string, property: keyof AnimationElement, value: any) => {
     setAnimations(animations.map(anim => 
       anim.id === id ? { ...anim, [property]: value } : anim
     ))
-  }
+  };
 
   // Remove animation
   const removeAnimation = (id: string) => {
     setAnimations(animations.filter(anim => anim.id !== id))
-  }
+  };
 
   // Generate CSS code
   const generateCSS = () => {
@@ -318,14 +327,14 @@ export default function AnimationTool() {
     const usedPresets = new Set<string>()
 
     animations.forEach(anim => {
-      if (anim.preset && ANIMATION_PRESETS[anim.preset as keyof typeof ANIMATION_PRESETS]) {
+      if (anim.preset && ANIMATION_PRESETS[anim.preset]) {
         usedPresets.add(anim.preset)
       }
     })
 
     // Add keyframes
     usedPresets.forEach(preset => {
-      const presetData = ANIMATION_PRESETS[preset as keyof typeof ANIMATION_PRESETS]
+      const presetData = ANIMATION_PRESETS[preset]
       if (presetData.keyframes) {
         css += presetData.keyframes + "\n\n"
       }
@@ -333,13 +342,9 @@ export default function AnimationTool() {
 
     // Add animations
     animations.forEach(anim => {
-      const preset = ANIMATION_PRESETS[anim.preset as keyof typeof ANIMATION_PRESETS]
+      const preset = ANIMATION_PRESETS[anim.preset]
       
       css += `${anim.selector} {\n`
-      
-      if (preset?.setup) {
-        css += `  ${preset.setup}\n`
-      }
       
       if (anim.customAnimation) {
         css += `  animation: ${anim.customAnimation};\n`
@@ -358,7 +363,7 @@ export default function AnimationTool() {
     })
 
     return css
-  }
+  };
 
   // Generate animated SVG
   const generateAnimatedSVG = () => {
@@ -373,7 +378,7 @@ export default function AnimationTool() {
     
     const serializer = new XMLSerializer()
     return serializer.serializeToString(doc.documentElement)
-  }
+  };
 
   // Copy to clipboard
   const copyToClipboard = async () => {
@@ -385,7 +390,7 @@ export default function AnimationTool() {
       title: "Copied!",
       description: "Animated SVG code copied to clipboard"
     })
-  }
+  };
 
   // Export animated SVG
   const exportSVG = () => {
@@ -397,7 +402,7 @@ export default function AnimationTool() {
     a.download = "animated.svg"
     a.click()
     URL.revokeObjectURL(url)
-  }
+  };
 
   // Video export (premium feature)
   const handleVideoExport = async () => {
@@ -425,68 +430,84 @@ export default function AnimationTool() {
       title: "Video Export",
       description: "Video export feature coming soon for premium users!"
     })
-  }
+  };
 
   return (
-    <section id="tool" className="py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-            <CardTitle className="text-2xl flex items-center gap-2">
-              <Zap className="w-6 h-6" />
-              SVG Animation Studio
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="upload">Upload SVG</TabsTrigger>
-                <TabsTrigger value="preview" disabled={!svgCode}>Preview & Animate</TabsTrigger>
-                <TabsTrigger value="export" disabled={animations.length === 0}>Export</TabsTrigger>
+    <div id="tool" className="py-8">
+      <Card className="max-w-6xl mx-auto">
+        <CardContent className="p-0">
+          {/* Compact Step Indicator */}
+          <div className="border-b bg-muted/30 p-4">
+            <div className="flex items-center justify-center gap-4">
+              <div className={`flex items-center gap-2 ${activeTab === 'upload' ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${activeTab === 'upload' ? 'bg-primary text-white' : 'bg-muted'}`}>
+                  1
+                </div>
+                <span className="hidden sm:inline">Upload</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              <div className={`flex items-center gap-2 ${activeTab === 'preview' ? 'text-primary font-semibold' : svgCode ? 'text-foreground' : 'text-muted-foreground'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${activeTab === 'preview' ? 'bg-primary text-white' : svgCode ? 'bg-muted' : 'bg-muted/50'}`}>
+                  2
+                </div>
+                <span className="hidden sm:inline">Animate</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              <div className={`flex items-center gap-2 ${activeTab === 'export' ? 'text-primary font-semibold' : animations.length > 0 ? 'text-foreground' : 'text-muted-foreground'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${activeTab === 'export' ? 'bg-primary text-white' : animations.length > 0 ? 'bg-muted' : 'bg-muted/50'}`}>
+                  3
+                </div>
+                <span className="hidden sm:inline">Export</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-0">
+              <TabsList className="hidden">
+                <TabsTrigger value="upload">Upload</TabsTrigger>
+                <TabsTrigger value="preview">Animate</TabsTrigger>
+                <TabsTrigger value="export">Export</TabsTrigger>
               </TabsList>
 
               {/* Upload Tab */}
-              <TabsContent value="upload" className="space-y-4">
-                <div className="grid gap-4">
-                  <div>
-                    <Label htmlFor="svg-upload">Upload SVG File</Label>
-                    <div className="mt-2">
+              <TabsContent value="upload" className="mt-6">
+                <div className="max-w-2xl mx-auto space-y-6">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2">Upload Your SVG</h3>
+                    <p className="text-muted-foreground">Choose a file or paste your SVG code below</p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* File Upload */}
+                    <Card className="p-6 text-center hover:border-primary/50 transition-colors cursor-pointer" onClick={() => fileInputRef.current?.click()}>
                       <input
                         ref={fileInputRef}
                         type="file"
                         accept=".svg"
                         onChange={handleFileUpload}
                         className="hidden"
-                        id="svg-upload"
                       />
-                      <Button
-                        variant="outline"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="w-full"
-                      >
-                        <Upload className="mr-2 h-4 w-4" />
-                        Choose SVG File
-                      </Button>
-                    </div>
+                      <Upload className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
+                      <h4 className="font-medium mb-1">Upload File</h4>
+                      <p className="text-sm text-muted-foreground">Click to browse SVG files</p>
+                    </Card>
+
+                    {/* Code Paste */}
+                    <Card className="p-6 text-center">
+                      <Code className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
+                      <h4 className="font-medium mb-1">Paste Code</h4>
+                      <p className="text-sm text-muted-foreground">Enter SVG code below</p>
+                    </Card>
                   </div>
 
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-gray-500">Or</span>
-                    </div>
-                  </div>
-
+                  {/* Code Input */}
                   <div>
-                    <Label htmlFor="svg-code">Paste SVG Code</Label>
                     <Textarea
-                      id="svg-code"
                       placeholder="<svg>...</svg>"
                       value={svgCode}
                       onChange={(e) => setSvgCode(e.target.value)}
-                      className="mt-2 font-mono text-sm min-h-[200px]"
+                      className="font-mono text-sm min-h-[200px] resize-none"
                     />
                   </div>
 
@@ -494,6 +515,7 @@ export default function AnimationTool() {
                     <Button 
                       onClick={() => setActiveTab("preview")}
                       className="w-full"
+                      size="lg"
                     >
                       Continue to Animation Editor
                       <ChevronRight className="ml-2 h-4 w-4" />
@@ -503,326 +525,384 @@ export default function AnimationTool() {
               </TabsContent>
 
               {/* Preview & Animate Tab */}
-              <TabsContent value="preview" className="space-y-6">
-                <div className="grid lg:grid-cols-2 gap-6">
-                  {/* Preview Panel */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold">Preview</h3>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setIsPlaying(!isPlaying)}
-                        >
-                          {isPlaying ? (
-                            <><Pause className="mr-1 h-3 w-3" /> Pause</>
-                          ) : (
-                            <><Play className="mr-1 h-3 w-3" /> Play</>
-                          )}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setIsPlaying(false)
-                            setTimeout(() => setIsPlaying(true), 100)
-                          }}
-                        >
-                          <RotateCw className="mr-1 h-3 w-3" /> Restart
-                        </Button>
+              <TabsContent value="preview" className="mt-6">
+                <div className="space-y-6">
+                  {/* Consolidated Preview Section */}
+                  <div className="bg-muted/30 rounded-lg p-6">
+                    <div className="max-w-4xl mx-auto">
+                      {/* Preview Controls */}
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold">Preview</h3>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant={isPlaying ? "default" : "outline"}
+                            onClick={() => setIsPlaying(!isPlaying)}
+                          >
+                            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setIsPlaying(false)
+                              setTimeout(() => setIsPlaying(true), 100)
+                            }}
+                          >
+                            <RotateCw className="h-4 w-4" />
+                          </Button>
+                          <div className="ml-4 flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground">Zoom:</span>
+                            <Slider
+                              value={[previewScale]}
+                              onValueChange={(value) => setPreviewScale(value[0])}
+                              min={0.5}
+                              max={2}
+                              step={0.1}
+                              className="w-24"
+                            />
+                            <span className="text-sm w-10">{Math.round(previewScale * 100)}%</span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
 
-                    <div 
-                      ref={svgContainerRef}
-                      className="bg-gray-50 rounded-lg p-8 min-h-[400px] flex items-center justify-center overflow-hidden"
-                    >
-                      {svgCode && (
-                        <div
-                          className={isPlaying ? "" : "animation-paused"}
-                          style={{ transform: `scale(${previewScale})` }}
-                          dangerouslySetInnerHTML={{ 
-                            __html: `<style>${generateCSS()}</style>${svgCode}` 
-                          }}
-                        />
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Label>Zoom:</Label>
-                      <Slider
-                        value={[previewScale]}
-                        onValueChange={(value) => setPreviewScale(value[0])}
-                        min={0.5}
-                        max={2}
-                        step={0.1}
-                        className="flex-1"
-                      />
-                      <span className="text-sm text-gray-500 w-12">{Math.round(previewScale * 100)}%</span>
+                      {/* SVG Preview */}
+                      <div 
+                        ref={svgContainerRef}
+                        className="bg-background rounded-lg border p-8 min-h-[300px] flex items-center justify-center overflow-hidden"
+                      >
+                        {svgCode && (
+                          <div
+                            className={isPlaying ? "" : "animation-paused"}
+                            style={{ transform: `scale(${previewScale})` }}
+                            dangerouslySetInnerHTML={{ 
+                              __html: `<style>${generateCSS()}</style>${svgCode}` 
+                            }}
+                          />
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   {/* Animation Controls */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Animation Timeline</h3>
+                  <div className="max-w-4xl mx-auto">
+                    <h3 className="text-lg font-semibold mb-4">Add Animations</h3>
 
-                    {/* Element Selector */}
-                    <div className="space-y-2">
-                      <Label>Select Element</Label>
-                      <Select value={selectedElement} onValueChange={setSelectedElement}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose an element to animate" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="svg">Entire SVG</SelectItem>
-                          {svgElements.map((element) => (
-                            <SelectItem key={element} value={element}>
-                              {element}
-                            </SelectItem>
+                    {/* Quick Start - Element Selection */}
+                    <Card className="p-4 bg-primary/5 border-primary/20">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1">
+                          <Label className="text-base">Select Element to Animate</Label>
+                          <p className="text-sm text-muted-foreground mt-1">Choose which part of your SVG to animate</p>
+                          <Select value={selectedElement} onValueChange={setSelectedElement}>
+                            <SelectTrigger className="mt-3">
+                              <SelectValue placeholder="Choose an element" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="svg">Entire SVG</SelectItem>
+                              {svgElements.map((element) => (
+                                <SelectItem key={element} value={element}>
+                                  {element}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {selectedElement && (
+                          <Button onClick={addAnimation} size="lg" className="mt-6">
+                            <Sparkles className="mr-2 h-4 w-4" />
+                            Add Animation
+                          </Button>
+                        )}
+                      </div>
+                    </Card>
+
+                    {/* Animation Timeline */}
+                    {animations.length > 0 && (
+                      <div className="mt-6">
+                        <h4 className="font-medium mb-3">Animation Timeline</h4>
+                        <div className="space-y-3">
+                          {animations.map((anim) => (
+                            <Card key={anim.id} className="p-4">
+                              <div className="space-y-3">
+                                {/* Header */}
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <Badge variant="outline">{anim.selector}</Badge>
+                                    <Badge variant="secondary" className="text-xs">
+                                      {anim.preset && ANIMATION_PRESETS[anim.preset] ? ANIMATION_PRESETS[anim.preset].name : 'Custom'}
+                                    </Badge>
+                                  </div>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-8 w-8"
+                                    onClick={() => removeAnimation(anim.id)}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+
+                                {/* Compact Controls Grid */}
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                  {/* Animation Type */}
+                                  <div>
+                                    <Label className="text-xs">Animation</Label>
+                                    <Select
+                                      value={anim.preset}
+                                      onValueChange={(value) => updateAnimation(anim.id, "preset", value)}
+                                    >
+                                      <SelectTrigger className="h-8 text-sm">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="custom">Custom</SelectItem>
+                                        {Object.entries(ANIMATION_PRESETS).map(([key, preset]) => (
+                                          <SelectItem key={key} value={key}>
+                                            {preset.name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+
+                                  {/* Duration */}
+                                  <div>
+                                    <Label className="text-xs">Duration</Label>
+                                    <div className="flex items-center gap-1">
+                                      <input
+                                        type="number"
+                                        value={anim.duration}
+                                        onChange={(e) => updateAnimation(anim.id, "duration", parseFloat(e.target.value))}
+                                        className="w-full h-8 px-2 text-sm border rounded"
+                                        min="0.1"
+                                        step="0.1"
+                                      />
+                                      <span className="text-xs text-muted-foreground">s</span>
+                                    </div>
+                                  </div>
+
+                                  {/* Delay */}
+                                  <div>
+                                    <Label className="text-xs">Delay</Label>
+                                    <div className="flex items-center gap-1">
+                                      <input
+                                        type="number"
+                                        value={anim.delay}
+                                        onChange={(e) => updateAnimation(anim.id, "delay", parseFloat(e.target.value))}
+                                        className="w-full h-8 px-2 text-sm border rounded"
+                                        min="0"
+                                        step="0.1"
+                                      />
+                                      <span className="text-xs text-muted-foreground">s</span>
+                                    </div>
+                                  </div>
+
+                                  {/* Easing */}
+                                  <div>
+                                    <Label className="text-xs">Easing</Label>
+                                    <Select
+                                      value={anim.easing}
+                                      onValueChange={(value) => updateAnimation(anim.id, "easing", value)}
+                                    >
+                                      <SelectTrigger className="h-8 text-sm">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {Object.entries(EASING_FUNCTIONS).map(([key, value]) => (
+                                          <SelectItem key={key} value={value}>
+                                            {key}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                </div>
+
+                                {/* Advanced Options - Collapsed by default */}
+                                <div className="flex gap-3">
+                                  <Select
+                                    value={anim.iterationCount}
+                                    onValueChange={(value) => updateAnimation(anim.id, "iterationCount", value)}
+                                  >
+                                    <SelectTrigger className="h-8 text-sm">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="1">Play once</SelectItem>
+                                      <SelectItem value="2">Play twice</SelectItem>
+                                      <SelectItem value="3">Play 3 times</SelectItem>
+                                      <SelectItem value="infinite">Loop forever</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <Select
+                                    value={anim.direction}
+                                    onValueChange={(value) => updateAnimation(anim.id, "direction", value)}
+                                  >
+                                    <SelectTrigger className="h-8 text-sm">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="normal">Normal</SelectItem>
+                                      <SelectItem value="reverse">Reverse</SelectItem>
+                                      <SelectItem value="alternate">Alternate</SelectItem>
+                                      <SelectItem value="alternate-reverse">Alternate Reverse</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                            </Card>
                           ))}
-                        </SelectContent>
-                      </Select>
-                      {selectedElement && (
-                        <Button onClick={addAnimation} className="w-full">
-                          <Sparkles className="mr-2 h-4 w-4" />
-                          Add Animation
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Continue button to Export */}
+                    {animations.length > 0 && (
+                      <div className="mt-6 text-center">
+                        <Button
+                          onClick={() => setActiveTab("export")}
+                          size="lg"
+                          className="min-w-[200px]"
+                        >
+                          Continue to Export
+                          <ChevronRight className="ml-2 h-4 w-4" />
                         </Button>
-                      )}
-                    </div>
-
-                    {/* Animation List */}
-                    <div className="space-y-4 max-h-[500px] overflow-y-auto">
-                      {animations.map((anim) => (
-                        <Card key={anim.id} className="p-4 space-y-3">
-                          <div className="flex items-center justify-between">
-                            <Badge variant="secondary">{anim.selector}</Badge>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => removeAnimation(anim.id)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-
-                          <div className="grid gap-3">
-                            <div>
-                              <Label>Animation Preset</Label>
-                              <Select
-                                value={anim.preset}
-                                onValueChange={(value) => updateAnimation(anim.id, "preset", value)}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="custom">Custom</SelectItem>
-                                  {Object.entries(ANIMATION_PRESETS).map(([key, preset]) => (
-                                    <SelectItem key={key} value={key}>
-                                      {preset.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <Label>Duration (s)</Label>
-                                <input
-                                  type="number"
-                                  value={anim.duration}
-                                  onChange={(e) => updateAnimation(anim.id, "duration", parseFloat(e.target.value))}
-                                  className="w-full px-3 py-2 border rounded-md"
-                                  min="0.1"
-                                  step="0.1"
-                                />
-                              </div>
-                              <div>
-                                <Label>Delay (s)</Label>
-                                <input
-                                  type="number"
-                                  value={anim.delay}
-                                  onChange={(e) => updateAnimation(anim.id, "delay", parseFloat(e.target.value))}
-                                  className="w-full px-3 py-2 border rounded-md"
-                                  min="0"
-                                  step="0.1"
-                                />
-                              </div>
-                            </div>
-
-                            <div>
-                              <Label>Easing</Label>
-                              <Select
-                                value={anim.easing}
-                                onValueChange={(value) => updateAnimation(anim.id, "easing", value)}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {Object.entries(EASING_FUNCTIONS).map(([key, value]) => (
-                                    <SelectItem key={key} value={value}>
-                                      {key}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <Label>Repeat</Label>
-                                <Select
-                                  value={anim.iterationCount}
-                                  onValueChange={(value) => updateAnimation(anim.id, "iterationCount", value)}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="1">Once</SelectItem>
-                                    <SelectItem value="2">Twice</SelectItem>
-                                    <SelectItem value="3">3 times</SelectItem>
-                                    <SelectItem value="infinite">Infinite</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div>
-                                <Label>Direction</Label>
-                                <Select
-                                  value={anim.direction}
-                                  onValueChange={(value) => updateAnimation(anim.id, "direction", value)}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="normal">Normal</SelectItem>
-                                    <SelectItem value="reverse">Reverse</SelectItem>
-                                    <SelectItem value="alternate">Alternate</SelectItem>
-                                    <SelectItem value="alternate-reverse">Alternate Reverse</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </TabsContent>
 
               {/* Export Tab */}
-              <TabsContent value="export" className="space-y-6">
-                <div className="grid lg:grid-cols-2 gap-6">
-                  {/* Code Preview */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold">Generated Code</h3>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setShowCode(!showCode)}
-                      >
-                        {showCode ? (
-                          <><EyeOff className="mr-1 h-3 w-3" /> Hide Code</>
-                        ) : (
-                          <><Eye className="mr-1 h-3 w-3" /> Show Code</>
-                        )}
-                      </Button>
-                    </div>
+              <TabsContent value="export" className="mt-6">
+                <div className="max-w-4xl mx-auto space-y-6">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-semibold mb-2">Export Your Animation</h3>
+                    <p className="text-muted-foreground">Download your animated SVG or upgrade for video export</p>
+                  </div>
 
-                    {showCode && (
-                      <div className="relative">
-                        <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto text-sm">
-                          <code>{generateAnimatedSVG()}</code>
-                        </pre>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="absolute top-2 right-2"
-                          onClick={copyToClipboard}
+                  {/* Export Options Grid */}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Free SVG Export */}
+                    <Card className="p-6">
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <Code className="w-8 h-8 text-primary" />
+                          <div>
+                            <h4 className="font-semibold text-lg">Animated SVG</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Export as SVG with embedded CSS animations
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-3">
+                          <Button onClick={exportSVG} className="w-full" size="lg">
+                            <Download className="mr-2 h-4 w-4" />
+                            Download SVG
+                          </Button>
+                          
+                          <Button onClick={copyToClipboard} variant="outline" className="w-full">
+                            {copied ? (
+                              <><Check className="mr-2 h-4 w-4" /> Copied!</>
+                            ) : (
+                              <><Copy className="mr-2 h-4 w-4" /> Copy Code</>
+                            )}
+                          </Button>
+                        </div>
+
+                        <Badge variant="outline" className="text-xs">Free • Unlimited exports</Badge>
+                      </div>
+                    </Card>
+
+                    {/* Premium Video Export */}
+                    <Card className="p-6 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <Video className="w-8 h-8 text-primary" />
+                          <div>
+                            <h4 className="font-semibold text-lg flex items-center gap-2">
+                              Video Export
+                              <Badge className="bg-primary text-white">Premium</Badge>
+                            </h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Convert to MP4, WebM, or GIF format
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <ul className="text-sm space-y-2">
+                          <li className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-primary" />
+                            HD & 4K resolution
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-primary" />
+                            Custom frame rates
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-primary" />
+                            Transparent backgrounds
+                          </li>
+                        </ul>
+                        
+                        <Button 
+                          onClick={handleVideoExport} 
+                          className="w-full"
+                          size="lg"
                         >
-                          {copied ? (
-                            <><Check className="mr-1 h-3 w-3" /> Copied!</>
-                          ) : (
-                            <><Copy className="mr-1 h-3 w-3" /> Copy</>
-                          )}
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Upgrade for Video Export
                         </Button>
                       </div>
-                    )}
+                    </Card>
                   </div>
 
-                  {/* Export Options */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Export Options</h3>
+                  {/* Pro Tip */}
+                  <Alert className="mt-6">
+                    <Zap className="h-4 w-4" />
+                    <AlertDescription>
+                      <strong>Pro tip:</strong> Use "infinite" iteration count for looping animations that will be converted to video.
+                    </AlertDescription>
+                  </Alert>
 
-                    <Card className="p-4 space-y-3">
-                      <div className="flex items-start gap-3">
-                        <Code className="w-5 h-5 text-gray-400 mt-0.5" />
-                        <div className="flex-1">
-                          <h4 className="font-medium">Animated SVG</h4>
-                          <p className="text-sm text-gray-600 mt-1">
-                            Export as a standalone SVG file with embedded CSS animations
-                          </p>
-                        </div>
+                  {/* Code Preview Toggle */}
+                  {showCode && (
+                    <div className="mt-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-medium">Generated Code</h4>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setShowCode(false)}
+                        >
+                          <EyeOff className="h-4 w-4" />
+                        </Button>
                       </div>
-                      <Button onClick={exportSVG} className="w-full">
-                        <Download className="mr-2 h-4 w-4" />
-                        Download SVG
-                      </Button>
-                    </Card>
-
-                    <Card className="p-4 space-y-3 border-indigo-200 bg-indigo-50">
-                      <div className="flex items-start gap-3">
-                        <Video className="w-5 h-5 text-indigo-600 mt-0.5" />
-                        <div className="flex-1">
-                          <h4 className="font-medium flex items-center gap-2">
-                            Video Export
-                            <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">Premium</Badge>
-                          </h4>
-                          <p className="text-sm text-gray-600 mt-1">
-                            Convert your animation to MP4, WebM, or GIF format
-                          </p>
-                          <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                            <li>• HD & 4K resolution</li>
-                            <li>• Custom frame rates</li>
-                            <li>• Transparent backgrounds</li>
-                          </ul>
-                        </div>
-                      </div>
-                      <Button 
-                        onClick={handleVideoExport} 
-                        className="w-full bg-indigo-600 hover:bg-indigo-700"
+                      <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-sm">
+                        <code>{generateAnimatedSVG()}</code>
+                      </pre>
+                    </div>
+                  )}
+                  
+                  {!showCode && (
+                    <div className="text-center">
+                      <Button
+                        variant="link"
+                        onClick={() => setShowCode(true)}
                       >
-                        <Sparkles className="mr-2 h-4 w-4" />
-                        Upgrade for Video Export
+                        <Eye className="mr-2 h-4 w-4" />
+                        View Generated Code
                       </Button>
-                    </Card>
-
-                    <Alert>
-                      <Zap className="h-4 w-4" />
-                      <AlertDescription>
-                        <strong>Pro Tip:</strong> Test your animations across different browsers 
-                        to ensure compatibility. Modern browsers have excellent SVG animation support!
-                      </AlertDescription>
-                    </Alert>
-                  </div>
+                    </div>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
-          </CardContent>
-        </Card>
-
-        <style jsx global>{`
-          .animation-paused * {
-            animation-play-state: paused !important;
-          }
-        `}</style>
-      </div>
-    </section>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

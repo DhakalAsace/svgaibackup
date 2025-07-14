@@ -1,0 +1,39 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cartoon house outline -->
+  <g>
+    <!-- House base -->
+    <rect x="10" y="24" width="28" height="20" fill="#FFE0B2" stroke="#D84315" stroke-width="2"/>
+    
+    <!-- Roof -->
+    <path d="M 6 24 L 24 8 L 42 24 Z" fill="#D84315" stroke="#BF360C" stroke-width="2"/>
+    
+    <!-- Chimney -->
+    <rect x="32" y="12" width="6" height="10" fill="#795548" stroke="#5D4037" stroke-width="2"/>
+    
+    <!-- Door -->
+    <rect x="20" y="30" width="8" height="14" fill="#8D6E63" stroke="#5D4037" stroke-width="2"/>
+    <circle cx="26" cy="37" r="0.8" fill="#FFD54F"/>
+    
+    <!-- Windows -->
+    <rect x="13" y="28" width="5" height="5" fill="#81D4FA" stroke="#039BE5" stroke-width="1.5"/>
+    <rect x="30" y="28" width="5" height="5" fill="#81D4FA" stroke="#039BE5" stroke-width="1.5"/>
+    
+    <!-- Window cross -->
+    <path d="M 15.5 28 L 15.5 33 M 13 30.5 L 18 30.5" stroke="#039BE5" stroke-width="1"/>
+    <path d="M 32.5 28 L 32.5 33 M 30 30.5 L 35 30.5" stroke="#039BE5" stroke-width="1"/>
+    
+    <!-- Front yard -->
+    <rect x="6" y="42" width="36" height="2" fill="#66BB6A" stroke="#43A047" stroke-width="1"/>
+    
+    <!-- Decorative flowers -->
+    <circle cx="12" cy="41" r="1.5" fill="#E91E63"/>
+    <circle cx="16" cy="41" r="1.5" fill="#FFC107"/>
+    <circle cx="32" cy="41" r="1.5" fill="#E91E63"/>
+    <circle cx="36" cy="41" r="1.5" fill="#FFC107"/>
+    
+    <!-- Smoke from chimney -->
+    <circle cx="35" cy="10" r="1.5" fill="#BDBDBD" opacity="0.6"/>
+    <circle cx="36" cy="7" r="1.8" fill="#BDBDBD" opacity="0.5"/>
+    <circle cx="34" cy="4" r="2" fill="#BDBDBD" opacity="0.4"/>
+  </g>
+</svg>

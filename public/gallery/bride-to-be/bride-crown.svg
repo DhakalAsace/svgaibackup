@@ -1,0 +1,33 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tiaraGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#C0C0C0;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C0C0C0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <path d="M 40 100 Q 40 80, 50 70 L 60 60 L 70 70 L 80 55 L 90 65 L 100 50 L 110 65 L 120 55 L 130 70 L 140 60 L 150 70 Q 160 80, 160 100" stroke="url(#tiaraGradient)" stroke-width="3" fill="none"/>
+  <circle cx="50" cy="70" r="4" fill="#FFF"/>
+  <circle cx="50" cy="70" r="2" fill="#E6E6FA"/>
+  <circle cx="70" cy="70" r="5" fill="#FFF"/>
+  <circle cx="70" cy="70" r="3" fill="#FFB6C1"/>
+  <circle cx="90" cy="65" r="4" fill="#FFF"/>
+  <circle cx="90" cy="65" r="2" fill="#E6E6FA"/>
+  <circle cx="100" cy="50" r="7" fill="#FFF"/>
+  <circle cx="100" cy="50" r="5" fill="#FFB6C1"/>
+  <circle cx="110" cy="65" r="4" fill="#FFF"/>
+  <circle cx="110" cy="65" r="2" fill="#E6E6FA"/>
+  <circle cx="130" cy="70" r="5" fill="#FFF"/>
+  <circle cx="130" cy="70" r="3" fill="#FFB6C1"/>
+  <circle cx="150" cy="70" r="4" fill="#FFF"/>
+  <circle cx="150" cy="70" r="2" fill="#E6E6FA"/>
+  <path d="M 60 60 L 65 50 L 70 60" stroke="#C0C0C0" stroke-width="1" fill="none"/>
+  <path d="M 80 55 L 85 45 L 90 55" stroke="#C0C0C0" stroke-width="1" fill="none"/>
+  <path d="M 120 55 L 125 45 L 130 55" stroke="#C0C0C0" stroke-width="1" fill="none"/>
+  <path d="M 140 60 L 145 50 L 150 60" stroke="#C0C0C0" stroke-width="1" fill="none"/>
+  <circle cx="65" cy="50" r="2" fill="#FFF" opacity="0.8"/>
+  <circle cx="85" cy="45" r="2" fill="#FFF" opacity="0.8"/>
+  <circle cx="125" cy="45" r="2" fill="#FFF" opacity="0.8"/>
+  <circle cx="145" cy="50" r="2" fill="#FFF" opacity="0.8"/>
+  <text x="100" y="140" font-family="Brush Script MT, cursive" font-size="28" text-anchor="middle" fill="#FFB6C1">Princess Bride</text>
+</svg>

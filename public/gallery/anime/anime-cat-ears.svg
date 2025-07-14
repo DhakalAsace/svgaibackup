@@ -1,0 +1,39 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cat ear headband -->
+  <!-- Headband -->
+  <path d="M20 100 Q20 80 40 75 Q60 70 100 70 Q140 70 160 75 Q180 80 180 100" 
+        fill="none" stroke="#000" stroke-width="4"/>
+  <!-- Left ear -->
+  <path d="M40 70 L30 30 Q30 20 35 20 L50 25 L65 40 L70 70 Z" 
+        fill="#000" stroke="#000" stroke-width="3"/>
+  <!-- Left ear inner -->
+  <path d="M45 60 L40 40 Q40 35 43 35 L50 38 L58 48 L60 60 Z" 
+        fill="#ff69b4"/>
+  <!-- Right ear -->
+  <path d="M160 70 L170 30 Q170 20 165 20 L150 25 L135 40 L130 70 Z" 
+        fill="#000" stroke="#000" stroke-width="3"/>
+  <!-- Right ear inner -->
+  <path d="M155 60 L160 40 Q160 35 157 35 L150 38 L142 48 L140 60 Z" 
+        fill="#ff69b4"/>
+  <!-- Decorative bow -->
+  <g transform="translate(100, 65)">
+    <!-- Bow left -->
+    <path d="M-20 0 Q-25 -10 -20 -15 Q-10 -20 0 -15 Q0 -10 0 0 Q0 10 0 15 Q-10 20 -20 15 Q-25 10 -20 0 Z" 
+          fill="#ff69b4" stroke="#000" stroke-width="2"/>
+    <!-- Bow right -->
+    <path d="M20 0 Q25 -10 20 -15 Q10 -20 0 -15 Q0 -10 0 0 Q0 10 0 15 Q10 20 20 15 Q25 10 20 0 Z" 
+          fill="#ff69b4" stroke="#000" stroke-width="2"/>
+    <!-- Bow center -->
+    <ellipse cx="0" cy="0" rx="8" ry="12" fill="#ff1493" stroke="#000" stroke-width="2"/>
+  </g>
+  <!-- Small sparkles -->
+  <g fill="#ffd700" opacity="0.8">
+    <path d="M60 40 L62 42 L64 40 L62 38 Z"/>
+    <path d="M140 40 L142 42 L144 40 L142 38 Z"/>
+    <path d="M100 45 L102 47 L104 45 L102 43 Z"/>
+  </g>
+  <!-- Bell on headband -->
+  <circle cx="100" cy="90" r="8" fill="#ffd700" stroke="#000" stroke-width="2"/>
+  <line x1="100" y1="90" x2="100" y2="96" stroke="#000" stroke-width="1"/>
+  <circle cx="100" cy="96" r="2" fill="#000"/>
+</svg>

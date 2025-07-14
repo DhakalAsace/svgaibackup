@@ -1,0 +1,49 @@
+# Task ID: 14
+# Title: Implement 3D Format Converters (STL to SVG, SVG to STL)
+# Status: pending
+# Dependencies: 11
+# Priority: medium
+# Description: Develop converters for STL 3D format with 2D projection for viewing and extrusion for creation
+# Details:
+Parse both ASCII and binary STL formats extracting vertex and normal data. Implement orthographic and perspective projection algorithms for 3D to 2D conversion. Create wireframe, hidden line, and silhouette rendering modes. For SVG to STL, implement path extrusion algorithm with configurable depth, generate proper face normals, create watertight meshes. Support user-defined view angles and zoom levels. Implementation: /lib/converters/3d/stl-parser.ts, /lib/converters/3d/projection.ts, /lib/converters/3d/extrusion.ts
+
+# Test Strategy:
+Test with various STL models (simple shapes to complex meshes), verify projection accuracy with known geometries, test extrusion with different path types, validate STL output in 3D viewers, performance test with large meshes
+
+# Subtasks:
+## 1. Implement STL parser for ASCII and binary formats [pending]
+### Dependencies: None
+### Description: Create a parser that can read both ASCII and binary STL file formats, extracting vertex and normal data from 3D models
+### Details:
+Build parser to handle ASCII STL format with regex/string parsing and binary STL format with ArrayBuffer/DataView. Extract triangular facets with vertices and surface normals. Validate file headers and handle malformed data gracefully.
+
+## 2. Develop 3D projection algorithms (orthographic and perspective) [pending]
+### Dependencies: 14.1
+### Description: Implement mathematical transformation algorithms to project 3D coordinates onto 2D plane using both orthographic and perspective projection methods
+### Details:
+Create projection matrices for orthographic (parallel) and perspective (vanishing point) views. Implement camera positioning, view direction, and field of view controls. Handle coordinate system transformations and clipping.
+
+## 3. Build rendering modes (wireframe, hidden line, silhouette) [pending]
+### Dependencies: 14.2
+### Description: Implement different visualization modes for the projected 3D models including wireframe display, hidden line removal, and silhouette edge detection
+### Details:
+Wireframe: render all edges. Hidden line: implement z-buffer or BSP tree algorithm for occlusion. Silhouette: detect edges where adjacent faces have opposing normals relative to view direction. Optimize for performance.
+
+## 4. Create SVG path extrusion algorithm with depth control [pending]
+### Dependencies: None
+### Description: Develop algorithm to extrude 2D SVG paths into 3D meshes with configurable depth and bevel options
+### Details:
+Parse SVG path commands and convert to polygons. Generate front/back faces and connecting walls. Implement bevel generation for edges. Support holes in paths using winding rules. Create valid STL mesh output.
+
+## 5. Implement mesh generation and normal calculation [pending]
+### Dependencies: 14.4
+### Description: Build utilities for generating 3D meshes from various inputs and calculating surface normals for proper lighting and rendering
+### Details:
+Calculate face normals using cross product of edge vectors. Generate vertex normals by averaging adjacent face normals. Ensure consistent winding order for proper normal direction. Handle degenerate triangles and mesh optimization.
+
+## 6. Develop interactive view controls and UI integration [pending]
+### Dependencies: 14.3, 14.5
+### Description: Create user interface controls for manipulating 3D view, adjusting projection parameters, and configuring conversion options
+### Details:
+Implement mouse/touch controls for rotation, zoom, and pan. Add UI sliders for projection parameters, extrusion depth, and rendering modes. Create real-time preview updates. Integrate file upload/download functionality.
+

@@ -1,6 +1,8 @@
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getConverterTrafficCategory } from '@/lib/converter-traffic-groups'
+import { findRedirect, findGoneRule, normalizeTrailingSlash } from '@/lib/redirects'
 
 // Define paths that require authentication
 // Note: We're only protecting dashboard and settings now
@@ -17,6 +19,65 @@ export async function middleware(request: NextRequest) {
   // Handle cache control for static assets
   const url = request.nextUrl.clone();
   const { pathname } = url;
+
+  // Handle redirects first
+  // Check for trailing slash normalization
+  const normalizedPath = normalizeTrailingSlash(pathname);
+  if (normalizedPath) {
+    const redirectUrl = new URL(normalizedPath, request.url);
+    redirectUrl.search = url.search; // Preserve query params
+    return NextResponse.redirect(redirectUrl, 301);
+  }
+
+  // Check for configured redirects
+  const redirect = findRedirect(pathname);
+  if (redirect) {
+    const redirectUrl = new URL(redirect.destination, request.url);
+    redirectUrl.search = url.search; // Preserve query params
+    return NextResponse.redirect(redirectUrl, redirect.statusCode || (redirect.permanent ? 301 : 302));
+  }
+
+  // Check for gone pages (410)
+  const goneRule = findGoneRule(pathname);
+  if (goneRule) {
+    return new NextResponse(
+      JSON.stringify({
+        error: 'Gone',
+        message: goneRule.message || 'This page has been permanently removed.',
+        statusCode: 410
+      }),
+      {
+        status: 410,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=31536000' // Cache 410s for a year
+        }
+      }
+    );
+  }
+
+  // Handle converter pages with traffic-based cache headers
+  if (pathname.startsWith('/convert/') && pathname.split('/').length === 3) {
+    const converterSlug = pathname.split('/')[2];
+    const category = getConverterTrafficCategory(converterSlug);
+    
+    if (category) {
+      // Continue with the request but we'll set cache headers in the page
+      const response = NextResponse.next();
+      
+      // Set cache headers based on traffic category
+      const revalidateSeconds = category === 'high' ? 900 : category === 'medium' ? 1800 : 3600;
+      
+      // These headers will be used by CDN/Edge
+      response.headers.set('X-Converter-Category', category);
+      response.headers.set('X-Revalidate-Seconds', revalidateSeconds.toString());
+      
+      // Note: Cache-Control headers should be set in the page component
+      // as middleware headers might be overridden
+      
+      return response;
+    }
+  }
 
   // Apply efficient cache policy to static assets
   if (STATIC_EXTENSIONS.some(ext => pathname.endsWith(ext))) {

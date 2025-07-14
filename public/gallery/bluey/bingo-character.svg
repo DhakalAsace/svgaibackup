@@ -1,0 +1,33 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- Orange/red dog character outline -->
+  <g>
+    <!-- Body -->
+    <ellipse cx="24" cy="30" rx="11" ry="9" fill="#FF8C42" stroke="#D66A2C" stroke-width="2"/>
+    
+    <!-- Head -->
+    <circle cx="24" cy="19" r="9" fill="#FF8C42" stroke="#D66A2C" stroke-width="2"/>
+    
+    <!-- Ears -->
+    <ellipse cx="17" cy="15" rx="4" ry="7" fill="#FF8C42" stroke="#D66A2C" stroke-width="2" transform="rotate(-25 17 15)"/>
+    <ellipse cx="31" cy="15" rx="4" ry="7" fill="#FF8C42" stroke="#D66A2C" stroke-width="2" transform="rotate(25 31 15)"/>
+    
+    <!-- Eyes -->
+    <circle cx="21" cy="19" r="2" fill="white"/>
+    <circle cx="27" cy="19" r="2" fill="white"/>
+    <circle cx="21" cy="19" r="1" fill="black"/>
+    <circle cx="27" cy="19" r="1" fill="black"/>
+    
+    <!-- Nose -->
+    <ellipse cx="24" cy="22" rx="1.5" ry="1" fill="black"/>
+    
+    <!-- Smile -->
+    <path d="M22 23 Q 24 25 26 23" fill="none" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+    
+    <!-- Tail -->
+    <path d="M35 28 Q 38 22 36 16" fill="none" stroke="#FF8C42" stroke-width="4" stroke-linecap="round"/>
+    
+    <!-- Legs -->
+    <rect x="19" y="35" width="4" height="7" rx="2" fill="#FF8C42" stroke="#D66A2C" stroke-width="2"/>
+    <rect x="25" y="35" width="4" height="7" rx="2" fill="#FF8C42" stroke="#D66A2C" stroke-width="2"/>
+  </g>
+</svg>

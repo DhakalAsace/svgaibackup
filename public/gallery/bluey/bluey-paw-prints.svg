@@ -1,0 +1,44 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cartoon paw print trail -->
+  <g>
+    <!-- First paw print -->
+    <g transform="translate(8, 8) rotate(-10 6 6)">
+      <!-- Main pad -->
+      <ellipse cx="6" cy="7" rx="4" ry="3.5" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="1.5"/>
+      <!-- Toe pads -->
+      <circle cx="3" cy="3" r="1.5" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="1.5"/>
+      <circle cx="6" cy="2" r="1.5" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="1.5"/>
+      <circle cx="9" cy="3" r="1.5" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Second paw print -->
+    <g transform="translate(20, 18) rotate(5 6 6)">
+      <!-- Main pad -->
+      <ellipse cx="6" cy="7" rx="4" ry="3.5" fill="#FF8C42" stroke="#D66A2C" stroke-width="1.5"/>
+      <!-- Toe pads -->
+      <circle cx="3" cy="3" r="1.5" fill="#FF8C42" stroke="#D66A2C" stroke-width="1.5"/>
+      <circle cx="6" cy="2" r="1.5" fill="#FF8C42" stroke="#D66A2C" stroke-width="1.5"/>
+      <circle cx="9" cy="3" r="1.5" fill="#FF8C42" stroke="#D66A2C" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Third paw print -->
+    <g transform="translate(30, 28) rotate(-15 6 6)">
+      <!-- Main pad -->
+      <ellipse cx="6" cy="7" rx="4" ry="3.5" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="1.5"/>
+      <!-- Toe pads -->
+      <circle cx="3" cy="3" r="1.5" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="1.5"/>
+      <circle cx="6" cy="2" r="1.5" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="1.5"/>
+      <circle cx="9" cy="3" r="1.5" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Fourth paw print -->
+    <g transform="translate(18, 34) rotate(20 6 6)">
+      <!-- Main pad -->
+      <ellipse cx="6" cy="7" rx="4" ry="3.5" fill="#FF8C42" stroke="#D66A2C" stroke-width="1.5"/>
+      <!-- Toe pads -->
+      <circle cx="3" cy="3" r="1.5" fill="#FF8C42" stroke="#D66A2C" stroke-width="1.5"/>
+      <circle cx="6" cy="2" r="1.5" fill="#FF8C42" stroke="#D66A2C" stroke-width="1.5"/>
+      <circle cx="9" cy="3" r="1.5" fill="#FF8C42" stroke="#D66A2C" stroke-width="1.5"/>
+    </g>
+  </g>
+</svg>

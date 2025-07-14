@@ -1,0 +1,37 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Playful chaos symbol -->
+  <defs>
+    <linearGradient id="chaosGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#f39c12;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#27ae60;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9b59b6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Eight arrows pointing outward -->
+  <g transform="translate(100, 100)">
+    <!-- Arrows -->
+    <g stroke="url(#chaosGrad)" stroke-width="4" fill="none">
+      <path d="M0,0 L0,-40 M-10,-30 L0,-40 L10,-30" transform="rotate(0)"/>
+      <path d="M0,0 L0,-40 M-10,-30 L0,-40 L10,-30" transform="rotate(45)"/>
+      <path d="M0,0 L0,-40 M-10,-30 L0,-40 L10,-30" transform="rotate(90)"/>
+      <path d="M0,0 L0,-40 M-10,-30 L0,-40 L10,-30" transform="rotate(135)"/>
+      <path d="M0,0 L0,-40 M-10,-30 L0,-40 L10,-30" transform="rotate(180)"/>
+      <path d="M0,0 L0,-40 M-10,-30 L0,-40 L10,-30" transform="rotate(225)"/>
+      <path d="M0,0 L0,-40 M-10,-30 L0,-40 L10,-30" transform="rotate(270)"/>
+      <path d="M0,0 L0,-40 M-10,-30 L0,-40 L10,-30" transform="rotate(315)"/>
+    </g>
+    <!-- Center circle -->
+    <circle cx="0" cy="0" r="15" fill="#2c3e50" stroke="#000" stroke-width="3"/>
+    <!-- Smiley face in center -->
+    <circle cx="-5" cy="-5" r="2" fill="#fff"/>
+    <circle cx="5" cy="-5" r="2" fill="#fff"/>
+    <path d="M-7 3 Q0 8 7 3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <!-- Random decorative elements -->
+  <circle cx="40" cy="40" r="5" fill="#e74c3c" opacity="0.6"/>
+  <rect x="150" y="50" width="10" height="10" fill="#3498db" opacity="0.6" transform="rotate(45 155 55)"/>
+  <polygon points="30,160 35,150 40,160" fill="#27ae60" opacity="0.6"/>
+  <circle cx="160" cy="160" r="5" fill="#f39c12" opacity="0.6"/>
+</svg>

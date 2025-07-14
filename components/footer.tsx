@@ -1,11 +1,14 @@
 import Link from "next/link"
 import { BrandLogo } from "./brand-logo"
+import { getPopularConversions } from "@/lib/internal-linking"
 
 export default function Footer() {
+  const { trending } = getPopularConversions(6)
+  
   return (
-    <footer className="border-t bg-brand/30">
+    <footer className="border-t bg-gray-50">
       <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           <div className="space-y-4">
             <BrandLogo />
             <p className="text-sm text-secondary/70">
@@ -18,23 +21,44 @@ export default function Footer() {
             <h4 className="font-semibold text-secondary mb-4">Product</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/#features" className="text-sm text-secondary/70 hover:text-primary">
-                  Features
+                <Link href="/" className="text-sm text-secondary/70 hover:text-primary">
+                  AI SVG Generator
                 </Link>
               </li>
               <li>
-                <Link href="/#use-cases" className="text-sm text-secondary/70 hover:text-primary">
-                  Use Cases
+                <Link href="/ai-icon-generator" className="text-sm text-secondary/70 hover:text-primary">
+                  AI Icon Generator
                 </Link>
               </li>
               <li>
-                <Link href="/#pricing" className="text-sm text-secondary/70 hover:text-primary">
+                <Link href="/tools/svg-to-video" className="text-sm text-secondary/70 hover:text-primary">
+                  SVG to Video
+                </Link>
+              </li>
+              <li>
+                <Link href="/pricing" className="text-sm text-secondary/70 hover:text-primary">
                   Pricing
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-secondary mb-4">Popular Converters</h4>
+            <ul className="space-y-2">
+              {trending.slice(0, 5).map((converter) => (
+                <li key={converter.id}>
+                  <Link 
+                    href={`/convert/${converter.urlSlug}`} 
+                    className="text-sm text-secondary/70 hover:text-primary"
+                  >
+                    {converter.fromFormat} to {converter.toFormat}
+                  </Link>
+                </li>
+              ))}
               <li>
-                <Link href="#" className="text-sm text-secondary/70 hover:text-primary">
-                  API
+                <Link href="/convert" className="text-sm text-secondary/70 hover:text-primary font-medium">
+                  View All →
                 </Link>
               </li>
             </ul>
@@ -44,23 +68,33 @@ export default function Footer() {
             <h4 className="font-semibold text-secondary mb-4">Resources</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="#" className="text-sm text-secondary/70 hover:text-primary">
-                  Documentation
+                <Link href="/learn/what-is-svg" className="text-sm text-secondary/70 hover:text-primary">
+                  What is SVG?
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-sm text-secondary/70 hover:text-primary">
-                  Tutorials
+                <Link href="/gallery" className="text-sm text-secondary/70 hover:text-primary">
+                  SVG Gallery
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-sm text-secondary/70 hover:text-primary">
+                <Link href="/animate" className="text-sm text-secondary/70 hover:text-primary">
+                  SVG Animation
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="text-sm text-secondary/70 hover:text-primary">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-sm text-secondary/70 hover:text-primary">
-                  Support
+                <Link href="/learn" className="text-sm text-secondary/70 hover:text-primary">
+                  Learn Center
+                </Link>
+              </li>
+              <li>
+                <Link href="/sitemap" className="text-sm text-secondary/70 hover:text-primary">
+                  Sitemap
                 </Link>
               </li>
             </ul>

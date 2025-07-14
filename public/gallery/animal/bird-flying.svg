@@ -1,0 +1,30 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bird in flight -->
+  <!-- Body -->
+  <ellipse cx="100" cy="100" rx="25" ry="15" fill="#1e90ff" stroke="#000" stroke-width="2" transform="rotate(-10 100 100)"/>
+  <!-- Head -->
+  <circle cx="120" cy="95" r="12" fill="#1e90ff" stroke="#000" stroke-width="2"/>
+  <!-- Beak -->
+  <path d="M130 95 L140 93 L130 91 Z" fill="#ffa500" stroke="#000" stroke-width="1"/>
+  <!-- Eye -->
+  <circle cx="125" cy="93" r="3" fill="#000"/>
+  <circle cx="126" cy="92" r="1" fill="#fff"/>
+  <!-- Wings spread -->
+  <!-- Left wing -->
+  <path d="M85 95 Q50 80 30 85 Q20 88 25 95 Q30 100 40 98 Q60 95 85 100 Z" 
+        fill="#4169e1" stroke="#000" stroke-width="2"/>
+  <path d="M85 100 Q60 105 40 115 Q30 120 35 115 Q40 110 50 108 Q70 105 85 105 Z" 
+        fill="#1e90ff" stroke="#000" stroke-width="2"/>
+  <!-- Right wing -->
+  <path d="M115 95 Q150 80 170 85 Q180 88 175 95 Q170 100 160 98 Q140 95 115 100 Z" 
+        fill="#4169e1" stroke="#000" stroke-width="2"/>
+  <path d="M115 100 Q140 105 160 115 Q170 120 165 115 Q160 110 150 108 Q130 105 115 105 Z" 
+        fill="#1e90ff" stroke="#000" stroke-width="2"/>
+  <!-- Tail feathers -->
+  <path d="M75 105 L60 115 L65 110 L70 112 L75 108 L80 110 L82 105 Z" 
+        fill="#1e90ff" stroke="#000" stroke-width="2"/>
+  <!-- Wind lines -->
+  <path d="M10 90 Q20 90 30 90" fill="none" stroke="#87ceeb" stroke-width="2" opacity="0.5"/>
+  <path d="M15 100 Q25 100 35 100" fill="none" stroke="#87ceeb" stroke-width="2" opacity="0.5"/>
+  <path d="M10 110 Q20 110 30 110" fill="none" stroke="#87ceeb" stroke-width="2" opacity="0.5"/>
+</svg>

@@ -1,0 +1,35 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="maneGrad">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  <rect width="48" height="48" fill="#FFFFFF"/>
+  <g transform="translate(24, 24)">
+    <!-- Mane -->
+    <circle cx="0" cy="0" r="14" fill="url(#maneGrad)" opacity="0.8"/>
+    <g stroke="#FFA500" stroke-width="1" fill="none" opacity="0.6">
+      <path d="M0,-14 Q-4,-16 -8,-14 Q-10,-10 -8,-6"/>
+      <path d="M0,-14 Q4,-16 8,-14 Q10,-10 8,-6"/>
+      <path d="M-14,0 Q-16,-4 -14,-8 Q-10,-10 -6,-8"/>
+      <path d="M14,0 Q16,-4 14,-8 Q10,-10 6,-8"/>
+      <path d="M-14,0 Q-16,4 -14,8 Q-10,10 -6,8"/>
+      <path d="M14,0 Q16,4 14,8 Q10,10 6,8"/>
+    </g>
+    <!-- Face -->
+    <ellipse cx="0" cy="0" rx="10" ry="12" fill="#FFA500" stroke="#8B4513" stroke-width="0.5"/>
+    <!-- Eyes -->
+    <ellipse cx="-4" cy="-3" rx="2" ry="3" fill="#FFFFFF"/>
+    <ellipse cx="4" cy="-3" rx="2" ry="3" fill="#FFFFFF"/>
+    <circle cx="-4" cy="-2" r="1.5" fill="#8B4513"/>
+    <circle cx="4" cy="-2" r="1.5" fill="#8B4513"/>
+    <!-- Nose -->
+    <path d="M-2,2 L0,4 L2,2 Q0,1 -2,2 Z" fill="#663399" stroke="#8B4513" stroke-width="0.5"/>
+    <!-- Mouth -->
+    <path d="M0,4 C-3,6 -3,5 -4,3 M0,4 C3,6 3,5 4,3" 
+          fill="none" stroke="#8B4513" stroke-width="1" stroke-linecap="round"/>
+    <!-- Light aura -->
+    <circle cx="0" cy="0" r="18" fill="none" stroke="#87CEEB" stroke-width="0.5" opacity="0.5" stroke-dasharray="2,2"/>
+  </g>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <style>
+    @keyframes twinkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.9); }
+    }
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .twinkle-star {
+      animation: twinkle 2s ease-in-out infinite;
+      transform-origin: center;
+    }
+    .sparkle {
+      animation: rotate 3s linear infinite;
+      transform-origin: center;
+    }
+  </style>
+  <g class="twinkle-star">
+    <path d="M24 6l5.5 11 12 2-8.5 8.5 2 12-11-6-11 6 2-12-8.5-8.5 12-2z" fill="#ffc107"/>
+  </g>
+  <g class="sparkle" opacity="0.5">
+    <path d="M24 0v10M24 38v10M0 24h10M38 24h10" stroke="#ffd700" stroke-width="1"/>
+  </g>
+</svg>

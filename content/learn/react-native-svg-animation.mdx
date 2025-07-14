@@ -1,0 +1,930 @@
+---
+title: "React Native SVG Animation: Complete Implementation Guide"
+date: "2025-06-25"
+description: "Master SVG animations in React Native apps. Learn react-native-svg, animation libraries, performance optimization, and real-world examples for iOS and Android."
+tags: ["react native svg animation", "react native svg", "mobile svg animation", "react native graphics", "animated svg react native"]
+author: "SVGAI Team"
+image: "/learn/react-native-svg-animation-hero.svg"
+featured: true
+---
+
+## Introduction: Bringing SVG Animations to Mobile Apps
+
+React Native SVG animation represents a powerful convergence of web technologies and mobile app development. By leveraging the flexibility of SVG graphics with React Native's cross-platform capabilities, developers can create stunning, performant animations that work seamlessly on both iOS and Android devices.
+
+This comprehensive guide explores every aspect of implementing SVG animations in React Native, from basic setup to advanced performance optimization techniques. Whether you're animating icons, creating data visualizations, or building interactive graphics, you'll learn the essential skills needed to bring your mobile interfaces to life.
+
+The ability to use SVG in React Native opens up possibilities that were previously challenging with traditional mobile development approaches. You can create resolution-independent graphics that scale perfectly across all device sizes while maintaining smooth 60 FPS animations.
+
+## Setting Up React Native SVG
+
+### Installation and Configuration
+
+First, let's set up the necessary dependencies for SVG support in React Native:
+
+```bash
+# Install react-native-svg
+npm install react-native-svg
+
+# For React Native 0.60+ (autolinking)
+cd ios && pod install
+
+# For older versions, manual linking required
+react-native link react-native-svg
+
+# Install animation libraries
+npm install react-native-reanimated react-native-gesture-handler
+npm install react-native-redash # Utility functions for animations
+```
+
+### Platform-Specific Setup
+
+**iOS Configuration:**
+```ruby
+# ios/Podfile
+pod 'RNSVG', :path => '../node_modules/react-native-svg'
+```
+
+**Android Configuration:**
+```gradle
+// android/app/build.gradle
+dependencies {
+    implementation project(':react-native-svg')
+}
+```
+
+### Basic SVG Implementation
+
+```jsx
+import React from 'react';
+import { View } from 'react-native';
+import Svg, { 
+  Circle, 
+  Rect, 
+  Path, 
+  Defs, 
+  LinearGradient, 
+  Stop 
+} from 'react-native-svg';
+
+const BasicSVGComponent = () => {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Svg height="200" width="200" viewBox="0 0 100 100">
+        <Defs>
+          <LinearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor="#FF6B6B" stopOpacity="1" />
+            <Stop offset="100%" stopColor="#4ECDC4" stopOpacity="1" />
+          </LinearGradient>
+        </Defs>
+        
+        <Circle cx="50" cy="50" r="45" fill="url(#grad)" />
+        
+        <Path
+          d="M25 50 Q50 25 75 50 T125 50"
+          stroke="#FFF"
+          strokeWidth="3"
+          fill="none"
+        />
+      </Svg>
+    </View>
+  );
+};
+```
+
+## Animation Fundamentals in React Native
+
+### Understanding Animation APIs
+
+React Native provides several approaches to animating SVG elements:
+
+1. **Animated API**: Built-in React Native animation system
+2. **Reanimated 2**: More powerful, runs on UI thread
+3. **Lottie**: For complex After Effects animations
+4. **React Native Redash**: Helper functions for animations
+
+### Animated API with SVG
+
+The Animated API is React Native's built-in solution for animations:
+
+```jsx
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
+const PulsingCircle = () => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 1.2,
+          duration: 1000,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }),
+      ])
+    ).start();
+  }, [scaleAnim]);
+
+  return (
+    <Svg height="200" width="200" viewBox="0 0 100 100">
+      <AnimatedCircle
+        cx="50"
+        cy="50"
+        r={scaleAnim.interpolate({
+          inputRange: [1, 1.2],
+          outputRange: [30, 40],
+        })}
+        fill="#3498db"
+      />
+    </Svg>
+  );
+};
+```
+
+### Reanimated 2 for High-Performance Animations
+
+Reanimated 2 provides superior performance by running animations on the UI thread:
+
+```jsx
+import React from 'react';
+import Animated, {
+  useSharedValue,
+  useAnimatedProps,
+  withRepeat,
+  withTiming,
+  withSpring,
+  Easing,
+} from 'react-native-reanimated';
+import Svg, { Path, Circle } from 'react-native-svg';
+
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
+const ReanimatedSVG = () => {
+  const progress = useSharedValue(0);
+  const scale = useSharedValue(1);
+
+  React.useEffect(() => {
+    progress.value = withRepeat(
+      withTiming(1, {
+        duration: 2000,
+        easing: Easing.linear,
+      }),
+      -1,
+      false
+    );
+
+    scale.value = withRepeat(
+      withSpring(1.5, {
+        damping: 2,
+        stiffness: 80,
+      }),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedProps = useAnimatedProps(() => {
+    const strokeDashoffset = 100 - progress.value * 100;
+    return {
+      strokeDashoffset,
+    };
+  });
+
+  const circleAnimatedProps = useAnimatedProps(() => ({
+    r: 20 * scale.value,
+  }));
+
+  return (
+    <Svg height="200" width="200" viewBox="0 0 100 100">
+      <AnimatedPath
+        d="M10 50 Q50 10 90 50 T170 50"
+        stroke="#e74c3c"
+        strokeWidth="3"
+        fill="none"
+        strokeDasharray="100"
+        animatedProps={animatedProps}
+      />
+      
+      <AnimatedCircle
+        cx="50"
+        cy="50"
+        fill="#3498db"
+        animatedProps={circleAnimatedProps}
+      />
+    </Svg>
+  );
+};
+```
+
+## Complex Animation Patterns
+
+### Morphing Shapes
+
+Shape morphing creates smooth transitions between different SVG paths:
+
+```jsx
+import React from 'react';
+import Animated, {
+  useSharedValue,
+  useAnimatedProps,
+  withRepeat,
+  withTiming,
+  interpolate,
+} from 'react-native-reanimated';
+import Svg, { Path } from 'react-native-svg';
+import { interpolatePath } from 'react-native-redash';
+
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+
+const MorphingShape = () => {
+  const progress = useSharedValue(0);
+
+  const path1 = "M20,50 Q50,20 80,50 T140,50";
+  const path2 = "M20,50 L50,20 L80,50 L110,20 L140,50";
+
+  React.useEffect(() => {
+    progress.value = withRepeat(
+      withTiming(1, { duration: 2000 }),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedProps = useAnimatedProps(() => {
+    const d = interpolatePath(
+      progress.value,
+      [0, 1],
+      [path1, path2]
+    );
+    return { d };
+  });
+
+  return (
+    <Svg height="100" width="300" viewBox="0 0 160 100">
+      <AnimatedPath
+        animatedProps={animatedProps}
+        fill="none"
+        stroke="#9b59b6"
+        strokeWidth="3"
+      />
+    </Svg>
+  );
+};
+```
+
+### Gesture-Driven Animations
+
+Combining gestures with SVG animations creates interactive experiences:
+
+```jsx
+import React from 'react';
+import {
+  PanGestureHandler,
+  State,
+} from 'react-native-gesture-handler';
+import Animated, {
+  useSharedValue,
+  useAnimatedGestureHandler,
+  useAnimatedProps,
+  withSpring,
+} from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
+const DraggableSVG = () => {
+  const translateX = useSharedValue(50);
+  const translateY = useSharedValue(50);
+
+  const gestureHandler = useAnimatedGestureHandler({
+    onActive: (event) => {
+      translateX.value = event.x;
+      translateY.value = event.y;
+    },
+    onEnd: () => {
+      translateX.value = withSpring(50);
+      translateY.value = withSpring(50);
+    },
+  });
+
+  const animatedProps = useAnimatedProps(() => ({
+    cx: translateX.value,
+    cy: translateY.value,
+  }));
+
+  return (
+    <PanGestureHandler onGestureEvent={gestureHandler}>
+      <Animated.View>
+        <Svg height="200" width="200" viewBox="0 0 100 100">
+          <AnimatedCircle
+            r="20"
+            fill="#e74c3c"
+            animatedProps={animatedProps}
+          />
+        </Svg>
+      </Animated.View>
+    </PanGestureHandler>
+  );
+};
+```
+
+### Animated Gradients
+
+Creating dynamic gradient animations:
+
+```jsx
+import React from 'react';
+import Animated, {
+  useSharedValue,
+  useAnimatedProps,
+  withRepeat,
+  withTiming,
+  interpolate,
+} from 'react-native-reanimated';
+import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
+
+const AnimatedStop = Animated.createAnimatedComponent(Stop);
+
+const AnimatedGradient = () => {
+  const progress = useSharedValue(0);
+
+  React.useEffect(() => {
+    progress.value = withRepeat(
+      withTiming(1, { duration: 3000 }),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedProps1 = useAnimatedProps(() => ({
+    stopColor: interpolate(
+      progress.value,
+      [0, 0.5, 1],
+      ['#FF6B6B', '#4ECDC4', '#FF6B6B']
+    ),
+  }));
+
+  const animatedProps2 = useAnimatedProps(() => ({
+    stopColor: interpolate(
+      progress.value,
+      [0, 0.5, 1],
+      ['#4ECDC4', '#FF6B6B', '#4ECDC4']
+    ),
+  }));
+
+  return (
+    <Svg height="200" width="200" viewBox="0 0 100 100">
+      <Defs>
+        <LinearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <AnimatedStop offset="0%" animatedProps={animatedProps1} />
+          <AnimatedStop offset="100%" animatedProps={animatedProps2} />
+        </LinearGradient>
+      </Defs>
+      <Rect x="0" y="0" width="100" height="100" fill="url(#gradient)" />
+    </Svg>
+  );
+};
+```
+
+## Performance Optimization Techniques
+
+### Using Native Driver
+
+When possible, use the native driver for better performance:
+
+```jsx
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+
+const OptimizedAnimation = () => {
+  const rotation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(rotation, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true, // Enable native driver
+      })
+    ).start();
+  }, []);
+
+  const spin = rotation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  return (
+    <AnimatedSvg
+      style={{
+        transform: [{ rotate: spin }],
+      }}
+      height="100"
+      width="100"
+      viewBox="0 0 100 100"
+    >
+      <Rect x="25" y="25" width="50" height="50" fill="#3498db" />
+    </AnimatedSvg>
+  );
+};
+```
+
+### Memoization and Optimization
+
+```jsx
+import React, { memo, useMemo } from 'react';
+
+const ComplexSVGComponent = memo(({ data, animationEnabled }) => {
+  const pathData = useMemo(() => {
+    // Expensive path calculation
+    return data.map((point) => `L${point.x},${point.y}`).join(' ');
+  }, [data]);
+
+  return (
+    <Svg height="200" width="200" viewBox="0 0 100 100">
+      <Path d={`M0,0 ${pathData}`} stroke="black" fill="none" />
+    </Svg>
+  );
+});
+```
+
+### Batching Updates
+
+```jsx
+import { runOnUI, runOnJS } from 'react-native-reanimated';
+
+const BatchedAnimations = () => {
+  const values = Array.from({ length: 10 }, () => useSharedValue(0));
+
+  const animateAll = () => {
+    'worklet';
+    values.forEach((value, index) => {
+      value.value = withTiming(1, {
+        duration: 1000 + index * 100,
+      });
+    });
+  };
+
+  return (
+    <TouchableOpacity onPress={() => runOnUI(animateAll)()}>
+      <Svg height="200" width="200" viewBox="0 0 100 100">
+        {values.map((value, index) => (
+          <AnimatedCircle
+            key={index}
+            cx={10 + index * 8}
+            cy="50"
+            r="3"
+            fill="#3498db"
+            animatedProps={useAnimatedProps(() => ({
+              opacity: value.value,
+            }))}
+          />
+        ))}
+      </Svg>
+    </TouchableOpacity>
+  );
+};
+```
+
+## Real-World Examples
+
+### Animated Loading Spinner
+
+```jsx
+const LoadingSpinner = () => {
+  const rotation = useSharedValue(0);
+  const strokeDashoffset = useSharedValue(0);
+
+  React.useEffect(() => {
+    rotation.value = withRepeat(
+      withTiming(360, {
+        duration: 1000,
+        easing: Easing.linear,
+      }),
+      -1
+    );
+
+    strokeDashoffset.value = withRepeat(
+      withTiming(-100, {
+        duration: 1500,
+        easing: Easing.linear,
+      }),
+      -1
+    );
+  }, []);
+
+  const animatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: strokeDashoffset.value,
+  }));
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <Svg height="50" width="50" viewBox="0 0 50 50">
+        <AnimatedCircle
+          cx="25"
+          cy="25"
+          r="20"
+          stroke="#3498db"
+          strokeWidth="4"
+          fill="none"
+          strokeDasharray="100"
+          strokeLinecap="round"
+          animatedProps={animatedProps}
+        />
+      </Svg>
+    </Animated.View>
+  );
+};
+```
+
+### Interactive Chart Animation
+
+```jsx
+const AnimatedBarChart = ({ data }) => {
+  const animations = data.map(() => useSharedValue(0));
+
+  React.useEffect(() => {
+    animations.forEach((animation, index) => {
+      animation.value = withDelay(
+        index * 100,
+        withSpring(data[index].value, {
+          damping: 10,
+          stiffness: 100,
+        })
+      );
+    });
+  }, [data]);
+
+  return (
+    <Svg height="200" width="300" viewBox="0 0 300 200">
+      {data.map((item, index) => {
+        const animatedProps = useAnimatedProps(() => ({
+          height: animations[index].value,
+          y: 200 - animations[index].value,
+        }));
+
+        return (
+          <AnimatedRect
+            key={index}
+            x={index * 50 + 10}
+            width="40"
+            fill={item.color}
+            animatedProps={animatedProps}
+          />
+        );
+      })}
+    </Svg>
+  );
+};
+```
+
+### Animated Icon Transitions
+
+```jsx
+const AnimatedMenuIcon = ({ isOpen }) => {
+  const topLineRotation = useSharedValue(0);
+  const middleLineOpacity = useSharedValue(1);
+  const bottomLineRotation = useSharedValue(0);
+  const topLineY = useSharedValue(20);
+  const bottomLineY = useSharedValue(40);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      topLineRotation.value = withSpring(45);
+      middleLineOpacity.value = withTiming(0, { duration: 200 });
+      bottomLineRotation.value = withSpring(-45);
+      topLineY.value = withSpring(30);
+      bottomLineY.value = withSpring(30);
+    } else {
+      topLineRotation.value = withSpring(0);
+      middleLineOpacity.value = withTiming(1, { duration: 200 });
+      bottomLineRotation.value = withSpring(0);
+      topLineY.value = withSpring(20);
+      bottomLineY.value = withSpring(40);
+    }
+  }, [isOpen]);
+
+  const topLineProps = useAnimatedProps(() => ({
+    y1: topLineY.value,
+    y2: topLineY.value,
+    transform: `rotate(${topLineRotation.value} 30 30)`,
+  }));
+
+  const middleLineProps = useAnimatedProps(() => ({
+    opacity: middleLineOpacity.value,
+  }));
+
+  const bottomLineProps = useAnimatedProps(() => ({
+    y1: bottomLineY.value,
+    y2: bottomLineY.value,
+    transform: `rotate(${bottomLineRotation.value} 30 30)`,
+  }));
+
+  return (
+    <Svg height="60" width="60" viewBox="0 0 60 60">
+      <AnimatedLine
+        x1="15"
+        x2="45"
+        stroke="#333"
+        strokeWidth="3"
+        strokeLinecap="round"
+        animatedProps={topLineProps}
+      />
+      <AnimatedLine
+        x1="15"
+        y1="30"
+        x2="45"
+        y2="30"
+        stroke="#333"
+        strokeWidth="3"
+        strokeLinecap="round"
+        animatedProps={middleLineProps}
+      />
+      <AnimatedLine
+        x1="15"
+        x2="45"
+        stroke="#333"
+        strokeWidth="3"
+        strokeLinecap="round"
+        animatedProps={bottomLineProps}
+      />
+    </Svg>
+  );
+};
+```
+
+## Troubleshooting Common Issues
+
+### Performance Issues
+
+```jsx
+// Problem: Janky animations
+// Solution: Use worklets and native driver
+
+const OptimizedComponent = () => {
+  'worklet'; // Mark function as worklet
+  
+  const animatedStyle = useAnimatedStyle(() => {
+    // Calculations run on UI thread
+    return {
+      transform: [{ scale: withSpring(1.2) }],
+    };
+  });
+
+  return <Animated.View style={animatedStyle}>{/* content */}</Animated.View>;
+};
+```
+
+### Memory Leaks
+
+```jsx
+// Clean up animations properly
+const Component = () => {
+  const animation = useRef(null);
+
+  useEffect(() => {
+    animation.current = Animated.timing(/* ... */);
+    animation.current.start();
+
+    return () => {
+      // Clean up
+      animation.current?.stop();
+    };
+  }, []);
+};
+```
+
+### Platform-Specific Issues
+
+```jsx
+import { Platform } from 'react-native';
+
+const PlatformSpecificSVG = () => {
+  const strokeWidth = Platform.select({
+    ios: 2,
+    android: 3, // Android may need thicker strokes
+  });
+
+  return (
+    <Svg height="100" width="100">
+      <Circle cx="50" cy="50" r="40" stroke="black" strokeWidth={strokeWidth} />
+    </Svg>
+  );
+};
+```
+
+## Testing SVG Animations
+
+### Unit Testing
+
+```jsx
+import { render } from '@testing-library/react-native';
+import { AnimatedSVGComponent } from './AnimatedSVGComponent';
+
+describe('AnimatedSVGComponent', () => {
+  it('renders correctly', () => {
+    const { getByTestId } = render(<AnimatedSVGComponent />);
+    expect(getByTestId('animated-circle')).toBeDefined();
+  });
+
+  it('animates on mount', () => {
+    const { getByTestId } = render(<AnimatedSVGComponent />);
+    const circle = getByTestId('animated-circle');
+    // Test animation values
+  });
+});
+```
+
+### Performance Testing
+
+```jsx
+import { measurePerformance } from 'react-native-performance';
+
+const PerformanceMonitor = ({ children }) => {
+  useEffect(() => {
+    const measure = measurePerformance('svg-animation');
+    
+    return () => {
+      const duration = measure.stop();
+      console.log(`Animation took ${duration}ms`);
+    };
+  }, []);
+
+  return children;
+};
+```
+
+## Best Practices and Tips
+
+### 1. Optimize SVG Complexity
+- Simplify paths when possible
+- Use `simplify-path` libraries for complex shapes
+- Limit the number of animated elements
+
+### 2. Choose the Right Animation Library
+- **Animated API**: Simple animations, good for beginners
+- **Reanimated 2**: Complex animations, better performance
+- **Lottie**: Designer-created animations from After Effects
+
+### 3. Handle Different Screen Sizes
+```jsx
+const ResponsiveSVG = () => {
+  const { width: screenWidth } = useWindowDimensions();
+  const svgSize = Math.min(screenWidth * 0.8, 300);
+
+  return (
+    <Svg height={svgSize} width={svgSize} viewBox="0 0 100 100">
+      {/* SVG content */}
+    </Svg>
+  );
+};
+```
+
+### 4. Accessibility Considerations
+```jsx
+<Svg accessible={true} accessibilityLabel="Animated loading spinner" accessibilityRole="image">
+  {/* SVG content */}
+</Svg>
+```
+
+## Integration with State Management
+
+### Using with Redux
+
+```jsx
+const AnimatedSVGWithRedux = () => {
+  const animationState = useSelector(state => state.animation);
+  const progress = useSharedValue(0);
+
+  useEffect(() => {
+    progress.value = withTiming(animationState.progress, {
+      duration: 1000,
+    });
+  }, [animationState.progress]);
+
+  // Animation implementation
+};
+```
+
+### Using with Context API
+
+```jsx
+const AnimationContext = React.createContext();
+
+export const AnimationProvider = ({ children }) => {
+  const sharedValues = {
+    scale: useSharedValue(1),
+    rotation: useSharedValue(0),
+  };
+
+  return (
+    <AnimationContext.Provider value={sharedValues}>
+      {children}
+    </AnimationContext.Provider>
+  );
+};
+```
+
+## Conclusion
+
+React Native SVG animations offer a powerful way to create engaging, performant mobile experiences. By combining the flexibility of SVG with React Native's animation capabilities, you can build interfaces that delight users while maintaining smooth performance across iOS and Android.
+
+Remember to always consider performance implications, test on real devices, and optimize for different screen sizes. With the techniques covered in this guide, you're equipped to implement professional-quality SVG animations in your React Native applications.
+
+Start experimenting with these patterns, and consider using our [AI-powered SVG generator](/ai-icon-generator) to create custom graphics optimized for mobile animation. For web-based SVG animations, check out our [CSS animation guide](/learn/svg-css-animation).
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Implement SVG Animations in React Native",
+  "description": "Learn to create performant SVG animations in React Native apps using react-native-svg and animation libraries",
+  "totalTime": "PT60M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "USD",
+    "value": "0"
+  },
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "React Native development environment"
+    },
+    {
+      "@type": "HowToSupply",
+      "name": "react-native-svg package"
+    }
+  ],
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "Code editor (VS Code, etc.)"
+    },
+    {
+      "@type": "HowToTool",
+      "name": "iOS/Android simulator or device"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Install Dependencies",
+      "text": "Install react-native-svg and animation libraries like react-native-reanimated",
+      "url": "https://svgai.org/learn/react-native-svg-animation#installation-and-configuration"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Create SVG Components",
+      "text": "Import SVG elements and create basic SVG components",
+      "url": "https://svgai.org/learn/react-native-svg-animation#basic-svg-implementation"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Implement Animations",
+      "text": "Use Animated API or Reanimated 2 to animate SVG properties",
+      "url": "https://svgai.org/learn/react-native-svg-animation#animation-fundamentals-in-react-native"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Add Interactivity",
+      "text": "Implement gesture handlers for interactive animations",
+      "url": "https://svgai.org/learn/react-native-svg-animation#gesture-driven-animations"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Optimize Performance",
+      "text": "Use native driver, memoization, and other optimization techniques",
+      "url": "https://svgai.org/learn/react-native-svg-animation#performance-optimization-techniques"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Test on Devices",
+      "text": "Test animations on real iOS and Android devices for performance",
+      "url": "https://svgai.org/learn/react-native-svg-animation#testing-svg-animations"
+    }
+  ]
+}
+</script>
+
+## Related Resources
+
+- [Check SVG Animation Guide](/learn/check-svg-animation)
+- [SVG CSS Animation Tutorial](/learn/svg-css-animation)
+- [SVG File Format Guide](/learn/svg-file-format)
+- [AI Icon Generator](/ai-icon-generator)
+- [React Native SVG Documentation](https://github.com/software-mansion/react-native-svg)

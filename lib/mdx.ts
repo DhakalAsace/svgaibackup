@@ -2,6 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { BlogPost } from './blog-types'
+import { createLogger } from '@/lib/logger'
+
+const logger = createLogger('mdx')
 
 /**
  * Legacy type for backward compatibility
@@ -22,6 +25,11 @@ type Metadata = {
  * Base directory for blog content
  */
 const BLOG_DIR = path.join(process.cwd(), 'content/blog')
+
+/**
+ * Base directory for learn content
+ */
+const LEARN_DIR = path.join(process.cwd(), 'content/learn')
 
 // For debugging - enable to log additional information
 const DEBUG = true
@@ -48,7 +56,7 @@ function getAllFiles(dirPath: string, arrayOfFiles: string[] = []): string[] {
   try {
     // Check if directory exists
     if (!fs.existsSync(dirPath)) {
-      console.warn(`Directory not found: ${dirPath}`);
+      logger.warn(`Directory not found: ${dirPath}`);
       debug(`Directory path ${dirPath} does not exist`);
       debug(`Current working directory: ${process.cwd()}`);
       return arrayOfFiles;
@@ -198,7 +206,7 @@ export function getBlogPostBySlug(slug: string): BlogPost | null {
     
     // Exit if file still doesn't exist
     if (!fileExists) {
-      console.warn(`Blog post not found at path: ${filePath}`);
+      logger.warn(`Blog post not found at path: ${filePath}`);
       debug(`No file found for slug: ${realSlug}`);
       return null;
     }
@@ -213,13 +221,13 @@ export function getBlogPostBySlug(slug: string): BlogPost | null {
     
     // Validate required metadata fields
     if (!data.title) {
-      console.warn(`Blog post at ${filePath} is missing a title`);
+      logger.warn(`Blog post at ${filePath} is missing a title`);
       debug(`Missing title, adding placeholder`);
       data.title = "Untitled Post";
     }
     
     if (!data.date) {
-      console.warn(`Blog post at ${filePath} is missing a date`);
+      logger.warn(`Blog post at ${filePath} is missing a date`);
       debug(`Missing date, using file stats instead`);
       // Use file stats date as fallback
       try {
@@ -233,7 +241,7 @@ export function getBlogPostBySlug(slug: string): BlogPost | null {
     }
     
     if (!data.description) {
-      console.warn(`Blog post at ${filePath} is missing a description`);
+      logger.warn(`Blog post at ${filePath} is missing a description`);
       debug(`Missing description, generating from content`);
       // Use first paragraph of content as fallback
       const firstParagraph = content.split('\n\n')[0]
@@ -349,4 +357,201 @@ export function getBlogPostsByTag(tag: string) {
   return posts.filter((post) => 
     post.metadata.tags && post.metadata.tags.includes(tag)
   )
+}
+
+/**
+ * Ensures the learn directory exists, creating it if needed
+ */
+export function ensureLearnDirExists(): void {
+  try {
+    const contentDir = path.join(process.cwd(), 'content');
+    
+    // Create content directory if it doesn't exist
+    if (!fs.existsSync(contentDir)) {
+      fs.mkdirSync(contentDir);
+      console.log(`Created content directory: ${contentDir}`);
+    }
+    
+    // Create learn directory if it doesn't exist
+    if (!fs.existsSync(LEARN_DIR)) {
+      fs.mkdirSync(LEARN_DIR);
+      console.log(`Created learn directory: ${LEARN_DIR}`);
+    }
+  } catch (error) {
+    console.error('Error ensuring learn directory exists:', error);
+  }
+}
+
+/**
+ * Get all learn content files
+ * Returns paths relative to LEARN_DIR
+ */
+export function getLearnContentFiles(): string[] {
+  ensureLearnDirExists();
+  
+  try {
+    const allFiles = getAllFiles(LEARN_DIR);
+    
+    // Filter for markdown files and normalize paths
+    return allFiles
+      .filter((file) => /\.(md|mdx)$/i.test(file))
+      .map((file) => {
+        const relativePath = path.relative(LEARN_DIR, file);
+        return normalizePath(relativePath);
+      });
+  } catch (error) {
+    console.error('Error getting learn content files:', error);
+    return [];
+  }
+}
+
+/**
+ * Get learn content by slug
+ */
+export function getLearnContentBySlug(slug: string): BlogPost | null {
+  try {
+    debug(`Getting learn content for slug: "${slug}"`);
+    
+    // Handle URL encoding in slug
+    const decodedSlug = decodeURIComponent(slug).trim();
+    debug(`Decoded slug: "${decodedSlug}"`);
+    
+    // Normalize path separators for slug and remove any file extension
+    const realSlug = normalizePath(decodedSlug).replace(/\.(md|mdx)$/i, '');
+    debug(`Normalized slug: "${realSlug}"`);
+    
+    // Try with .mdx extension first (preferred)
+    let filePath = path.join(LEARN_DIR, `${realSlug}.mdx`);
+    debug(`Trying .mdx path: ${filePath}`);
+    let fileExists = fs.existsSync(filePath);
+    
+    // If .mdx doesn't exist, try .md extension
+    if (!fileExists) {
+      filePath = path.join(LEARN_DIR, `${realSlug}.md`);
+      debug(`Trying .md path: ${filePath}`);
+      fileExists = fs.existsSync(filePath);
+    }
+    
+    // Exit if file doesn't exist
+    if (!fileExists) {
+      logger.warn(`Learn content not found at path: ${filePath}`);
+      debug(`No file found for slug: ${realSlug}`);
+      return null;
+    }
+    
+    debug(`Reading file: ${filePath}`);
+    
+    // Read and parse the file
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    const { data, content } = matter(fileContents);
+    
+    debug(`Parsed frontmatter:`, data);
+    
+    // Validate required metadata fields
+    if (!data.title) {
+      logger.warn(`Learn content at ${filePath} is missing a title`);
+      data.title = "Untitled Learn Content";
+    }
+    
+    if (!data.date) {
+      logger.warn(`Learn content at ${filePath} is missing a date`);
+      const stats = fs.statSync(filePath);
+      data.date = stats.mtime.toISOString();
+    }
+    
+    if (!data.description) {
+      logger.warn(`Learn content at ${filePath} is missing a description`);
+      const firstParagraph = content.split('\n\n')[0]
+        .replace(/^#+\s+.*$/m, '')
+        .replace(/[*_`]/g, '')
+        .trim();
+      data.description = firstParagraph.length > 160 
+        ? firstParagraph.substring(0, 157) + '...'
+        : firstParagraph;
+    }
+    
+    // Build the content object
+    return {
+      slug: realSlug,
+      source: 'mdx' as const,
+      metadata: {
+        ...data,
+        slug: realSlug,
+      } as Metadata,
+      content,
+    };
+  } catch (error) {
+    console.error(`Error reading learn content ${slug}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Get all MDX files from a specific directory (blog or learn)
+ */
+export function getAllMdxFiles(type: 'blog' | 'learn' = 'blog') {
+  if (type === 'learn') {
+    return getAllLearnContent();
+  }
+  return getAllBlogPosts();
+}
+
+/**
+ * Get MDX content by slug from a specific directory
+ */
+export function getMdxBySlug(type: 'blog' | 'learn', slug: string) {
+  if (type === 'learn') {
+    return getLearnContentBySlug(slug);
+  }
+  return getBlogPostBySlug(slug);
+}
+
+/**
+ * Get all learn content with metadata
+ */
+export function getAllLearnContent() {
+  debug('Getting all learn content...');
+  
+  try {
+    const files = getLearnContentFiles();
+    debug(`Found ${files.length} learn content files:`, files);
+    
+    const content = files
+      .map((file) => {
+        try {
+          const normalizedFile = file.replace(/\\/g, '/');
+          const slug = normalizedFile.replace(/\.mdx?$/, '');
+          
+          debug(`Processing file: ${file}, normalized slug: ${slug}`);
+          
+          const post = getLearnContentBySlug(slug);
+          
+          if (!post) {
+            debug(`No content found for slug: ${slug}`);
+            return null;
+          }
+          
+          return {
+            slug: post.slug,
+            source: 'mdx' as const,
+            metadata: post.metadata,
+          };
+        } catch (error) {
+          console.error(`Error processing file ${file}:`, error);
+          return null;
+        }
+      })
+      .filter(Boolean)
+      .sort((post1, post2) => {
+        const date1 = post1?.metadata?.date ? new Date(post1.metadata.date).getTime() : 0;
+        const date2 = post2?.metadata?.date ? new Date(post2.metadata.date).getTime() : 0;
+        return (isNaN(date2) ? 0 : date2) - (isNaN(date1) ? 0 : date1);
+      });
+    
+    debug(`Processed ${content.length} learn content items successfully`);
+    return content as { slug: string; source: 'mdx'; metadata: Metadata }[];
+  } catch (error) {
+    console.error('Error in getAllLearnContent:', error);
+    return [];
+  }
 }

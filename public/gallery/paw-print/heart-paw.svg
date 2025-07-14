@@ -1,0 +1,16 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pawHeartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF69B4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF1493;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <path d="M 100 50 C 75 25, 25 25, 25 65 C 25 85, 40 100, 100 160 C 160 100, 175 85, 175 65 C 175 25, 125 25, 100 50 Z" fill="url(#pawHeartGradient)"/>
+  <g transform="translate(100, 90)">
+    <ellipse cx="0" cy="20" rx="20" ry="18" fill="#FFF" opacity="0.8"/>
+    <ellipse cx="-15" cy="-5" rx="12" ry="15" fill="#FFF" opacity="0.8" transform="rotate(-30 -15 -5)"/>
+    <ellipse cx="15" cy="-5" rx="12" ry="15" fill="#FFF" opacity="0.8" transform="rotate(30 15 -5)"/>
+    <ellipse cx="-25" cy="-20" rx="10" ry="12" fill="#FFF" opacity="0.8" transform="rotate(-45 -25 -20)"/>
+    <ellipse cx="25" cy="-20" rx="10" ry="12" fill="#FFF" opacity="0.8" transform="rotate(45 25 -20)"/>
+  </g>
+</svg>

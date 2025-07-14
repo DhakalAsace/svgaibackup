@@ -1,0 +1,19 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <title>ABC Letters</title>
+  <!-- Letter A -->
+  <text x="8" y="24" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FF6B6B">A</text>
+  <!-- Letter B -->
+  <text x="20" y="24" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#4ECDC4">B</text>
+  <!-- Letter C -->
+  <text x="32" y="24" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FFD93D">C</text>
+  
+  <!-- Decorative elements -->
+  <circle cx="8" cy="32" r="2" fill="#FF6B6B" opacity="0.3"/>
+  <circle cx="24" cy="34" r="2" fill="#4ECDC4" opacity="0.3"/>
+  <circle cx="40" cy="32" r="2" fill="#FFD93D" opacity="0.3"/>
+  
+  <!-- Small educational icons -->
+  <path d="M6,38 L8,36 L10,38 L9,39 L10,40 L8,39 L6,40 L7,39 Z" fill="#9C27B0" transform="scale(0.8)"/>
+  <path d="M22,38 L24,36 L26,38 L25,39 L26,40 L24,39 L22,40 L23,39 Z" fill="#4CAF50" transform="scale(0.8)"/>
+  <path d="M38,38 L40,36 L42,38 L41,39 L42,40 L40,39 L38,40 L39,39 Z" fill="#FF5722" transform="scale(0.8)"/>
+</svg>

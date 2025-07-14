@@ -1,0 +1,29 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Simple chibi outline -->
+  <!-- Head -->
+  <circle cx="100" cy="70" r="45" fill="#fdbcb4" stroke="#000" stroke-width="3"/>
+  <!-- Hair -->
+  <path d="M55 50 Q55 30 70 25 Q85 20 100 20 Q115 20 130 25 Q145 30 145 50 Q140 45 135 50 Q130 40 120 45 Q110 35 100 40 Q90 35 80 45 Q70 40 65 50 Q60 45 55 50 Z" 
+        fill="#8b4513" stroke="#000" stroke-width="2"/>
+  <!-- Eyes -->
+  <circle cx="80" cy="70" r="12" fill="#000"/>
+  <circle cx="120" cy="70" r="12" fill="#000"/>
+  <circle cx="78" cy="68" r="5" fill="#fff"/>
+  <circle cx="118" cy="68" r="5" fill="#fff"/>
+  <!-- Blush -->
+  <ellipse cx="65" cy="85" rx="8" ry="5" fill="#ff9999" opacity="0.6"/>
+  <ellipse cx="135" cy="85" rx="8" ry="5" fill="#ff9999" opacity="0.6"/>
+  <!-- Mouth -->
+  <path d="M90 90 Q100 95 110 90" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+  <!-- Body -->
+  <ellipse cx="100" cy="140" rx="30" ry="40" fill="#87ceeb" stroke="#000" stroke-width="3"/>
+  <!-- Arms -->
+  <ellipse cx="65" cy="130" rx="12" ry="25" fill="#fdbcb4" stroke="#000" stroke-width="2" transform="rotate(-30 65 130)"/>
+  <ellipse cx="135" cy="130" rx="12" ry="25" fill="#fdbcb4" stroke="#000" stroke-width="2" transform="rotate(30 135 130)"/>
+  <!-- Legs -->
+  <ellipse cx="85" cy="175" rx="12" ry="20" fill="#fdbcb4" stroke="#000" stroke-width="2"/>
+  <ellipse cx="115" cy="175" rx="12" ry="20" fill="#fdbcb4" stroke="#000" stroke-width="2"/>
+  <!-- Sparkle effects -->
+  <path d="M30 30 L35 35 L30 40 L25 35 Z" fill="#ffd700" opacity="0.8"/>
+  <path d="M170 40 L173 43 L170 46 L167 43 Z" fill="#ffd700" opacity="0.8"/>
+</svg>

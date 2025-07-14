@@ -1,0 +1,43 @@
+# Task ID: 13
+# Title: Implement CAD Format Converters (DXF to SVG, SVG to DXF)
+# Status: pending
+# Dependencies: 11
+# Priority: high
+# Description: Create bidirectional converters for DXF CAD format using dxf-parser and dxf-writer libraries
+# Details:
+Install and integrate dxf-parser for reading DXF entities (LINE, ARC, CIRCLE, POLYLINE, SPLINE). Convert DXF coordinate system to SVG viewport. Map DXF layers to SVG groups with proper naming. Handle DXF color indices to RGB values. For SVG to DXF, decompose complex paths into DXF primitives, maintain scale through UNITS setting, preserve layer information. Support both ASCII and binary DXF formats. Implementation: /lib/converters/cad/dxf-to-svg.ts, /lib/converters/cad/svg-to-dxf.ts, /lib/converters/cad/dxf-utils.ts
+
+# Test Strategy:
+Test with AutoCAD sample files, verify dimension accuracy, test layer preservation, validate arc and spline conversions, test with architectural drawings, ensure round-trip conversion maintains data
+
+# Subtasks:
+## 1. DXF parser integration and entity mapping setup [pending]
+### Dependencies: None
+### Description: Integrate a DXF parsing library and establish mappings between DXF entities and SVG elements
+### Details:
+Research and integrate a suitable DXF parsing library (e.g., dxf-parser). Create comprehensive mapping tables for DXF entities (LINE, CIRCLE, ARC, POLYLINE, TEXT, etc.) to their SVG counterparts. Implement basic entity recognition and extraction from DXF files. Set up test infrastructure with sample DXF files covering common entity types.
+
+## 2. Coordinate system transformation and viewport handling [pending]
+### Dependencies: 13.1
+### Description: Implement coordinate transformation between DXF and SVG coordinate systems with proper viewport management
+### Details:
+Handle DXF's bottom-left origin vs SVG's top-left origin. Implement unit conversion (inches, millimeters, etc.) and scaling factors. Create viewport calculation logic to properly frame DXF content in SVG viewBox. Handle DXF extents and limits for automatic viewport sizing. Ensure precision is maintained during transformations.
+
+## 3. Layer system implementation with proper grouping [pending]
+### Dependencies: 13.1, 13.2
+### Description: Build layer management system to preserve CAD organizational structure in SVG output
+### Details:
+Parse DXF layer table and maintain layer hierarchy. Create SVG groups (<g>) for each DXF layer with proper naming and attributes. Implement layer visibility, color, and line type properties. Support layer freezing/locking states. Ensure proper z-ordering based on layer structure.
+
+## 4. SVG to DXF decomposition algorithm for complex paths [pending]
+### Dependencies: 13.1, 13.2
+### Description: Develop algorithms to decompose complex SVG paths into DXF-compatible primitives
+### Details:
+Implement Bezier curve approximation using polylines or arcs. Create path parsing and segmentation logic. Develop algorithms for converting SVG path commands to DXF entities. Handle text conversion with font mapping. Implement precision controls for curve approximation. Support both polyline and arc-based approximations based on user preference.
+
+## 5. Binary and ASCII format support with proper encoding [pending]
+### Dependencies: 13.1, 13.2, 13.3, 13.4
+### Description: Implement support for both binary and ASCII DXF formats with correct encoding handling
+### Details:
+Add binary DXF parsing capability alongside ASCII support. Implement proper character encoding detection and conversion. Create format auto-detection logic. Ensure Unicode text entity support. Add compression handling for binary formats. Implement robust error handling for malformed files.
+

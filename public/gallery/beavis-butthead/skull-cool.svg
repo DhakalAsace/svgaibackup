@@ -1,0 +1,23 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cool skull with sunglasses -->
+  <!-- Skull -->
+  <ellipse cx="100" cy="80" rx="50" ry="55" fill="#f0f0f0" stroke="#000" stroke-width="3"/>
+  <!-- Jaw -->
+  <path d="M70 120 Q70 140 85 145 L100 150 L115 145 Q130 140 130 120" 
+        fill="#f0f0f0" stroke="#000" stroke-width="3"/>
+  <!-- Sunglasses -->
+  <path d="M50 70 L50 85 Q50 95 60 95 L75 95 Q85 95 85 85 L85 70 Q85 60 75 60 L60 60 Q50 60 50 70 Z" 
+        fill="#000"/>
+  <path d="M115 70 L115 85 Q115 95 125 95 L140 95 Q150 95 150 85 L150 70 Q150 60 140 60 L125 60 Q115 60 115 70 Z" 
+        fill="#000"/>
+  <rect x="85" y="75" width="30" height="5" fill="#000"/>
+  <!-- Nose -->
+  <path d="M95 100 L95 110 L100 115 L105 110 L105 100" fill="none" stroke="#000" stroke-width="2"/>
+  <!-- Teeth -->
+  <rect x="85" y="130" width="8" height="10" fill="#fff" stroke="#000" stroke-width="1"/>
+  <rect x="96" y="130" width="8" height="10" fill="#fff" stroke="#000" stroke-width="1"/>
+  <rect x="107" y="130" width="8" height="10" fill="#fff" stroke="#000" stroke-width="1"/>
+  <!-- Cool reflection on glasses -->
+  <ellipse cx="65" cy="75" rx="8" ry="5" fill="#fff" opacity="0.3"/>
+  <ellipse cx="130" cy="75" rx="8" ry="5" fill="#fff" opacity="0.3"/>
+</svg>

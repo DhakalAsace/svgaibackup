@@ -1,0 +1,37 @@
+# Task ID: 16
+# Title: Implement Raster Format Converters (TIFF to SVG, SVG to TIFF)
+# Status: pending
+# Dependencies: 11
+# Priority: medium
+# Description: Develop converters for TIFF format including multi-page support using UTIF.js
+# Details:
+Integrate UTIF.js for TIFF decoding supporting various compressions (LZW, JPEG, PackBits). Handle multi-page TIFFs by creating grouped SVGs or multiple outputs. Use existing potrace integration for vectorization with configurable threshold and smoothing. For SVG to TIFF, rasterize at specified DPI, support compression options, maintain metadata. Handle both RGB and CMYK color spaces. Implementation: /lib/converters/raster/tiff-handler.ts, /lib/converters/raster/tiff-encoder.ts
+
+# Test Strategy:
+Test with various TIFF types (uncompressed, LZW, JPEG compressed), verify multi-page handling, test different color spaces, validate metadata preservation, benchmark performance with large files
+
+# Subtasks:
+## 1. UTIF.js integration with multi-page support [pending]
+### Dependencies: None
+### Description: Implement UTIF.js library for TIFF file parsing and handling, including support for multi-page TIFF documents
+### Details:
+Set up UTIF.js to decode TIFF files, handle multiple pages/frames, extract metadata (dimensions, color space, compression), and provide page selection UI for multi-page files. Implement memory-efficient streaming for large files.
+
+## 2. Compression format handlers (LZW, JPEG, PackBits) [pending]
+### Dependencies: 16.1
+### Description: Create handlers for different TIFF compression formats to ensure broad compatibility
+### Details:
+Implement decompression support for LZW, JPEG, PackBits, and uncompressed TIFF data. Handle different color spaces (RGB, CMYK, grayscale) and bit depths. Add fallback mechanisms for unsupported compression types.
+
+## 3. Vectorization pipeline using potrace with quality controls [pending]
+### Dependencies: 16.1, 16.2
+### Description: Build TIFF to SVG vectorization pipeline with potrace integration and quality settings
+### Details:
+Convert decoded TIFF bitmap data to potrace-compatible format, implement quality controls (threshold, optimization level, smoothing), handle color images through color quantization, and provide preview functionality with adjustable parameters.
+
+## 4. SVG rasterization with DPI and compression options [pending]
+### Dependencies: 16.1, 16.2
+### Description: Implement SVG to TIFF conversion with configurable DPI and compression settings
+### Details:
+Rasterize SVG to bitmap at specified DPI using Canvas API, implement TIFF encoding with compression options (LZW, PackBits, none), support color space conversion, handle multi-page output for complex SVGs, and optimize file size.
+

@@ -4,14 +4,15 @@ import { useState, useEffect, Suspense, lazy, useCallback } from "react";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/database.types';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Download, Trash2, Plus, Loader2, Check, Crown, Sparkles } from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Download, Trash2, Plus, Loader2, Check, Crown, Sparkles, Edit, Settings, Video, Zap, Clock, BarChart, BarChart3, Code, FileDown, Film } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "@/components/ui/use-toast";
 import { useCredits } from "@/contexts/CreditContext";
 import { ManageSubscriptionButton } from "@/components/manage-subscription-button";
 import { SafeSvgDisplay } from "@/components/safe-svg-display";
+import { Badge } from "@/components/ui/badge";
 
 // Dynamically import heavy components
 const Image = lazy(() => import("next/image"));
@@ -27,6 +28,18 @@ type SvgDesign = {
   is_public: boolean;
   tags: string[] | null;
   user_id: string;
+};
+
+type ToolUsageStats = {
+  toolName: string;
+  count: number;
+  lastUsed?: Date;
+};
+
+type RecentToolActivity = {
+  toolName: string;
+  timestamp: Date;
+  toolPath: string;
 };
 
 type DashboardProps = {
@@ -337,6 +350,58 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
         </CardContent>
       </Card>
 
+      {/* Tool Usage Statistics Widget */}
+      <Card className="mb-6">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center">
+            <BarChart3 className="w-5 h-5 mr-2" />
+            Tool Usage Statistics
+          </CardTitle>
+          <CardDescription>Your tool usage over the last 30 days</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {/* TODO: Integrate with real usage tracking data */}
+          {(() => {
+            // Placeholder data - replace with real data from database
+            const toolStats: ToolUsageStats[] = [
+              { toolName: "SVG Editor", count: 23, lastUsed: new Date(Date.now() - 86400000) },
+              { toolName: "SVG Optimizer", count: 15, lastUsed: new Date(Date.now() - 172800000) },
+              { toolName: "SVG to Video", count: 5, lastUsed: new Date(Date.now() - 259200000) },
+              { toolName: "AI Icon Generator", count: displayCreditInfo.used || 0, lastUsed: new Date() },
+            ];
+
+            const maxCount = Math.max(...toolStats.map(t => t.count), 1);
+            const mostUsedTool = toolStats.reduce((prev, current) => 
+              (prev.count > current.count) ? prev : current
+            );
+
+            return (
+              <div className="space-y-4">
+                {toolStats.map((tool) => (
+                  <div key={tool.toolName} className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium">{tool.toolName}</span>
+                      <span className="text-muted-foreground">{tool.count} uses</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all"
+                        style={{ width: `${(tool.count / maxCount) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+                <div className="pt-2 border-t">
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium">Most Used:</span> {mostUsedTool.toolName}
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
+        </CardContent>
+      </Card>
+
       {/* Tier-specific dashboard sections */}
       {userTier === 'free' && (
         <div className="mb-6 bg-gradient-to-r from-[#FF7043]/10 to-[#FFA726]/10 rounded-lg p-6 border border-[#FFE0B2]">
@@ -454,6 +519,65 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
           </div>
         </div>
       )}
+
+      {/* Quick Access Buttons */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3 flex items-center">
+          <Zap className="w-5 h-5 mr-2" />
+          Quick Access to Tools
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          <Link href="/tools/svg-editor">
+            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+              <CardContent className="p-4 text-center">
+                <Code className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+                <h4 className="font-medium text-sm">SVG Editor</h4>
+                <Badge variant="secondary" className="mt-1 text-xs">Free</Badge>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link href="/tools/svg-optimizer">
+            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+              <CardContent className="p-4 text-center">
+                <FileDown className="w-8 h-8 mx-auto mb-2 text-green-600" />
+                <h4 className="font-medium text-sm">SVG Optimizer</h4>
+                <Badge variant="secondary" className="mt-1 text-xs">Free</Badge>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link href="/tools/svg-to-video">
+            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+              <CardContent className="p-4 text-center">
+                <Film className="w-8 h-8 mx-auto mb-2 text-purple-600" />
+                <h4 className="font-medium text-sm">SVG to Video</h4>
+                <Badge className="mt-1 text-xs">Premium</Badge>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link href="/ai-icon-generator">
+            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+              <CardContent className="p-4 text-center">
+                <Sparkles className="w-8 h-8 mx-auto mb-2 text-orange-600" />
+                <h4 className="font-medium text-sm">AI Icon Generator</h4>
+                <Badge className="mt-1 text-xs">Premium</Badge>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link href="/animate">
+            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+              <CardContent className="p-4 text-center">
+                <Zap className="w-8 h-8 mx-auto mb-2 text-pink-600" />
+                <h4 className="font-medium text-sm">SVG Animator</h4>
+                <Badge variant="secondary" className="mt-1 text-xs">Free</Badge>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+      </div>
       
       <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-md text-amber-800 text-sm">
         <p className="flex items-center">
@@ -467,14 +591,18 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
         </p>
       </div>
       
-      {svgs.length === 0 ? (
-        <div className="text-center py-12 bg-muted/20 rounded-lg">
-          <h3 className="text-lg font-medium mb-2">No SVGs yet</h3>
-          <p className="text-muted-foreground mb-4">Create your first SVG design</p>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Main Content Area with Recent Activity Sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* SVG Designs Grid - Takes up 3 columns on large screens */}
+        <div className="lg:col-span-3">
+          {svgs.length === 0 ? (
+            <div className="text-center py-12 bg-muted/20 rounded-lg">
+              <h3 className="text-lg font-medium mb-2">No SVGs yet</h3>
+              <p className="text-muted-foreground mb-4">Create your first SVG design</p>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {displayedSvgs.map((svg) => (
               <Card key={svg.id} className="overflow-hidden">
                 <CardHeader className="p-3 pb-0">
@@ -543,8 +671,90 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
               </Button>
             </div>
           )}
-        </>
-      )}
+            </>
+          )}
+        </div>
+
+        {/* Recent Tool Activity Sidebar - Takes up 1 column on large screens */}
+        <div className="lg:col-span-1">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center">
+                <Clock className="w-5 h-5 mr-2" />
+                Recent Activity
+              </CardTitle>
+              <CardDescription>Your recent tool usage</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* TODO: Integrate with real activity tracking data */}
+              {(() => {
+                // Placeholder data - replace with real activity from database
+                const recentActivities: RecentToolActivity[] = [
+                  { 
+                    toolName: "AI Icon Generator", 
+                    timestamp: new Date(Date.now() - 3600000), // 1 hour ago
+                    toolPath: "/ai-icon-generator"
+                  },
+                  { 
+                    toolName: "SVG Editor", 
+                    timestamp: new Date(Date.now() - 7200000), // 2 hours ago
+                    toolPath: "/tools/svg-editor"
+                  },
+                  { 
+                    toolName: "SVG Optimizer", 
+                    timestamp: new Date(Date.now() - 86400000), // 1 day ago
+                    toolPath: "/tools/svg-optimizer"
+                  },
+                  { 
+                    toolName: "SVG Animator", 
+                    timestamp: new Date(Date.now() - 172800000), // 2 days ago
+                    toolPath: "/animate"
+                  },
+                  { 
+                    toolName: "SVG to Video", 
+                    timestamp: new Date(Date.now() - 259200000), // 3 days ago
+                    toolPath: "/tools/svg-to-video"
+                  }
+                ];
+
+                const formatTimeAgo = (date: Date) => {
+                  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+                  
+                  if (seconds < 60) return 'just now';
+                  if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
+                  if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+                  if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
+                  return date.toLocaleDateString();
+                };
+
+                return (
+                  <div className="space-y-3">
+                    {recentActivities.map((activity, index) => (
+                      <Link 
+                        key={index}
+                        href={activity.toolPath}
+                        className="block p-2 rounded-md hover:bg-muted transition-colors"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{activity.toolName}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {formatTimeAgo(activity.timestamp)}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                    {recentActivities.length === 0 && (
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        No recent activity
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

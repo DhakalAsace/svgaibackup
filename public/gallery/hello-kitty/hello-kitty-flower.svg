@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <title>Hello Kitty with Flowers</title>
+  <!-- Flower 1 -->
+  <g transform="translate(8, 36)">
+    <circle cx="0" cy="0" r="3" fill="#FFD700"/>
+    <circle cx="0" cy="-5" r="3" fill="#FFB6C1"/>
+    <circle cx="5" cy="0" r="3" fill="#FFB6C1"/>
+    <circle cx="0" cy="5" r="3" fill="#FFB6C1"/>
+    <circle cx="-5" cy="0" r="3" fill="#FFB6C1"/>
+  </g>
+  
+  <!-- Flower 2 -->
+  <g transform="translate(40, 36)">
+    <circle cx="0" cy="0" r="3" fill="#FFD700"/>
+    <circle cx="0" cy="-5" r="3" fill="#FF69B4"/>
+    <circle cx="5" cy="0" r="3" fill="#FF69B4"/>
+    <circle cx="0" cy="5" r="3" fill="#FF69B4"/>
+    <circle cx="-5" cy="0" r="3" fill="#FF69B4"/>
+  </g>
+  
+  <!-- Face -->
+  <ellipse cx="24" cy="20" rx="15" ry="13" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  
+  <!-- Left ear -->
+  <path d="M 11 9 Q 9 7, 7 10 Q 5 13, 9 15 L 13 13 Z" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  
+  <!-- Right ear -->
+  <path d="M 37 9 Q 39 7, 41 10 Q 43 13, 39 15 L 35 13 Z" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+  
+  <!-- Flower bow -->
+  <g transform="translate(31, 8)">
+    <circle cx="0" cy="0" r="2" fill="#FFD700"/>
+    <circle cx="0" cy="-4" r="2.5" fill="#FF69B4"/>
+    <circle cx="4" cy="0" r="2.5" fill="#FF69B4"/>
+    <circle cx="0" cy="4" r="2.5" fill="#FF69B4"/>
+    <circle cx="-4" cy="0" r="2.5" fill="#FF69B4"/>
+    <circle cx="2.8" cy="-2.8" r="2.5" fill="#FF69B4"/>
+    <circle cx="2.8" cy="2.8" r="2.5" fill="#FF69B4"/>
+    <circle cx="-2.8" cy="-2.8" r="2.5" fill="#FF69B4"/>
+    <circle cx="-2.8" cy="2.8" r="2.5" fill="#FF69B4"/>
+  </g>
+  
+  <!-- Left eye -->
+  <ellipse cx="17" cy="20" rx="1.5" ry="2.5" fill="#000000"/>
+  
+  <!-- Right eye -->
+  <ellipse cx="31" cy="20" rx="1.5" ry="2.5" fill="#000000"/>
+  
+  <!-- Nose -->
+  <ellipse cx="24" cy="23" rx="2.5" ry="1.5" fill="#FFD700"/>
+  
+  <!-- Smile -->
+  <path d="M 19 25 Q 24 27, 29 25" stroke="#000000" stroke-width="1" fill="none"/>
+  
+  <!-- Left whisker -->
+  <line x1="7" y1="19" x2="12" y2="20" stroke="#000000" stroke-width="1"/>
+  <line x1="7" y1="22" x2="12" y2="22" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Right whisker -->
+  <line x1="36" y1="20" x2="41" y2="19" stroke="#000000" stroke-width="1"/>
+  <line x1="36" y1="22" x2="41" y2="22" stroke="#000000" stroke-width="1"/>
+</svg>

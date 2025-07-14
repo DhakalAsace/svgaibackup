@@ -1,0 +1,41 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Wise owl on branch -->
+  <!-- Branch -->
+  <rect x="20" y="160" width="160" height="10" rx="5" fill="#8b4513" stroke="#000" stroke-width="2"/>
+  <ellipse cx="50" cy="165" rx="8" ry="3" fill="#654321" opacity="0.5"/>
+  <ellipse cx="150" cy="165" rx="8" ry="3" fill="#654321" opacity="0.5"/>
+  <!-- Owl body -->
+  <ellipse cx="100" cy="110" rx="40" ry="50" fill="#8b4513" stroke="#000" stroke-width="3"/>
+  <!-- Chest feathers -->
+  <ellipse cx="100" cy="120" rx="25" ry="35" fill="#daa520"/>
+  <g stroke="#8b4513" stroke-width="1" fill="none">
+    <path d="M85 100 Q90 105 85 110"/>
+    <path d="M95 105 Q100 110 95 115"/>
+    <path d="M105 105 Q110 110 105 115"/>
+    <path d="M115 100 Q110 105 115 110"/>
+  </g>
+  <!-- Head -->
+  <ellipse cx="100" cy="70" rx="35" ry="30" fill="#8b4513" stroke="#000" stroke-width="3"/>
+  <!-- Ear tufts -->
+  <path d="M70 55 L65 40 L75 45" fill="#8b4513" stroke="#000" stroke-width="2"/>
+  <path d="M130 55 L135 40 L125 45" fill="#8b4513" stroke="#000" stroke-width="2"/>
+  <!-- Eyes -->
+  <circle cx="85" cy="70" r="15" fill="#fff" stroke="#000" stroke-width="2"/>
+  <circle cx="115" cy="70" r="15" fill="#fff" stroke="#000" stroke-width="2"/>
+  <circle cx="85" cy="70" r="10" fill="#ffa500"/>
+  <circle cx="115" cy="70" r="10" fill="#ffa500"/>
+  <circle cx="85" cy="70" r="6" fill="#000"/>
+  <circle cx="115" cy="70" r="6" fill="#000"/>
+  <circle cx="87" cy="68" r="2" fill="#fff"/>
+  <circle cx="117" cy="68" r="2" fill="#fff"/>
+  <!-- Beak -->
+  <path d="M95 80 L100 90 L105 80 Q100 75 95 80 Z" fill="#ffa500" stroke="#000" stroke-width="2"/>
+  <!-- Wings -->
+  <ellipse cx="65" cy="110" rx="15" ry="35" fill="#654321" stroke="#000" stroke-width="2"/>
+  <ellipse cx="135" cy="110" rx="15" ry="35" fill="#654321" stroke="#000" stroke-width="2"/>
+  <!-- Feet -->
+  <path d="M85 155 L85 165 M85 165 L80 170 M85 165 L85 170 M85 165 L90 170" 
+        stroke="#ffa500" stroke-width="3" stroke-linecap="round"/>
+  <path d="M115 155 L115 165 M115 165 L110 170 M115 165 L115 170 M115 165 L120 170" 
+        stroke="#ffa500" stroke-width="3" stroke-linecap="round"/>
+</svg>

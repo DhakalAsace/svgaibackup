@@ -3,7 +3,7 @@ import UseCases from "@/components/use-cases"
 import HowItWorks from "@/components/how-it-works"
 import Pricing from "@/components/pricing"
 import Faq from "@/components/faq"
-import Hero from "@/components/hero"
+import Hero from "@/components/hero-optimized"
 import dynamic from 'next/dynamic'
 import type { Metadata } from 'next'
 

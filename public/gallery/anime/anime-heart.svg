@@ -1,0 +1,37 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Kawaii heart design -->
+  <defs>
+    <radialGradient id="heartGrad" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#ff69b4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff1493;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  <!-- Main heart -->
+  <path d="M100 170 C100 170 30 120 30 80 C30 60 45 40 65 40 C80 40 95 50 100 60 C105 50 120 40 135 40 C155 40 170 60 170 80 C170 120 100 170 100 170 Z" 
+        fill="url(#heartGrad)" stroke="#000" stroke-width="3"/>
+  <!-- Kawaii face -->
+  <!-- Eyes -->
+  <circle cx="80" cy="85" r="8" fill="#000"/>
+  <circle cx="120" cy="85" r="8" fill="#000"/>
+  <circle cx="78" cy="83" r="3" fill="#fff"/>
+  <circle cx="118" cy="83" r="3" fill="#fff"/>
+  <!-- Blush -->
+  <ellipse cx="65" cy="100" rx="12" ry="8" fill="#ff9999" opacity="0.6"/>
+  <ellipse cx="135" cy="100" rx="12" ry="8" fill="#ff9999" opacity="0.6"/>
+  <!-- Mouth -->
+  <path d="M90 105 Q100 115 110 105" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+  <!-- Sparkles around heart -->
+  <g fill="#ffd700" opacity="0.9">
+    <path d="M40 50 L43 53 L46 50 L43 47 Z"/>
+    <path d="M160 50 L163 53 L166 50 L163 47 Z"/>
+    <path d="M50 130 L52 132 L54 130 L52 128 Z"/>
+    <path d="M150 130 L152 132 L154 130 L152 128 Z"/>
+  </g>
+  <!-- Small hearts floating -->
+  <g opacity="0.7">
+    <path d="M30 30 C30 30 20 25 20 20 C20 15 22.5 12.5 25 12.5 C27.5 12.5 30 15 30 17.5 C30 15 32.5 12.5 35 12.5 C37.5 12.5 40 15 40 20 C40 25 30 30 30 30 Z" 
+          fill="#ff69b4"/>
+    <path d="M170 160 C170 160 160 155 160 150 C160 145 162.5 142.5 165 142.5 C167.5 142.5 170 145 170 147.5 C170 145 172.5 142.5 175 142.5 C177.5 142.5 180 145 180 150 C180 155 170 160 170 160 Z" 
+          fill="#ff69b4"/>
+  </g>
+</svg>

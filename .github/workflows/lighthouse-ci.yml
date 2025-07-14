@@ -1,0 +1,91 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            http://localhost:3000/
+            http://localhost:3000/convert/png-to-svg
+            http://localhost:3000/convert/svg-to-png
+            http://localhost:3000/gallery/heart-svg
+            http://localhost:3000/learn/what-is-svg
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          budgetPath: ./performance-budget.json
+          runs: 3
+          configPath: './.lighthouserc.json'
+
+      - name: Format Lighthouse Results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('./lighthouse-results.json', 'utf8'));
+            
+            const comment = `## 🔍 Lighthouse Performance Results
+            
+            | Page | Performance | Accessibility | Best Practices | SEO |
+            |------|-------------|---------------|----------------|-----|
+            ${results.map(r => `| ${r.url} | ${r.performance} | ${r.accessibility} | ${r.bestPractices} | ${r.seo} |`).join('\n')}
+            
+            ### Core Web Vitals
+            ${results.map(r => `
+            **${r.url}**
+            - LCP: ${r.lcp}ms
+            - INP: ${r.inp}ms  
+            - CLS: ${r.cls}
+            `).join('\n')}
+            `;
+            
+            if (context.eventName === 'pull_request') {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+
+      - name: Assert Performance Budget
+        run: |
+          node -e "
+          const results = require('./lighthouse-results.json');
+          const failed = results.some(r => r.performance < 85);
+          if (failed) {
+            console.error('Performance budget failed! One or more pages scored below 85.');
+            process.exit(1);
+          }
+          "

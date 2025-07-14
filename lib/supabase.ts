@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { type Database } from '@/types/database.types'
 
@@ -11,7 +11,7 @@ export const createServerClient = () => {
     throw new Error('Missing Supabase server environment variables')
   }
 
-  return createClient<Database>(supabaseUrl, supabaseKey)
+  return createSupabaseClient<Database>(supabaseUrl, supabaseKey)
 }
 
 // For client components - uses the auth helpers which handle cookies properly
@@ -21,3 +21,6 @@ export const createBrowserClient = () => {
     supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   })
 }
+
+// Alias for backward compatibility
+export const createClient = createServerClient

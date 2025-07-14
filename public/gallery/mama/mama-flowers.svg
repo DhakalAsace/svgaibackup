@@ -1,0 +1,45 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <text x="100" y="100" font-family="Brush Script MT, cursive" font-size="48" font-weight="bold" text-anchor="middle" fill="#FF69B4">Mama</text>
+  <g transform="translate(30, 50)">
+    <circle cx="0" cy="0" r="8" fill="#FFB6C1"/>
+    <circle cx="-10" cy="-5" r="8" fill="#FFB6C1"/>
+    <circle cx="-10" cy="5" r="8" fill="#FFB6C1"/>
+    <circle cx="0" cy="10" r="8" fill="#FFB6C1"/>
+    <circle cx="10" cy="5" r="8" fill="#FFB6C1"/>
+    <circle cx="10" cy="-5" r="8" fill="#FFB6C1"/>
+    <circle cx="0" cy="-10" r="8" fill="#FFB6C1"/>
+    <circle cx="0" cy="0" r="5" fill="#FFD700"/>
+  </g>
+  <g transform="translate(170, 50)">
+    <circle cx="0" cy="0" r="8" fill="#FF69B4"/>
+    <circle cx="-10" cy="-5" r="8" fill="#FF69B4"/>
+    <circle cx="-10" cy="5" r="8" fill="#FF69B4"/>
+    <circle cx="0" cy="10" r="8" fill="#FF69B4"/>
+    <circle cx="10" cy="5" r="8" fill="#FF69B4"/>
+    <circle cx="10" cy="-5" r="8" fill="#FF69B4"/>
+    <circle cx="0" cy="-10" r="8" fill="#FF69B4"/>
+    <circle cx="0" cy="0" r="5" fill="#FFD700"/>
+  </g>
+  <g transform="translate(50, 130)">
+    <circle cx="0" cy="0" r="8" fill="#FFB6C1"/>
+    <circle cx="-10" cy="-5" r="8" fill="#FFB6C1"/>
+    <circle cx="-10" cy="5" r="8" fill="#FFB6C1"/>
+    <circle cx="0" cy="10" r="8" fill="#FFB6C1"/>
+    <circle cx="10" cy="5" r="8" fill="#FFB6C1"/>
+    <circle cx="10" cy="-5" r="8" fill="#FFB6C1"/>
+    <circle cx="0" cy="-10" r="8" fill="#FFB6C1"/>
+    <circle cx="0" cy="0" r="5" fill="#FFD700"/>
+  </g>
+  <g transform="translate(150, 130)">
+    <circle cx="0" cy="0" r="8" fill="#FF69B4"/>
+    <circle cx="-10" cy="-5" r="8" fill="#FF69B4"/>
+    <circle cx="-10" cy="5" r="8" fill="#FF69B4"/>
+    <circle cx="0" cy="10" r="8" fill="#FF69B4"/>
+    <circle cx="10" cy="5" r="8" fill="#FF69B4"/>
+    <circle cx="10" cy="-5" r="8" fill="#FF69B4"/>
+    <circle cx="0" cy="-10" r="8" fill="#FF69B4"/>
+    <circle cx="0" cy="0" r="5" fill="#FFD700"/>
+  </g>
+  <path d="M 30 60 Q 30 80, 50 120" stroke="#90EE90" stroke-width="2" fill="none"/>
+  <path d="M 170 60 Q 170 80, 150 120" stroke="#90EE90" stroke-width="2" fill="none"/>
+</svg>

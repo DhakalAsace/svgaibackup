@@ -1,0 +1,215 @@
+/**
+ * Performance Monitoring Configuration
+ * Tracks Core Web Vitals and conversion metrics based on traffic volume
+ */
+
+import { track } from '@vercel/analytics'
+import { getISRConfigBySearchVolume, COMPLEX_CONVERTERS } from './isr-config'
+
+export interface PerformanceMetrics {
+  // Core Web Vitals
+  lcp?: number  // Largest Contentful Paint (ms)
+  fid?: number  // First Input Delay (ms) - now INP
+  inp?: number  // Interaction to Next Paint (ms)
+  cls?: number  // Cumulative Layout Shift
+  fcp?: number  // First Contentful Paint (ms)
+  ttfb?: number // Time to First Byte (ms)
+  
+  // Custom metrics
+  converterSlug?: string
+  searchVolume?: number
+  conversionTime?: number // Time to convert file (ms)
+  fileSize?: number      // Input file size (bytes)
+  outputSize?: number    // Output file size (bytes)
+  errorRate?: number     // Error percentage
+}
+
+/**
+ * Track Core Web Vitals for a converter page
+ */
+export function trackWebVitals(metrics: PerformanceMetrics) {
+  const { converterSlug, searchVolume } = metrics
+  
+  if (!converterSlug || searchVolume === undefined) return
+  
+  // Get alert thresholds based on search volume
+  const isrConfig = getISRConfigBySearchVolume(searchVolume)
+  const thresholds = isrConfig.alertThreshold
+  
+  // Check if metrics exceed thresholds
+  const alerts: string[] = []
+  
+  if (thresholds) {
+    if (metrics.lcp && metrics.lcp > thresholds.lcp) {
+      alerts.push(`LCP exceeded: ${metrics.lcp}ms > ${thresholds.lcp}ms`)
+    }
+    if (metrics.inp && metrics.inp > thresholds.fid) {
+      alerts.push(`INP exceeded: ${metrics.inp}ms > ${thresholds.fid}ms`)
+    }
+    if (metrics.cls && metrics.cls > thresholds.cls) {
+      alerts.push(`CLS exceeded: ${metrics.cls} > ${thresholds.cls}`)
+    }
+  }
+  
+  // Track to Vercel Analytics with custom properties
+  track('web-vitals', {
+    converter: converterSlug,
+    searchVolume,
+    priority: isrConfig.priority,
+    lcp: metrics.lcp || 0,
+    inp: metrics.inp || 0,
+    cls: metrics.cls || 0,
+    fcp: metrics.fcp || 0,
+    ttfb: metrics.ttfb || 0,
+    hasAlerts: alerts.length > 0,
+    alerts: alerts.join(', '),
+  })
+  
+  // Log alerts for high-traffic pages
+  if (alerts.length > 0 && isrConfig.priority === 'high') {
+    console.error(`Performance alerts for ${converterSlug}:`, alerts)
+  }
+}
+
+/**
+ * Track conversion metrics
+ */
+export function trackConversion(
+  converterSlug: string,
+  searchVolume: number,
+  success: boolean,
+  details?: {
+    conversionTime?: number
+    inputSize?: number
+    outputSize?: number
+    error?: string
+  }
+) {
+  const isComplex = COMPLEX_CONVERTERS.includes(converterSlug)
+  
+  track('conversion', {
+    converter: converterSlug,
+    searchVolume,
+    success,
+    isComplex,
+    conversionTime: details?.conversionTime || 0,
+    inputSize: details?.inputSize || 0,
+    outputSize: details?.outputSize || 0,
+    error: details?.error || '',
+    compressionRatio: details?.inputSize && details?.outputSize 
+      ? (details.outputSize / details.inputSize).toFixed(2)
+      : '0',
+  })
+}
+
+/**
+ * Track page views with converter context
+ */
+export function trackConverterPageView(converterSlug: string, searchVolume: number) {
+  track('converter-page-view', {
+    converter: converterSlug,
+    searchVolume,
+    priority: getISRConfigBySearchVolume(searchVolume).priority,
+  })
+}
+
+/**
+ * Client-side Web Vitals reporter
+ * This should be used in a client component
+ */
+export function reportWebVitals(metric: any) {
+  // Get converter info from URL
+  const pathname = window.location.pathname
+  const converterMatch = pathname.match(/\/convert\/([^\/]+)/)
+  
+  if (!converterMatch) return
+  
+  const converterSlug = converterMatch[1]
+  
+  // Map Next.js metrics to our format
+  const metrics: PerformanceMetrics = {
+    converterSlug,
+  }
+  
+  switch (metric.name) {
+    case 'LCP':
+      metrics.lcp = Math.round(metric.value)
+      break
+    case 'FID':
+    case 'INP':
+      metrics.inp = Math.round(metric.value)
+      break
+    case 'CLS':
+      metrics.cls = metric.value
+      break
+    case 'FCP':
+      metrics.fcp = Math.round(metric.value)
+      break
+    case 'TTFB':
+      metrics.ttfb = Math.round(metric.value)
+      break
+  }
+  
+  // Send to analytics
+  if (Object.keys(metrics).length > 1) {
+    track('client-web-vitals', {
+      converterSlug: metrics.converterSlug || '',
+      searchVolume: metrics.searchVolume || 0,
+      lcp: metrics.lcp || 0,
+      inp: metrics.inp || 0,
+      cls: metrics.cls || 0,
+      fcp: metrics.fcp || 0,
+      ttfb: metrics.ttfb || 0,
+    })
+  }
+}
+
+/**
+ * Performance budget checker
+ * Returns true if page meets performance budget
+ */
+export function checkPerformanceBudget(
+  converterSlug: string,
+  searchVolume: number,
+  metrics: PerformanceMetrics
+): { passed: boolean; violations: string[] } {
+  const isrConfig = getISRConfigBySearchVolume(searchVolume)
+  const thresholds = isrConfig.alertThreshold
+  
+  if (!thresholds) {
+    return { passed: true, violations: [] }
+  }
+  
+  const violations: string[] = []
+  
+  if (metrics.lcp && metrics.lcp > thresholds.lcp) {
+    violations.push(`LCP: ${metrics.lcp}ms (limit: ${thresholds.lcp}ms)`)
+  }
+  
+  if (metrics.inp && metrics.inp > thresholds.fid) {
+    violations.push(`INP: ${metrics.inp}ms (limit: ${thresholds.fid}ms)`)
+  }
+  
+  if (metrics.cls && metrics.cls > thresholds.cls) {
+    violations.push(`CLS: ${metrics.cls} (limit: ${thresholds.cls})`)
+  }
+  
+  return {
+    passed: violations.length === 0,
+    violations,
+  }
+}
+
+/**
+ * Get monitoring dashboard URL for a converter
+ */
+export function getMonitoringDashboardUrl(converterSlug: string): string {
+  // Vercel Analytics dashboard with filters
+  const baseUrl = 'https://vercel.com/analytics'
+  const params = new URLSearchParams({
+    path: `/convert/${converterSlug}`,
+    metric: 'web-vitals',
+  })
+  
+  return `${baseUrl}?${params.toString()}`
+}

@@ -1,0 +1,47 @@
+<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <g id="candle1">
+    <rect x="20" y="80" width="20" height="60" fill="#FFD700"/>
+    <ellipse cx="30" cy="75" rx="10" ry="15" fill="#FF6347"/>
+    <text x="30" y="115" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#333">1</text>
+  </g>
+  <g id="candle2">
+    <rect x="50" y="80" width="20" height="60" fill="#FF69B4"/>
+    <ellipse cx="60" cy="75" rx="10" ry="15" fill="#FF6347"/>
+    <text x="60" y="115" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFF">2</text>
+  </g>
+  <g id="candle3">
+    <rect x="80" y="80" width="20" height="60" fill="#87CEEB"/>
+    <ellipse cx="90" cy="75" rx="10" ry="15" fill="#FF6347"/>
+    <text x="90" y="115" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFF">3</text>
+  </g>
+  <g id="candle4">
+    <rect x="110" y="80" width="20" height="60" fill="#32CD32"/>
+    <ellipse cx="120" cy="75" rx="10" ry="15" fill="#FF6347"/>
+    <text x="120" y="115" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFF">4</text>
+  </g>
+  <g id="candle5">
+    <rect x="140" y="80" width="20" height="60" fill="#9370DB"/>
+    <ellipse cx="150" cy="75" rx="10" ry="15" fill="#FF6347"/>
+    <text x="150" y="115" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFF">5</text>
+  </g>
+  <g id="candle6">
+    <rect x="170" y="80" width="20" height="60" fill="#FF1493"/>
+    <ellipse cx="180" cy="75" rx="10" ry="15" fill="#FF6347"/>
+    <text x="180" y="115" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFF">6</text>
+  </g>
+  <g id="candle7">
+    <rect x="200" y="80" width="20" height="60" fill="#FF6347"/>
+    <ellipse cx="210" cy="75" rx="10" ry="15" fill="#FF6347"/>
+    <text x="210" y="115" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFF">7</text>
+  </g>
+  <g id="candle8">
+    <rect x="230" y="80" width="20" height="60" fill="#4169E1"/>
+    <ellipse cx="240" cy="75" rx="10" ry="15" fill="#FF6347"/>
+    <text x="240" y="115" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFF">8</text>
+  </g>
+  <g id="candle9">
+    <rect x="260" y="80" width="20" height="60" fill="#DC143C"/>
+    <ellipse cx="270" cy="75" rx="10" ry="15" fill="#FF6347"/>
+    <text x="270" y="115" font-family="Arial" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFF">9</text>
+  </g>
+</svg>

@@ -1,0 +1,20 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Humorous warning sign -->
+  <!-- Triangle sign -->
+  <path d="M100 30 L170 150 L30 150 Z" fill="#ffd93d" stroke="#000" stroke-width="4"/>
+  <path d="M100 40 L160 140 L40 140 Z" fill="#ffed4e" stroke="none"/>
+  <!-- Exclamation mark but it's wobbly -->
+  <path d="M95 60 Q97 70 99 80 L101 90 Q103 100 102 110 L98 110 Q97 100 95 90 L93 80 Q91 70 95 60 Z" 
+        fill="#000"/>
+  <circle cx="100" cy="125" r="6" fill="#000"/>
+  <!-- Small text -->
+  <text x="100" y="170" font-family="Arial" font-size="12" text-anchor="middle" fill="#000">
+    CAUTION: HUMOR
+  </text>
+  <!-- Decorative tilted effect -->
+  <line x1="20" y1="155" x2="25" y2="160" stroke="#000" stroke-width="2"/>
+  <line x1="175" y1="155" x2="180" y2="160" stroke="#000" stroke-width="2"/>
+  <!-- Cartoon eyes on the sign -->
+  <circle cx="80" cy="80" r="3" fill="#000"/>
+  <circle cx="120" cy="80" r="3" fill="#000"/>
+</svg>

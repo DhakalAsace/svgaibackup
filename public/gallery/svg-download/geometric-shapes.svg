@@ -1,0 +1,19 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Circle -->
+  <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+  
+  <!-- Square -->
+  <rect x="26" y="3" width="16" height="16" stroke="currentColor" stroke-width="2"/>
+  
+  <!-- Triangle -->
+  <path d="M11 26L19 42H3L11 26Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+  
+  <!-- Hexagon -->
+  <path d="M34 26L40.9282 30V38L34 42L27.0718 38V30L34 26Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+  
+  <!-- Diamond -->
+  <path d="M11 11L17 17L11 23L5 17L11 11Z" fill="currentColor" opacity="0.2"/>
+  
+  <!-- Pentagon -->
+  <path d="M34 3L39.5106 6.72746L37.7553 13.2725L30.2447 13.2725L28.4894 6.72746L34 3Z" fill="currentColor" opacity="0.2"/>
+</svg>

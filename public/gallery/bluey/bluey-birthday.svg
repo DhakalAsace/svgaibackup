@@ -1,0 +1,68 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- Birthday party theme with dogs -->
+  <g>
+    <!-- Party hat on dog -->
+    <g transform="translate(0, -2)">
+      <!-- Hat -->
+      <path d="M 24 8 L 18 20 L 30 20 Z" fill="#E91E63" stroke="#C2185B" stroke-width="1.5"/>
+      <circle cx="24" cy="8" r="2" fill="#FFC107"/>
+      <!-- Hat stripes -->
+      <line x1="20" y1="16" x2="28" y2="16" stroke="#FFC107" stroke-width="1.5"/>
+      <line x1="21" y1="18" x2="27" y2="18" stroke="#4CAF50" stroke-width="1.5"/>
+    </g>
+    
+    <!-- Birthday dog -->
+    <g>
+      <!-- Body -->
+      <ellipse cx="24" cy="30" rx="10" ry="8" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="2"/>
+      
+      <!-- Head -->
+      <circle cx="24" cy="22" r="8" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="2"/>
+      
+      <!-- Ears -->
+      <ellipse cx="18" cy="18" rx="3" ry="5" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="2" transform="rotate(-20 18 18)"/>
+      <ellipse cx="30" cy="18" rx="3" ry="5" fill="#4E9FDB" stroke="#2D5F8B" stroke-width="2" transform="rotate(20 30 18)"/>
+      
+      <!-- Happy eyes -->
+      <circle cx="21" cy="22" r="1.5" fill="white"/>
+      <circle cx="27" cy="22" r="1.5" fill="white"/>
+      <circle cx="21" cy="22" r="0.8" fill="black"/>
+      <circle cx="27" cy="22" r="0.8" fill="black"/>
+      
+      <!-- Nose -->
+      <ellipse cx="24" cy="24" rx="1.5" ry="1" fill="black"/>
+      
+      <!-- Big smile -->
+      <path d="M20 25 Q 24 27 28 25" fill="none" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+    </g>
+    
+    <!-- Birthday cake -->
+    <g transform="translate(4, 0)">
+      <!-- Cake base -->
+      <rect x="5" y="36" width="14" height="8" fill="#8D6E63" stroke="#5D4037" stroke-width="1.5" rx="1"/>
+      <!-- Frosting -->
+      <rect x="5" y="34" width="14" height="4" fill="#FFB3E6" stroke="#F06292" stroke-width="1.5" rx="1"/>
+      <!-- Candles -->
+      <rect x="8" y="31" width="2" height="5" fill="#FFC107"/>
+      <rect x="12" y="31" width="2" height="5" fill="#4CAF50"/>
+      <rect x="16" y="31" width="2" height="5" fill="#2196F3"/>
+      <!-- Flames -->
+      <ellipse cx="9" cy="30" rx="1" ry="1.5" fill="#FF5722"/>
+      <ellipse cx="13" cy="30" rx="1" ry="1.5" fill="#FF5722"/>
+      <ellipse cx="17" cy="30" rx="1" ry="1.5" fill="#FF5722"/>
+    </g>
+    
+    <!-- Confetti -->
+    <rect x="8" y="10" width="2" height="4" fill="#E91E63" transform="rotate(45 9 12)"/>
+    <rect x="38" y="12" width="2" height="4" fill="#FFC107" transform="rotate(-30 39 14)"/>
+    <rect x="36" y="26" width="2" height="4" fill="#4CAF50" transform="rotate(60 37 28)"/>
+    <rect x="10" y="28" width="2" height="4" fill="#2196F3" transform="rotate(-45 11 30)"/>
+    
+    <!-- Small present -->
+    <g transform="translate(28, 36)">
+      <rect x="0" y="2" width="6" height="6" fill="#9C27B0" stroke="#6A1B9A" stroke-width="1"/>
+      <rect x="-1" y="1" width="8" height="2" fill="#E91E63" stroke="#C2185B" stroke-width="1"/>
+      <path d="M3 1 L3 -1 M2 0 Q 3 -1 4 0" stroke="#FFC107" stroke-width="1" fill="none"/>
+    </g>
+  </g>
+</svg>

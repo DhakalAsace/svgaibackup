@@ -3,9 +3,10 @@ import { Montserrat } from 'next/font/google'
 import './globals.css'
 import { Providers } from "./providers"
 import Footer from "@/components/footer"
-import { SpeedInsights } from '@vercel/speed-insights/next';
-import { Analytics } from '@vercel/analytics/react';
 import { NavbarWrapper } from '@/components/client-wrappers';
+import { WebVitalsReporter } from '@/components/web-vitals-reporter';
+import { ServiceWorkerProvider } from '@/components/service-worker-provider';
+import { ErrorInterceptor } from '@/components/error-interceptor';
 
 // Initialize Montserrat font
 const montserrat = Montserrat({
@@ -81,9 +82,35 @@ export default function RootLayout({
   return (
     <html lang="en" className={montserrat.variable}>
       <head>
+        {/* Critical CSS inline for faster FCP */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          /* Critical CSS for above-the-fold content */
+          *, ::before, ::after { box-sizing: border-box; border-width: 0; }
+          html { line-height: 1.5; -webkit-text-size-adjust: 100%; font-family: var(--font-montserrat), ui-sans-serif, system-ui; visibility: visible; }
+          body { margin: 0; line-height: inherit; font-family: inherit; background-color: rgba(14, 116, 144, 0.3); }
+          .container { width: 100%; margin-right: auto; margin-left: auto; padding-right: 1rem; padding-left: 1rem; }
+          @media (min-width: 1280px) { .container { max-width: 1280px; } }
+          .text-center { text-align: center; }
+          .font-bold { font-weight: 700; }
+          .bg-gradient-to-b { background-image: linear-gradient(to bottom, var(--tw-gradient-stops)); }
+          .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+          @media (min-width: 768px) { .md\\:text-5xl { font-size: 3rem; line-height: 1; } }
+          @media (min-width: 1024px) { .lg\\:text-6xl { font-size: 3.75rem; line-height: 1; } }
+          img { max-width: 100%; height: auto; display: block; }
+          .w-\\[156px\\] { width: 156px; }
+          .h-\\[80px\\] { height: 80px; }
+        ` }} />
+        
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://svgai.supabase.co" />
+        <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
+        <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
+        
+        {/* Preload critical resources */}
+        <link rel="preload" href="/laurel.svg" as="image" type="image/svg+xml" />
+        <link rel="preload" href="/star.svg" as="image" type="image/svg+xml" />
 
         {/* Font loading moved to metadata */}
         
@@ -100,6 +127,18 @@ export default function RootLayout({
         
         {/* Core Web Vitals optimization - disable FCP blocking content */}
         <meta name="theme-color" content="#FFFFFF" />
+        
+        {/* Prefetch critical resources */}
+        <link rel="prefetch" href="/api/generate-svg" as="fetch" crossOrigin="anonymous" />
+        <link rel="prefetch" href="/api/convert" as="fetch" crossOrigin="anonymous" />
+        
+        {/* Resource hints for critical CSS */}
+        <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
+        
+        {/* Module preload for critical JS */}
+        <link rel="modulepreload" href="/_next/static/chunks/webpack.js" />
+        <link rel="modulepreload" href="/_next/static/chunks/framework.js" />
+        <link rel="modulepreload" href="/_next/static/chunks/main.js" />
         
         {/* WebSite structured data for Google site name */}
         <script type="application/ld+json">{`
@@ -119,17 +158,18 @@ export default function RootLayout({
           }
         `}</script>
       </head>
-      <body className={`font-sans bg-brand/30`} suppressHydrationWarning>
+      <body className={`font-sans`} suppressHydrationWarning>
         <Providers>
           <div className="flex flex-col min-h-screen">
             <NavbarWrapper />
-            <main className="flex-1">
+            <main className="flex-1 bg-background">
               {children}
             </main>
             <Footer />
           </div>
-          <SpeedInsights />
-          <Analytics />
+          <WebVitalsReporter />
+          <ServiceWorkerProvider />
+          <ErrorInterceptor />
         </Providers>
       </body>
     </html>

@@ -145,13 +145,9 @@ export function UserMenu() {
     };
   }, [user?.id, fetchSubscriptionStatus]);
 
-  // Display Sign In button if user is not logged in
+  // Don't display anything if user is not logged in
   if (!session) {
-    return (
-      <Button variant="outline" asChild>
-        <Link href="/login">Sign In</Link>
-      </Button>
-    );
+    return null;
   }
 
   // Get user initials or a default fallback

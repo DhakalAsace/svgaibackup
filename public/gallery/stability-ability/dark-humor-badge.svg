@@ -1,0 +1,29 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Badge with edgy design -->
+  <defs>
+    <linearGradient id="darkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d3436;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#636e72;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Star badge shape -->
+  <path d="M100 20 L120 70 L175 70 L130 105 L150 155 L100 120 L50 155 L70 105 L25 70 L80 70 Z" 
+        fill="url(#darkGrad)" stroke="#000" stroke-width="3"/>
+  <!-- Inner circle -->
+  <circle cx="100" cy="95" r="35" fill="#000" stroke="#ff6b6b" stroke-width="2"/>
+  <!-- Skull emoji style -->
+  <circle cx="88" cy="85" r="6" fill="#fff"/>
+  <circle cx="112" cy="85" r="6" fill="#fff"/>
+  <!-- Nose -->
+  <path d="M95 95 L100 100 L105 95" fill="#fff"/>
+  <!-- Grin -->
+  <rect x="85" y="105" width="6" height="8" fill="#fff"/>
+  <rect x="93" y="105" width="6" height="8" fill="#fff"/>
+  <rect x="101" y="105" width="6" height="8" fill="#fff"/>
+  <rect x="109" y="105" width="6" height="8" fill="#fff"/>
+  <!-- Text ribbon -->
+  <rect x="50" y="165" width="100" height="20" fill="#ff6b6b" stroke="#000" stroke-width="2"/>
+  <text x="100" y="179" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">
+    EDGY™
+  </text>
+</svg>

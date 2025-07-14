@@ -1,0 +1,37 @@
+# Task ID: 15
+# Title: Implement Web and Font Converters (HTML to SVG, TTF to SVG)
+# Status: pending
+# Dependencies: 11
+# Priority: medium
+# Description: Create converters for HTML content and TrueType fonts using html2canvas and opentype.js
+# Details:
+For HTML to SVG, use html2canvas to render DOM to canvas, then either embed as image or attempt vectorization using edge detection. Preserve CSS styling, handle responsive layouts, support form elements. For TTF to SVG, use opentype.js to parse font tables, extract glyph outlines as SVG paths, support full character sets or selective extraction, maintain kerning data. Generate SVG font format or individual path elements. Implementation: /lib/converters/web/html-to-svg.ts, /lib/converters/font/ttf-to-svg.ts
+
+# Test Strategy:
+Test HTML converter with various layouts, CSS frameworks, and interactive elements. Test TTF converter with different font types (serif, sans-serif, script), verify glyph accuracy, test with non-Latin scripts, validate SVG font output
+
+# Subtasks:
+## 1. HTML to canvas rendering with html2canvas integration [pending]
+### Dependencies: None
+### Description: Implement HTML to canvas conversion using html2canvas library for capturing web content as raster images
+### Details:
+Set up html2canvas library integration, configure options for high-quality rendering (scale, logging, useCORS), handle cross-origin content, implement error handling for failed renders, and create a preview system for the captured canvas output
+
+## 2. Canvas to SVG conversion with vectorization options [pending]
+### Dependencies: 15.1
+### Description: Convert rendered canvas data to SVG format using vectorization techniques and potrace integration
+### Details:
+Extract canvas image data, implement potrace integration for bitmap-to-vector conversion, provide configuration options for vectorization (threshold, turnpolicy, turdsize), handle color quantization for multi-color images, and generate optimized SVG paths from traced output
+
+## 3. TTF parser integration using opentype.js [pending]
+### Dependencies: None
+### Description: Implement TTF/OTF font file parsing and metadata extraction using opentype.js library
+### Details:
+Set up opentype.js for font file parsing, extract font metadata (family, style, weight), read glyph data and outlines, handle font tables (GPOS, GSUB for advanced features), implement error handling for malformed fonts, and support for both TTF and OTF formats
+
+## 4. Glyph extraction and SVG font generation with kerning preservation [pending]
+### Dependencies: 15.3
+### Description: Extract individual glyphs from parsed fonts and generate SVG font files with proper kerning data
+### Details:
+Convert glyph outlines to SVG path data, preserve kerning pairs and spacing information, generate SVG font format with proper font-face definitions, implement character mapping and unicode support, optimize path data for file size, and create preview system for generated SVG fonts
+

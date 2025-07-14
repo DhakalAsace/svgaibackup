@@ -1,0 +1,35 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Large anime-style eyes -->
+  <defs>
+    <radialGradient id="eyeGrad1">
+      <stop offset="0%" style="stop-color:#87ceeb;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#4682b4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#191970;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  <!-- Left eye -->
+  <ellipse cx="60" cy="100" rx="35" ry="40" fill="#fff" stroke="#000" stroke-width="3"/>
+  <ellipse cx="60" cy="105" rx="25" ry="30" fill="url(#eyeGrad1)"/>
+  <ellipse cx="60" cy="110" rx="15" ry="20" fill="#000"/>
+  <ellipse cx="55" cy="105" rx="8" ry="10" fill="#fff" opacity="0.9"/>
+  <ellipse cx="65" cy="115" rx="4" ry="5" fill="#fff" opacity="0.7"/>
+  <!-- Eyelashes -->
+  <path d="M30 80 Q35 75 40 75" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+  <path d="M40 75 Q45 70 50 70" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+  <path d="M50 70 Q55 68 60 68" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Right eye -->
+  <ellipse cx="140" cy="100" rx="35" ry="40" fill="#fff" stroke="#000" stroke-width="3"/>
+  <ellipse cx="140" cy="105" rx="25" ry="30" fill="url(#eyeGrad1)"/>
+  <ellipse cx="140" cy="110" rx="15" ry="20" fill="#000"/>
+  <ellipse cx="135" cy="105" rx="8" ry="10" fill="#fff" opacity="0.9"/>
+  <ellipse cx="145" cy="115" rx="4" ry="5" fill="#fff" opacity="0.7"/>
+  <!-- Eyelashes -->
+  <path d="M170 80 Q165 75 160 75" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+  <path d="M160 75 Q155 70 150 70" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+  <path d="M150 70 Q145 68 140 68" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Eyebrows -->
+  <path d="M35 60 Q60 55 85 60" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+  <path d="M115 60 Q140 55 165 60" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+</svg>

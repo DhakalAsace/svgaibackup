@@ -1,0 +1,22 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fire/flame pattern -->
+  <defs>
+    <linearGradient id="flameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff0000;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#ff6600;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#ffaa00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffff00;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Main flame -->
+  <path d="M100 180 C80 180 70 160 70 140 C70 120 80 100 85 80 C88 65 92 50 100 30 C108 50 112 65 115 80 C120 100 130 120 130 140 C130 160 120 180 100 180 Z" 
+        fill="url(#flameGrad)" stroke="#000" stroke-width="2"/>
+  <!-- Inner flame -->
+  <path d="M100 170 C85 170 80 155 80 140 C80 125 85 110 90 95 C93 85 96 70 100 55 C104 70 107 85 110 95 C115 110 120 125 120 140 C120 155 115 170 100 170 Z" 
+        fill="#fff" opacity="0.4"/>
+  <!-- Side flames -->
+  <path d="M60 160 C50 160 45 150 45 140 C45 130 50 120 52 110 C54 100 56 90 60 80 C64 90 66 100 68 110 C70 120 75 130 75 140 C75 150 70 160 60 160 Z" 
+        fill="url(#flameGrad)" stroke="#000" stroke-width="2" opacity="0.8"/>
+  <path d="M140 160 C150 160 155 150 155 140 C155 130 150 120 148 110 C146 100 144 90 140 80 C136 90 134 100 132 110 C130 120 125 130 125 140 C125 150 130 160 140 160 Z" 
+        fill="url(#flameGrad)" stroke="#000" stroke-width="2" opacity="0.8"/>
+</svg>

@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, AlertTriangle } from "lucide-react";
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('settings-form');
 import {
   AlertDialog,
   AlertDialogAction,
@@ -165,7 +168,7 @@ export function SettingsForm({ userId }: SettingsFormProps) {
             const errorData = await response.json();
             errorMsg = errorData.error || errorData.message || errorMsg; // Prefer server error message
           } catch (jsonError) {
-             console.warn("Could not parse error response body as JSON");
+             logger.warn("Could not parse error response body as JSON");
              // Use the generic message if parsing fails
           }
           throw new Error(errorMsg);

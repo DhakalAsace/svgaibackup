@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <title>Hello Kitty Birthday</title>
+  <!-- Cake -->
+  <rect x="14" y="32" width="20" height="12" fill="#FFE4B5" stroke="#000000" stroke-width="1.5"/>
+  <rect x="14" y="36" width="20" height="2" fill="#FF69B4"/>
+  <rect x="14" y="40" width="20" height="2" fill="#FFB6C1"/>
+  
+  <!-- Candles -->
+  <rect x="20" y="28" width="2" height="5" fill="#FFD700"/>
+  <ellipse cx="21" cy="27" rx="2" ry="3" fill="#FFA500"/>
+  
+  <rect x="26" y="28" width="2" height="5" fill="#FFD700"/>
+  <ellipse cx="27" cy="27" rx="2" ry="3" fill="#FFA500"/>
+  
+  <!-- Face -->
+  <ellipse cx="24" cy="16" rx="12" ry="10" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+  
+  <!-- Left ear -->
+  <path d="M 14 6 Q 12 4, 10 7 Q 8 10, 12 12 L 16 10 Z" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+  
+  <!-- Right ear -->
+  <path d="M 34 6 Q 36 4, 38 7 Q 40 10, 36 12 L 32 10 Z" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+  
+  <!-- Bow -->
+  <path d="M 28 4 Q 31 3, 33 5 Q 35 7, 33 9 Q 31 11, 28 9 Q 25 11, 23 9 Q 21 7, 23 5 Q 25 3, 28 4 Z" fill="#FF69B4" stroke="#000000" stroke-width="1"/>
+  <circle cx="28" cy="7" r="1.5" fill="#FF1493"/>
+  
+  <!-- Left eye -->
+  <ellipse cx="19" cy="16" rx="1" ry="2" fill="#000000"/>
+  
+  <!-- Right eye -->
+  <ellipse cx="29" cy="16" rx="1" ry="2" fill="#000000"/>
+  
+  <!-- Nose -->
+  <ellipse cx="24" cy="19" rx="2" ry="1" fill="#FFD700"/>
+  
+  <!-- Smile -->
+  <path d="M 20 20 Q 24 22, 28 20" stroke="#000000" stroke-width="1" fill="none"/>
+  
+  <!-- Left whisker -->
+  <line x1="10" y1="15" x2="14" y2="16" stroke="#000000" stroke-width="0.8"/>
+  <line x1="10" y1="18" x2="14" y2="18" stroke="#000000" stroke-width="0.8"/>
+  
+  <!-- Right whisker -->
+  <line x1="34" y1="16" x2="38" y2="15" stroke="#000000" stroke-width="0.8"/>
+  <line x1="34" y1="18" x2="38" y2="18" stroke="#000000" stroke-width="0.8"/>
+</svg>

@@ -105,6 +105,486 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_events: {
+        Row: {
+          id: string
+          event_type: string
+          payload: Json
+          status: string
+          error_message: string | null
+          processing_time: number | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_type: string
+          payload: Json
+          status?: string
+          error_message?: string | null
+          processing_time?: number | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_type?: string
+          payload?: Json
+          status?: string
+          error_message?: string | null
+          processing_time?: number | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      payment_audit_log: {
+        Row: {
+          id: string
+          event_type: string
+          user_id: string | null
+          stripe_event_id: string | null
+          amount: number | null
+          currency: string | null
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_type: string
+          user_id?: string | null
+          stripe_event_id?: string | null
+          amount?: number | null
+          currency?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_type?: string
+          user_id?: string | null
+          stripe_event_id?: string | null
+          amount?: number | null
+          currency?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
+      monitoring_metrics: {
+        Row: {
+          id: string
+          tool: string
+          metric: string
+          value: number
+          session_id: string | null
+          user_id: string | null
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          tool: string
+          metric: string
+          value: number
+          session_id?: string | null
+          user_id?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          tool?: string
+          metric?: string
+          value?: number
+          session_id?: string | null
+          user_id?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
+      funnel_conversions: {
+        Row: {
+          id: string
+          session_id: string
+          user_id: string | null
+          from_tool: string | null
+          to_feature: string
+          journey_steps: string[]
+          journey_duration: number
+          device: string | null
+          browser: string | null
+          referrer: string | null
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          user_id?: string | null
+          from_tool?: string | null
+          to_feature: string
+          journey_steps: string[]
+          journey_duration: number
+          device?: string | null
+          browser?: string | null
+          referrer?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          user_id?: string | null
+          from_tool?: string | null
+          to_feature?: string
+          journey_steps?: string[]
+          journey_duration?: number
+          device?: string | null
+          browser?: string | null
+          referrer?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
+      monitoring_alerts: {
+        Row: {
+          id: string
+          tool: string
+          metric: string
+          severity: string
+          message: string
+          context: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          tool: string
+          metric: string
+          severity: string
+          message: string
+          context?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          tool?: string
+          metric?: string
+          severity?: string
+          message?: string
+          context?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
+      web_vitals_logs: {
+        Row: {
+          id: string
+          url: string
+          user_agent: string | null
+          metrics: Json
+          evaluation: Json
+          timestamp: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          url: string
+          user_agent?: string | null
+          metrics: Json
+          evaluation: Json
+          timestamp?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          url?: string
+          user_agent?: string | null
+          metrics?: Json
+          evaluation?: Json
+          timestamp?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      performance_alerts: {
+        Row: {
+          id: string
+          url: string
+          issues: Json
+          severity: string
+          resolved: boolean
+          resolved_at: string | null
+          timestamp: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          url: string
+          issues: Json
+          severity: string
+          resolved?: boolean
+          resolved_at?: string | null
+          timestamp?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          url?: string
+          issues?: Json
+          severity?: string
+          resolved?: boolean
+          resolved_at?: string | null
+          timestamp?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      error_groups: {
+        Row: {
+          id: string
+          fingerprint: string
+          service: string
+          level: string
+          message: string
+          count: number
+          status: string
+          first_seen: string
+          last_seen: string
+          resolved_at: string | null
+          resolved_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          fingerprint: string
+          service: string
+          level: string
+          message: string
+          count?: number
+          status?: string
+          first_seen?: string
+          last_seen?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          fingerprint?: string
+          service?: string
+          level?: string
+          message?: string
+          count?: number
+          status?: string
+          first_seen?: string
+          last_seen?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      error_events: {
+        Row: {
+          id: string
+          fingerprint: string
+          service: string
+          level: string
+          message: string
+          stack: string | null
+          context: Json | null
+          metadata: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          fingerprint: string
+          service: string
+          level: string
+          message: string
+          stack?: string | null
+          context?: Json | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          fingerprint?: string
+          service?: string
+          level?: string
+          message?: string
+          stack?: string | null
+          context?: Json | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      synthetic_checks: {
+        Row: {
+          id: string
+          name: string
+          path: string
+          status: string
+          response_time: number | null
+          status_code: number | null
+          error: string | null
+          metadata: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          path: string
+          status: string
+          response_time?: number | null
+          status_code?: number | null
+          error?: string | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          path?: string
+          status?: string
+          response_time?: number | null
+          status_code?: number | null
+          error?: string | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      uptime_metrics: {
+        Row: {
+          id: string
+          service: string
+          check_time: string
+          is_up: boolean
+          response_time: number | null
+          status_code: number | null
+          error: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          service: string
+          check_time?: string
+          is_up: boolean
+          response_time?: number | null
+          status_code?: number | null
+          error?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          service?: string
+          check_time?: string
+          is_up?: boolean
+          response_time?: number | null
+          status_code?: number | null
+          error?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      analytics_events: {
+        Row: {
+          id: string
+          event_name: string
+          user_id: string | null
+          session_id: string | null
+          properties: Json
+          processed: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_name: string
+          user_id?: string | null
+          session_id?: string | null
+          properties?: Json
+          processed?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_name?: string
+          user_id?: string | null
+          session_id?: string | null
+          properties?: Json
+          processed?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      conversion_metrics: {
+        Row: {
+          id: string
+          converter_type: string
+          date: string
+          page_views: number
+          file_selections: number
+          conversions_started: number
+          conversions_completed: number
+          conversion_rate: number
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          converter_type: string
+          date: string
+          page_views?: number
+          file_selections?: number
+          conversions_started?: number
+          conversions_completed?: number
+          conversion_rate?: number
+          metadata?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          converter_type?: string
+          date?: string
+          page_views?: number
+          file_selections?: number
+          conversions_started?: number
+          conversions_completed?: number
+          conversion_rate?: number
+          metadata?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
+      redirect_logs: {
+        Row: {
+          id: string
+          source_url: string
+          destination_url: string
+          referrer: string | null
+          user_agent: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          source_url: string
+          destination_url: string
+          referrer?: string | null
+          user_agent?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          source_url?: string
+          destination_url?: string
+          referrer?: string | null
+          user_agent?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

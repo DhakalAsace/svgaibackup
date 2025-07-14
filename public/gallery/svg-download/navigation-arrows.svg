@@ -1,0 +1,26 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Up Arrow -->
+  <g transform="translate(12, 2)">
+    <path d="M12 0L18 6H14V12H10V6H6L12 0Z" fill="currentColor"/>
+  </g>
+  
+  <!-- Right Arrow -->
+  <g transform="translate(26, 12)">
+    <path d="M12 6L18 12L12 18V14H6V10H12V6Z" fill="currentColor"/>
+  </g>
+  
+  <!-- Down Arrow -->
+  <g transform="translate(12, 26)">
+    <path d="M12 18L6 12H10V6H14V12H18L12 18Z" fill="currentColor"/>
+  </g>
+  
+  <!-- Left Arrow -->
+  <g transform="translate(2, 12)">
+    <path d="M6 12L0 6V10H6V14H0V18L6 12Z" fill="currentColor"/>
+  </g>
+  
+  <!-- Chevrons -->
+  <g transform="translate(22, 22)">
+    <path d="M2 2L6 6L2 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

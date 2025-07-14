@@ -1,0 +1,15 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <title>Graduation Cap with Stars</title>
+  <!-- Mortarboard top -->
+  <polygon points="24,12 4,22 24,32 44,22" fill="#000" stroke="none"/>
+  <!-- Mortarboard edge -->
+  <rect x="4" y="22" width="40" height="4" fill="#000"/>
+  <!-- Cap button -->
+  <circle cx="24" cy="22" r="2" fill="#FFD700"/>
+  <!-- Stars -->
+  <path d="M8,8 L9.5,11 L13,11.5 L10.5,14 L11,17.5 L8,16 L5,17.5 L5.5,14 L3,11.5 L6.5,11 Z" fill="#FFD700"/>
+  <path d="M40,8 L41.5,11 L45,11.5 L42.5,14 L43,17.5 L40,16 L37,17.5 L37.5,14 L35,11.5 L38.5,11 Z" fill="#FFD700"/>
+  <path d="M24,2 L25,4 L27,4.5 L25.5,6 L26,8 L24,7 L22,8 L22.5,6 L21,4.5 L23,4 Z" fill="#FFD700"/>
+  <path d="M12,35 L13,37 L15,37.5 L13.5,39 L14,41 L12,40 L10,41 L10.5,39 L9,37.5 L11,37 Z" fill="#0066CC"/>
+  <path d="M36,35 L37,37 L39,37.5 L37.5,39 L38,41 L36,40 L34,41 L34.5,39 L33,37.5 L35,37 Z" fill="#0066CC"/>
+</svg>

@@ -1,0 +1,103 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Multi Size Centers - Sheet with multiple center sizes -->
+  <title>Multi Size Center Templates</title>
+  
+  <!-- Row 1 - Circles -->
+  <circle cx="15" cy="15" r="12" fill="none" stroke="#000000" stroke-width="0.5"/>
+  <text x="12" y="16" font-size="2" font-family="Arial, sans-serif" fill="#000000">1"</text>
+  
+  <circle cx="40" cy="15" r="10" fill="none" stroke="#000000" stroke-width="0.5"/>
+  <text x="36" y="16" font-size="2" font-family="Arial, sans-serif" fill="#000000">0.8"</text>
+  
+  <circle cx="60" cy="15" r="8" fill="none" stroke="#000000" stroke-width="0.5"/>
+  <text x="56" y="16" font-size="2" font-family="Arial, sans-serif" fill="#000000">0.6"</text>
+  
+  <circle cx="80" cy="15" r="6" fill="none" stroke="#000000" stroke-width="0.5"/>
+  <text x="76" y="16" font-size="2" font-family="Arial, sans-serif" fill="#000000">0.5"</text>
+  
+  <!-- Row 2 - Scalloped circles -->
+  <g transform="translate(0, 25)">
+    <path d="M 15 0
+             a 2 2 0 0 0 3.46 2
+             a 2 2 0 0 0 4 0
+             a 2 2 0 0 0 3.46 -2
+             a 2 2 0 0 0 2 -3.46
+             a 2 2 0 0 0 0 -4
+             a 2 2 0 0 0 -2 -3.46
+             a 2 2 0 0 0 -3.46 -2
+             a 2 2 0 0 0 -4 0
+             a 2 2 0 0 0 -3.46 2
+             a 2 2 0 0 0 -2 3.46
+             a 2 2 0 0 0 0 4
+             a 2 2 0 0 0 2 3.46
+             z"
+          fill="none" stroke="#000000" stroke-width="0.5"/>
+    <text x="11" y="16" font-size="1.8" font-family="Arial, sans-serif" fill="#000000">Scal</text>
+  </g>
+  
+  <g transform="translate(25, 25)">
+    <path d="M 15 2
+             a 2 2 0 0 0 2.65 1.53
+             a 2 2 0 0 0 3.06 0
+             a 2 2 0 0 0 2.65 -1.53
+             a 2 2 0 0 0 1.53 -2.65
+             a 2 2 0 0 0 0 -3.06
+             a 2 2 0 0 0 -1.53 -2.65
+             a 2 2 0 0 0 -2.65 -1.53
+             a 2 2 0 0 0 -3.06 0
+             a 2 2 0 0 0 -2.65 1.53
+             a 2 2 0 0 0 -1.53 2.65
+             a 2 2 0 0 0 0 3.06
+             a 2 2 0 0 0 1.53 2.65
+             z"
+          fill="none" stroke="#000000" stroke-width="0.5"/>
+  </g>
+  
+  <!-- Row 3 - Stars -->
+  <g transform="translate(0, 50)">
+    <path d="M 15 5
+             L 17 11
+             L 23 11
+             L 18 15
+             L 20 21
+             L 15 17
+             L 10 21
+             L 12 15
+             L 7 11
+             L 13 11
+             Z"
+          fill="none" stroke="#000000" stroke-width="0.5"/>
+    <text x="11" y="26" font-size="1.8" font-family="Arial, sans-serif" fill="#000000">Star</text>
+  </g>
+  
+  <g transform="translate(25, 50)">
+    <path d="M 15 8
+             L 16.5 12
+             L 20.5 12
+             L 17.25 14.5
+             L 18.75 18.5
+             L 15 16
+             L 11.25 18.5
+             L 12.75 14.5
+             L 9.5 12
+             L 13.5 12
+             Z"
+          fill="none" stroke="#000000" stroke-width="0.5"/>
+  </g>
+  
+  <!-- Row 4 - Hexagons -->
+  <g transform="translate(50, 55)">
+    <polygon points="15,10 22.32,14 22.32,22 15,26 7.68,22 7.68,14" 
+             fill="none" stroke="#000000" stroke-width="0.5"/>
+    <text x="11" y="31" font-size="1.8" font-family="Arial, sans-serif" fill="#000000">Hex</text>
+  </g>
+  
+  <g transform="translate(25, 55)">
+    <polygon points="15,12 20,15 20,21 15,24 10,21 10,15" 
+             fill="none" stroke="#000000" stroke-width="0.5"/>
+  </g>
+  
+  <!-- Title and instructions -->
+  <text x="5" y="90" font-size="2.5" font-family="Arial, sans-serif" fill="#000000">Cut out desired shape and size</text>
+  <text x="5" y="95" font-size="3" font-family="Arial, sans-serif" fill="#000000">All-purpose center templates</text>
+</svg>

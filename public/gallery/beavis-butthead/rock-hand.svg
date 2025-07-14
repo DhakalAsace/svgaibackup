@@ -1,0 +1,22 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rock and roll hand gesture -->
+  <g transform="translate(100, 100)">
+    <!-- Palm -->
+    <ellipse cx="0" cy="10" rx="40" ry="60" fill="#fdbcb4" stroke="#000" stroke-width="3"/>
+    <!-- Thumb -->
+    <ellipse cx="-35" cy="0" rx="12" ry="20" fill="#fdbcb4" stroke="#000" stroke-width="3" transform="rotate(-30 -35 0)"/>
+    <!-- Index finger up -->
+    <rect x="-20" y="-65" width="15" height="50" rx="7" fill="#fdbcb4" stroke="#000" stroke-width="3"/>
+    <circle cx="-12.5" cy="-70" r="7.5" fill="#fdbcb4" stroke="#000" stroke-width="3"/>
+    <!-- Middle finger down -->
+    <rect x="-5" y="40" width="15" height="30" rx="7" fill="#fdbcb4" stroke="#000" stroke-width="3"/>
+    <!-- Ring finger down -->
+    <rect x="10" y="40" width="15" height="30" rx="7" fill="#fdbcb4" stroke="#000" stroke-width="3"/>
+    <!-- Pinky up -->
+    <rect x="15" y="-60" width="12" height="45" rx="6" fill="#fdbcb4" stroke="#000" stroke-width="3"/>
+    <circle cx="21" cy="-65" r="6" fill="#fdbcb4" stroke="#000" stroke-width="3"/>
+    <!-- Wristband -->
+    <rect x="-45" y="60" width="90" height="20" fill="#000"/>
+    <rect x="-40" y="65" width="80" height="10" fill="#ff0000"/>
+  </g>
+</svg>

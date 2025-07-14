@@ -22,7 +22,7 @@ export function NavbarWrapper() {
   // Show placeholder during SSR and initial render
   if (!mounted) {
     return (
-      <header className="sticky top-0 z-40 w-full h-20 border-b bg-brand/95 backdrop-blur">
+      <header className="sticky top-0 z-40 w-full h-20 border-b bg-background/95 backdrop-blur">
         <div className="container flex h-20"></div>
       </header>
     );

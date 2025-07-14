@@ -1,0 +1,22 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <title>Graduation Cap with Confetti</title>
+  <!-- Confetti pieces -->
+  <rect x="6" y="4" width="3" height="8" fill="#FF6B6B" transform="rotate(25 7.5 8)"/>
+  <rect x="38" y="6" width="3" height="8" fill="#4ECDC4" transform="rotate(-30 39.5 10)"/>
+  <rect x="10" y="36" width="3" height="8" fill="#45B7D1" transform="rotate(45 11.5 40)"/>
+  <rect x="35" y="38" width="3" height="8" fill="#96CEB4" transform="rotate(-15 36.5 42)"/>
+  <circle cx="15" cy="8" r="2" fill="#FFD93D"/>
+  <circle cx="33" cy="10" r="2" fill="#A8E6CF"/>
+  <circle cx="8" cy="28" r="2" fill="#FF8CC6"/>
+  <circle cx="40" cy="30" r="2" fill="#FFA502"/>
+  
+  <!-- Mortarboard top -->
+  <polygon points="24,14 4,24 24,34 44,24" fill="#000" stroke="none"/>
+  <!-- Mortarboard edge -->
+  <rect x="4" y="24" width="40" height="4" fill="#000"/>
+  <!-- Cap button -->
+  <circle cx="24" cy="24" r="2" fill="#FFD700"/>
+  <!-- Small tassel -->
+  <path d="M24,24 L26,28" stroke="#FFD700" stroke-width="1.5"/>
+  <circle cx="26" cy="29" r="1.5" fill="#FFD700"/>
+</svg>

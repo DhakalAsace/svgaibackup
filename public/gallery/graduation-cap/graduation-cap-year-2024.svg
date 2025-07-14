@@ -1,0 +1,14 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <title>Graduation Cap 2024</title>
+  <!-- Mortarboard top -->
+  <polygon points="24,10 4,20 24,30 44,20" fill="#000" stroke="none"/>
+  <!-- Mortarboard edge -->
+  <rect x="4" y="20" width="40" height="4" fill="#000"/>
+  <!-- Cap button -->
+  <circle cx="24" cy="20" r="2" fill="#FFD700"/>
+  <!-- Tassel -->
+  <path d="M24,20 Q26,23 28,26" stroke="#FFD700" stroke-width="1.5" fill="none"/>
+  <ellipse cx="28" cy="27" rx="2" ry="3" fill="#FFD700"/>
+  <!-- 2024 text -->
+  <text x="24" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#0066CC">2024</text>
+</svg>

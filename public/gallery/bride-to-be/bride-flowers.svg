@@ -1,0 +1,60 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(100, 60)">
+    <circle cx="0" cy="0" r="12" fill="#FFF"/>
+    <circle cx="-15" cy="-8" r="12" fill="#FFF"/>
+    <circle cx="-15" cy="8" r="12" fill="#FFF"/>
+    <circle cx="0" cy="15" r="12" fill="#FFF"/>
+    <circle cx="15" cy="8" r="12" fill="#FFF"/>
+    <circle cx="15" cy="-8" r="12" fill="#FFF"/>
+    <circle cx="0" cy="-15" r="12" fill="#FFF"/>
+    <circle cx="0" cy="0" r="8" fill="#FFD700"/>
+  </g>
+  <g transform="translate(70, 80)">
+    <circle cx="0" cy="0" r="10" fill="#FFB6C1"/>
+    <circle cx="-12" cy="-6" r="10" fill="#FFB6C1"/>
+    <circle cx="-12" cy="6" r="10" fill="#FFB6C1"/>
+    <circle cx="0" cy="12" r="10" fill="#FFB6C1"/>
+    <circle cx="12" cy="6" r="10" fill="#FFB6C1"/>
+    <circle cx="12" cy="-6" r="10" fill="#FFB6C1"/>
+    <circle cx="0" cy="-12" r="10" fill="#FFB6C1"/>
+    <circle cx="0" cy="0" r="6" fill="#FF69B4"/>
+  </g>
+  <g transform="translate(130, 80)">
+    <circle cx="0" cy="0" r="10" fill="#FFB6C1"/>
+    <circle cx="-12" cy="-6" r="10" fill="#FFB6C1"/>
+    <circle cx="-12" cy="6" r="10" fill="#FFB6C1"/>
+    <circle cx="0" cy="12" r="10" fill="#FFB6C1"/>
+    <circle cx="12" cy="6" r="10" fill="#FFB6C1"/>
+    <circle cx="12" cy="-6" r="10" fill="#FFB6C1"/>
+    <circle cx="0" cy="-12" r="10" fill="#FFB6C1"/>
+    <circle cx="0" cy="0" r="6" fill="#FF69B4"/>
+  </g>
+  <g transform="translate(85, 110)">
+    <circle cx="0" cy="0" r="8" fill="#FFF"/>
+    <circle cx="-10" cy="-5" r="8" fill="#FFF"/>
+    <circle cx="-10" cy="5" r="8" fill="#FFF"/>
+    <circle cx="0" cy="10" r="8" fill="#FFF"/>
+    <circle cx="10" cy="5" r="8" fill="#FFF"/>
+    <circle cx="10" cy="-5" r="8" fill="#FFF"/>
+    <circle cx="0" cy="-10" r="8" fill="#FFF"/>
+    <circle cx="0" cy="0" r="5" fill="#FFD700"/>
+  </g>
+  <g transform="translate(115, 110)">
+    <circle cx="0" cy="0" r="8" fill="#FFF"/>
+    <circle cx="-10" cy="-5" r="8" fill="#FFF"/>
+    <circle cx="-10" cy="5" r="8" fill="#FFF"/>
+    <circle cx="0" cy="10" r="8" fill="#FFF"/>
+    <circle cx="10" cy="5" r="8" fill="#FFF"/>
+    <circle cx="10" cy="-5" r="8" fill="#FFF"/>
+    <circle cx="0" cy="-10" r="8" fill="#FFF"/>
+    <circle cx="0" cy="0" r="5" fill="#FFD700"/>
+  </g>
+  <path d="M 100 70 Q 90 100, 85 130 Q 85 150, 90 170" stroke="#90EE90" stroke-width="3" fill="none"/>
+  <path d="M 100 70 Q 110 100, 115 130 Q 115 150, 110 170" stroke="#90EE90" stroke-width="3" fill="none"/>
+  <path d="M 70 90 Q 80 110, 85 130" stroke="#90EE90" stroke-width="2" fill="none"/>
+  <path d="M 130 90 Q 120 110, 115 130" stroke="#90EE90" stroke-width="2" fill="none"/>
+  <ellipse cx="85" cy="150" rx="3" ry="8" fill="#90EE90"/>
+  <ellipse cx="100" cy="160" rx="3" ry="8" fill="#90EE90"/>
+  <ellipse cx="115" cy="150" rx="3" ry="8" fill="#90EE90"/>
+  <path d="M 85 170 Q 100 180, 115 170" stroke="#FFB6C1" stroke-width="2" fill="none"/>
+</svg>
