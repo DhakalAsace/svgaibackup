@@ -5,12 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Download, Settings, Play, Pause, RotateCcw } from 'lucide-react'
+import { Download, Settings, Play, Pause, RotateCcw, Video } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
-import { convertSvgToGifClient } from '@/lib/converters/svg-to-gif'
+import { svgToGifHandler } from '@/lib/converters/svg-to-gif-client'
+import Link from 'next/link'
 
 const qualityPresets = {
   'high': { quality: 1, workers: 4, colors: 256 },
@@ -59,16 +60,14 @@ export function SvgToGifSpecific({
     try {
       const preset = qualityPresets[quality as keyof typeof qualityPresets]
       
-      const result = await convertSvgToGifClient(svgContent, {
+      const result = await svgToGifHandler(Buffer.from(svgContent, 'utf-8'), {
         width,
         height,
-        frameRate,
-        duration,
         colors: colors || preset.colors,
         dither: enableDither,
-        workers: workers || preset.workers,
-        quality: preset.quality,
-        qualityPreset: quality as 'high' | 'medium' | 'low' | 'animation',
+        quality: preset.quality === 1 ? 95 : preset.quality === 10 ? 85 : 75, // Map old quality to CloudConvert quality (1-100)
+        density: 150, // DPI for rasterization
+        fit: 'scale',
         onProgress: (progressValue) => {
           setProgress(Math.round(progressValue * 100))
         }
@@ -98,7 +97,7 @@ export function SvgToGifSpecific({
       setIsConverting(false)
       setProgress(0)
     }
-  }, [svgContent, width, height, quality, frameRate, duration, colors, enableDither, workers, onConversionStart, onConversionComplete])
+  }, [svgContent, width, height, quality, colors, enableDither, onConversionStart, onConversionComplete])
 
   const resetOptions = () => {
     setWidth(800)
@@ -276,10 +275,26 @@ export function SvgToGifSpecific({
         </div>
 
         {!isConverting && (
-          <div className="text-xs text-gray-500 space-y-1">
-            <p>• Supports both static SVG and animated SVG with CSS/SMIL animations</p>
-            <p>• Client-side conversion - your files never leave your browser</p>
-            <p>• Larger images and longer animations will take more time to process</p>
+          <div className="space-y-3">
+            <div className="text-xs text-gray-500 space-y-1">
+              <p>• Supports both static SVG and animated SVG with CSS/SMIL animations</p>
+              <p>• Secure conversion - we never save your files</p>
+              <p>• Larger images and longer animations will take more time to process</p>
+            </div>
+            
+            <Alert className="bg-blue-50 border-blue-200">
+              <Video className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-sm">
+                <strong>Need higher quality video?</strong> Try our{' '}
+                <Link 
+                  href="/tools/svg-to-video" 
+                  className="text-blue-600 hover:text-blue-700 underline font-medium"
+                >
+                  SVG to MP4 converter
+                </Link>{' '}
+                for HD video with AI-powered animations and better compression.
+              </AlertDescription>
+            </Alert>
           </div>
         )}
       </CardContent>

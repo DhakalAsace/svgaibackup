@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Simple company logo example from svg-file.mdx -->
+<!-- Shows how logos can be created with SVG -->
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo shape -->
+  <circle cx="30" cy="30" r="25" fill="#3498db"/>
+  <path d="M20 30 L25 20 L35 20 L40 30 L35 40 L25 40 Z" fill="white"/>
+  
+  <!-- Company name -->
+  <text x="65" y="35" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#2c3e50">Company</text>
+</svg>

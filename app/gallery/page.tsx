@@ -63,10 +63,10 @@ export default function GalleryIndexPage() {
   const allThemes = sortedThemes
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       {/* Hero Section with Professional Gradient */}
       <section className={`relative overflow-hidden border-b ${styles.hero}`}>
-        <div className="container relative z-10 px-6 py-20 md:py-28 lg:py-32">
+        <div className="container relative z-10 px-4 py-20 sm:px-6 md:py-28 lg:py-32">
           <div className="mx-auto max-w-5xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
               <Sparkles className="h-4 w-4" />
@@ -80,7 +80,7 @@ export default function GalleryIndexPage() {
               Download instantly or create custom designs with our AI-powered generator.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/ai-icon-generator">
+              <Link href="/">
                 <Button size="lg" className={`gap-2 px-8 py-6 text-lg ${styles.ctaButton}`}>
                   <Sparkles className="h-5 w-5" />
                   Create Custom SVGs with AI
@@ -103,7 +103,7 @@ export default function GalleryIndexPage() {
 
       {/* Stats Section */}
       <section className="border-b bg-muted/20">
-        <div className="container px-6 py-12">
+        <div className="container px-4 py-12 sm:px-6">
           <div className="mx-auto grid max-w-5xl grid-cols-2 gap-6 md:grid-cols-4">
             <div className={styles.statCard}>
               <div className={styles.statNumber}>{themes.length}</div>
@@ -127,7 +127,7 @@ export default function GalleryIndexPage() {
 
       {/* Featured Collections */}
       <section id="collections" className={`${styles.section} ${styles.contentSection}`}>
-        <div className="container px-6">
+        <div className="container px-4 sm:px-6">
           <div className="mx-auto max-w-6xl">
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
@@ -143,44 +143,25 @@ export default function GalleryIndexPage() {
                 <Link key={theme.slug} href={`/gallery/${theme.slug}`}>
                   <Card className={`group h-full transition-all duration-300 ${styles.galleryCard} ${styles.fadeInUp}`} 
                         style={{ animationDelay: `${index * 100}ms` }}>
-                    <CardHeader className="pb-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                            {theme.title}
-                          </CardTitle>
-                          <div className="mt-2 flex items-center gap-2">
-                            <Badge variant="secondary" className="text-xs">
-                              <TrendingUp className="mr-1 h-3 w-3" />
-                              {(theme.searchVolume / 1000).toFixed(1)}K searches
-                            </Badge>
-                            {index === 0 && (
-                              <Badge className={`text-xs ${styles.premiumBadge}`}>
-                                Most Popular
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                        <div className="rounded-full bg-primary/10 p-2 transition-all group-hover:bg-primary/20">
-                          <ArrowRight className="h-5 w-5 text-primary transition-transform group-hover:translate-x-1" />
-                        </div>
+                    <CardHeader className="pb-3">
+                      <div className="space-y-2">
+                        <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors">
+                          {theme.title}
+                        </CardTitle>
+                        {index === 0 && (
+                          <Badge className={`text-xs ${styles.featuredBadge}`}>
+                            Featured
+                          </Badge>
+                        )}
                       </div>
                     </CardHeader>
-                    <CardContent>
-                      <p className="line-clamp-2 text-muted-foreground">
+                    <CardContent className="pt-0">
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
                         {theme.description}
                       </p>
-                      <div className="mt-4 flex items-center justify-between">
-                        <span className="text-sm font-medium text-primary">
-                          View collection →
-                        </span>
-                        <div className="flex gap-1">
-                          {theme.keywords.slice(0, 2).map((keyword, idx) => (
-                            <span key={idx} className={styles.tag}>
-                              {keyword}
-                            </span>
-                          ))}
-                        </div>
+                      <div className="flex items-center text-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span>Explore collection</span>
+                        <ArrowRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                       </div>
                     </CardContent>
                   </Card>
@@ -191,11 +172,9 @@ export default function GalleryIndexPage() {
         </div>
       </section>
 
-      <div className={styles.divider} />
-
       {/* All Collections Grid with Enhanced Styling */}
       <section className={`border-t bg-gradient-to-b from-muted/30 to-background ${styles.section}`}>
-        <div className="container px-6">
+        <div className="container px-4 sm:px-6">
           <div className="mx-auto max-w-7xl">
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
@@ -209,25 +188,15 @@ export default function GalleryIndexPage() {
             <div className={styles.galleryGrid}>
               {allThemes.map((theme, index) => (
                 <Link key={theme.slug} href={`/gallery/${theme.slug}`}>
-                  <Card className={`group h-full transition-all ${styles.listItem} hover:scale-[1.02]`}>
-                    <CardContent className="p-5">
-                      <div className="mb-2 flex items-start justify-between">
-                        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {theme.title}
-                        </h3>
-                        <ArrowRight className="h-4 w-4 text-muted-foreground transition-all group-hover:text-primary group-hover:translate-x-1" />
-                      </div>
-                      <p className="mb-3 text-sm text-muted-foreground line-clamp-2">
+                  <Card className={`group h-full transition-all ${styles.listItem}`}>
+                    <CardContent className="p-6">
+                      <h3 className="font-medium text-base mb-2 group-hover:text-primary transition-colors">
+                        {theme.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
                         {theme.description}
                       </p>
-                      <div className="flex items-center justify-between">
-                        <Badge variant="outline" className="text-xs">
-                          {theme.title.split(' ')[0]} Collection
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">
-                          30+ designs
-                        </span>
-                      </div>
+                      <ArrowRight className="mt-4 h-4 w-4 text-muted-foreground/50 transition-all opacity-0 group-hover:opacity-100 group-hover:text-primary group-hover:translate-x-1" />
                     </CardContent>
                   </Card>
                 </Link>
@@ -239,7 +208,7 @@ export default function GalleryIndexPage() {
 
       {/* Professional CTA Section */}
       <section className="relative overflow-hidden border-t bg-gradient-to-br from-primary/5 via-background to-primary/5">
-        <div className="container relative z-10 px-6 py-20">
+        <div className="container relative z-10 px-4 py-20 sm:px-6">
           <div className="mx-auto max-w-4xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium">
               <Zap className="h-4 w-4 text-primary" />
@@ -253,16 +222,16 @@ export default function GalleryIndexPage() {
               and get professional results in seconds.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/ai-icon-generator">
+              <Link href="/">
                 <Button size="lg" className={`gap-2 px-8 py-6 text-lg ${styles.ctaButton}`}>
                   <Sparkles className="h-5 w-5" />
-                  Try AI Generator Free
+                  Try AI SVG Generator Free
                 </Button>
               </Link>
-              <Link href="/tools">
+              <Link href="/tools/icon-generator">
                 <Button size="lg" variant="outline" className="gap-2 px-8 py-6 text-lg">
                   <Palette className="h-5 w-5" />
-                  Explore All Tools
+                  AI Icon Generator
                 </Button>
               </Link>
             </div>
@@ -276,9 +245,9 @@ export default function GalleryIndexPage() {
 
       {/* SEO Content Section with Professional Typography */}
       <section className="border-t bg-muted/20">
-        <div className="container px-6 py-20">
+        <div className="container px-4 py-20 sm:px-6">
           <div className="mx-auto max-w-4xl">
-            <div className="prose prose-lg prose-gray max-w-none dark:prose-invert">
+            <div className="prose prose-lg prose-gray max-w-full dark:prose-invert">
               <h2 className="text-3xl font-bold">Free SVG Downloads for Every Project</h2>
               <p className="lead text-xl">
                 Welcome to SVG AI's comprehensive gallery of free SVG icons and images. Our collection 
@@ -347,7 +316,7 @@ export default function GalleryIndexPage() {
               </p>
               
               <div className="mt-10 not-prose">
-                <Link href="/ai-icon-generator">
+                <Link href="/">
                   <Button size="lg" className={`gap-2 ${styles.ctaButton}`}>
                     <Sparkles className="h-5 w-5" />
                     Try AI SVG Generator

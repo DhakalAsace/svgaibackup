@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Download, Heart, Edit, Eye, TrendingUp, Sparkles } from "lucide-react"
+import { Download, Heart, TrendingUp, Sparkles } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -23,10 +23,9 @@ interface GalleryItemProps {
     featured?: boolean
   }
   onClick: () => void
-  onViewClick: (e: React.MouseEvent) => void
 }
 
-export default function GalleryItem({ item, onClick, onViewClick }: GalleryItemProps) {
+export default function GalleryItem({ item, onClick }: GalleryItemProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
 
@@ -56,15 +55,8 @@ export default function GalleryItem({ item, onClick, onViewClick }: GalleryItemP
         <div className="relative aspect-square bg-gradient-to-br from-muted/50 to-muted/30 transition-all duration-300 group-hover:from-muted/70 group-hover:to-muted/40">
           {/* Badges */}
           <div className="absolute left-3 top-3 z-10 flex gap-2">
-            {item.isNew && (
-              <Badge className="gap-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0">
-                <Sparkles className="h-3 w-3" />
-                New
-              </Badge>
-            )}
             {item.featured && (
-              <Badge className={`gap-1 ${styles.premiumBadge} text-white border-0`}>
-                <TrendingUp className="h-3 w-3" />
+              <Badge className="text-xs px-2 py-0.5 bg-primary/90 text-white border-0">
                 Featured
               </Badge>
             )}
@@ -93,26 +85,33 @@ export default function GalleryItem({ item, onClick, onViewClick }: GalleryItemP
           {/* Hover Overlay */}
           <div className={`absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent opacity-0 transition-opacity duration-300 ${isHovered ? 'opacity-100' : ''}`}>
             <div className="absolute bottom-0 left-0 right-0 p-4">
-              <div className="flex gap-2">
+              <div className="flex">
                 <Button
                   size="sm"
-                  variant="secondary"
-                  className="flex-1 gap-2 bg-background/80 backdrop-blur-sm"
-                  onClick={onViewClick}
+                  className="w-full gap-2 bg-primary/90 backdrop-blur-sm hover:bg-primary"
+                  onClick={async (e) => {
+                    e.stopPropagation()
+                    // Download the SVG
+                    try {
+                      const response = await fetch(item.svgPath)
+                      const svgContent = await response.text()
+                      const blob = new Blob([svgContent], { type: 'image/svg+xml' })
+                      const url = URL.createObjectURL(blob)
+                      const a = document.createElement('a')
+                      a.href = url
+                      a.download = item.filename
+                      document.body.appendChild(a)
+                      a.click()
+                      document.body.removeChild(a)
+                      URL.revokeObjectURL(url)
+                    } catch (error) {
+                      console.error('Download failed:', error)
+                    }
+                  }}
                 >
-                  <Eye className="h-4 w-4" />
-                  Preview
+                  <Download className="h-4 w-4" />
+                  Download
                 </Button>
-                <Link href="/ai-icon-generator" className="flex-1">
-                  <Button 
-                    size="sm" 
-                    className="w-full gap-2 bg-primary/90 backdrop-blur-sm hover:bg-primary"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Edit className="h-4 w-4" />
-                    Customize
-                  </Button>
-                </Link>
               </div>
             </div>
           </div>
@@ -128,55 +127,41 @@ export default function GalleryItem({ item, onClick, onViewClick }: GalleryItemP
           </p>
           
           {/* Stats Row */}
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1">
-                <Download className="h-3 w-3" />
-                {item.downloads.toLocaleString()}
-              </span>
-              <span className="flex items-center gap-1">
-                <Heart className="h-3 w-3" />
-                {(item.likes + (isLiked ? 1 : 0)).toLocaleString()}
-              </span>
-            </div>
-            {item.tags.length > 0 && (
-              <div className="flex gap-1">
-                {item.tags.slice(0, 2).map((tag, idx) => (
-                  <span 
-                    key={idx} 
-                    className="rounded-full bg-muted px-2 py-0.5 text-xs"
-                  >
-                    {tag}
-                  </span>
-                ))}
-                {item.tags.length > 2 && (
-                  <span className="text-xs">+{item.tags.length - 2}</span>
-                )}
-              </div>
-            )}
+          <div className="flex items-center text-xs text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <Download className="h-3 w-3" />
+              {item.downloads.toLocaleString()} downloads
+            </span>
           </div>
 
           {/* Mobile Action Buttons (visible on small screens) */}
-          <div className="mt-4 flex gap-2 sm:hidden">
+          <div className="mt-4 flex sm:hidden">
             <Button
               size="sm"
-              variant="outline"
-              className="flex-1 gap-2"
-              onClick={onViewClick}
+              className="w-full gap-2"
+              onClick={async (e) => {
+                e.stopPropagation()
+                // Download the SVG
+                try {
+                  const response = await fetch(item.svgPath)
+                  const svgContent = await response.text()
+                  const blob = new Blob([svgContent], { type: 'image/svg+xml' })
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = item.filename
+                  document.body.appendChild(a)
+                  a.click()
+                  document.body.removeChild(a)
+                  URL.revokeObjectURL(url)
+                } catch (error) {
+                  console.error('Download failed:', error)
+                }
+              }}
             >
-              <Eye className="h-4 w-4" />
-              View
+              <Download className="h-4 w-4" />
+              Download
             </Button>
-            <Link href="/ai-icon-generator" className="flex-1">
-              <Button 
-                size="sm" 
-                className="w-full gap-2"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Edit className="h-4 w-4" />
-                Edit
-              </Button>
-            </Link>
           </div>
         </div>
       </CardContent>

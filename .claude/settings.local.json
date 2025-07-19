@@ -119,12 +119,40 @@
       "Bash(do sed -i 's/With \\*\\*[0-9,]* monthly searches\\*\\* for [^,]*, //g' \"$file\")",
       "Bash(npx next telemetry:*)",
       "WebFetch(domain:cloudconvert.com)",
-      "Bash(jq:*)"
+      "Bash(jq:*)",
+      "Bash(sudo rm:*)",
+      "Bash(NEXT_BUILD_DIRECTORY=.next-new npm run build)",
+      "Bash(killall:*)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=4096\" npm run build)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=4096\" timeout 300 npm run build)",
+      "WebFetch(domain:api.cloudconvert.com)",
+      "mcp__supabase__list_migrations",
+      "mcp__supabase__list_edge_functions",
+      "mcp__supabase__deploy_edge_function",
+      "Bash(NODE_OPTIONS='--max-old-space-size=4096' npm run build)",
+      "Bash(# Fix react-native-svg-animation.mdx\nsed -i ''s/console\\.log(`Animation took ${duration}ms`);/console.log(`Animation took \\\\${duration}ms`);/g'' /mnt/a/svgaibackup/content/learn/react-native-svg-animation.mdx\n\n# Fix svg-to-png-guide.mdx\nsed -i ''s/console\\.log(`✓ Converted: ${file} → ${outputPath}`);/console.log(`✓ Converted: \\\\${file} → \\\\${outputPath}`);/g'' /mnt/a/svgaibackup/content/learn/svg-to-png-guide.mdx\nsed -i ''s/console\\.error(`✗ Failed: ${file} - ${error\\.message}`);/console.error(`✗ Failed: \\\\${file} - \\\\${error.message}`);/g'' /mnt/a/svgaibackup/content/learn/svg-to-png-guide.mdx\nsed -i ''s/console\\.log(`\\\\nConversion complete: ${successful}\\/${files\\.length} files converted`);/console.log(`\\\\\\\\nConversion complete: \\\\${successful}\\/\\\\${files.length} files converted`);/g'' /mnt/a/svgaibackup/content/learn/svg-to-png-guide.mdx\nsed -i ''s/path\\.basename += `-${size}px`;/path.basename += `-\\\\${size}px`;/g'' /mnt/a/svgaibackup/content/learn/svg-to-png-guide.mdx\nsed -i ''s/if convert \"\"$file\"\" \"\"${file%\\.svg}\\.png\"\" 2>> \"\"$LOG_FILE\"\"; then/if convert \"\"$file\"\" \"\"\\\\${file%.svg}.png\"\" 2>> \"\"$LOG_FILE\"\"; then/g'' /mnt/a/svgaibackup/content/learn/svg-to-png-guide.mdx\nsed -i ''s/convert \"\"$file\"\" \"\"${file%\\.svg}\\.png\"\"/convert \"\"$file\"\" \"\"\\\\${file%.svg}.png\"\"/g'' /mnt/a/svgaibackup/content/learn/svg-to-png-guide.mdx\n\necho \"\"Template literals fixed\"\")",
+      "Bash(kill:*)",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_press_key",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_network_requests",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_tab_select",
+      "mcp__playwright__browser_close",
+      "mcp__playwright__browser_navigate_back",
+      "Bash(do echo \"=== $file ===\")",
+      "mcp__playwright__browser_snapshot",
+      "Bash(NODE_ENV=production npm run build)",
+      "Bash(export NEXT_TELEMETRY_DISABLED=1)",
+      "Bash(export DISABLE_COLLECT_NEXT_TELEMETRY=1)",
+      "Bash(NODE_OPTIONS=\"--max_old_space_size=4096\" npm run build)"
     ]
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "supabase",
-    "stripe"
+    "stripe",
+    "playwright"
   ]
 }

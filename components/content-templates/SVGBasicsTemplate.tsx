@@ -179,7 +179,7 @@ export default function SVGBasicsTemplate({
         <section className="relative bg-gradient-to-br from-primary/5 via-primary/10 to-background py-12 md:py-20">
           <div className="container mx-auto px-4">
             <div className="text-center space-y-6 max-w-4xl mx-auto">
-              <Badge variant="secondary" className="mb-4">
+              <Badge variant="info" className="mb-4">
                 <HelpCircle className="w-3 h-3 mr-1" />
                 Guide
               </Badge>
@@ -364,7 +364,7 @@ export default function SVGBasicsTemplate({
                                   </code>
                                 </TableCell>
                                 <TableCell>
-                                  <Badge variant="outline">{spec.value}</Badge>
+                                  <Badge variant="info">{spec.value}</Badge>
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell text-muted-foreground">
                                   {spec.description}
@@ -515,10 +515,10 @@ export default function SVGBasicsTemplate({
                     </TableRow>
                     <TableRow>
                       <TableCell className="font-medium">File Size (Icons)</TableCell>
-                      <TableCell><Badge variant="outline">Small</Badge></TableCell>
-                      <TableCell><Badge variant="outline">Medium</Badge></TableCell>
-                      <TableCell><Badge variant="outline">Large</Badge></TableCell>
-                      <TableCell><Badge variant="outline">Medium</Badge></TableCell>
+                      <TableCell><Badge variant="info">Small</Badge></TableCell>
+                      <TableCell><Badge variant="info">Medium</Badge></TableCell>
+                      <TableCell><Badge variant="info">Large</Badge></TableCell>
+                      <TableCell><Badge variant="info">Medium</Badge></TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell className="font-medium">Best For</TableCell>
@@ -549,7 +549,7 @@ export default function SVGBasicsTemplate({
                               <Icon className="w-6 h-6 text-primary" />
                             </div>
                             {tool.isPremium && (
-                              <Badge variant="secondary">Premium</Badge>
+                              <Badge variant="warning">Premium</Badge>
                             )}
                           </div>
                           <CardTitle className="group-hover:text-primary transition-colors">

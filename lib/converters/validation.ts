@@ -38,8 +38,6 @@ const MIME_TYPE_MAP: Record<string, ImageFormat> = {
   'application/x-emf': 'emf',
   'image/x-wmf': 'wmf',
   'application/x-wmf': 'wmf',
-  'image/heic': 'heic',
-  'image/heif': 'heic',
 }
 
 // Enhanced file signatures with more specific patterns
@@ -99,7 +97,6 @@ export const FORMAT_SIZE_LIMITS: Record<ImageFormat, number> = {
   ttf: 10 * 1024 * 1024,     // 10MB - font files
   emf: 25 * 1024 * 1024,     // 25MB - Windows Enhanced Metafile
   wmf: 10 * 1024 * 1024,     // 10MB - Windows Metafile (older, smaller)
-  heic: 15 * 1024 * 1024,    // 15MB - efficient image format
 }
 
 // Maximum dimensions for image formats
@@ -125,7 +122,6 @@ export const MAX_DIMENSIONS: Record<ImageFormat, { width: number; height: number
   ttf: { width: 0, height: 0 }, // Not applicable
   emf: { width: 32767, height: 32767 }, // EMF supports 32-bit coordinates
   wmf: { width: 32767, height: 32767 }, // WMF supports 16-bit coordinates
-  heic: { width: 10000, height: 10000 }, // HEIC similar to other image formats
 }
 
 export function getImageFormatFromMimeType(mimeType: string): ImageFormat | null {
@@ -187,12 +183,15 @@ export function detectFileTypeFromBuffer(buffer: Buffer): ImageFormat | null {
   // AI files are often PDF-based, check for AI markers in PDF files
   if (textStart.includes('%PDF')) {
     if (textStart.includes('%%Creator: Adobe Illustrator') || 
-        textStart.includes('%%Title:') && textStart.includes('.ai') ||
+        (textStart.includes('%%Title:') && textStart.includes('.ai')) ||
         textStart.includes('/Creator (Adobe Illustrator)') ||
+        textStart.includes('/Creator(Adobe Illustrator)') || // Without space
         textStart.includes('%%AI') ||
         textStart.toLowerCase().includes('adobe illustrator') ||
         textStart.includes('AI9_') ||
-        textStart.includes('%%For: (Adobe Illustrator)')) {
+        textStart.includes('AI8_') ||
+        textStart.includes('%%For: (Adobe Illustrator)') ||
+        textStart.includes('/Producer') && textStart.includes('Illustrator')) {
       return 'ai'
     }
     return 'pdf'
@@ -361,11 +360,11 @@ export function validateFile(
     if (ext === 'ai' && (file.type === 'application/pdf' || file.type === 'application/postscript' || file.type === '')) {
       format = 'ai'
       console.log('[validateFile] Detected as AI file based on extension')
-    } else if (ext === 'pdf' && options?.allowedFormats?.includes('ai')) {
-      // If AI format is allowed and we have a PDF file, it might be an AI file
-      // Let the content detection decide
-      format = getImageFormatFromMimeType(file.type)
-      console.log('[validateFile] PDF file with AI format allowed, format from MIME:', format)
+    } else if ((file.type === 'application/pdf' || ext === 'pdf') && options?.allowedFormats?.includes('ai')) {
+      // If AI format is allowed and we have a PDF file, check if it's actually an AI file
+      // We'll let the buffer content detection decide later
+      format = null // Force buffer detection
+      console.log('[validateFile] PDF file with AI format allowed, will check content for AI markers')
     } else {
       // Try to get format from MIME type first
       format = getImageFormatFromMimeType(file.type)
@@ -383,6 +382,24 @@ export function validateFile(
     // Detect from buffer content
     format = detectFileTypeFromBuffer(file)
     console.log('[validateFile] Format detected from buffer:', format)
+    
+    // Special case: If we detected PDF but AI is in allowed formats, 
+    // check if it's actually an AI file
+    if (format === 'pdf' && config.allowedFormats.includes('ai')) {
+      const header = file.toString('utf8', 0, Math.min(2048, file.length))
+      const hasAIMarkers = header.includes('%%Creator: Adobe Illustrator') || 
+                          header.includes('%%AI') ||
+                          header.includes('/Creator (Adobe Illustrator)') ||
+                          header.toLowerCase().includes('adobe illustrator') ||
+                          header.includes('%%For: (Adobe Illustrator)') ||
+                          header.includes('AI9_') ||
+                          header.includes('%%Title:') && header.includes('.ai')
+      
+      if (hasAIMarkers) {
+        console.log('[validateFile] PDF file contains AI markers, treating as AI file')
+        format = 'ai'
+      }
+    }
   }
 
   if (!format) {
@@ -398,6 +415,17 @@ export function validateFile(
 
   // Check if format is allowed
   if (!config.allowedFormats.includes(format)) {
+    // Special case: If we detected PDF but AI is allowed, and this might be an AI file
+    if (format === 'pdf' && config.allowedFormats.includes('ai')) {
+      console.log('[validateFile] PDF detected but AI is allowed, checking if it might be an AI file...')
+      // Allow it to pass validation, the AI converter will handle it
+      return {
+        isValid: true,
+        format: 'ai', // Treat as AI since that's what's expected
+        size,
+      }
+    }
+    
     return {
       isValid: false,
       error: `File format "${format}" is not supported. Supported formats: ${config.allowedFormats.join(', ')}`,

@@ -145,7 +145,7 @@ export const LIBRARY_CONFIGS = {
       const pdfjsLib = await import('pdfjs-dist')
       // Set worker path for client-side usage
       if (typeof window !== 'undefined') {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js?v=5.3.93'
       }
       return pdfjsLib
     }
@@ -176,10 +176,6 @@ export const LIBRARY_CONFIGS = {
     name: 'utif',
     importFn: () => import('utif')
   },
-  heic2any: {
-    name: 'heic2any',
-    importFn: () => import('heic2any')
-  },
   gifEncoder: {
     name: 'gif-encoder-2',
     importFn: () => import('gif-encoder-2')
@@ -209,7 +205,6 @@ export const loadDxfParser = () => loadLibrary(LIBRARY_CONFIGS.dxfParser)
 export const loadDxfWriter = () => loadLibrary(LIBRARY_CONFIGS.dxfWriter)
 export const loadOpentype = () => loadLibrary(LIBRARY_CONFIGS.opentype)
 export const loadUtif = () => loadLibrary(LIBRARY_CONFIGS.utif)
-export const loadHeic2any = () => loadLibrary(LIBRARY_CONFIGS.heic2any)
 export const loadGifEncoder = () => loadLibrary(LIBRARY_CONFIGS.gifEncoder)
 export const loadHtml2canvas = () => loadLibrary(LIBRARY_CONFIGS.html2canvas)
 export const loadPako = () => loadLibrary(LIBRARY_CONFIGS.pako)

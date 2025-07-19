@@ -43,7 +43,7 @@ export default function SVGEditorPage() {
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Hero Section */}
       <div className="text-center mb-12">
-        <Badge className="mb-4 border-green-500 text-green-600" variant="outline">
+        <Badge className="mb-4" variant="success">
           <Zap className="w-3 h-3 mr-1" />
           Free Tool
         </Badge>

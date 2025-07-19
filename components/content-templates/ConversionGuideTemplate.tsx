@@ -283,7 +283,7 @@ export default function ConversionGuideTemplate({
         {/* Hero Section */}
         <div className="space-y-6">
           <div className="space-y-4">
-            <Badge variant="secondary" className="mb-2">
+            <Badge variant="info" className="mb-2">
               {monthlySearches.toLocaleString()}+ monthly searches
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
@@ -424,7 +424,7 @@ export default function ConversionGuideTemplate({
                     <div className="space-y-3">
                       {technique.steps.map((step, stepIndex) => (
                         <div key={stepIndex} className="flex gap-3">
-                          <Badge variant="outline" className="flex-shrink-0">
+                          <Badge variant="info" className="flex-shrink-0">
                             {stepIndex + 1}
                           </Badge>
                           <p className="text-sm">{step}</p>
@@ -552,7 +552,7 @@ export default function ConversionGuideTemplate({
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle>{tool.name}</CardTitle>
-                      <Badge variant="outline">{tool.pricing}</Badge>
+                      <Badge variant={tool.pricing === 'Free' ? 'success' : 'warning'}>{tool.pricing}</Badge>
                     </div>
                     <CardDescription>{tool.description}</CardDescription>
                   </CardHeader>
@@ -666,7 +666,7 @@ export default function ConversionGuideTemplate({
                       <div className="space-y-3">
                         {method.steps.map((step, stepIndex) => (
                           <div key={stepIndex} className="flex gap-3">
-                            <Badge variant="secondary" className="flex-shrink-0">
+                            <Badge variant="info" className="flex-shrink-0">
                               {stepIndex + 1}
                             </Badge>
                             <p className="text-sm">{step}</p>
@@ -739,7 +739,7 @@ export default function ConversionGuideTemplate({
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">{api.name}</CardTitle>
-                      <Badge variant="outline">{api.pricing}</Badge>
+                      <Badge variant={api.pricing === 'Free' ? 'success' : 'warning'}>{api.pricing}</Badge>
                     </div>
                     <CardDescription>{api.description}</CardDescription>
                   </CardHeader>
@@ -807,9 +807,9 @@ export default function ConversionGuideTemplate({
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <Badge variant="secondary">{related.fromFormat}</Badge>
+                        <Badge variant="info">{related.fromFormat}</Badge>
                         <ArrowRight className="w-4 h-4" />
-                        <Badge variant="secondary">{related.toFormat}</Badge>
+                        <Badge variant="info">{related.toFormat}</Badge>
                       </div>
                     </div>
                     <h3 className="font-semibold mb-1">{related.title}</h3>

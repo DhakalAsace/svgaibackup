@@ -303,7 +303,7 @@ export default function TechnicalGuideTemplate({
                 <div>
                   <h1 className="text-4xl md:text-5xl font-bold mb-2">{title}</h1>
                   {technology.version && (
-                    <Badge variant="secondary" className="text-sm">
+                    <Badge variant="info" className="text-sm">
                       Version {technology.version}
                     </Badge>
                   )}
@@ -313,7 +313,7 @@ export default function TechnicalGuideTemplate({
               
               <div className="flex flex-wrap gap-2 mt-6">
                 {keywords.map((keyword, index) => (
-                  <Badge key={index} variant="secondary" className="bg-white/20 text-white">
+                  <Badge key={index} variant="info" className="bg-white/20 text-white">
                     {keyword}
                   </Badge>
                 ))}
@@ -443,7 +443,7 @@ export default function TechnicalGuideTemplate({
                       )}
                     </div>
                     {prereq.required && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="warning" className="text-xs">
                         REQUIRED
                       </Badge>
                     )}
@@ -704,7 +704,7 @@ export default function TechnicalGuideTemplate({
                       <CardContent className="p-6">
                         <h4 className="font-semibold mb-2">{metric.name}</h4>
                         <p className="text-sm text-gray-600 mb-3">{metric.description}</p>
-                        <Badge variant="outline">Target: {metric.targetValue}</Badge>
+                        <Badge variant="info">Target: {metric.targetValue}</Badge>
                         {metric.measurementCode && (
                           <div className="mt-4">
                             <CodeExample {...metric.measurementCode} />
@@ -966,7 +966,7 @@ export default function TechnicalGuideTemplate({
                         <CardTitle className="flex items-center justify-between">
                           {platform.name}
                           {platform.estimatedCost && (
-                            <Badge variant="secondary">{platform.estimatedCost}</Badge>
+                            <Badge variant={platform.estimatedCost === 'Free' ? 'success' : 'warning'}>{platform.estimatedCost}</Badge>
                           )}
                         </CardTitle>
                       </CardHeader>
@@ -1031,7 +1031,7 @@ export default function TechnicalGuideTemplate({
                             {envVar.required ? (
                               <Badge variant="destructive">Yes</Badge>
                             ) : (
-                              <Badge variant="secondary">No</Badge>
+                              <Badge variant="info">No</Badge>
                             )}
                           </TableCell>
                         </TableRow>
@@ -1178,7 +1178,7 @@ export default function TechnicalGuideTemplate({
                     <CardTitle className="flex items-center justify-between">
                       <span>{example.title}</span>
                       {example.stars && (
-                        <Badge variant="secondary">⭐ {example.stars}</Badge>
+                        <Badge variant="info">⭐ {example.stars}</Badge>
                       )}
                     </CardTitle>
                   </CardHeader>
@@ -1277,7 +1277,7 @@ export default function TechnicalGuideTemplate({
                     <div className="flex items-center justify-between">
                       <Badge variant="outline">{resource.type}</Badge>
                       {resource.isPaid && (
-                        <Badge variant="secondary">PAID</Badge>
+                        <Badge variant="warning">PAID</Badge>
                       )}
                     </div>
                   </CardHeader>

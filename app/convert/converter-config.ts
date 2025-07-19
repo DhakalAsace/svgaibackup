@@ -15,7 +15,7 @@ export interface ConverterConfig {
   isSupported: boolean
 }
 
-// Complete list of 40 converters with SEO metadata
+// Complete list of 37 converters with SEO metadata
 export const converterConfigs: ConverterConfig[] = [
   // High priority converters (>10k searches)
   {
@@ -289,20 +289,6 @@ export const converterConfigs: ConverterConfig[] = [
     isSupported: true
   },
   {
-    id: 'svg-to-png-guide',
-    urlSlug: 'svg-to-png-guide',
-    fromFormat: 'SVG',
-    toFormat: 'PNG',
-    title: 'Convert SVG to PNG Guide',
-    metaTitle: 'SVG to PNG Conversion Guide - Tips & Tools | SVG AI',
-    metaDescription: 'Learn how to efficiently convert SVG files to PNG format. Tips, tools, and best practices for conversion.',
-    keywords: ['convert svg to png', 'svg to png guide', 'svg to png conversion', 'svg png converter', 'svg conversion tips', 'svg to png tools', 'svg file conversion', 'svg to png process', 'svg converter guide', 'svg to png tutorial', 'svg to png free', 'svg to png tool'],
-    searchVolume: 720,
-    priority: 'low',
-    routeType: 'learn',
-    isSupported: true
-  },
-  {
     id: 'stl-to-svg',
     urlSlug: 'stl-to-svg',
     fromFormat: 'STL',
@@ -316,34 +302,7 @@ export const converterConfigs: ConverterConfig[] = [
     routeType: 'convert',
     isSupported: true
   },
-  {
-    id: 'svg-to-mp4',
-    urlSlug: 'svg-to-mp4',
-    fromFormat: 'SVG',
-    toFormat: 'MP4',
-    title: 'SVG to MP4 Converter',
-    metaTitle: 'SVG to MP4 Video Converter | SVG AI',
-    metaDescription: 'Convert animated SVG files to MP4 video format. Create videos from SVG animations. Premium tool.',
-    keywords: ['svg to mp4', 'svg to mp4 converter', 'convert svg to video', 'svg animation to mp4', 'svg video export', 'animated svg to mp4', 'svg to movie', 'vector to video', 'svg mp4 conversion', 'export svg animation', 'svg video converter', 'svg to mp4 online'],
-    searchVolume: 590,
-    priority: 'low',
-    routeType: 'convert',
-    isSupported: true // Premium feature
-  },
-  {
-    id: 'html-string-to-svg-js',
-    urlSlug: 'html-string-to-svg-js',
-    fromFormat: 'HTML',
-    toFormat: 'SVG',
-    title: 'HTML String to SVG JavaScript',
-    metaTitle: 'HTML String to SVG with JavaScript - Tutorial | SVG AI',
-    metaDescription: 'Learn how to convert HTML strings to SVG using JavaScript. Code examples and best practices.',
-    keywords: ['html string to svg javascript'],
-    searchVolume: 590,
-    priority: 'low',
-    routeType: 'learn',
-    isSupported: true
-  },
+  
   {
     id: 'html-to-svg',
     urlSlug: 'html-to-svg',
@@ -414,7 +373,7 @@ export const converterConfigs: ConverterConfig[] = [
     searchVolume: 320,
     priority: 'low',
     routeType: 'convert',
-    isSupported: true
+    isSupported: false // Redirects to premium AI video tool
   },
   {
     id: 'bmp-to-svg',
@@ -541,34 +500,6 @@ export const converterConfigs: ConverterConfig[] = [
     priority: 'low',
     routeType: 'convert',
     isSupported: true
-  },
-  {
-    id: 'heic-to-svg',
-    urlSlug: 'heic-to-svg',
-    fromFormat: 'HEIC',
-    toFormat: 'SVG',
-    title: 'HEIC to SVG Converter',
-    metaTitle: 'HEIC to SVG Converter - iOS Photo Format | SVG AI',
-    metaDescription: 'Convert HEIC photos from iPhone to SVG vector format. Free online tool.',
-    keywords: ['heic to svg'],
-    searchVolume: 30,
-    priority: 'low',
-    routeType: 'convert',
-    isSupported: true
-  },
-  {
-    id: 'svg-to-heic',
-    urlSlug: 'svg-to-heic',
-    fromFormat: 'SVG',
-    toFormat: 'HEIC',
-    title: 'SVG to HEIC Converter',
-    metaTitle: 'SVG to HEIC Converter - iOS Format | SVG AI',
-    metaDescription: 'Convert SVG files to HEIC format for iOS devices. Optimize for Apple ecosystem.',
-    keywords: ['svg to heic'],
-    searchVolume: 20,
-    priority: 'low',
-    routeType: 'convert',
-    isSupported: false // Very low search volume (20/month), server-side only
   }
 ]
 

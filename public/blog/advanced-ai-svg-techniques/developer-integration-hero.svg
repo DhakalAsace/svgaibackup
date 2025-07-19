@@ -1,0 +1,164 @@
+<svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="codeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#374151;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Grid overlay -->
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#334155" stroke-width="1" opacity="0.3"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- Code editor window -->
+  <rect x="200" y="150" width="800" height="400" rx="12" fill="url(#codeGradient)" filter="url(#glow)"/>
+  
+  <!-- Window controls -->
+  <circle cx="230" cy="180" r="8" fill="#ef4444"/>
+  <circle cx="250" cy="180" r="8" fill="#f59e0b"/>
+  <circle cx="270" cy="180" r="8" fill="#22c55e"/>
+  
+  <!-- Window title -->
+  <text x="600" y="185" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="500" 
+        text-anchor="middle" fill="#94a3b8">
+    IconComponent.tsx
+  </text>
+  
+  <!-- Code content -->
+  <text x="220" y="220" font-family="Monaco, Consolas, monospace" font-size="14" fill="#10b981">
+    import React from 'react';
+  </text>
+  <text x="220" y="245" font-family="Monaco, Consolas, monospace" font-size="14" fill="#10b981">
+    import { SVGProps } from 'react';
+  </text>
+  
+  <text x="220" y="275" font-family="Monaco, Consolas, monospace" font-size="14" fill="#8b5cf6">
+    interface IconProps extends SVGProps&lt;SVGSVGElement&gt; {
+  </text>
+  <text x="240" y="300" font-family="Monaco, Consolas, monospace" font-size="14" fill="#f472b6">
+    size?: number;
+  </text>
+  <text x="240" y="325" font-family="Monaco, Consolas, monospace" font-size="14" fill="#f472b6">
+    color?: string;
+  </text>
+  <text x="220" y="350" font-family="Monaco, Consolas, monospace" font-size="14" fill="#8b5cf6">
+    }
+  </text>
+  
+  <text x="220" y="380" font-family="Monaco, Consolas, monospace" font-size="14" fill="#06b6d4">
+    export const GeneratedIcon: React.FC&lt;IconProps&gt; = ({
+  </text>
+  <text x="240" y="405" font-family="Monaco, Consolas, monospace" font-size="14" fill="#f59e0b">
+    size = 24, color = '#000', ...props
+  </text>
+  <text x="220" y="430" font-family="Monaco, Consolas, monospace" font-size="14" fill="#06b6d4">
+    }) =&gt; (
+  </text>
+  <text x="240" y="455" font-family="Monaco, Consolas, monospace" font-size="14" fill="#10b981">
+    &lt;svg width={size} height={size} fill={color} {...props}&gt;
+  </text>
+  <text x="260" y="480" font-family="Monaco, Consolas, monospace" font-size="14" fill="#64748b">
+    {/* AI-generated SVG content */}
+  </text>
+  <text x="240" y="505" font-family="Monaco, Consolas, monospace" font-size="14" fill="#10b981">
+    &lt;/svg&gt;
+  </text>
+  <text x="220" y="530" font-family="Monaco, Consolas, monospace" font-size="14" fill="#06b6d4">
+    );
+  </text>
+  
+  <!-- AI indicator -->
+  <circle cx="1050" cy="250" r="35" fill="#22c55e" opacity="0.9">
+    <animate attributeName="r" values="35;40;35" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <text x="1050" y="260" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="bold" 
+        text-anchor="middle" fill="#ffffff">AI</text>
+  
+  <!-- React logo -->
+  <g transform="translate(120, 300)">
+    <circle cx="0" cy="0" r="20" fill="none" stroke="#61dafb" stroke-width="3"/>
+    <ellipse cx="0" cy="0" rx="50" ry="18" fill="none" stroke="#61dafb" stroke-width="3"/>
+    <ellipse cx="0" cy="0" rx="50" ry="18" fill="none" stroke="#61dafb" stroke-width="3" 
+             transform="rotate(60)"/>
+    <ellipse cx="0" cy="0" rx="50" ry="18" fill="none" stroke="#61dafb" stroke-width="3" 
+             transform="rotate(-60)"/>
+    <circle cx="0" cy="0" r="4" fill="#61dafb"/>
+  </g>
+  
+  <!-- Title -->
+  <text x="600" y="100" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="bold" 
+        text-anchor="middle" fill="#ffffff">
+    AI SVG for Developers
+  </text>
+  
+  <!-- Features -->
+  <g>
+    <!-- Feature 1 -->
+    <rect x="50" y="50" width="200" height="60" rx="8" fill="#1e293b" opacity="0.8"/>
+    <text x="150" y="75" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="bold" 
+          text-anchor="middle" fill="#10b981">
+      JSX Export
+    </text>
+    <text x="150" y="95" font-family="Inter, Arial, sans-serif" font-size="12" 
+          text-anchor="middle" fill="#94a3b8">
+      Direct React components
+    </text>
+    
+    <!-- Feature 2 -->
+    <rect x="950" y="50" width="200" height="60" rx="8" fill="#1e293b" opacity="0.8"/>
+    <text x="1050" y="75" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="bold" 
+          text-anchor="middle" fill="#8b5cf6">
+      TypeScript
+    </text>
+    <text x="1050" y="95" font-family="Inter, Arial, sans-serif" font-size="12" 
+          text-anchor="middle" fill="#94a3b8">
+      Full type safety
+    </text>
+  </g>
+  
+  <!-- Arrow from AI to code -->
+  <path d="M 1015 250 Q 950 300 880 350" stroke="#22c55e" stroke-width="3" fill="none" opacity="0.8"/>
+  <polygon points="880,350 885,345 885,355" fill="#22c55e" opacity="0.8"/>
+  
+  <!-- Terminal window -->
+  <rect x="50" y="450" width="300" height="150" rx="8" fill="#000000" opacity="0.9"/>
+  <text x="70" y="480" font-family="Monaco, Consolas, monospace" font-size="12" fill="#22c55e">
+    $ npx svgai generate --prompt "search icon"
+  </text>
+  <text x="70" y="505" font-family="Monaco, Consolas, monospace" font-size="12" fill="#94a3b8">
+    ✓ Component generated successfully
+  </text>
+  <text x="70" y="530" font-family="Monaco, Consolas, monospace" font-size="12" fill="#94a3b8">
+    ✓ TypeScript definitions created
+  </text>
+  <text x="70" y="555" font-family="Monaco, Consolas, monospace" font-size="12" fill="#94a3b8">
+    ✓ Tests generated
+  </text>
+  
+  <!-- Blinking cursor -->
+  <rect x="70" y="570" width="8" height="15" fill="#22c55e">
+    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+  </rect>
+  
+  <!-- Brand -->
+  <text x="1050" y="580" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="600" 
+        text-anchor="middle" fill="#ffffff" opacity="0.8">
+    SVGai.org
+  </text>
+</svg>

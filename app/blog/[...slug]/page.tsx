@@ -6,6 +6,8 @@ import { ChevronLeft } from 'lucide-react';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import { BlogHeaderImage } from '@/components/client-wrappers';
 import { mdxComponentsMap } from '@/mdx-components';
+import { MdxSvgP } from '@/components/mdx-custom-components';
+import SvgAwareMDXProvider, { SVGContext } from '@/components/mdx/mdx-provider';
 
 // Generate static params for all blog posts, including nested paths
 export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
@@ -59,7 +61,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   // Compile MDX content with custom components
   const { content } = await compileMDX({
     source: post.content!,
-    components: mdxComponentsMap,
+    components: {
+      ...mdxComponentsMap,
+      svg: (props: React.SVGProps<SVGSVGElement>) => (
+        <SVGContext.Provider value={true}>
+          <svg {...props} />
+        </SVGContext.Provider>
+      ),
+      p: MdxSvgP,
+    },
     options: {
       parseFrontmatter: true,
       mdxOptions: {
@@ -70,63 +80,65 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   });
 
   return (
-    <div className="container px-4 py-12 mx-auto">
-      {/* Back to blog link */}
-      <div className="mb-8">
-        <Link href="/blog" className="inline-flex items-center text-sm font-medium text-primary hover:underline">
-          <ChevronLeft className="w-4 h-4 mr-1" />
-          Back to blog
-        </Link>
-      </div>
+    <SvgAwareMDXProvider>
+      <div className="container px-4 py-12 mx-auto">
+        {/* Back to blog link */}
+        <div className="mb-8">
+          <Link href="/blog" className="inline-flex items-center text-sm font-medium text-primary hover:underline">
+            <ChevronLeft className="w-4 h-4 mr-1" />
+            Back to blog
+          </Link>
+        </div>
 
-      {/* Post header */}
-      <div className="max-w-3xl mx-auto mb-12">
-        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
-          {post.metadata.title}
-        </h1>
+        {/* Post header */}
+        <div className="max-w-3xl mx-auto mb-12">
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
+            {post.metadata.title}
+          </h1>
 
-        <div className="flex items-center gap-x-4 text-sm text-muted-foreground mb-8">
-          <time dateTime={post.metadata.date}>
-            {new Date(post.metadata.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </time>
+          <div className="flex items-center gap-x-4 text-sm text-muted-foreground mb-8">
+            <time dateTime={post.metadata.date}>
+              {new Date(post.metadata.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
 
-          {post.metadata.author && (
-            <div>By {post.metadata.author}</div>
+            {post.metadata.author && (
+              <div>By {post.metadata.author}</div>
+            )}
+          </div>
+
+          {post.metadata.image && (
+            <div className="aspect-video overflow-hidden rounded-lg mb-8">
+              <BlogHeaderImage
+                src={post.metadata.image}
+                alt={post.metadata.title}
+                className="object-cover w-full h-full"
+              />
+            </div>
+          )}
+
+          {post.metadata.tags && post.metadata.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-8">
+              {post.metadata.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm text-primary"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           )}
         </div>
 
-        {post.metadata.image && (
-          <div className="aspect-video overflow-hidden rounded-lg mb-8">
-            <BlogHeaderImage
-              src={post.metadata.image}
-              alt={post.metadata.title}
-              className="object-cover w-full h-full"
-            />
-          </div>
-        )}
-
-        {post.metadata.tags && post.metadata.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-8">
-            {post.metadata.tags.map((tag) => (
-              <span
-                key={tag}
-                className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm text-primary"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
+        {/* MDX content */}
+        <article className="max-w-3xl mx-auto prose prose-gray dark:prose-invert prose-headings:font-heading prose-headings:leading-tight prose-headings:tracking-tight">
+          {content}
+        </article>
       </div>
-
-      {/* MDX content */}
-      <article className="max-w-3xl mx-auto prose prose-gray dark:prose-invert prose-headings:font-heading prose-headings:leading-tight prose-headings:tracking-tight">
-        {content}
-      </article>
-    </div>
+    </SvgAwareMDXProvider>
   );
 }

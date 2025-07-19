@@ -56,7 +56,7 @@ export default function PricingPage() {
             Affordable AI SVG generator with transparent pricing. Free plan available, paid plans starting at just $12/month. No hidden fees, cancel anytime.
           </p>
           <div className="mt-4 text-sm text-gray-500">
-            ✓ Free forever plan ✓ Best value pricing ✓ 30-day money-back guarantee
+            ✓ Free forever plan ✓ Best value pricing ✓ Cancel anytime
           </div>
         </div>
         
@@ -84,12 +84,7 @@ export default function PricingPage() {
             
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-2">Can I change plans anytime?</h3>
-              <p className="text-gray-600">Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately with prorated billing.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="font-semibold mb-2">What happens if I hit my monthly limit?</h3>
-              <p className="text-gray-600">You'll be notified when you're close to your limit. You can upgrade your plan instantly or wait for the next billing cycle when your credits refresh.</p>
+              <p className="text-gray-600">Yes! You can cancel your plan at any time. Cancellation takes effect at the end of your current billing period. Any unused credits will be forfeited.</p>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -105,11 +100,6 @@ export default function PricingPage() {
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-2">Is SVG AI pricing worth it compared to competitors?</h3>
               <p className="text-gray-600">SVG AI offers the best value with transparent pricing, no hidden fees, 11 icon styles, 5 SVG styles, and both monthly/annual options. Most competitors charge more for fewer features.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="font-semibold mb-2">Do you offer refunds on subscriptions?</h3>
-              <p className="text-gray-600">We offer a 30-day money-back guarantee if you're not satisfied with our AI SVG generation service. Contact support for assistance with refunds.</p>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -269,15 +259,7 @@ export default function PricingPage() {
                   "name": "Can I change plans anytime?",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately with prorated billing."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "What happens if I hit my monthly limit?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "You'll be notified when you're close to your limit. You can upgrade your plan instantly or wait for the next billing cycle when your credits refresh."
+                    "text": "Yes! You can cancel your plan at any time. Cancellation takes effect at the end of your current billing period. Any unused credits will be forfeited."
                   }
                 },
                 {
@@ -302,14 +284,6 @@ export default function PricingPage() {
                   "acceptedAnswer": {
                     "@type": "Answer",
                     "text": "SVG AI offers the best value with transparent pricing, no hidden fees, 11 icon styles, 5 SVG styles, and both monthly/annual options. Most competitors charge more for fewer features."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "Do you offer refunds on subscriptions?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "We offer a 30-day money-back guarantee if you're not satisfied with our AI SVG generation service. Contact support for assistance with refunds."
                   }
                 },
                 {

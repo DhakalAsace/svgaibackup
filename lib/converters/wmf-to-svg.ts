@@ -56,8 +56,8 @@ export const wmfToSvgHandler: ConversionHandler = async (
       ? Buffer.from(input, 'base64') 
       : input
 
-    // Basic WMF validation
-    validateWmfFile(buffer)
+    // Skip client-side WMF validation - let CloudConvert handle file validation
+    // validateWmfFile(buffer)
 
     // Report initial progress
     if (options.onProgress) {
@@ -82,6 +82,13 @@ export const wmfToSvgHandler: ConversionHandler = async (
         }
       }
     )
+
+    if (!result.data) {
+      throw new ConversionError(
+        'CloudConvert WMF to SVG returned no data',
+        'CLOUDCONVERT_NO_DATA'
+      )
+    }
 
     // Ensure we return string data for SVG
     const svgData = typeof result.data === 'string' 

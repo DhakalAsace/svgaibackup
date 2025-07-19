@@ -628,8 +628,8 @@ export default function AnimationTool() {
                                 {/* Header */}
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2">
-                                    <Badge variant="outline">{anim.selector}</Badge>
-                                    <Badge variant="secondary" className="text-xs">
+                                    <Badge variant="info">{anim.selector}</Badge>
+                                    <Badge variant="info" className="text-xs">
                                       {anim.preset && ANIMATION_PRESETS[anim.preset] ? ANIMATION_PRESETS[anim.preset].name : 'Custom'}
                                     </Badge>
                                   </div>
@@ -812,7 +812,7 @@ export default function AnimationTool() {
                           </Button>
                         </div>
 
-                        <Badge variant="outline" className="text-xs">Free • Unlimited exports</Badge>
+                        <Badge variant="success" className="text-xs">Free • Unlimited exports</Badge>
                       </div>
                     </Card>
 
@@ -824,7 +824,7 @@ export default function AnimationTool() {
                           <div>
                             <h4 className="font-semibold text-lg flex items-center gap-2">
                               Video Export
-                              <Badge className="bg-primary text-white">Premium</Badge>
+                              <Badge variant="warning">Premium</Badge>
                             </h4>
                             <p className="text-sm text-muted-foreground mt-1">
                               Convert to MP4, WebM, or GIF format

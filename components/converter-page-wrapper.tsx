@@ -1,8 +1,10 @@
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { ConverterConfig } from '@/app/convert/converter-config'
 import { PublicConverterConfig } from '@/app/convert/public-converter-config'
 import { getConverterCacheHeaders } from '@/lib/converter-cache-strategy'
-import ConverterPageOptimized from './converter-page-optimized'
+import ConverterPageTemplate from './converter-page-template'
+import ConverterInterface from './converter-interface'
 
 interface ConverterPageWrapperProps {
   config: ConverterConfig
@@ -13,6 +15,11 @@ interface ConverterPageWrapperProps {
  * This component sets appropriate cache headers based on traffic
  */
 export default async function ConverterPageWrapper({ config }: ConverterPageWrapperProps) {
+  // Redirect SVG to video converters to the premium tool
+  if (config.fromFormat === 'SVG' && ['MP4', 'WebM', 'GIF'].includes(config.toFormat)) {
+    redirect('/tools/svg-to-video')
+  }
+  
   // Get request headers to check if this is a revalidation request
   const headersList = await headers()
   const isRevalidating = headersList.get('x-revalidating') === 'true'
@@ -37,7 +44,23 @@ export default async function ConverterPageWrapper({ config }: ConverterPageWrap
   // from server components. The caching is handled by the revalidate export
   // and fetch options. This wrapper is mainly for organization and logging.
   
-  return <ConverterPageOptimized config={publicConfig as PublicConverterConfig} />
+  return (
+    <ConverterPageTemplate
+      title={config.metaTitle}
+      description={config.metaDescription}
+      keywords={config.keywords}
+      converterConfig={config}
+      converterType={{
+        from: config.fromFormat.toLowerCase(),
+        to: config.toFormat.toLowerCase(),
+        fromFull: config.fromFormat,
+        toFull: config.toFormat
+      }}
+      heroTitle={config.title}
+      heroSubtitle={config.metaDescription}
+      converterComponent={<ConverterInterface config={publicConfig as PublicConverterConfig} />}
+    />
+  )
 }
 
 /**

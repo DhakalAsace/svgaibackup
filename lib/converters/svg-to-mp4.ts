@@ -4,6 +4,9 @@
  * This module provides SVG to MP4 video conversion.
  * This is a premium feature that will convert animated SVGs
  * or create animated presentations from static SVGs.
+ * 
+ * The actual conversion is handled by the server-side API at /api/convert/svg-to-video
+ * This module serves as a client-side wrapper that directs users to the premium tool.
  */
 
 import type { 
@@ -110,19 +113,20 @@ export const svgToMp4Handler: ConversionHandler = async (
 
 /**
  * Client-side SVG to MP4 conversion wrapper
- * This will always redirect to premium upgrade
+ * This will redirect to the premium SVG to Video tool
  */
 export async function convertSvgToMp4Client(
   input: File | string,
   options: SvgToMp4Options = {}
 ): Promise<ConversionResult> {
-  // Premium feature - show upgrade prompt
+  // Premium feature - redirect to the SVG to Video tool
   return {
     success: false,
-    error: 'SVG to MP4 conversion is a premium feature. Please upgrade your account to access video export functionality.',
+    error: 'SVG to MP4 conversion is a premium feature. Please use our SVG to Video tool to convert animated SVGs to MP4 or GIF format.',
     metadata: {
       premiumFeature: true,
-      upgradeUrl: '/pricing'
+      upgradeUrl: '/tools/svg-to-video',
+      toolUrl: '/tools/svg-to-video'
     }
   }
 }

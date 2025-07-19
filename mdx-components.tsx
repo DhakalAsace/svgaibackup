@@ -3,6 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 
+import { MdxP } from '@/components/mdx-custom-components';
+
 // This file allows you to provide custom React components
 // to be used in MDX files. You can import and use any
 // React component you want, including components from
@@ -15,7 +17,7 @@ export const mdxComponentsMap: MDXComponents = {
     h2: ({ children }) => <h2 className="text-3xl font-bold mt-8 mb-4">{children}</h2>,
     h3: ({ children }) => <h3 className="text-2xl font-bold mt-6 mb-3">{children}</h3>,
     h4: ({ children }) => <h4 className="text-xl font-bold mt-4 mb-2">{children}</h4>,
-    p: ({ children }) => <p className="mt-4 mb-4">{children}</p>,
+    p: MdxP,
     a: ({ href, children }) => {
       const isExternal = href?.startsWith('http')
       if (isExternal) {
@@ -69,13 +71,15 @@ export const mdxComponentsMap: MDXComponents = {
       </blockquote>
     ),
     code: ({ children }) => (
-      <code className="bg-muted px-1.5 py-0.5 rounded-md text-sm">
+      <code className="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-1.5 py-0.5 rounded-md text-sm font-mono">
         {children}
       </code>
     ),
-    pre: ({ children }) => (
-      <pre className="bg-muted p-4 rounded-lg overflow-x-auto my-4">
-        {children}
+    pre: ({ children, ...props }) => (
+      <pre className="bg-slate-900 text-white p-6 rounded-lg overflow-x-auto my-6 shadow-lg border border-slate-700" {...props}>
+        <code className="text-white bg-transparent p-0 rounded-none text-sm font-mono block">
+          {children}
+        </code>
       </pre>
     ),
     strong: ({ children }) => (

@@ -115,18 +115,18 @@ export function InternalLinksEnhanced({
                   onClick={() => trackLinkClick(currentPath, `/convert/${converter.urlSlug}`, 'gallery_to_converter')}
                   className="group"
                 >
-                  <div className="p-3 bg-white dark:bg-gray-800 border rounded-lg hover:border-primary hover:shadow-md transition-all">
+                  <div className="p-3 bg-white border rounded-lg hover:border-primary hover:shadow-md transition-all">
                     <div className="flex items-center justify-between mb-1">
                       <FileImage className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
                       {converter.searchVolume > 10000 && (
-                        <Badge variant="secondary" className="text-xs">Popular</Badge>
+                        <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-700">Popular</Badge>
                       )}
                     </div>
                     <h4 className="font-medium text-sm group-hover:text-primary transition-colors">
                       {converter.fromFormat} → {converter.toFormat}
                     </h4>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {converter.searchVolume > 1000 ? `${(converter.searchVolume / 1000).toFixed(0)}k searches` : 'Convert now'}
+                      Convert now
                     </p>
                   </div>
                 </Link>
@@ -136,7 +136,7 @@ export function InternalLinksEnhanced({
         </Card>
 
         {/* Create Similar with AI */}
-        <Card className="border-violet-200 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20">
+        <Card className="border-violet-200 bg-gradient-to-br from-violet-50 to-purple-50">
           <CardHeader>
             <CardTitle className="flex items-center text-lg">
               <Wand2 className="w-5 h-5 mr-2 text-violet-600" />
@@ -151,9 +151,9 @@ export function InternalLinksEnhanced({
               {theme.samplePrompts.slice(0, 3).map((prompt, idx) => (
                 <Link
                   key={idx}
-                  href={`/ai-icon-generator?prompt=${encodeURIComponent(prompt)}`}
-                  onClick={() => trackLinkClick(currentPath, '/ai-icon-generator', 'gallery_to_ai_generator')}
-                  className="block p-3 bg-white dark:bg-gray-800 border rounded-lg hover:border-violet-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all"
+                  href={`/?prompt=${encodeURIComponent(prompt)}`}
+                  onClick={() => trackLinkClick(currentPath, '/', 'gallery_to_ai_generator')}
+                  className="block p-3 bg-white border rounded-lg hover:border-violet-300 hover:bg-violet-50 transition-all"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-sm">{prompt}</span>
@@ -167,8 +167,8 @@ export function InternalLinksEnhanced({
               className="w-full mt-4 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
             >
               <Link 
-                href="/ai-icon-generator"
-                onClick={() => trackLinkClick(currentPath, '/ai-icon-generator', 'gallery_to_ai_generator_main')}
+                href="/"
+                onClick={() => trackLinkClick(currentPath, '/', 'gallery_to_ai_generator_main')}
               >
                 <Wand2 className="w-4 h-4 mr-2" />
                 Create Your Own SVG with AI
@@ -205,9 +205,6 @@ export function InternalLinksEnhanced({
                             {relatedTheme.keywords.slice(0, 2).join(', ')}
                           </p>
                         </div>
-                        <Badge variant="outline">
-                          {(relatedTheme.searchVolume / 1000).toFixed(1)}k
-                        </Badge>
                       </div>
                     </div>
                   </Link>
@@ -291,7 +288,7 @@ export function InternalLinksEnhanced({
               <Link 
                 href={`/convert/${reverseConverter.urlSlug}`}
                 onClick={() => trackLinkClick(currentPath, `/convert/${reverseConverter.urlSlug}`, 'converter_reverse')}
-                className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition-shadow"
+                className="flex items-center justify-between p-4 bg-white rounded-lg hover:shadow-md transition-shadow"
               >
                 <div>
                   <h4 className="font-semibold">{reverseConverter.title}</h4>
@@ -307,7 +304,7 @@ export function InternalLinksEnhanced({
 
         {/* Browse Free SVGs */}
         {galleries.length > 0 && (
-          <Card className="border-violet-200 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20">
+          <Card className="border-violet-200 bg-gradient-to-br from-violet-50 to-purple-50">
             <CardHeader>
               <CardTitle className="flex items-center text-lg">
                 <ImageIcon className="w-5 h-5 mr-2" />
@@ -327,9 +324,6 @@ export function InternalLinksEnhanced({
                     className="p-3 text-center border rounded-lg hover:border-violet-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all"
                   >
                     <span className="text-sm font-medium">{theme.title}</span>
-                    <Badge variant="secondary" className="ml-2 text-xs">
-                      {(theme.searchVolume / 1000).toFixed(0)}k
-                    </Badge>
                   </Link>
                 ))}
               </div>
@@ -480,7 +474,7 @@ export function InternalLinksEnhanced({
         </Card>
 
         {/* Create with AI */}
-        <Card className="border-violet-200 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20">
+        <Card className="border-violet-200 bg-gradient-to-br from-violet-50 to-purple-50">
           <CardHeader>
             <CardTitle className="flex items-center text-lg">
               <Wand2 className="w-5 h-5 mr-2 text-violet-600" />

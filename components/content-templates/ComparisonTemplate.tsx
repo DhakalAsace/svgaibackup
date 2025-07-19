@@ -203,7 +203,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: UserTestimonial }) => (
         <div className="flex items-center gap-2">
           <StarRating rating={testimonial.rating} showNumber={false} />
           {testimonial.verified && (
-            <Badge variant="secondary" className="text-xs">
+            <Badge variant="success" className="text-xs">
               <Check className="h-3 w-3 mr-1" />
               Verified
             </Badge>
@@ -313,7 +313,7 @@ export default function ComparisonTemplate({
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {svgAITool.bestFor.map((use, i) => (
-                      <Badge key={i} variant="secondary">{use}</Badge>
+                      <Badge key={i} variant="info">{use}</Badge>
                     ))}
                   </div>
                 </div>
@@ -618,7 +618,7 @@ export default function ComparisonTemplate({
                             </div>
                           ) : (
                             <div>
-                              <Badge variant={tool.pricing.type === 'free' ? 'secondary' : 'default'}>
+                              <Badge variant={tool.pricing.type === 'free' ? 'success' : 'warning'}>
                                 {tool.pricing.type === 'free' ? 'Free' : 
                                  tool.pricing.type === 'freemium' ? 'Freemium' : 'Paid'}
                               </Badge>
@@ -941,7 +941,7 @@ export default function ComparisonTemplate({
                         <div className="space-y-2">
                           {tool.features.slice(3, 6).map((feature, i) => (
                             <div key={i} className="flex items-center gap-2">
-                              <Badge variant="secondary" className="text-xs">Advanced</Badge>
+                              <Badge variant="info" className="text-xs">Advanced</Badge>
                               <span className="text-sm">{feature}</span>
                             </div>
                           ))}
@@ -968,14 +968,14 @@ export default function ComparisonTemplate({
                         <div key={tool.id} className="space-y-3">
                           <div className="flex items-center justify-between">
                             <h4 className="font-semibold">{tool.name}</h4>
-                            <Badge variant="outline">
+                            <Badge variant="info">
                               {tool.integrations?.length || 0} integrations
                             </Badge>
                           </div>
                           {tool.integrations && tool.integrations.length > 0 ? (
                             <div className="flex flex-wrap gap-2">
                               {tool.integrations.map((integration, i) => (
-                                <Badge key={i} variant="secondary">{integration}</Badge>
+                                <Badge key={i} variant="info">{integration}</Badge>
                               ))}
                             </div>
                           ) : (

@@ -64,7 +64,7 @@ export default function HtmlSitemap() {
                   {converter.title}
                 </h3>
                 <p className="text-sm text-gray-600">
-                  {converter.searchVolume.toLocaleString()} monthly searches
+                  Convert {converter.fromFormat} to {converter.toFormat}
                 </p>
               </Link>
             ))}
@@ -87,7 +87,7 @@ export default function HtmlSitemap() {
                   {gallery.title}
                 </h3>
                 <p className="text-sm text-gray-600">
-                  {gallery.searchVolume.toLocaleString()} monthly searches
+                  {gallery.description}
                 </p>
               </Link>
             ))}

@@ -184,7 +184,7 @@ export function UserMenu() {
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium leading-none">My Account</p>
               {subscriptionTier ? (
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="warning" className="text-xs">
                   {subscriptionTier === 'pro' ? (
                     <>
                       <Crown className="w-3 h-3 mr-1" />
@@ -198,7 +198,7 @@ export function UserMenu() {
                   )}
                 </Badge>
               ) : (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="success" className="text-xs">
                   Free
                 </Badge>
               )}

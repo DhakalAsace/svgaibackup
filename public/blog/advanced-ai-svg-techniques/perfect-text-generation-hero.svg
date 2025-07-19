@@ -1,0 +1,63 @@
+<svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f7fafc;stop-opacity:0.9" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Grid pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.1"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- Main text demonstration -->
+  <text x="600" y="200" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="bold" 
+        text-anchor="middle" fill="url(#textGradient)" filter="url(#glow)">
+    Perfect Text Generation
+  </text>
+  
+  <!-- AI indicator -->
+  <circle cx="150" cy="150" r="30" fill="#4ade80" opacity="0.8">
+    <animate attributeName="r" values="30;35;30" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <text x="150" y="158" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="bold" 
+        text-anchor="middle" fill="#ffffff">AI</text>
+  
+  <!-- Code snippet visualization -->
+  <rect x="200" y="300" width="800" height="250" rx="12" fill="#1a202c" opacity="0.9"/>
+  <text x="220" y="335" font-family="Monaco, monospace" font-size="16" fill="#68d391">
+    &lt;text font-family="Inter" font-size="32" fill="#2563eb"&gt;
+  </text>
+  <text x="240" y="365" font-family="Monaco, monospace" font-size="16" fill="#ffffff">
+    Revolutionary Design
+  </text>
+  <text x="220" y="395" font-family="Monaco, monospace" font-size="16" fill="#68d391">
+    &lt;/text&gt;
+  </text>
+  
+  <!-- Arrow pointing to perfect text -->
+  <path d="M 150 250 Q 200 280 250 300" stroke="#f59e0b" stroke-width="3" fill="none" opacity="0.8"/>
+  <polygon points="250,300 245,295 245,305" fill="#f59e0b" opacity="0.8"/>
+  
+  <!-- Brand indicator -->
+  <text x="1050" y="580" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="600" 
+        text-anchor="middle" fill="#ffffff" opacity="0.8">
+    SVGai.org
+  </text>
+</svg>

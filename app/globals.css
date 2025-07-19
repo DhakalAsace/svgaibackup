@@ -52,11 +52,11 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 224 71% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 224 71% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 224 71% 4%;
     --primary: 16 72% 57%; /* #FF7043 in HSL */
     --primary-foreground: 0 0% 98%;
     --secondary: 210 40% 96.1%;
@@ -69,7 +69,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --ring: 16 72% 57%;
     --radius: 0.5rem;
   }
 
@@ -100,13 +100,60 @@
   * {
     @apply border-border;
   }
+  html {
+    @apply overflow-x-hidden;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer components {
+  /* Fix select dropdown active color */
+  [role="option"][data-state="checked"] {
+    @apply bg-gray-100 text-gray-900;
+  }
+  
+  [role="option"][data-state="checked"] > span {
+    @apply text-gray-900;
+  }
+  
+  /* Fix button secondary variant colors */
+  .btn-secondary-clean {
+    @apply bg-gray-100 text-gray-900 hover:bg-gray-200;
+  }
+
+  /* Dashboard Design System */
+  .dashboard-metric-card {
+    @apply bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200;
+  }
+
+  .dashboard-action-button {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold py-2.5 px-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
+  }
+
+  .dashboard-creation-card {
+    @apply bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer;
+  }
+
+  .dashboard-sidebar-link {
+    @apply flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150;
+  }
+
+  .dashboard-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .dashboard-empty-state {
+    @apply text-center py-12;
+  }
+
+  /* Professional Card Effects */
+  .card-hover-lift {
+    @apply hover:-translate-y-0.5 transition-transform duration-200;
+  }
+
   /* Converter-specific card styling */
   .converter-card {
     @apply bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300;
@@ -137,6 +184,27 @@
 }
 
 @layer utilities {
+  /* Responsive text utilities */
+  .text-wrap-balance {
+    text-wrap: balance;
+  }
+  
+  .break-word {
+    word-break: break-word;
+  }
+  
+  /* Prevent text overflow on mobile */
+  @media (max-width: 640px) {
+    .text-responsive {
+      @apply text-sm;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+  }
   .container {
     @apply px-4 mx-auto max-w-7xl;
   }

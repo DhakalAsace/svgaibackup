@@ -1,6 +1,6 @@
 "use client"
 
-import { ReactNode, useEffect } from "react"
+import React, { ReactNode, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Sparkles, Check, ArrowRight } from "lucide-react"
 import {
@@ -105,22 +105,29 @@ function getConversionBenefits(fromFormat: string, toFormat: string): string {
 function enhanceTextWithLinks(text: string | ReactNode, converterConfig: ConverterConfig): ReactNode {
   if (typeof text !== 'string') return text
   
+  const currentPath = `/convert/${converterConfig.urlSlug}`;
+
   // Common conversion patterns to link
   const linkPatterns = [
     { pattern: /SVG files?/gi, replacement: () => <Link href="/learn/what-is-svg" className="text-primary hover:underline">SVG files</Link> },
     { pattern: /PNG to SVG/gi, replacement: () => <Link href="/convert/png-to-svg" className="text-primary hover:underline">PNG to SVG</Link> },
     { pattern: /SVG to PNG/gi, replacement: () => <Link href="/convert/svg-to-png" className="text-primary hover:underline">SVG to PNG</Link> },
     { pattern: /vector graphics/gi, replacement: () => <Link href="/learn/svg-file-format" className="text-primary hover:underline">vector graphics</Link> },
-    { pattern: /batch convert/gi, replacement: () => <Link href="/convert/svg-converter" className="text-primary hover:underline">batch convert</Link> },
-    { pattern: /image to SVG/gi, replacement: () => <Link href="/convert/image-to-svg" className="text-primary hover:underline">image to SVG</Link> },
-    { pattern: /AI (SVG )?generation/gi, replacement: () => <Link href="/ai-icon-generator" className="text-primary hover:underline">AI generation</Link> },
+    { pattern: /convert multiple/gi, replacement: () => <Link href="/convert/svg-converter" className="text-primary hover:underline">convert multiple</Link> },
+    { 
+      pattern: /image to SVG/gi, 
+      replacement: () => currentPath === '/convert/image-to-svg' 
+        ? <span>image to SVG</span> 
+        : <Link href="/convert/image-to-svg" className="text-primary hover:underline">image to SVG</Link> 
+    },
+    { pattern: /AI (SVG )?generation/gi, replacement: () => <Link href="/" className="text-primary hover:underline">AI generation</Link> },
     { pattern: /vectorization/gi, replacement: () => <Link href="/learn/convert-png-to-svg" className="text-primary hover:underline">vectorization</Link> }
   ]
   
   // Split text and apply links  
   let result: ReactNode[] = [text]
   
-  linkPatterns.forEach(({ pattern, replacement }) => {
+  linkPatterns.forEach(({ pattern, replacement }, patternIndex) => {
     result = result.flatMap((item, index) => {
       if (typeof item !== 'string') return [item]
       
@@ -129,9 +136,11 @@ function enhanceTextWithLinks(text: string | ReactNode, converterConfig: Convert
       
       const enhanced: ReactNode[] = []
       parts.forEach((part, partIndex) => {
-        enhanced.push(part)
+        if (part) {
+          enhanced.push(<React.Fragment key={`text-${patternIndex}-${index}-${partIndex}`}>{part}</React.Fragment>)
+        }
         if (partIndex < parts.length - 1) {
-          enhanced.push(<span key={`${index}-${partIndex}`}>{replacement()}</span>)
+          enhanced.push(<span key={`link-${patternIndex}-${index}-${partIndex}`}>{replacement()}</span>)
         }
       })
       return enhanced
@@ -158,11 +167,11 @@ export default function ConverterPageTemplate({
 }: ConverterPageTemplateProps) {
   
   // Generate related converters if not provided
-  const finalRelatedConverters = relatedConverters || getRelatedConverters(converterConfig, 6).map(item => ({
+  const finalRelatedConverters = (relatedConverters || getRelatedConverters(converterConfig, 6).map(item => ({
     title: item.title,
     href: item.url,
     description: item.description
-  }))
+  }))).filter(converter => converter.href !== `/convert/${converterConfig.urlSlug}`);
   
   // Inject structured data into page head
   useEffect(() => {
@@ -251,8 +260,8 @@ export default function ConverterPageTemplate({
               <div className="flex items-center justify-center bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                 <div className="text-2xl mr-3">🔒</div>
                 <div className="text-left">
-                  <div className="font-semibold text-[#4E342E]">100% Secure</div>
-                  <div className="text-sm text-gray-600">Files stay private</div>
+                  <div className="font-semibold text-[#4E342E]">100% Private</div>
+                  <div className="text-sm text-gray-600">Files never leave your device</div>
                 </div>
               </div>
               
@@ -632,14 +641,6 @@ export default function ConverterPageTemplate({
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-            <Button 
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              variant="outline"
-              className="py-3 px-8 border-[#FF7043] text-[#FF7043] hover:bg-[#FFF0E6] font-semibold text-lg rounded-lg transition-all"
-            >
-              Use Free Converter
-            </Button>
-            
             <Link 
               href="/"
               onClick={() => {
@@ -662,13 +663,31 @@ export default function ConverterPageTemplate({
             >
               <Button className="py-3 px-8 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 transition-all">
                 <Sparkles className="mr-2 h-5 w-5" />
-                Try AI Generator
+                Create AI SVGs
+              </Button>
+            </Link>
+            
+            <Link href="/tools/icon-generator">
+              <Button 
+                variant="outline"
+                className="py-3 px-8 border-[#FF7043] text-[#FF7043] hover:bg-[#FFF0E6] font-semibold text-lg rounded-lg transition-all"
+              >
+                Design Icons
+              </Button>
+            </Link>
+            
+            <Link href="/tools/svg-to-video">
+              <Button 
+                variant="ghost"
+                className="py-3 px-8 text-gray-600 hover:text-[#FF7043] font-semibold text-lg rounded-lg transition-all"
+              >
+                Animate SVGs
               </Button>
             </Link>
           </div>
           
           <p className="text-sm text-gray-500">
-            ✓ Create custom designs instantly ✓ No conversion needed ✓ Professional results
+            ✓ Professional design tools ✓ Instant results ✓ Commercial use allowed
           </p>
         </div>
       </section>
@@ -733,16 +752,31 @@ function getFormatDetails(format: string): string[] {
 }
 
 
+// Helper to check if converter requires server processing
+function isServerProcessed(from: string, to: string): boolean {
+  const serverProcessedFormats = [
+    'ai-to-svg', 'svg-to-ai',
+    'emf-to-svg', 'svg-to-emf', 
+    'wmf-to-svg', 'svg-to-wmf',
+    'avif-to-svg', 'svg-to-gif'
+  ];
+  return serverProcessedFormats.includes(`${from}-to-${to}`);
+}
+
 // Enhanced feature content generation based on converter type
 function generateDynamicFeatures(converterType: { from: string; to: string }): Array<{ title: string; description: string }> {
+  const isServer = isServerProcessed(converterType.from, converterType.to);
+  
   const baseFeatures = [
     {
       title: "100% Free & Unlimited",
-      description: "No signup required, no file limits, completely free to use for personal and commercial projects. Convert as many ${converterType.from.toUpperCase()} files to ${converterType.to.toUpperCase()} as you need without any restrictions or hidden costs."
+      description: `No signup required, no file limits, completely free to use for personal and commercial projects. Convert as many ${converterType.from.toUpperCase()} files to ${converterType.to.toUpperCase()} as you need without any restrictions or hidden costs.`
     },
     {
-      title: "Client-Side Processing",
-      description: "Your files never leave your device - all ${converterType.from} to ${converterType.to} conversion happens locally in your browser. This ensures maximum privacy, security, and compliance with data protection regulations."
+      title: isServer ? "Secure Processing" : "Privacy-First Conversion",
+      description: isServer 
+        ? `Advanced ${converterType.from} to ${converterType.to} conversion with enterprise-grade security. Files are transmitted securely, processed, and immediately deleted. We never save, store, or access your files.`
+        : `Your files never leave your device - all ${converterType.from} to ${converterType.to} conversion happens locally in your browser. Zero server storage ensures complete privacy and compliance with data protection regulations.`
     },
     {
       title: "Professional-Grade Quality",
@@ -753,8 +787,8 @@ function generateDynamicFeatures(converterType: { from: string; to: string }): A
       description: `Convert ${converterType.from.toUpperCase()} files to ${converterType.to.toUpperCase()} instantly with our optimized conversion engine. No waiting for uploads or server processing - get your converted files in seconds.`
     },
     {
-      title: "Smart Batch Processing",
-      description: `Save hours by converting multiple ${converterType.from.toUpperCase()} files to ${converterType.to.toUpperCase()} simultaneously. Perfect for large projects, design systems, or bulk asset management.`
+      title: "Multiple File Support",
+      description: `Convert multiple ${converterType.from.toUpperCase()} files to ${converterType.to.toUpperCase()} quickly and efficiently. Perfect for large projects, design systems, or managing multiple assets.`
     },
     {
       title: "Universal Compatibility",
@@ -858,6 +892,8 @@ const defaultHowItWorksSteps = [
 
 // Enhanced FAQ generation with format-specific questions
 function generateDynamicFAQs(converterType: { from: string; to: string }, converterConfig: ConverterConfig): Array<{ question: string; answer: string | ReactNode }> {
+  const isServer = isServerProcessed(converterType.from, converterType.to);
+  
   const baseFAQs = [
     {
       question: `Is this ${converterType.from} to ${converterType.to} converter really free?`,
@@ -865,7 +901,9 @@ function generateDynamicFAQs(converterType: { from: string; to: string }, conver
     },
     {
       question: `Are my ${converterType.from} files secure during conversion?`,
-      answer: `Absolutely. All ${converterType.from} to ${converterType.to} conversion happens directly in your browser using client-side JavaScript. Your files never leave your device or get uploaded to any server. This ensures complete privacy, security, and compliance with data protection regulations like GDPR.`
+      answer: isServer 
+        ? `Absolutely. Your ${converterType.from} files are processed with enterprise-grade security. Files are transmitted over secure HTTPS, processed immediately, and automatically deleted after conversion. We never save, store, or access your files. The conversion uses specialized engines to handle complex ${converterType.from} formats while maintaining complete privacy.`
+        : `Absolutely. All ${converterType.from} to ${converterType.to} conversion happens directly in your browser. Your files never leave your device - everything processes locally. This ensures complete privacy and compliance with data protection regulations like GDPR.`
     },
     {
       question: `What's the maximum file size for ${converterType.from} to ${converterType.to} conversion?`,
@@ -924,6 +962,10 @@ function getFormatSpecificFAQs(from: string, to: string): Array<{ question: stri
       }
     ],
     'jpg-to-svg': [
+      {
+        question: "What's the difference between JPG and JPEG?",
+        answer: "There is no difference in the image data. JPG and JPEG refer to the exact same file format, defined by the Joint Photographic Experts Group. The .jpg extension exists because older Windows systems required a three-letter file extension. Our tool handles both .jpg and .jpeg files interchangeably."
+      },
       {
         question: "Can I convert photographic JPGs to SVG?",
         answer: "While technically possible, converting photographs to SVG rarely produces ideal results. Photos contain complex gradients and details that result in very large SVG files. This converter works best for JPGs containing logos, simple graphics, or images that can be stylized into vector art."

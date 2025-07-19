@@ -55,14 +55,16 @@ export function PremiumToolsCTA({
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 mb-1">
-                Need More Power?
+                Need Custom SVGs?
               </h3>
               <p className="text-sm text-gray-600 mb-2">
-                Try our AI SVG generator and premium tools
+                Create unique designs instantly with AI
               </p>
-              <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
-                <Zap className="mr-2 h-3 w-3" />
-                Explore Premium
+              <Button size="sm" className="bg-orange-600 hover:bg-orange-700" asChild>
+                <Link href="/">
+                  <Zap className="mr-2 h-3 w-3" />
+                  Try AI Generator
+                </Link>
               </Button>
             </div>
           </div>
@@ -84,10 +86,12 @@ export function PremiumToolsCTA({
                 Premium Tools
               </h3>
               <p className="text-sm text-gray-600 mb-3">
-                AI generation, batch processing, and more
+                AI generation, icon design, and animation tools
               </p>
-              <Button size="sm" className="w-full" variant="outline">
-                Learn More
+              <Button size="sm" className="w-full" variant="outline" asChild>
+                <Link href="/">
+                  Create AI SVGs
+                </Link>
               </Button>
             </div>
           </CardContent>
@@ -110,10 +114,10 @@ export function PremiumToolsCTA({
                 SVG Editor
               </Link>
               <Link 
-                href="/ai-icon-generator" 
+                href="/tools/icon-generator" 
                 className="block text-sm text-blue-600 hover:text-blue-800 hover:underline"
               >
-                AI Icon Generator
+                Icon Generator
               </Link>
             </div>
           </CardContent>
@@ -133,13 +137,13 @@ export function PremiumToolsCTA({
           <h2 className="text-3xl font-bold text-[#4E342E] mb-4">
             {variant === "success" 
               ? "Great job! Ready for more advanced tools?" 
-              : "Need More Powerful Conversion Tools?"
+              : "Ready for Professional Design Tools?"
             }
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             {variant === "success"
               ? "You've successfully converted your file. Explore our premium features for professional workflows."
-              : "Upgrade to our premium features for advanced capabilities and professional workflows"
+              : "Create custom SVGs with AI, design professional icons, or animate your graphics"
             }
           </p>
         </div>
@@ -178,7 +182,7 @@ export function PremiumToolsCTA({
                 className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white"
                 asChild
               >
-                <Link href="/ai-icon-generator">
+                <Link href="/">
                   <Sparkles className="mr-2 h-4 w-4" />
                   Try AI Generation
                 </Link>
@@ -220,34 +224,36 @@ export function PremiumToolsCTA({
             </CardContent>
           </Card>
           
-          {/* Batch Processing */}
+          {/* Icon Libraries */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6 text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <Users className="h-8 w-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2 text-[#4E342E]">
-                Batch Conversion
+                Icon Libraries
               </h3>
               <p className="text-gray-600 mb-4">
-                Convert hundreds of files at once with our powerful batch processing tools
+                Browse thousands of free SVG icons and graphics for your projects
               </p>
               <div className="space-y-2 mb-4">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Clock className="h-3 w-3 text-blue-500" />
-                  <span>Up to 1000 files</span>
+                  <span>50,000+ icons</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Shield className="h-3 w-3 text-blue-500" />
-                  <span>Secure processing</span>
+                  <span>Free to use</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Zap className="h-3 w-3 text-blue-500" />
-                  <span>10x faster</span>
+                  <span>Commercial license</span>
                 </div>
               </div>
-              <Button variant="outline" className="w-full">
-                Coming Soon
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/tools/icon-generator">
+                  Browse Icons
+                </Link>
               </Button>
             </CardContent>
           </Card>
@@ -263,9 +269,9 @@ export function PremiumToolsCTA({
               className="py-3 px-8 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-orange-500/40 transition-all"
               asChild
             >
-              <Link href="/pricing">
-                <Crown className="mr-2 h-5 w-5" />
-                View All Premium Tools
+              <Link href="/">
+                <Sparkles className="mr-2 h-5 w-5" />
+                Create AI SVGs
               </Link>
             </Button>
             <Button 
@@ -274,9 +280,9 @@ export function PremiumToolsCTA({
               className="py-3 px-8 font-bold text-lg"
               asChild
             >
-              <Link href="/ai-icon-generator">
-                <Sparkles className="mr-2 h-5 w-5" />
-                Try AI Generation Free
+              <Link href="/tools/icon-generator">
+                <Zap className="mr-2 h-5 w-5" />
+                Design Icons
               </Link>
             </Button>
           </div>
@@ -394,7 +400,7 @@ export function TrustIndicators() {
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-900">100% Secure</p>
-              <p className="text-xs text-gray-600">Files never leave your device</p>
+              <p className="text-xs text-gray-600">Your privacy protected</p>
             </div>
           </div>
           
@@ -575,7 +581,7 @@ export function ProfessionalCTA({ converterType }: { converterType: { from: stri
       </div>
       <h3 className="text-2xl font-bold mb-2">Ready for Professional Tools?</h3>
       <p className="text-blue-100 mb-6 max-w-md mx-auto">
-        Upgrade to access advanced features, batch processing, and premium support
+        Upgrade to access advanced features, professional-grade tools, and premium support
       </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Button 
@@ -583,9 +589,9 @@ export function ProfessionalCTA({ converterType }: { converterType: { from: stri
           className="bg-white text-blue-600 hover:bg-gray-100 font-semibold"
           asChild
         >
-          <Link href="/pricing">
-            <Crown className="mr-2 h-5 w-5" />
-            Upgrade Now
+          <Link href="/">
+            <Sparkles className="mr-2 h-5 w-5" />
+            Create AI SVGs
           </Link>
         </Button>
         <Button 
@@ -594,9 +600,9 @@ export function ProfessionalCTA({ converterType }: { converterType: { from: stri
           className="border-white text-white hover:bg-white hover:text-blue-600 font-semibold"
           asChild
         >
-          <Link href="/ai-icon-generator">
-            <Sparkles className="mr-2 h-5 w-5" />
-            Try AI Generator
+          <Link href="/tools/icon-generator">
+            <Zap className="mr-2 h-5 w-5" />
+            Design Icons
           </Link>
         </Button>
       </div>

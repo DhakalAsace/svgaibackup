@@ -48,7 +48,7 @@ export function RelatedToolsSidebar({
           Related Tools
         </CardTitle>
         <CardDescription>
-          Try these powerful conversion tools
+          Explore more conversion options
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">

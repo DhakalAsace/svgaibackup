@@ -72,7 +72,7 @@ export default function ConvertersHubPage() {
     featureList: [
       'Free SVG conversion',
       'No registration required',
-      'Client-side processing',
+      'Secure browser-based conversion',
       'Multiple format support',
       'High-quality output'
     ]
@@ -129,7 +129,7 @@ export default function ConvertersHubPage() {
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">100%</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Client-Side Security</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">No Server Storage</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600 dark:text-green-400">∞</div>
@@ -297,7 +297,7 @@ export default function ConvertersHubPage() {
                 How secure is my data?
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Completely secure. All conversions happen directly in your browser using client-side processing. Your files never leave your device or touch our servers.
+                Completely secure. Most conversions happen directly in your browser - files never leave your device. Advanced formats use secure processing with immediate deletion.
               </p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
@@ -344,7 +344,7 @@ export default function ConvertersHubPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
-              href="/ai-icon-generator"
+              href="/"
               className="inline-flex items-center px-8 py-4 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all transform hover:scale-105 shadow-lg"
             >
               <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -356,13 +356,22 @@ export default function ConvertersHubPage() {
               </svg>
             </Link>
             <Link
-              href="/animate"
+              href="/ai-icon-generator"
               className="inline-flex items-center px-6 py-3 border-2 border-primary text-primary dark:text-primary hover:bg-primary hover:text-white transition-all rounded-lg"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l.707.707a1 1 0 00.707.293H15M9 10v1.586a1 1 0 00.293.707l.707.707a1 1 0 00.707.293H13" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
-              Animate SVGs
+              AI Icon Generator
+            </Link>
+            <Link
+              href="/convert/svg-to-mp4"
+              className="inline-flex items-center px-6 py-3 border-2 border-gray-300 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all rounded-lg"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              SVG to Video
             </Link>
           </div>
           

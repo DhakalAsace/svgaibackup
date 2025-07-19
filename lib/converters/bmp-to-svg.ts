@@ -87,6 +87,13 @@ class BmpToSvgConverter extends LazyLoadedConverter {
       // Step 2: Convert PNG to SVG using existing client-side converter
       this.reportProgress(options, 0.5)
       
+      if (!pngResult.data) {
+        throw new ConversionError(
+          'CloudConvert BMP to PNG returned no data',
+          'CLOUDCONVERT_NO_DATA'
+        )
+      }
+      
       const { pngToSvgHandler } = await import('./png-to-svg')
       const svgResult = await pngToSvgHandler(pngResult.data, {
         ...options,
@@ -99,6 +106,13 @@ class BmpToSvgConverter extends LazyLoadedConverter {
         throw new ConversionError(
           `PNG to SVG conversion failed: ${svgResult.error}`,
           'PNG_TO_SVG_FAILED'
+        )
+      }
+      
+      if (!svgResult.data) {
+        throw new ConversionError(
+          'PNG to SVG conversion returned no data',
+          'PNG_TO_SVG_NO_DATA'
         )
       }
       

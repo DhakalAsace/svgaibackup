@@ -119,7 +119,7 @@ export default function Navbar() {
   }, [session, supabase]);
   
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur-sm supports-[backdrop-filter]:bg-white/70">
+    <header className="sticky top-0 z-40 w-full border-b bg-gradient-to-b from-white/95 to-white/85 backdrop-blur-md shadow-sm">
       <div className="container flex h-20 items-center justify-between py-2">
         <Link href="/" className="flex items-center -ml-2" aria-label="SVGAI Home">
           <BrandLogo />

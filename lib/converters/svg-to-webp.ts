@@ -71,7 +71,7 @@ function sanitizeSvgContent(svg: string): string {
 }
 
 /**
- * Converts SVG to WebP using CloudConvert API
+ * Converts SVG to WebP using Canvas API (client-side only)
  * Implements the ConversionHandler interface
  */
 export const svgToWebpHandler: ConversionHandler = async (
@@ -93,37 +93,30 @@ export const svgToWebpHandler: ConversionHandler = async (
       : input.toString('utf8')
     
     const sanitizedSvg = sanitizeSvgContent(svgContent)
-    const svgBuffer = Buffer.from(sanitizedSvg, 'utf8')
 
     // Report progress after preparation
     if (options.onProgress) {
-      options.onProgress(0.2)
+      options.onProgress(0.3)
     }
 
-    // Prepare CloudConvert options
-    const cloudConvertOptions: CloudConvertOptions = {
-      quality: options.quality ?? 85,
-      width: options.width,
-      height: options.height,
-      preserveAspectRatio: options.preserveAspectRatio,
-      background: options.background,
-      onProgress: (progress) => {
-        // Map CloudConvert progress to our range (0.2 to 1.0)
-        const adjustedProgress = 0.2 + (progress * 0.8)
-        options.onProgress?.(adjustedProgress)
+    // Convert SVG to WebP using Canvas API
+    const webpBuffer = await convertSvgToWebpCanvas(sanitizedSvg, options)
+
+    if (options.onProgress) {
+      options.onProgress(1.0)
+    }
+
+    return {
+      success: true,
+      data: webpBuffer,
+      mimeType: 'image/webp',
+      metadata: {
+        size: webpBuffer.length,
+        format: 'webp',
+        method: 'canvas-api',
+        quality: options.quality ?? 85
       }
     }
-
-    // Convert using CloudConvert
-    const result = await convertWithCloudConvert(
-      svgBuffer,
-      'svg',
-      'webp',
-      'input.svg',
-      cloudConvertOptions
-    )
-
-    return result
 
   } catch (error) {
     // Handle known errors
@@ -149,8 +142,104 @@ export const svgToWebpHandler: ConversionHandler = async (
 }
 
 /**
+ * Convert SVG to WebP using Canvas API
+ */
+async function convertSvgToWebpCanvas(
+  svgContent: string,
+  options: SvgToWebpOptions = {}
+): Promise<Buffer> {
+  // Check if we're in a browser environment
+  if (typeof window === 'undefined') {
+    throw new ConversionError(
+      'SVG to WebP conversion requires a browser environment',
+      'BROWSER_REQUIRED'
+    )
+  }
+
+  return new Promise<Buffer>((resolve, reject) => {
+    try {
+      // Create an image element
+      const img = new Image()
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')!
+
+      img.onload = () => {
+        try {
+          // Set canvas dimensions
+          const width = options.width || img.naturalWidth || 300
+          const height = options.height || img.naturalHeight || 300
+          
+          canvas.width = width
+          canvas.height = height
+
+          // Set background if specified
+          if (options.background && !options.background.toLowerCase().includes('transparent')) {
+            ctx.fillStyle = options.background
+            ctx.fillRect(0, 0, width, height)
+          }
+
+          // Draw the SVG image
+          if (options.preserveAspectRatio !== false) {
+            // Calculate aspect-preserving dimensions
+            const scale = Math.min(width / img.naturalWidth, height / img.naturalHeight)
+            const scaledWidth = img.naturalWidth * scale
+            const scaledHeight = img.naturalHeight * scale
+            const x = (width - scaledWidth) / 2
+            const y = (height - scaledHeight) / 2
+            
+            ctx.drawImage(img, x, y, scaledWidth, scaledHeight)
+          } else {
+            ctx.drawImage(img, 0, 0, width, height)
+          }
+
+          // Convert to WebP
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              reject(new ConversionError('Failed to create WebP blob', 'WEBP_CREATION_FAILED'))
+              return
+            }
+
+            // Convert blob to buffer
+            const reader = new FileReader()
+            reader.onload = () => {
+              const arrayBuffer = reader.result as ArrayBuffer
+              const buffer = Buffer.from(arrayBuffer)
+              resolve(buffer)
+            }
+            reader.onerror = () => {
+              reject(new ConversionError('Failed to read WebP blob', 'WEBP_READ_FAILED'))
+            }
+            reader.readAsArrayBuffer(blob)
+          }, 'image/webp', (options.quality ?? 85) / 100)
+
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+          reject(new ConversionError(`Canvas drawing failed: ${errorMessage}`, 'CANVAS_ERROR'))
+        }
+      }
+
+      img.onerror = () => {
+        reject(new ConversionError('Failed to load SVG image', 'SVG_LOAD_FAILED'))
+      }
+
+      // Load SVG as data URL
+      const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' })
+      const url = URL.createObjectURL(svgBlob)
+      img.src = url
+
+      // Clean up URL after some time
+      setTimeout(() => URL.revokeObjectURL(url), 10000)
+      
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      reject(new ConversionError(`SVG to WebP setup failed: ${errorMessage}`, 'SETUP_ERROR'))
+    }
+  })
+}
+
+/**
  * Client-side SVG to WebP conversion wrapper
- * Note: This requires server-side processing due to sharp dependency
+ * Uses Canvas API for browser-based conversion
  */
 export async function convertSvgToWebpClient(
   file: File,
@@ -165,14 +254,17 @@ export async function convertSvgToWebpClient(
 
 /**
  * Server-side SVG to WebP conversion wrapper
- * This function is optimized for server environments
+ * Note: Server-side conversion not supported - redirects to client-side
  */
 export async function convertSvgToWebpServer(
   input: Buffer | string,
   options: SvgToWebpOptions = {}
 ): Promise<ConversionResult> {
-  // Direct conversion using the handler
-  return svgToWebpHandler(input, options)
+  // Server-side conversion not supported for this format combination
+  throw new ConversionError(
+    'SVG to WebP conversion must be performed client-side in browser',
+    'SERVER_NOT_SUPPORTED'
+  )
 }
 
 /**
@@ -183,6 +275,6 @@ export const svgToWebpConverter = {
   from: 'svg' as ImageFormat,
   to: 'webp' as ImageFormat,
   handler: svgToWebpHandler,
-  isClientSide: true, // Now supports client-side with Canvas API
-  description: 'Convert scalable vector graphics to WebP format with advanced compression options'
+  isClientSide: true, // Requires browser Canvas API
+  description: 'Convert scalable vector graphics to WebP format using browser Canvas API'
 }

@@ -39,13 +39,13 @@ const tools = [
     features: ['Size reduction', 'Path optimization', 'Safe processing'],
   },
   {
-    title: 'SVG to Video',
-    description: 'Convert animated SVGs to MP4 or GIF format',
+    title: 'SVG to MP4 Converter',
+    description: 'Convert SVG to MP4 video format with AI-powered animations',
     icon: Film,
     href: '/tools/svg-to-video',
     badge: 'Premium',
     isPremium: true,
-    features: ['MP4 export', 'GIF export', 'Custom quality'],
+    features: ['SVG to MP4 conversion', '5-second HD videos', 'AI motion effects'],
   },
 ]
 
@@ -56,7 +56,7 @@ export default function ToolsPage() {
       <section className={`${getSectionStyles('gradient')} py-16`}>
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center">
-            <Badge className="mb-4 border-green-500 text-green-600 inline-flex" variant="outline">
+            <Badge className="mb-4 inline-flex" variant="success">
               <Zap className="w-3 h-3 mr-1" />
               Free & Premium Tools
             </Badge>
@@ -109,8 +109,8 @@ export default function ToolsPage() {
                         <tool.icon className="w-6 h-6 text-[#FF7043]" />
                       </div>
                       <Badge 
-                        variant={tool.isPremium ? 'default' : 'outline'} 
-                        className={tool.isPremium ? 'bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white border-0' : 'border-green-500 text-green-600'}
+                        variant={tool.isPremium ? 'warning' : 'success'} 
+                        className={tool.isPremium ? 'bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white border-0' : ''}
                       >
                         {tool.isPremium && <Crown className="w-3 h-3 mr-1" />}
                         {tool.badge}

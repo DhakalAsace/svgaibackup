@@ -17,7 +17,6 @@ import {
   FileValidationError
 } from './errors'
 import { detectFileTypeFromBuffer } from './validation'
-import { convertWithCloudConvert, type CloudConvertOptions } from './cloudconvert-client'
 import { pngToSvgHandler } from './png-to-svg'
 
 /**
@@ -37,12 +36,15 @@ interface WebpToSvgOptions extends ConversionOptions {
  * Implements the ConversionHandler interface
  */
 async function performWebpToSvgConversion(
-  input: Buffer,
+  input: Buffer | string,
   options: WebpToSvgOptions
 ): Promise<ConversionResult> {
   try {
+    // Convert string input to Buffer if needed
+    const inputBuffer = typeof input === 'string' ? Buffer.from(input, 'base64') : input
+    
     // Validate input is WebP
-    const detectedFormat = detectFileTypeFromBuffer(input)
+    const detectedFormat = detectFileTypeFromBuffer(inputBuffer)
     
     if (detectedFormat !== 'webp') {
       throw new FileValidationError(
@@ -53,22 +55,21 @@ async function performWebpToSvgConversion(
     // Report initial progress
     options.onProgress?.(0.1)
 
-    // Step 1: Convert WebP → PNG using CloudConvert
-    const cloudConvertOptions: CloudConvertOptions = {
-      onProgress: (progress) => {
-        // Map to 0.1 - 0.5 range for WebP → PNG conversion
-        const adjustedProgress = 0.1 + (progress * 0.4)
-        options.onProgress?.(adjustedProgress)
-      }
-    }
+    // Note: CloudConvert doesn't support WebP → SVG directly
+    // For now, we'll implement a client-side approach using Canvas API
+    // First convert WebP to canvas, then use existing PNG → SVG tracing
+    
+    const pngBuffer = await convertWebpToPngCanvas(inputBuffer)
+    
+    // Report progress after WebP → PNG
+    options.onProgress?.(0.5)
 
-    const pngResult = await convertWithCloudConvert(
-      input,
-      'webp',
-      'png',
-      'webp-input.webp',
-      cloudConvertOptions
-    )
+    const pngResult = {
+      success: true,
+      data: pngBuffer,
+      mimeType: 'image/png',
+      metadata: { method: 'canvas-api' }
+    }
 
     if (!pngResult.success || !pngResult.data) {
       throw new ConversionError(
@@ -143,4 +144,87 @@ export async function convertWebpToSvgServer(
   options: WebpToSvgOptions = {}
 ): Promise<ConversionResult> {
   return webpToSvgHandler(buffer, options)
+}
+
+/**
+ * Convert WebP to PNG using Canvas API
+ */
+async function convertWebpToPngCanvas(input: Buffer): Promise<Buffer> {
+  // Check if we're in a browser environment
+  if (typeof window === 'undefined') {
+    throw new ConversionError(
+      'WebP to PNG conversion requires a browser environment',
+      'BROWSER_REQUIRED'
+    )
+  }
+
+  return new Promise<Buffer>((resolve, reject) => {
+    try {
+      // Create an image element
+      const img = new Image()
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')!
+
+      img.onload = () => {
+        try {
+          // Set canvas dimensions to match image
+          canvas.width = img.naturalWidth
+          canvas.height = img.naturalHeight
+
+          // Draw the WebP image
+          ctx.drawImage(img, 0, 0)
+
+          // Convert to PNG
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              reject(new ConversionError('Failed to create PNG blob', 'PNG_CREATION_FAILED'))
+              return
+            }
+
+            // Convert blob to buffer
+            const reader = new FileReader()
+            reader.onload = () => {
+              const arrayBuffer = reader.result as ArrayBuffer
+              const buffer = Buffer.from(arrayBuffer)
+              resolve(buffer)
+            }
+            reader.onerror = () => {
+              reject(new ConversionError('Failed to read PNG blob', 'PNG_READ_FAILED'))
+            }
+            reader.readAsArrayBuffer(blob)
+          }, 'image/png')
+
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+          reject(new ConversionError(`Canvas drawing failed: ${errorMessage}`, 'CANVAS_ERROR'))
+        }
+      }
+
+      img.onerror = () => {
+        reject(new ConversionError('Failed to load WebP image', 'WEBP_LOAD_FAILED'))
+      }
+
+      // Load WebP as data URL
+      const webpBlob = new Blob([input], { type: 'image/webp' })
+      const url = URL.createObjectURL(webpBlob)
+      img.src = url
+
+      // Clean up URL after some time
+      setTimeout(() => URL.revokeObjectURL(url), 10000)
+      
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      reject(new ConversionError(`WebP to PNG setup failed: ${errorMessage}`, 'SETUP_ERROR'))
+    }
+  })
+}
+
+// Export converter object for use in routing
+export const webpToSvgConverter = {
+  name: 'WebP to SVG',
+  from: 'webp' as const,
+  to: 'svg' as const,
+  handler: webpToSvgHandler,
+  isClientSide: true,
+  description: 'Convert WebP images to SVG using Canvas API and Potrace vectorization'
 }

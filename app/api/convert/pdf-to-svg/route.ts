@@ -11,10 +11,11 @@ export async function POST(req: NextRequest) {
     // Get the form data
     const formData = await req.formData()
     const file = formData.get('file') as File
-    const pageNumber = Number(formData.get('page')) || 1
+    const pageString = formData.get('page') as string | null
+    const pageNumber = pageString ? Number(pageString) : 1
     
     if (!file) {
-      const { response, status } = createErrorResponse('No file provided', 400)
+      const { response, status } = createErrorResponse('No file provided', 'No file provided', 400)
       return NextResponse.json(response, { status })
     }
 
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
     })
 
     if (!validation.isValid) {
-      const { response, status } = createErrorResponse(validation.error || 'Invalid file', 400)
+      const { response, status } = createErrorResponse(validation.error || 'Invalid file', 'Invalid file', 400)
       return NextResponse.json(response, { status })
     }
 
@@ -39,21 +40,21 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    // Use CloudConvert for PDF to SVG conversion
+    // Use advanced conversion engine for PDF to SVG
     const result = await convertWithCloudConvert(
       buffer,
       'pdf',
       'svg',
       file.name,
       {
-        onProgress: (progress) => {
+        onProgress: (progress: number) => {
           logger.info(`Conversion progress: ${Math.round(progress * 100)}%`)
         }
       }
     )
 
     if (!result.success) {
-      const { response, status } = createErrorResponse(result.error || 'Conversion failed', 500)
+      const { response, status } = createErrorResponse(result.error || 'Conversion failed', 'Conversion failed', 500)
       return NextResponse.json(response, { status })
     }
 
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
     logger.error('PDF to SVG conversion failed', error)
     
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
-    const { response, status } = createErrorResponse(`Conversion failed: ${errorMessage}`, 500)
+    const { response, status } = createErrorResponse(`Conversion failed: ${errorMessage}`, 'Conversion failed', 500)
     
     return NextResponse.json(response, { status })
   }
@@ -97,7 +98,7 @@ export async function GET(req: NextRequest) {
         default: 1
       }
     },
-    description: 'Convert PDF pages to SVG using CloudConvert API with high fidelity vector conversion'
+    description: 'Convert PDF pages to SVG using advanced conversion engine with high fidelity vector output'
   })
 
   return NextResponse.json(response, { status })

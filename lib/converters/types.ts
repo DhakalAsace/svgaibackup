@@ -1,4 +1,4 @@
-export type ImageFormat = 'png' | 'jpg' | 'jpeg' | 'gif' | 'webp' | 'bmp' | 'svg' | 'pdf' | 'ico' | 'tiff' | 'eps' | 'ai' | 'dxf' | 'stl' | 'avif' | 'cdr' | 'mp4' | 'html' | 'ttf' | 'emf' | 'wmf' | 'heic'
+export type ImageFormat = 'png' | 'jpg' | 'jpeg' | 'gif' | 'webp' | 'bmp' | 'svg' | 'pdf' | 'ico' | 'tiff' | 'eps' | 'ai' | 'dxf' | 'stl' | 'avif' | 'cdr' | 'mp4' | 'html' | 'ttf' | 'emf' | 'wmf'
 
 export interface ConversionOptions {
   quality?: number

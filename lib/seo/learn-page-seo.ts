@@ -110,7 +110,7 @@ export const learnPageSEOConfig: Record<string, LearnPageSEOConfig> = {
     searchVolume: 2900,
     schemaType: 'HowToGuide',
     priority: 0.7,
-    relatedPages: ['/convert/svg-to-png', '/learn/batch-svg-to-png', '/learn/svg-file'],
+    relatedPages: ['/convert/svg-to-png', '/learn/svg-to-png-guide', '/learn/svg-file'],
     faqQuestions: [
       {
         question: 'How do I convert SVG to PNG in Windows 10?',
@@ -150,7 +150,7 @@ export const learnPageSEOConfig: Record<string, LearnPageSEOConfig> = {
     searchVolume: 1900,
     schemaType: 'Article',
     priority: 0.6,
-    relatedPages: ['/convert', '/learn/convert-png-to-svg', '/learn/batch-svg-to-png'],
+    relatedPages: ['/convert', '/learn/convert-png-to-svg', '/learn/svg-to-png-guide'],
     faqQuestions: [
       {
         question: 'What is the best SVG converter?',
@@ -159,26 +159,6 @@ export const learnPageSEOConfig: Record<string, LearnPageSEOConfig> = {
       {
         question: 'Are online SVG converters safe?',
         answer: 'Reputable online converters like ours process files client-side in your browser, ensuring your files never leave your device.'
-      }
-    ]
-  },
-  'batch-svg-to-png': {
-    slug: 'batch-svg-to-png',
-    title: 'Batch Convert SVG to PNG: Automate Bulk Conversions',
-    description: 'Learn how to batch convert multiple SVG files to PNG format. Compare tools, scripts, and methods for efficient bulk SVG to PNG conversion.',
-    keywords: ['batch svg to png', 'bulk svg to png', 'convert multiple svg to png', 'svg to png batch', 'mass convert svg'],
-    searchVolume: 1300,
-    schemaType: 'HowToGuide',
-    priority: 0.55,
-    relatedPages: ['/convert/svg-to-png', '/learn/convert-svg-to-png-windows', '/tools/svg-optimizer'],
-    faqQuestions: [
-      {
-        question: 'How do I convert multiple SVG files to PNG at once?',
-        answer: 'Use command-line tools like ImageMagick, desktop software like Inkscape with batch processing, or our online converter for smaller batches.'
-      },
-      {
-        question: 'Can I automate SVG to PNG conversion?',
-        answer: 'Yes, you can automate conversions using scripts with ImageMagick, Node.js libraries, or Python with cairosvg.'
       }
     ]
   },

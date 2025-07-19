@@ -49,11 +49,8 @@ export function PopularConversions({
               >
                 <Card className="h-full hover:shadow-lg hover:border-primary transition-all">
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-start mb-2">
                       <Zap className="w-5 h-5 text-primary" />
-                      {converter.searchVolume > 30000 && (
-                        <Badge variant="secondary" className="text-xs">Hot</Badge>
-                      )}
                     </div>
                     <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
                       {converter.fromFormat} to {converter.toFormat}
@@ -84,7 +81,7 @@ export function PopularConversions({
                   <Link
                     key={converter.id}
                     href={`/convert/${converter.urlSlug}`}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center">
                       <span className="text-sm font-medium text-muted-foreground mr-3">
@@ -115,7 +112,7 @@ export function PopularConversions({
                   <Link
                     key={converter.id}
                     href={`/convert/${converter.urlSlug}`}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center">
                       <span className="text-sm font-medium text-muted-foreground mr-3">
@@ -135,7 +132,7 @@ export function PopularConversions({
           </Card>
 
           {/* AI-Ready */}
-          <Card className="border-violet-200 bg-gradient-to-br from-violet-50/50 to-purple-50/50 dark:from-violet-900/10 dark:to-purple-900/10">
+          <Card className="border-violet-200 bg-gradient-to-br from-violet-50/50 to-purple-50/50">
             <CardHeader>
               <CardTitle className="flex items-center text-lg">
                 <Wand2 className="w-5 h-5 mr-2 text-violet-600" />
@@ -148,7 +145,7 @@ export function PopularConversions({
                   <Link
                     key={converter.id}
                     href={`/convert/${converter.urlSlug}`}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors"
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-violet-50 transition-colors"
                   >
                     <span className="text-sm font-medium">
                       {converter.title}
@@ -157,12 +154,12 @@ export function PopularConversions({
                   </Link>
                 ))}
                 <Link
-                  href="/ai-icon-generator"
+                  href="/"
                   className="block mt-4"
                 >
                   <Button 
                     variant="secondary" 
-                    className="w-full bg-violet-100 hover:bg-violet-200 dark:bg-violet-800 dark:hover:bg-violet-700"
+                    className="w-full bg-violet-100 hover:bg-violet-200"
                   >
                     Try AI Generator
                     <Wand2 className="w-4 h-4 ml-2" />
@@ -174,7 +171,7 @@ export function PopularConversions({
         </div>
 
         {/* Features Bar */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-lg">
           <div className="flex items-center space-x-3">
             <Clock className="w-8 h-8 text-primary" />
             <div>
@@ -186,7 +183,7 @@ export function PopularConversions({
             <Shield className="w-8 h-8 text-primary" />
             <div>
               <h4 className="font-semibold">100% Secure</h4>
-              <p className="text-sm text-muted-foreground">Files never leave your device</p>
+              <p className="text-sm text-muted-foreground">Your privacy is protected</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">

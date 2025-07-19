@@ -39,7 +39,7 @@ export function InternalLinks({ config }: InternalLinksProps) {
           <CardContent>
             <Link 
               href={`/convert/${reverseConverter.urlSlug}`}
-              className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition-shadow"
+              className="flex items-center justify-between p-4 bg-white dark:bg-gray-50 rounded-lg hover:shadow-md transition-shadow"
             >
               <div>
                 <h4 className="font-semibold">{reverseConverter.title}</h4>
@@ -76,11 +76,6 @@ export function InternalLinks({ config }: InternalLinksProps) {
                         {getContextualLinkText(config, converter, 'natural')}
                       </p>
                     </div>
-                    {converter.searchVolume > 10000 && (
-                      <Badge variant="secondary" className="ml-2">
-                        Popular
-                      </Badge>
-                    )}
                   </div>
                 </Link>
               ))}

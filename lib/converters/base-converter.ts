@@ -314,7 +314,6 @@ export abstract class BaseConverter implements Converter {
       mp4: 'video/mp4',
       html: 'text/html',
       ttf: 'font/ttf',
-      heic: 'image/heic',
       emf: 'image/x-emf',
       wmf: 'image/x-wmf'
     }

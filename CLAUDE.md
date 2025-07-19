@@ -516,7 +516,6 @@ cat ../svgaibackup/rules.txt
 
 #### Content Creation Sub-Agent
 ```
-"CRITICAL: First read /mnt/a/svgaibackup/rules.txt and adhere to all rules.
 
 Research and write MDX content for 'png to svg converter':
 - Target keyword: 'png to svg' (40,500 searches/month)

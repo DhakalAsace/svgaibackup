@@ -52,8 +52,8 @@ export const emfToSvgHandler: ConversionHandler = async (
       ? Buffer.from(input, 'base64') 
       : input
 
-    // Basic EMF validation
-    validateEmfFile(buffer)
+    // Skip client-side EMF validation - let CloudConvert handle file validation
+    // validateEmfFile(buffer)
 
     // Report initial progress
     if (options.onProgress) {
@@ -78,6 +78,13 @@ export const emfToSvgHandler: ConversionHandler = async (
         }
       }
     )
+
+    if (!result.data) {
+      throw new ConversionError(
+        'CloudConvert EMF to SVG returned no data',
+        'CLOUDCONVERT_NO_DATA'
+      )
+    }
 
     // Ensure we return string data for SVG
     const svgData = typeof result.data === 'string' 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Path commands demonstration from svg-file-format.mdx -->
+<!-- Shows various path commands for creating complex shapes -->
+<svg width="200" height="200" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rectangle using path commands -->
+  <path d="M10 10 H 90 V 90 H 10 Z" fill="transparent" stroke="black" stroke-width="2"/>
+  
+  <!-- Heart shape using curves -->
+  <path d="M50 25 C50 10, 70 10, 70 25 C70 10, 90 10, 90 25 Q90 40, 50 70 Q10 40, 10 25 C10 10, 30 10, 30 25 C30 10, 50 10, 50 25 Z" 
+        fill="#e74c3c" transform="scale(0.8) translate(12, 5)"/>
+</svg>

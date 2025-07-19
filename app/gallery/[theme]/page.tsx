@@ -419,7 +419,7 @@ export default async function GalleryThemePage({ params }: GalleryPageProps) {
   const relatedKeywords = [...theme.keywords, theme.title.toLowerCase().split(' ')[0]]
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <GalleryPageEnhanced theme={theme} />
     </div>
   )

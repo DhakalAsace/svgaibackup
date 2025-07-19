@@ -32,7 +32,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/tools/svg-to-video" className="text-sm text-secondary/70 hover:text-primary">
-                  SVG to Video
+                  SVG to MP4 Converter
                 </Link>
               </li>
               <li>
@@ -114,12 +114,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-sm text-secondary/70 hover:text-primary">
+                <Link href="/privacy" className="text-sm text-secondary/70 hover:text-primary">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-sm text-secondary/70 hover:text-primary">
+                <Link href="/terms" className="text-sm text-secondary/70 hover:text-primary">
                   Terms of Service
                 </Link>
               </li>

@@ -130,8 +130,6 @@ import { svgToAiConverter } from './svg-to-ai'
 import { wmfToSvgConverter } from './wmf-to-svg'
 import { svgToWmfConverter } from './svg-to-wmf'
 import { emfToSvgConverter } from './emf-to-svg'
-import { heicToSvgConverter } from './heic-to-svg'
-import { svgToHeicConverter } from './svg-to-heic'
 
 // Export individual converters
 export {
@@ -192,11 +190,7 @@ export {
   svgToAiConverter,
   wmfToSvgConverter,
   svgToWmfConverter,
-  emfToSvgConverter,
-  
-  // HEIC converters
-  heicToSvgConverter,
-  svgToHeicConverter
+  emfToSvgConverter
 }
 
 // Export handler functions directly for convenience
@@ -220,7 +214,8 @@ export { imageToSvgHandler } from './image-to-svg'
 export { svgOptimizerHandler } from './svg-optimizer'
 export { svgToBase64Handler } from './svg-to-base64'
 export { epsToSvgHandler } from './eps-to-svg'
-export { aiToSvgHandler } from './ai-to-svg'
+// Note: AI to SVG handler is server-side only, use client-wrapper for client-side
+// export { aiToSvgHandler } from './ai-to-svg'
 export { dxfToSvgHandler } from './dxf-to-svg'
 export { stlToSvgHandler } from './stl-to-svg'
 export { svgToAvifHandler } from './svg-to-avif'
@@ -238,8 +233,6 @@ export { svgToAiHandler } from './svg-to-ai'
 export { wmfToSvgHandler } from './wmf-to-svg'
 export { svgToWmfHandler } from './svg-to-wmf'
 export { emfToSvgHandler } from './emf-to-svg'
-export { heicToSvgHandler } from './heic-to-svg'
-export { svgToHeicHandler } from './svg-to-heic'
 
 // Create and export a pre-configured registry with all converters
 import { converterRegistry } from './registry'
@@ -284,9 +277,7 @@ const converters = [
   svgToAiConverter,
   wmfToSvgConverter,
   svgToWmfConverter,
-  emfToSvgConverter,
-  heicToSvgConverter,
-  svgToHeicConverter
+  emfToSvgConverter
 ]
 
 // Register all converters
@@ -344,7 +335,7 @@ export const SUPPORTED_FORMATS = {
   FONT: ['ttf'] as const,
   WEB: ['html'] as const,
   WINDOWS: ['emf', 'wmf'] as const,
-  ALL: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'svg', 'pdf', 'ico', 'tiff', 'eps', 'ai', 'dxf', 'stl', 'avif', 'cdr', 'mp4', 'html', 'ttf', 'emf', 'wmf', 'heic'] as const
+  ALL: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'svg', 'pdf', 'ico', 'tiff', 'eps', 'ai', 'dxf', 'stl', 'avif', 'cdr', 'mp4', 'html', 'ttf', 'emf', 'wmf'] as const
 } as const
 
 // Export mime type mappings
@@ -369,8 +360,7 @@ export const MIME_TYPES = {
   'html': 'text/html',
   'ttf': 'font/ttf',
   'emf': 'image/x-emf',
-  'wmf': 'image/x-wmf',
-  'heic': 'image/heic'
+  'wmf': 'image/x-wmf'
 } as const
 
 // Export file extension mappings
@@ -393,8 +383,7 @@ export const FILE_EXTENSIONS = {
   'text/html': 'html',
   'font/ttf': 'ttf',
   'image/x-emf': 'emf',
-  'image/x-wmf': 'wmf',
-  'image/heic': 'heic'
+  'image/x-wmf': 'wmf'
 } as const
 
 // Default export with all major exports grouped

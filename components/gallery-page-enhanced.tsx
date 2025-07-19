@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
-import { Download, Search, Sparkles, Grid, List, Info, Zap, FileDown, Edit, Share2, Heart, TrendingUp, Clock, Users, Filter, SortAsc, ChevronRight, Eye, Palette, Copy, X } from "lucide-react"
+import { Download, Search, Sparkles, Grid, List, Info, Zap, FileDown, Edit, Share2, Heart, TrendingUp, Clock, Users, Filter, SortAsc, ChevronRight, Palette, Copy, X } from "lucide-react"
 import { GalleryTheme, getRelatedThemes } from "@/app/gallery/gallery-config"
 import { getGallerySVGs, getSVGFullPath, galleryFolderMap, type GallerySVG } from "@/app/gallery/gallery-data"
 import { Button } from "@/components/ui/button"
@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { toast } from "@/components/ui/use-toast"
 import SVGPreviewModal from "./gallery/svg-preview-modal"
 import { InternalLinksEnhanced } from "@/components/internal-links-enhanced"
 import LazySVG from "@/components/lazy-svg"
@@ -189,10 +190,10 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
   const styleOptions = getAllStyles()
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       {/* Professional Breadcrumb Navigation */}
       <nav aria-label="Breadcrumb" className="border-b bg-gradient-to-r from-muted/50 to-muted/30">
-        <div className="container px-6 py-4">
+        <div className="container px-4 py-4 sm:px-6">
           <ol className="flex items-center space-x-2 text-sm">
             <li>
               <Link href="/" className="text-muted-foreground transition-colors hover:text-foreground">
@@ -217,7 +218,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
 
       {/* Enhanced Hero Section */}
       <section className={`relative overflow-hidden ${styles.hero}`}>
-        <div className="container relative z-10 px-6 py-16 md:py-24">
+        <div className="container relative z-10 px-4 py-16 sm:px-6 md:py-24">
           <div className="mx-auto max-w-5xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium">
               <TrendingUp className="h-4 w-4 text-primary" />
@@ -230,7 +231,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
               {theme.description}
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/ai-icon-generator">
+              <Link href="/">
                 <Button size="lg" className={`gap-2 px-8 py-6 text-lg ${styles.ctaButton}`}>
                   <Sparkles className="h-5 w-5" />
                   Create Custom {theme.title.split(" ")[0]} with AI
@@ -250,20 +251,10 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
         </div>
       </section>
 
-      {/* Professional Alert Section */}
-      <section className="container px-6 py-8">
-        <Alert className="mx-auto max-w-4xl border-primary/20 bg-primary/5">
-          <Zap className="h-5 w-5 text-primary" />
-          <AlertDescription className="text-base">
-            <strong className="font-semibold">New Feature Coming Soon:</strong> Upload and share your own {theme.title.split(" ")[0].toLowerCase()} designs with our community! 
-            For now, enjoy our curated collection or create custom designs with AI.
-          </AlertDescription>
-        </Alert>
-      </section>
 
       {/* Enhanced Search, Filter, and View Controls */}
-      <section className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container px-6 py-6">
+      <section className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 overflow-x-hidden">
+        <div className="container px-4 py-6 sm:px-6">
           <div className="mx-auto max-w-6xl">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex flex-1 gap-4">
@@ -317,7 +308,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
       </section>
 
       {/* Enhanced SVG Gallery */}
-      <section id="gallery" className={`container px-6 pb-20 pt-12 ${styles.section}`}>
+      <section id="gallery" className={`container px-4 pb-20 pt-12 sm:px-6 ${styles.section}`}>
         <div className="mx-auto max-w-7xl">
           {filteredItems.length === 0 ? (
             <Card className="mx-auto max-w-2xl overflow-hidden">
@@ -346,7 +337,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                       Clear Search
                     </Button>
                   )}
-                  <Link href="/ai-icon-generator">
+                  <Link href="/">
                     <Button className="gap-2" size="lg">
                       <Sparkles className="h-4 w-4" />
                       Create with AI Instead
@@ -368,10 +359,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                       <GalleryItem
                         item={item}
                         onClick={() => openPreviewModal(item)}
-                        onViewClick={(e) => {
-                          e.stopPropagation()
-                          openPreviewModal(item)
-                        }}
                       />
                     </div>
                   )}
@@ -413,29 +400,42 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                           <div className="p-5">
                             <h3 className="mb-2 font-semibold text-foreground line-clamp-1">{item.title}</h3>
                             <p className="mb-4 text-sm text-muted-foreground line-clamp-2">{item.description}</p>
-                            <div className="flex gap-2">
+                            <div className="flex">
                               <Button
                                 size="sm"
-                                variant="outline"
-                                className="flex-1 gap-2"
-                                onClick={(e) => {
+                                className="w-full gap-2"
+                                onClick={async (e) => {
                                   e.stopPropagation()
-                                  openPreviewModal(item)
+                                  // Download the SVG
+                                  try {
+                                    const response = await fetch(item.svgPath)
+                                    const svgContent = await response.text()
+                                    const blob = new Blob([svgContent], { type: 'image/svg+xml' })
+                                    const url = URL.createObjectURL(blob)
+                                    const a = document.createElement('a')
+                                    a.href = url
+                                    a.download = item.filename
+                                    document.body.appendChild(a)
+                                    a.click()
+                                    document.body.removeChild(a)
+                                    URL.revokeObjectURL(url)
+                                    toast({
+                                      title: "Downloaded!",
+                                      description: `${item.filename} has been downloaded successfully.`
+                                    })
+                                  } catch (error) {
+                                    console.error('Download failed:', error)
+                                    toast({
+                                      title: "Download failed",
+                                      description: "Please try again.",
+                                      variant: "destructive"
+                                    })
+                                  }
                                 }}
                               >
-                                <Eye className="h-4 w-4" />
-                                Preview
+                                <Download className="h-4 w-4" />
+                                Download
                               </Button>
-                              <Link href="/ai-icon-generator" className="flex-1">
-                                <Button 
-                                  size="sm" 
-                                  className="w-full gap-2"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                  Customize
-                                </Button>
-                              </Link>
                             </div>
                           </div>
                         </CardContent>
@@ -505,29 +505,42 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center">
                         <Button
                           size="default"
-                          variant="outline"
                           className="gap-2"
-                          onClick={(e) => {
+                          onClick={async (e) => {
                             e.stopPropagation()
-                            openPreviewModal(item)
+                            // Download the SVG
+                            try {
+                              const response = await fetch(item.svgPath)
+                              const svgContent = await response.text()
+                              const blob = new Blob([svgContent], { type: 'image/svg+xml' })
+                              const url = URL.createObjectURL(blob)
+                              const a = document.createElement('a')
+                              a.href = url
+                              a.download = item.filename
+                              document.body.appendChild(a)
+                              a.click()
+                              document.body.removeChild(a)
+                              URL.revokeObjectURL(url)
+                              toast({
+                                title: "Downloaded!",
+                                description: `${item.filename} has been downloaded successfully.`
+                              })
+                            } catch (error) {
+                              console.error('Download failed:', error)
+                              toast({
+                                title: "Download failed",
+                                description: "Please try again.",
+                                variant: "destructive"
+                              })
+                            }
                           }}
                         >
-                          <Eye className="h-4 w-4" />
-                          View
+                          <Download className="h-4 w-4" />
+                          Download
                         </Button>
-                        <Link href="/ai-icon-generator">
-                          <Button 
-                            size="default" 
-                            className="gap-2"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Edit className="h-4 w-4" />
-                            Customize
-                          </Button>
-                        </Link>
                       </div>
                     </CardContent>
                   </Card>
@@ -556,7 +569,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
 
       {/* Professional Benefits Section */}
       <section className="border-t bg-gradient-to-b from-muted/20 to-background">
-        <div className="container px-6 py-20">
+        <div className="container px-4 py-20 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <h2 className="mb-12 text-center text-3xl font-bold tracking-tight">
               Why Choose {theme.keywords[0]} Graphics?
@@ -581,7 +594,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
 
       {/* Professional AI CTA Section */}
       <section className="relative overflow-hidden border-t bg-gradient-to-br from-primary/5 via-background to-primary/5">
-        <div className="container relative z-10 px-6 py-20">
+        <div className="container relative z-10 px-4 py-20 sm:px-6">
           <div className="mx-auto max-w-4xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium">
               <Sparkles className="h-4 w-4 text-primary" />
@@ -607,7 +620,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
             </div>
             
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/ai-icon-generator">
+              <Link href="/">
                 <Button size="lg" className={`gap-2 px-8 py-6 text-lg ${styles.ctaButton}`}>
                   <Sparkles className="h-5 w-5" />
                   Try AI Generator Now
@@ -630,7 +643,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
 
       {/* Professional Resources Grid */}
       <section className="border-t bg-muted/20">
-        <div className="container px-6 py-20">
+        <div className="container px-4 py-20 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <h2 className="mb-12 text-center text-3xl font-bold tracking-tight">
               Essential Tools & Resources
@@ -694,7 +707,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
       {/* Related Collections with Enhanced Design */}
       {relatedThemes.length > 0 && (
         <section className="border-t">
-          <div className="container px-6 py-20">
+          <div className="container px-4 py-20 sm:px-6">
             <h2 className="mb-12 text-center text-3xl font-bold tracking-tight">
               Explore Related Collections
             </h2>
@@ -713,10 +726,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                       <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
                         {relatedTheme.description}
                       </p>
-                      <div className="flex items-center justify-between">
-                        <Badge variant="outline" className="text-xs">
-                          {(relatedTheme.searchVolume / 1000).toFixed(1)}K/mo
-                        </Badge>
+                      <div className="flex items-center justify-end">
                         <span className="text-xs text-primary opacity-0 transition-opacity group-hover:opacity-100">
                           View collection →
                         </span>

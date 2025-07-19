@@ -75,9 +75,16 @@ async function loadConverter(from: ImageFormat, to: ImageFormat): Promise<Conver
         return gifToSvgHandler
         
       case 'svg-to-gif':
-        const { svgToGifHandler } = await import('./svg-to-gif')
-        converterMap.set(key, svgToGifHandler)
-        return svgToGifHandler
+        console.log(`[client-wrapper] Loading SVG to GIF converter...`)
+        try {
+          const { svgToGifHandler } = await import('./svg-to-gif-client')
+          console.log(`[client-wrapper] SVG to GIF handler loaded successfully`)
+          converterMap.set(key, svgToGifHandler)
+          return svgToGifHandler
+        } catch (svgGifError) {
+          console.error(`[client-wrapper] Failed to load SVG to GIF converter:`, svgGifError)
+          throw svgGifError
+        }
         
       case 'bmp-to-svg':
         const { bmpToSvgHandler } = await import('./bmp-to-svg')
@@ -142,7 +149,7 @@ async function loadConverter(from: ImageFormat, to: ImageFormat): Promise<Conver
       case 'ai-to-svg':
         console.log(`[client-wrapper] Loading AI to SVG converter...`)
         try {
-          const { aiToSvgHandler } = await import('./ai-to-svg')
+          const { aiToSvgHandler } = await import('./ai-to-svg-client')
           console.log(`[client-wrapper] AI to SVG handler loaded successfully`)
           converterMap.set(key, aiToSvgHandler)
           return aiToSvgHandler
@@ -197,9 +204,16 @@ async function loadConverter(from: ImageFormat, to: ImageFormat): Promise<Conver
         return htmlToSvgHandler
         
       case 'avif-to-svg':
-        const { avifToSvgHandler } = await import('./avif-to-svg')
-        converterMap.set(key, avifToSvgHandler)
-        return avifToSvgHandler
+        console.log(`[client-wrapper] Loading AVIF to SVG converter...`)
+        try {
+          const { avifToSvgHandler } = await import('./avif-to-svg-client')
+          console.log(`[client-wrapper] AVIF to SVG handler loaded successfully`)
+          converterMap.set(key, avifToSvgHandler)
+          return avifToSvgHandler
+        } catch (avifError) {
+          console.error(`[client-wrapper] Failed to load AVIF to SVG converter:`, avifError)
+          throw avifError
+        }
         
       case 'ttf-to-svg':
         const { ttfToSvgHandler } = await import('./ttf-to-svg')
@@ -212,9 +226,16 @@ async function loadConverter(from: ImageFormat, to: ImageFormat): Promise<Conver
         return svgToHtmlHandler
         
       case 'svg-to-emf':
-        const { svgToEmfHandler } = await import('./svg-to-emf')
-        converterMap.set(key, svgToEmfHandler)
-        return svgToEmfHandler
+        console.log(`[client-wrapper] Loading SVG to EMF converter...`)
+        try {
+          const { svgToEmfHandler } = await import('./svg-to-emf-client')
+          console.log(`[client-wrapper] SVG to EMF handler loaded successfully`)
+          converterMap.set(key, svgToEmfHandler)
+          return svgToEmfHandler
+        } catch (svgEmfError) {
+          console.error(`[client-wrapper] Failed to load SVG to EMF converter:`, svgEmfError)
+          throw svgEmfError
+        }
         
       case 'svg-to-ai':
         const { svgToAiHandler } = await import('./svg-to-ai')
@@ -222,29 +243,40 @@ async function loadConverter(from: ImageFormat, to: ImageFormat): Promise<Conver
         return svgToAiHandler
         
       case 'wmf-to-svg':
-        const { wmfToSvgHandler } = await import('./wmf-to-svg')
-        converterMap.set(key, wmfToSvgHandler)
-        return wmfToSvgHandler
+        console.log(`[client-wrapper] Loading WMF to SVG converter...`)
+        try {
+          const { wmfToSvgHandler } = await import('./wmf-to-svg-client')
+          console.log(`[client-wrapper] WMF to SVG handler loaded successfully`)
+          converterMap.set(key, wmfToSvgHandler)
+          return wmfToSvgHandler
+        } catch (wmfError) {
+          console.error(`[client-wrapper] Failed to load WMF to SVG converter:`, wmfError)
+          throw wmfError
+        }
         
       case 'svg-to-wmf':
-        const { svgToWmfHandler } = await import('./svg-to-wmf')
-        converterMap.set(key, svgToWmfHandler)
-        return svgToWmfHandler
+        console.log(`[client-wrapper] Loading SVG to WMF converter...`)
+        try {
+          const { svgToWmfHandler } = await import('./svg-to-wmf-client')
+          console.log(`[client-wrapper] SVG to WMF handler loaded successfully`)
+          converterMap.set(key, svgToWmfHandler)
+          return svgToWmfHandler
+        } catch (svgWmfError) {
+          console.error(`[client-wrapper] Failed to load SVG to WMF converter:`, svgWmfError)
+          throw svgWmfError
+        }
         
       case 'emf-to-svg':
-        const { emfToSvgHandler } = await import('./emf-to-svg')
-        converterMap.set(key, emfToSvgHandler)
-        return emfToSvgHandler
-        
-      case 'heic-to-svg':
-        const { heicToSvgHandler } = await import('./heic-to-svg')
-        converterMap.set(key, heicToSvgHandler)
-        return heicToSvgHandler
-        
-      case 'svg-to-heic':
-        const { svgToHeicHandler } = await import('./svg-to-heic')
-        converterMap.set(key, svgToHeicHandler)
-        return svgToHeicHandler
+        console.log(`[client-wrapper] Loading EMF to SVG converter...`)
+        try {
+          const { emfToSvgHandler } = await import('./emf-to-svg-client')
+          console.log(`[client-wrapper] EMF to SVG handler loaded successfully`)
+          converterMap.set(key, emfToSvgHandler)
+          return emfToSvgHandler
+        } catch (emfError) {
+          console.error(`[client-wrapper] Failed to load EMF to SVG converter:`, emfError)
+          throw emfError
+        }
         
       default:
         console.warn(`No converter found for ${from} to ${to}`)

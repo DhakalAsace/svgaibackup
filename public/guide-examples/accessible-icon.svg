@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Accessible icon example from svg-file.mdx and convert-png-to-svg.mdx -->
+<!-- Shows proper accessibility attributes -->
+<svg role="img" aria-labelledby="title desc" width="48" height="48" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <title id="title">Home Icon</title>
+  <desc id="desc">A house-shaped icon representing the home or main page</desc>
+  <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>
+</svg>

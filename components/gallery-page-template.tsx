@@ -22,7 +22,7 @@ interface SVGItem {
   downloads: number
 }
 
-// Sample SVG data - in production, this would come from a database or API
+// Sample SVG data - in production, this would come from our curated collection
 function generateSampleSVGs(theme: GalleryTheme): SVGItem[] {
   const baseShapes = {
     heart: `<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"/>`,
@@ -67,7 +67,7 @@ export default function GalleryPageTemplate({ theme }: GalleryPageTemplateProps)
   const relatedThemes = getRelatedThemes(theme.slug)
 
   useEffect(() => {
-    // Generate sample SVGs - in production, fetch from API
+    // Generate sample SVGs - in production, load from gallery collection
     const items = generateSampleSVGs(theme)
     setSvgItems(items)
     setFilteredItems(items)
@@ -98,7 +98,7 @@ export default function GalleryPageTemplate({ theme }: GalleryPageTemplateProps)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-background to-muted/20">
       {/* Hero Section */}
       <section className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container px-4 py-12 md:py-20">
@@ -254,7 +254,7 @@ export default function GalleryPageTemplate({ theme }: GalleryPageTemplateProps)
                 </Card>
               ))}
             </div>
-            <Link href="/ai-icon-generator" className="mt-8 inline-block">
+            <Link href="/" className="mt-8 inline-block">
               <Button size="lg" className="gap-2">
                 <Sparkles className="h-5 w-5" />
                 Try AI Generator Now

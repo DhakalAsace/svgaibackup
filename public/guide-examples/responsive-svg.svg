@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Responsive SVG example from svg-file.mdx -->
+<!-- Shows media query usage in SVG -->
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .desktop-only { display: block; }
+    .mobile-only { display: none; }
+    @media (max-width: 768px) {
+      .desktop-only { display: none; }
+      .mobile-only { display: block; }
+    }
+  </style>
+  <text class="desktop-only" x="50" y="50" text-anchor="middle" font-size="14" fill="#333">Full Text Version</text>
+  <text class="mobile-only" x="50" y="50" text-anchor="middle" font-size="18" fill="#333">Mobile</text>
+</svg>

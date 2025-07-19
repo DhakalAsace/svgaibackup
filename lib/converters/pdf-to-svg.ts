@@ -80,8 +80,8 @@ async function loadPdfJs(): Promise<any> {
     
     // Configure worker for client-side usage
     if (typeof window !== 'undefined') {
-      // Set worker source from CDN for browser
-      pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+      // Set worker source from local file with cache busting
+      pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js?v=5.3.93'
     }
     
     pdfjsLib = pdfjs

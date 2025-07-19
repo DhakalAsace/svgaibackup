@@ -294,7 +294,7 @@ export function AnalyticsDashboard() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Rate</span>
-                      <Badge variant="secondary">{converter.rate}%</Badge>
+                      <Badge variant="info">{converter.rate}%</Badge>
                     </div>
                   </div>
                 </CardContent>

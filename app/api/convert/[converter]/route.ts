@@ -14,6 +14,14 @@ import { webpToSvgHandler } from '@/lib/converters/webp-to-svg'
 import { svgToWebpHandler } from '@/lib/converters/svg-to-webp'
 import { bmpToSvgHandler } from '@/lib/converters/bmp-to-svg'
 import { svgToIcoHandler } from '@/lib/converters/svg-to-ico'
+import { aiToSvgHandler } from '@/lib/converters/ai-to-svg'
+import { svgToAiHandler } from '@/lib/converters/svg-to-ai'
+import { emfToSvgHandler } from '@/lib/converters/emf-to-svg'
+import { svgToEmfHandler } from '@/lib/converters/svg-to-emf'
+import { wmfToSvgHandler } from '@/lib/converters/wmf-to-svg'
+import { svgToWmfHandler } from '@/lib/converters/svg-to-wmf'
+import { avifToSvgHandler } from '@/lib/converters/avif-to-svg'
+import { svgToGifHandler } from '@/lib/converters/svg-to-gif'
 
 const logger = createLogger('converters:api')
 
@@ -77,6 +85,46 @@ const converters: Record<string, {
     from: 'svg',
     to: 'ico',
     handler: createConverterHandler('svg', 'ico', svgToIcoHandler)
+  },
+  'ai-to-svg': {
+    from: 'ai',
+    to: 'svg',
+    handler: createConverterHandler('ai', 'svg', aiToSvgHandler)
+  },
+  'svg-to-ai': {
+    from: 'svg',
+    to: 'ai',
+    handler: createConverterHandler('svg', 'ai', svgToAiHandler)
+  },
+  'emf-to-svg': {
+    from: 'emf',
+    to: 'svg',
+    handler: createConverterHandler('emf', 'svg', emfToSvgHandler)
+  },
+  'svg-to-emf': {
+    from: 'svg',
+    to: 'emf',
+    handler: createConverterHandler('svg', 'emf', svgToEmfHandler)
+  },
+  'wmf-to-svg': {
+    from: 'wmf',
+    to: 'svg',
+    handler: createConverterHandler('wmf', 'svg', wmfToSvgHandler)
+  },
+  'svg-to-wmf': {
+    from: 'svg',
+    to: 'wmf',
+    handler: createConverterHandler('svg', 'wmf', svgToWmfHandler)
+  },
+  'avif-to-svg': {
+    from: 'avif',
+    to: 'svg',
+    handler: createConverterHandler('avif', 'svg', avifToSvgHandler)
+  },
+  'svg-to-gif': {
+    from: 'svg',
+    to: 'gif',
+    handler: createConverterHandler('svg', 'gif', svgToGifHandler)
   }
 }
 
@@ -138,7 +186,7 @@ export async function GET(
   })
 
   return NextResponse.json(response, { 
-    status: Number(status),
+    status: 200,
     headers: handleCors(origin)
   })
 }

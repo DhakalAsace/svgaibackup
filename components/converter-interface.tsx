@@ -159,11 +159,11 @@ export default function ConverterInterface({
 
   // Premium features that could be highlighted
   const premiumFeatures = [
-    "Batch conversion of multiple files",
-    "Advanced quality settings",
-    "Custom watermark removal",
-    "Priority processing speed",
-    "Extended file size limits (500MB+)"
+    "Create custom SVGs with AI generation",
+    "Professional icon design tools",
+    "Animate and export SVGs as videos",
+    "Advanced SVG editing capabilities",
+    "Commercial-use design library"
   ]
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -430,11 +430,11 @@ export default function ConverterInterface({
             {/* Format Information Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="info" className="text-xs">
                   {config.fromFormat}
                 </Badge>
                 <span className="text-sm text-gray-400">→</span>
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="info" className="text-xs">
                   {config.toFormat}
                 </Badge>
                 <Tooltip>
@@ -448,8 +448,52 @@ export default function ConverterInterface({
                 </Tooltip>
               </div>
               <div className="flex items-center gap-2 text-xs text-gray-500">
-                <Shield className="h-3 w-3" />
-                <span>100% Private • Client-side Processing</span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-1 cursor-help">
+                      <Shield className="h-3 w-3" />
+                      <span>{
+                        // Server-processed converters
+                        (config.id.includes('ai-to-svg') || 
+                         config.id.includes('svg-to-ai') ||
+                         config.id.includes('emf-to-svg') || 
+                         config.id.includes('svg-to-emf') ||
+                         config.id.includes('wmf-to-svg') || 
+                         config.id.includes('svg-to-wmf') ||
+                         config.id.includes('avif-to-svg') || 
+                         config.id.includes('svg-to-gif')) 
+                          ? '🔒 Secure • We never save your files'
+                          : '🔒 100% Private • Files stay on your device'
+                      }</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    {(config.id.includes('ai-to-svg') || 
+                      config.id.includes('svg-to-ai') ||
+                      config.id.includes('emf-to-svg') || 
+                      config.id.includes('svg-to-emf') ||
+                      config.id.includes('wmf-to-svg') || 
+                      config.id.includes('svg-to-wmf') ||
+                      config.id.includes('avif-to-svg') || 
+                      config.id.includes('svg-to-gif')) ? (
+                      <div>
+                        <p className="font-semibold mb-1">Server Processing Required</p>
+                        <p>This format requires specialized conversion engines. Your file is:</p>
+                        <ul className="list-disc pl-4 mt-1 text-xs">
+                          <li>Sent over secure HTTPS</li>
+                          <li>Processed immediately</li>
+                          <li>Deleted right after conversion</li>
+                          <li>Never stored or logged</li>
+                        </ul>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="font-semibold mb-1">Browser-based Conversion</p>
+                        <p>This conversion happens entirely in your browser. Your file never leaves your device and we cannot access it.</p>
+                      </div>
+                    )}
+                  </TooltipContent>
+                </Tooltip>
               </div>
             </div>
 
@@ -461,7 +505,7 @@ export default function ConverterInterface({
                   dragActive 
                     ? "border-primary bg-primary/5 scale-[1.02] shadow-lg" 
                     : "border-gray-300 dark:border-gray-600",
-                  "hover:border-primary/50 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 relative overflow-hidden"
+                  "hover:border-primary/50 hover:bg-gray-50/50 dark:hover:bg-gray-100/50 relative overflow-hidden"
                 )}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -519,7 +563,7 @@ export default function ConverterInterface({
           {file && !result && (
             <div className="space-y-6">
               {/* File Info */}
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-100 rounded-lg">
                 <div className="flex items-center space-x-3">
                   <FileIcon className="h-8 w-8 text-gray-400" />
                   <div>
@@ -543,7 +587,7 @@ export default function ConverterInterface({
 
               {/* Preview */}
               {previewUrl && (
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                <div className="bg-gray-50 dark:bg-gray-100 rounded-lg p-4">
                   <img
                     src={previewUrl}
                     alt="Preview"
@@ -566,7 +610,7 @@ export default function ConverterInterface({
                 </button>
                 
                 {showOptions && (
-                  <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-100 rounded-lg">
                     {/* Quality Slider (for formats that support it) */}
                     {['jpg', 'jpeg', 'webp'].includes(config.toFormat.toLowerCase()) && (
                       <div>
@@ -728,7 +772,7 @@ export default function ConverterInterface({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="success" className="text-xs">
                       <CheckCircle2 className="h-3 w-3 mr-1" />
                       Ready
                     </Badge>
@@ -812,10 +856,10 @@ export default function ConverterInterface({
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Need More Power?
+                    Need More Creative Power?
                   </h3>
                   <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-                    Upgrade to our premium tools for advanced features like batch conversion, video export, and AI-powered SVG generation.
+                    Try our AI SVG generator to create custom designs instantly, or explore our professional icon tools and animation features.
                   </p>
                   <div className="space-y-2 mb-4">
                     {premiumFeatures.slice(0, 3).map((feature, index) => (
@@ -829,10 +873,10 @@ export default function ConverterInterface({
                     <Button
                       size="sm"
                       className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white"
-                      onClick={() => window.open('/pricing', '_blank')}
+                      onClick={() => window.open('/', '_blank')}
                     >
                       <Zap className="mr-2 h-3 w-3" />
-                      View Premium
+                      Create AI SVGs
                     </Button>
                     <Button
                       size="sm"
@@ -863,6 +907,25 @@ export default function ConverterInterface({
           )}
         </CardContent>
       </Card>
+
+      {/* Related Tools Section */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold text-center mb-4">Related Tools</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <a href="/ai-icon-generator" className="block p-4 border rounded-lg hover:shadow-lg transition-shadow">
+            <h3 className="font-semibold text-lg">AI Icon Generator</h3>
+            <p className="text-sm text-gray-600">Generate unique and consistent icon sets in seconds.</p>
+          </a>
+          <a href="/" className="block p-4 border-2 border-primary rounded-lg hover:shadow-xl transition-shadow bg-primary/5 hover:bg-primary/10">
+            <h3 className="font-semibold text-lg text-primary">AI SVG Generator</h3>
+            <p className="text-sm text-gray-600">Create stunning SVG graphics from text prompts.</p>
+          </a>
+          <a href="/tools/svg-to-video" className="block p-4 border rounded-lg hover:shadow-lg transition-shadow">
+            <h3 className="font-semibold text-lg">SVG to Video Converter</h3>
+            <p className="text-sm text-gray-600">Animate your SVGs and convert them to high-quality videos.</p>
+          </a>
+        </div>
+      </div>
     </div>
     </TooltipProvider>
   )

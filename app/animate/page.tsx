@@ -123,7 +123,7 @@ export default function AnimatePage() {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <Badge className="mb-4 border-green-500 text-green-600" variant="outline">
+          <Badge className="mb-4" variant="success">
             <Zap className="w-3 h-3 mr-1" />
             Free Tool
           </Badge>
@@ -282,16 +282,16 @@ export default function AnimatePage() {
         {/* Premium CTA */}
         <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20 mb-16">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Need to Convert SVG to Video?</CardTitle>
+            <CardTitle className="text-2xl">Need to Convert SVG to MP4?</CardTitle>
             <CardDescription className="text-base">
-              Transform your animated SVGs into MP4 videos for social media and presentations
+              Transform your animated SVGs into MP4 videos with AI-powered motion effects
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
             <Link href="/tools/svg-to-video">
               <Button size="lg" className="gap-2">
                 <Sparkles className="w-4 h-4" />
-                Try SVG to Video Converter
+                Try SVG to MP4 Converter
               </Button>
             </Link>
           </CardContent>
@@ -316,7 +316,7 @@ export default function AnimatePage() {
             <div>
               <h3 className="text-lg font-semibold mb-2">Can I export to video format?</h3>
               <p className="text-muted-foreground">
-                SVG export is free. For MP4/GIF video export, upgrade to our premium plan with our SVG to Video converter.
+                SVG export is free. To convert your animations to MP4 video with AI-powered motion, try our premium AI Video Generator.
               </p>
             </div>
             <div>

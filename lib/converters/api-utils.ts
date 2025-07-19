@@ -114,7 +114,10 @@ export async function applyRateLimit(
     logger.debug('Rate limit check passed', { clientId, remaining })
     return { success: true }
   } catch (error) {
-    logger.error('Rate limit check failed', { error })
+    logger.debug('Rate limit check failed (Redis unavailable), allowing request', { 
+      clientId, 
+      errorMessage: error instanceof Error ? error.message : 'Unknown error' 
+    })
     // Allow request if rate limiting fails
     return { success: true }
   }
@@ -182,8 +185,22 @@ export function createConversionResponse(
   const outputFilename = getOutputFilename(filename, fromFormat, toFormat)
   const mimeType = result.mimeType || getMimeTypeFromFormat(toFormat)
   
+  // Log what we're about to return
+  logger.info('Creating conversion response', {
+    converter: `${fromFormat}-to-${toFormat}`,
+    mimeType,
+    dataType: result.data instanceof Buffer ? 'Buffer' : 'string',
+    dataLength: result.data instanceof Buffer ? result.data.length : result.data.length,
+    outputFilename,
+    dataPreview: result.data instanceof Buffer ? 'Binary data' : typeof result.data === 'string' ? result.data.substring(0, 100) : 'Non-string data'
+  })
+  
   // For binary data, return as blob
   if (result.data instanceof Buffer) {
+    logger.info('Returning binary response', {
+      converter: `${fromFormat}-to-${toFormat}`,
+      size: result.data.length
+    })
     return new NextResponse(result.data, {
       headers: {
         'Content-Type': mimeType,
@@ -195,6 +212,11 @@ export function createConversionResponse(
   }
   
   // For text data (like SVG), return as text
+  logger.info('Returning text response', {
+    converter: `${fromFormat}-to-${toFormat}`,
+    size: Buffer.byteLength(result.data),
+    preview: typeof result.data === 'string' ? result.data.substring(0, 100) : 'Non-string data'
+  })
   return new NextResponse(result.data, {
     headers: {
       'Content-Type': mimeType,
@@ -331,7 +353,9 @@ export function createConverterHandler(
       }
 
       // Process file upload
-      const uploadResult = await processFileUpload(req, [fromFormat])
+      // For AI converter, also allow PDF files since AI files are PDF-based
+      const allowedFormats = fromFormat === 'ai' ? ['ai', 'pdf'] : [fromFormat]
+      const uploadResult = await processFileUpload(req, allowedFormats)
       if ('error' in uploadResult) {
         return uploadResult.error
       }
@@ -340,7 +364,13 @@ export function createConverterHandler(
 
       // Verify format
       if (format !== fromFormat) {
-        return badRequest(`Expected ${fromFormat} file, got ${format}`)
+        // Special case: AI files can come as PDF files
+        if (fromFormat === 'ai' && format === 'pdf') {
+          logger.info('PDF file uploaded to AI converter, will check if it is an AI file')
+          // Allow it to proceed, the AI converter will validate it properly
+        } else {
+          return badRequest(`Expected ${fromFormat} file, got ${format}`)
+        }
       }
 
       // Parse conversion options

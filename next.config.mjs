@@ -12,7 +12,7 @@ const nextConfig = {
   },
   // Remove complex user config import
   // Remove MDX for now
-  pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
   
   // Add webpack configuration to handle native modules
   webpack: (config, { isServer, webpack }) => {
@@ -49,6 +49,12 @@ const nextConfig = {
       );
     }
     
+    // Suppress SVGO webpack warning about dynamic imports
+    config.module = {
+      ...config.module,
+      exprContextCritical: false,
+    };
+    
     // Fix module resolution
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -63,6 +69,42 @@ const nextConfig = {
     }
     
     return config;
+  },
+
+  async redirects() {
+    return [
+      // Redirect learn pages to blog/guides
+      {
+        source: '/learn/:slug',
+        destination: '/blog/guides/:slug',
+        permanent: true,
+      },
+      // Consolidate JPG/JPEG converters
+      {
+        source: '/convert/jpeg-to-svg',
+        destination: '/convert/jpg-to-svg',
+        permanent: true,
+      },
+      {
+        source: '/convert/svg-to-jpeg',
+        destination: '/convert/svg-to-jpg',
+        permanent: true,
+      },
+
+      // Consolidate general converters into the best specific term
+      {
+        source: '/convert/svg-converter',
+        destination: '/convert/image-to-svg',
+        permanent: true,
+      },
+
+      // Redirect unsupported converters to the premium tool
+      {
+        source: '/convert/svg-to-mp4',
+        destination: '/tools/svg-to-video',
+        permanent: true,
+      },
+    ];
   },
 };
 

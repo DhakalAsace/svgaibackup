@@ -68,12 +68,6 @@ export function ConverterCard({
         
         {variant !== 'compact' && (
           <div className="flex items-center gap-4 mt-4 text-sm text-gray-500">
-            {searchVolume && (
-              <div className="flex items-center gap-1">
-                <Zap className="w-4 h-4" />
-                <span>{searchVolume.toLocaleString()} searches/mo</span>
-              </div>
-            )}
             {fromFormat && toFormat && (
               <div className="flex items-center gap-1">
                 <span className="font-medium">{fromFormat.toUpperCase()}</span>

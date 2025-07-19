@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Animated circle example from svg-file.mdx -->
+<!-- Simple animation using SMIL -->
+<svg width="200" height="200" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="5" fill="#e74c3c">
+    <animate attributeName="r" values="5;20;5" dur="2s" repeatCount="indefinite" />
+    <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite" />
+  </circle>
+</svg>

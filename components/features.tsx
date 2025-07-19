@@ -19,15 +19,6 @@ export default function Features() {
         "Our AI SVG generator transforms text descriptions into professional vector graphics in seconds with advanced AI technology.",
     },
     {
-      icon: <Play className="h-6 w-6 text-[#0084FF]" />,
-      title: "Free SVG Animation Tool",
-      description:
-        "Transform static SVGs into dynamic animations with our visual editor. No coding required!",
-      link: "/animate",
-      linkText: "Try Animation Tool",
-      isNew: true,
-    },
-    {
       icon: <Download className="h-6 w-6 text-[#0084FF]" />,
       title: "Multiple Export Options",
       description:

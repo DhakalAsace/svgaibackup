@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- SVG Filter Effects Showcase -->
+  <defs>
+    <!-- Blur Filter -->
+    <filter id="blur">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+    </filter>
+    
+    <!-- Drop Shadow -->
+    <filter id="dropshadow">
+      <feDropShadow dx="4" dy="4" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+    
+    <!-- Glow Effect -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Grayscale -->
+    <filter id="grayscale">
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    
+    <!-- Emboss -->
+    <filter id="emboss">
+      <feConvolveMatrix kernelMatrix="3 0 0 0 0 0 0 0 -3" divisor="1" bias="0.5"/>
+    </filter>
+    
+    <!-- Color Shift -->
+    <filter id="colorshift">
+      <feColorMatrix type="hueRotate" values="90"/>
+    </filter>
+    
+    <style>
+      .base-shape { fill: #4CAF50; }
+      .label { font-family: Arial, sans-serif; font-size: 14px; fill: #333; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="600" height="400" fill="#f5f5f5"/>
+  
+  <!-- Original -->
+  <g transform="translate(100, 80)">
+    <rect x="-40" y="-40" width="80" height="80" rx="10" class="base-shape"/>
+    <text x="0" y="60" text-anchor="middle" class="label">Original</text>
+  </g>
+  
+  <!-- Blur -->
+  <g transform="translate(250, 80)">
+    <rect x="-40" y="-40" width="80" height="80" rx="10" class="base-shape" filter="url(#blur)"/>
+    <text x="0" y="60" text-anchor="middle" class="label">Blur</text>
+  </g>
+  
+  <!-- Drop Shadow -->
+  <g transform="translate(400, 80)">
+    <rect x="-40" y="-40" width="80" height="80" rx="10" class="base-shape" filter="url(#dropshadow)"/>
+    <text x="0" y="60" text-anchor="middle" class="label">Drop Shadow</text>
+  </g>
+  
+  <!-- Glow -->
+  <g transform="translate(100, 220)">
+    <rect x="-40" y="-40" width="80" height="80" rx="10" class="base-shape" filter="url(#glow)"/>
+    <text x="0" y="60" text-anchor="middle" class="label">Glow</text>
+  </g>
+  
+  <!-- Grayscale -->
+  <g transform="translate(250, 220)">
+    <rect x="-40" y="-40" width="80" height="80" rx="10" fill="url(#gradient)" filter="url(#grayscale)"/>
+    <text x="0" y="60" text-anchor="middle" class="label">Grayscale</text>
+  </g>
+  
+  <!-- Color Shift -->
+  <g transform="translate(400, 220)">
+    <rect x="-40" y="-40" width="80" height="80" rx="10" class="base-shape" filter="url(#colorshift)"/>
+    <text x="0" y="60" text-anchor="middle" class="label">Hue Rotate</text>
+  </g>
+  
+  <!-- Gradient for grayscale demo -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4ecdc4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

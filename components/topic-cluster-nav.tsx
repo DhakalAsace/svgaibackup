@@ -174,11 +174,6 @@ export function TopicClusterNav({
                       className="block text-sm hover:text-primary transition-colors"
                     >
                       • {converter.fromFormat} to {converter.toFormat}
-                      {converter.searchVolume > 10000 && (
-                        <Badge variant="secondary" className="ml-2 text-xs">
-                          Popular
-                        </Badge>
-                      )}
                     </Link>
                   ))}
                   {cluster.converters.length > 3 && (

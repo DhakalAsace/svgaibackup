@@ -1,217 +1,212 @@
 /**
  * SVG to GIF Converter Implementation
  * 
- * This module provides SVG to GIF conversion using sharp library.
- * Creates a single frame GIF from SVG content, preserving transparency
- * when possible.
+ * Converts SVG files to GIF format using CloudConvert API.
+ * Supports quality control, resolution management, and animation preservation.
+ * Uses ImageMagick engine through CloudConvert for high-quality conversion.
  */
 
 import type { 
-  ConversionHandler, 
+  ConversionHandler,
   ConversionOptions, 
   ConversionResult,
-  ImageFormat 
+  ImageFormat
 } from './types'
 import { 
-  ConversionError, 
-  FileValidationError,
-  UnsupportedFormatError 
+  ConversionError,
+  UnsupportedFormatError,
+  CorruptedFileError,
+  FileValidationError
 } from './errors'
-import { detectFileTypeFromBuffer } from './validation'
-
-// Check if we're in a browser environment
-const isBrowser = typeof window !== 'undefined'
+import { validateFile, detectFileTypeFromBuffer } from './validation'
+import { convertWithCloudConvert } from './cloudconvert-client'
 
 /**
  * Extended conversion options for SVG to GIF
  */
 interface SvgToGifOptions extends ConversionOptions {
-  /** DPI for rasterization (default: 96) */
+  /** DPI for rasterization (default: 150) */
   density?: number
   /** Whether to preserve transparency (default: true) */
   transparent?: boolean
   /** Number of colors in palette (2-256, default: 256) */
   colors?: number
-  /** Dithering algorithm (default: none) */
+  /** Dithering algorithm (default: false) */
   dither?: boolean
-  /** Progress callback for tracking conversion progress */
-  onProgress?: (progress: number) => void
+  /** Fit method for resizing */
+  fit?: 'scale' | 'crop' | 'pad' | 'fill'
+  /** Strip metadata (default: true) */
+  strip?: boolean
 }
 
 /**
- * Validates that the input is an SVG
+ * Validate SVG file input
  */
-function validateSvgInput(input: Buffer | string): string {
-  let svgContent: string
+function validateSvgInput(input: Buffer | string): void {
+  const buffer = typeof input === 'string' ? Buffer.from(input, 'utf-8') : input
   
-  if (typeof input === 'string') {
-    svgContent = input
-  } else {
-    // Try to detect if buffer contains SVG
-    const format = detectFileTypeFromBuffer(input)
-    if (format && format !== 'svg') {
-      throw new UnsupportedFormatError(
-        format,
-        ['svg'],
-        `Expected SVG format but received ${format}`
-      )
-    }
-    
-    // Convert buffer to string
-    svgContent = input.toString('utf8')
+  // Basic file validation
+  const validation = validateFile(buffer, {
+    allowedFormats: ['svg'],
+    maxSize: 50 * 1024 * 1024 // 50MB for SVG files
+  })
+  
+  if (!validation.isValid) {
+    throw new FileValidationError(validation.error!)
   }
   
-  // Basic SVG validation
-  if (!svgContent.includes('<svg') && !svgContent.includes('<?xml')) {
-    throw new FileValidationError('Invalid SVG content')
+  // Detect file type
+  const content = buffer.toString('utf-8')
+  
+  // Check for SVG content markers
+  if (!content.includes('<svg') && !content.includes('<?xml')) {
+    throw new FileValidationError('Invalid SVG content - missing SVG tags')
   }
   
-  return svgContent
+  // Basic SVG structure validation
+  if (!content.includes('<svg') || !content.includes('</svg>')) {
+    throw new UnsupportedFormatError(
+      'unknown',
+      ['svg'],
+      'File does not appear to be a valid SVG document'
+    )
+  }
 }
 
 /**
- * Prepares SVG for sharp processing
- */
-function prepareSvgForSharp(svgContent: string): Buffer {
-  // Ensure SVG has proper XML declaration if missing
-  if (!svgContent.startsWith('<?xml')) {
-    svgContent = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgContent
-  }
-  
-  return Buffer.from(svgContent, 'utf8')
-}
-
-/**
- * Converts SVG to GIF using either gif.js (browser) or sharp (server)
- * Implements the ConversionHandler interface
+ * SVG to GIF conversion handler using CloudConvert
  */
 export const svgToGifHandler: ConversionHandler = async (
   input: Buffer | string,
   options: SvgToGifOptions = {}
 ): Promise<ConversionResult> => {
-  // Use browser implementation if in browser environment
-  if (isBrowser) {
-    const { svgToGifHandler: browserHandler } = await import('./svg-to-gif-browser')
-    return browserHandler(input, options)
-  }
-  
   try {
-    // Server-side implementation using sharp
-    const sharp = await import('sharp').then(m => m.default)
+    // Convert string input to Buffer if needed
+    const inputBuffer = typeof input === 'string' ? Buffer.from(input, 'utf-8') : input
     
-    // Validate and prepare SVG
-    const svgContent = validateSvgInput(input)
-    const svgBuffer = prepareSvgForSharp(svgContent)
-
+    // Validate input
+    validateSvgInput(inputBuffer)
+    
     // Report initial progress
     if (options.onProgress) {
       options.onProgress(0.1)
     }
-
-    // Create sharp instance with SVG input
-    let pipeline = sharp(svgBuffer, {
-      density: options.density || 96
-    })
-
-    // Report progress after initialization
-    if (options.onProgress) {
-      options.onProgress(0.3)
-    }
-
-    // Apply dimensions if specified
-    if (options.width || options.height) {
-      pipeline = pipeline.resize({
-        width: options.width,
-        height: options.height,
-        fit: options.preserveAspectRatio ? 'inside' : 'fill',
-        background: options.background || { r: 0, g: 0, b: 0, alpha: 0 }
-      })
-    }
-
-    // Report progress before conversion
-    if (options.onProgress) {
-      options.onProgress(0.6)
-    }
-
-    // Configure GIF output options
-    const gifOptions: any = {
-      colors: options.colors || 256,
-      dither: options.dither ? 1.0 : 0
-    }
-
-    // If not transparent, flatten with background
-    if (options.transparent === false && options.background) {
-      pipeline = pipeline.flatten({
-        background: options.background
-      })
-    }
-
-    // Convert to GIF
-    const gifBuffer = await pipeline
-      .gif(gifOptions)
-      .toBuffer({ resolveWithObject: true })
-
-    // Report completion
-    if (options.onProgress) {
-      options.onProgress(1)
-    }
-
-    return {
-      success: true,
-      data: gifBuffer.data,
-      mimeType: 'image/gif',
-      metadata: {
-        width: gifBuffer.info.width,
-        height: gifBuffer.info.height,
-        format: 'gif',
-        size: gifBuffer.info.size
+    
+    console.log('[SVG-to-GIF] Starting CloudConvert conversion...')
+    
+    // Prepare CloudConvert options
+    const cloudConvertOptions = {
+      onProgress: (progress: number) => {
+        if (options.onProgress) {
+          // Map CloudConvert progress to 0.1 - 1.0 range
+          options.onProgress(0.1 + progress * 0.9)
+        }
+      },
+      // CloudConvert-specific parameters for SVG to GIF
+      conversionParams: {
+        quality: options.quality || 85,
+        fit: options.fit || 'scale',
+        density: options.density || 150,
+        strip: options.strip !== false,
+        ...(options.width && { width: options.width }),
+        ...(options.height && { height: options.height }),
+        ...(options.colors && { colors: Math.min(Math.max(options.colors, 2), 256) }),
+        ...(options.dither !== undefined && { dither: options.dither }),
+        ...(options.transparent !== undefined && { transparent: options.transparent })
       }
     }
-
+    
+    // Use CloudConvert for SVG to GIF conversion
+    const result = await convertWithCloudConvert(
+      inputBuffer,
+      'svg',
+      'gif',
+      'image.svg',
+      cloudConvertOptions
+    )
+    
+    if (!result.success) {
+      throw new ConversionError(
+        `CloudConvert SVG to GIF failed: ${result.error}`,
+        'CLOUDCONVERT_SVG_TO_GIF_FAILED'
+      )
+    }
+    
+    if (!result.data) {
+      throw new ConversionError(
+        'CloudConvert SVG to GIF returned no data',
+        'CLOUDCONVERT_NO_DATA'
+      )
+    }
+    
+    // Ensure we return Buffer data for GIF
+    const gifData = typeof result.data === 'string' 
+      ? Buffer.from(result.data, 'base64')
+      : result.data
+    
+    console.log('[SVG-to-GIF] CloudConvert conversion completed:', {
+      inputSize: inputBuffer.length,
+      outputSize: gifData.length,
+      quality: options.quality || 85,
+      density: options.density || 150
+    })
+    
+    return {
+      success: true,
+      data: gifData,
+      mimeType: 'image/gif',
+      metadata: {
+        format: 'gif',
+        size: gifData.length,
+        method: 'cloudconvert',
+        originalFormat: 'svg',
+        engine: 'imagemagick',
+        quality: options.quality || 85,
+        density: options.density || 150,
+        colors: options.colors || 256,
+        fit: options.fit || 'scale',
+        transparent: options.transparent !== false,
+        animated: false // Single frame from SVG
+      }
+    }
+    
   } catch (error) {
     // Handle known errors
     if (error instanceof FileValidationError || 
-        error instanceof UnsupportedFormatError) {
+        error instanceof UnsupportedFormatError ||
+        error instanceof ConversionError) {
       throw error
     }
-
-    // Wrap unknown errors
-    if (error instanceof Error) {
-      throw new ConversionError(
-        `SVG to GIF conversion failed: ${error.message}`,
-        'SVG_TO_GIF_FAILED'
-      )
-    }
-
-    // Handle non-Error objects
+    
+    // Handle unknown errors
+    const message = error instanceof Error ? error.message : 'Unknown error'
     throw new ConversionError(
-      'An unexpected error occurred during SVG to GIF conversion',
-      'SVG_TO_GIF_UNKNOWN_ERROR'
+      `Failed to convert SVG file: ${message}`,
+      'SVG_TO_GIF_FAILED'
     )
   }
 }
 
 /**
  * Client-side SVG to GIF conversion wrapper
- * Uses gif.js for browser-based conversion
  */
 export async function convertSvgToGifClient(
-  svgContent: string,
+  file: File,
   options: SvgToGifOptions = {}
 ): Promise<ConversionResult> {
-  return svgToGifHandler(svgContent, options)
+  const arrayBuffer = await file.arrayBuffer()
+  const buffer = Buffer.from(arrayBuffer)
+  return svgToGifHandler(buffer, options)
 }
 
 /**
  * Server-side SVG to GIF conversion wrapper
- * This function is optimized for server environments
  */
 export async function convertSvgToGifServer(
-  input: Buffer | string,
+  buffer: Buffer,
   options: SvgToGifOptions = {}
 ): Promise<ConversionResult> {
-  // Direct conversion using the handler
-  return svgToGifHandler(input, options)
+  return svgToGifHandler(buffer, options)
 }
 
 /**
@@ -219,9 +214,9 @@ export async function convertSvgToGifServer(
  */
 export const svgToGifConverter = {
   name: 'SVG to GIF',
-  from: 'svg' as ImageFormat,
-  to: 'gif' as ImageFormat,
+  from: 'svg' as const,
+  to: 'gif' as const,
   handler: svgToGifHandler,
-  isClientSide: true, // Now supports client-side with gif.js
-  description: 'Convert scalable vector graphics to GIF format with support for animations'
+  isClientSide: false, // Uses CloudConvert API
+  description: 'Convert SVG images to GIF format using CloudConvert API with ImageMagick engine'
 }

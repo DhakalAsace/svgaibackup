@@ -538,12 +538,17 @@ export default function GuideAiIconCreation() {
 
         <div className="bg-primary/5 p-6 rounded-lg mt-12 text-center">
           <h3 className="text-2xl font-bold mb-3">Ready to put these techniques into practice?</h3>
-          <Link 
+          <a 
             href="/ai-icon-generator"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-white font-medium hover:bg-primary/90 transition-colors"
+            className="inline-block rounded-md px-8 py-3 text-base font-semibold transition-colors shadow-md text-white hover:bg-[#E55A2B]"
+            style={{ 
+              backgroundColor: '#FF6B35',
+              color: '#FFFFFF',
+              textDecoration: 'none'
+            }}
           >
             Try SVGAI.org's Free AI Icon Generator Now!
-          </Link>
+          </a>
         </div>
       </article>
 

@@ -27,7 +27,7 @@ export default function SVGOptimizerPage() {
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Hero Section */}
       <div className="text-center mb-12">
-        <Badge className="mb-4 border-green-500 text-green-600" variant="outline">
+        <Badge className="mb-4" variant="success">
           <Zap className="w-3 h-3 mr-1" />
           Free Tool
         </Badge>
@@ -58,9 +58,9 @@ export default function SVGOptimizerPage() {
         {/* CTA for AI Generation */}
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6 rounded-lg mb-8">
           <p className="text-sm text-muted-foreground mb-3">
-            Need custom optimized SVGs? Create them with AI
+            Skip the complexity - Generate SVGs with AI
           </p>
-          <Link href="/ai-icon-generator">
+          <Link href="/">
             <Button size="lg" className="gap-2">
               <Sparkles className="w-4 h-4" />
               Generate Optimized SVGs
@@ -456,11 +456,11 @@ export default function SVGOptimizerPage() {
                 <td className="text-center p-4 text-muted-foreground">✗</td>
               </tr>
               <tr className="border-b">
-                <td className="p-4">Batch Processing</td>
-                <td className="text-center p-4 text-muted-foreground">Coming soon</td>
+                <td className="p-4">Code Output</td>
                 <td className="text-center p-4"><Check className="w-5 h-5 text-green-500 mx-auto" /></td>
                 <td className="text-center p-4"><Check className="w-5 h-5 text-green-500 mx-auto" /></td>
-                <td className="text-center p-4"><Check className="w-5 h-5 text-green-500 mx-auto" /></td>
+                <td className="text-center p-4 text-muted-foreground">✗</td>
+                <td className="text-center p-4 text-muted-foreground">✗</td>
               </tr>
               <tr className="border-b">
                 <td className="p-4">Animation Support</td>
@@ -678,9 +678,9 @@ export default function SVGOptimizerPage() {
             </p>
           </div>
           <div>
-            <h3 className="text-xl font-semibold mb-2">Can I batch optimize multiple SVGs?</h3>
+            <h3 className="text-xl font-semibold mb-2">Can I optimize multiple SVGs at once?</h3>
             <p className="text-muted-foreground">
-              Currently, we process one file at a time for the best results and to provide detailed optimization feedback. Batch processing is on our roadmap and will be available soon for Pro users.
+              Currently, we process one file at a time for the best results and to provide detailed optimization feedback. This ensures each file gets the most appropriate optimization settings and you can review the results carefully.
             </p>
           </div>
           <div>

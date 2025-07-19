@@ -74,7 +74,7 @@ export const keywordMappings: KeywordMapping[] = [
         customCta: 'Convert SVG to PNG Online - Works on Windows!'
       },
       {
-        toolId: 'batch-svg-to-png',
+        toolId: 'svg-to-png',
         relevance: 'secondary',
         ctaVariant: 'standard',
         customCta: 'Need to Convert Multiple Files?'
@@ -252,12 +252,12 @@ export const keywordMappings: KeywordMapping[] = [
   },
   {
     keyword: 'batch-svg-to-png',
-    pageSlug: 'batch-svg-to-png',
+    pageSlug: 'svg-to-png-guide',
     searchVolume: 720,
     primaryFocus: 'Batch conversion guide',
     mappings: [
       {
-        toolId: 'batch-svg-to-png',
+        toolId: 'svg-to-png',
         relevance: 'primary',
         ctaVariant: 'prominent'
       },

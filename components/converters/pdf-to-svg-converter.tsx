@@ -72,14 +72,14 @@ export default function PdfToSvgConverter() {
         <div className="flex items-center gap-2">
           <Label className="text-sm font-medium">Conversion Method:</Label>
           <Badge variant={conversionMethod === 'client' ? 'default' : 'secondary'}>
-            {conversionMethod === 'client' ? 'Client-side (PDF.js)' : 'Server-side (CloudConvert)'}
+            {conversionMethod === 'client' ? 'Browser-based (PDF.js)' : 'Advanced Processing'}
           </Badge>
         </div>
       )}
 
       <div className="text-xs text-gray-500 space-y-1">
         <p>• Client-side: Fast, uses PDF.js library in your browser</p>
-        <p>• Server-side: Fallback using CloudConvert API for complex PDFs</p>
+        <p>• Advanced: Specialized processing for complex PDFs with embedded fonts</p>
         <p>• Automatic fallback ensures reliable conversion</p>
       </div>
     </div>

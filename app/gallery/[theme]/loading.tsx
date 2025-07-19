@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function GalleryThemeLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-background to-muted/20">
       <section className="border-b bg-background/95 backdrop-blur">
         <div className="container px-4 py-12 md:py-20">
           <div className="mx-auto max-w-4xl text-center space-y-6">

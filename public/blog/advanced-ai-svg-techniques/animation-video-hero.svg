@@ -1,0 +1,122 @@
+<svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="screenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f2937;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#374151;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="playGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f3f4f6;stop-opacity:0.9" />
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Floating particles -->
+  <circle cx="100" cy="100" r="4" fill="#ffffff" opacity="0.6">
+    <animate attributeName="cy" values="100;80;100" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="1100" cy="150" r="6" fill="#ffffff" opacity="0.4">
+    <animate attributeName="cy" values="150;130;150" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="200" cy="500" r="5" fill="#ffffff" opacity="0.5">
+    <animate attributeName="cy" values="500;480;500" dur="3.5s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Main video screen -->
+  <rect x="300" y="180" width="600" height="340" rx="20" fill="url(#screenGradient)" filter="url(#glow)"/>
+  
+  <!-- Screen border -->
+  <rect x="295" y="175" width="610" height="350" rx="25" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Play button -->
+  <circle cx="600" cy="350" r="45" fill="url(#playGradient)" opacity="0.9">
+    <animate attributeName="r" values="45;50;45" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <polygon points="585,335 585,365 615,350" fill="#7c3aed"/>
+  
+  <!-- Animation elements around screen -->
+  <g opacity="0.8">
+    <!-- Animated circle -->
+    <circle cx="200" cy="200" r="20" fill="#22c55e">
+      <animate attributeName="r" values="20;25;20" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Animated square -->
+    <rect x="980" y="200" width="40" height="40" fill="#3b82f6">
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="0 1000 220;360 1000 220" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    
+    <!-- Animated triangle -->
+    <polygon points="150,400 130,440 170,440" fill="#f59e0b">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+    </polygon>
+    
+    <!-- Animated line -->
+    <line x1="1000" y1="400" x2="1050" y2="400" stroke="#ec4899" stroke-width="4">
+      <animate attributeName="x2" values="1050;1080;1050" dur="2.5s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  
+  <!-- Title -->
+  <text x="600" y="120" font-family="Inter, Arial, sans-serif" font-size="52" font-weight="bold" 
+        text-anchor="middle" fill="#ffffff">
+    SVG Animation & Video Export
+  </text>
+  
+  <!-- Feature highlights -->
+  <g>
+    <!-- Left feature -->
+    <rect x="50" y="300" width="200" height="80" rx="10" fill="#ffffff" opacity="0.1"/>
+    <text x="150" y="325" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="bold" 
+          text-anchor="middle" fill="#ffffff">
+      AI-Powered Animation
+    </text>
+    <text x="150" y="350" font-family="Inter, Arial, sans-serif" font-size="14" 
+          text-anchor="middle" fill="#ffffff" opacity="0.8">
+      Intelligent motion generation
+    </text>
+    
+    <!-- Right feature -->
+    <rect x="950" y="300" width="200" height="80" rx="10" fill="#ffffff" opacity="0.1"/>
+    <text x="1050" y="325" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="bold" 
+          text-anchor="middle" fill="#ffffff">
+      Video Export
+    </text>
+    <text x="1050" y="350" font-family="Inter, Arial, sans-serif" font-size="14" 
+          text-anchor="middle" fill="#ffffff" opacity="0.8">
+      Universal compatibility
+    </text>
+  </g>
+  
+  <!-- Progress bar animation -->
+  <rect x="320" y="480" width="560" height="8" rx="4" fill="#ffffff" opacity="0.2"/>
+  <rect x="320" y="480" width="280" height="8" rx="4" fill="#22c55e">
+    <animate attributeName="width" values="0;560;0" dur="4s" repeatCount="indefinite"/>
+  </rect>
+  
+  <!-- Timeline indicator -->
+  <text x="600" y="510" font-family="Inter, Arial, sans-serif" font-size="14" 
+        text-anchor="middle" fill="#ffffff" opacity="0.7">
+    Rendering Animation...
+  </text>
+  
+  <!-- Brand -->
+  <text x="1050" y="580" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="600" 
+        text-anchor="middle" fill="#ffffff" opacity="0.8">
+    SVGai.org
+  </text>
+</svg>

@@ -392,7 +392,7 @@ export const learningModules = [
       {
         id: "batch-conversion",
         title: "Batch SVG to PNG Conversion",
-        slug: "batch-svg-to-png"
+        slug: "svg-to-png-guide"
       },
       {
         id: "png-to-svg",

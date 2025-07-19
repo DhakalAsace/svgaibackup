@@ -452,102 +452,7 @@ export function ConverterContentSections({ config, converterType }: ConverterCon
             </Card>
           </div>
           
-          {/* Code Examples */}
-          <Card className="mt-8 border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileCode className="w-5 h-5 text-purple-500" />
-                Integration Examples
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="javascript" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="javascript">JavaScript</TabsTrigger>
-                  <TabsTrigger value="python">Python</TabsTrigger>
-                  <TabsTrigger value="cli">CLI</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="javascript" className="mt-4">
-                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
-                    <pre className="text-sm">
-                      <code>{`// Convert ${converterType.from} to ${converterType.to} using our API
-const convertFile = async (file) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('format', '${converterType.to.toLowerCase()}');
-  
-  const response = await fetch('/api/convert', {
-    method: 'POST',
-    body: formData
-  });
-  
-  const blob = await response.blob();
-  return URL.createObjectURL(blob);
-};
-
-// Usage
-const input = document.getElementById('file-input');
-input.addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  const convertedUrl = await convertFile(file);
-  console.log('Converted file:', convertedUrl);
-});`}</code>
-                    </pre>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="python" className="mt-4">
-                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
-                    <pre className="text-sm">
-                      <code>{`# Convert ${converterType.from} to ${converterType.to} using Python
-import requests
-
-def convert_file(file_path, output_path):
-    with open(file_path, 'rb') as f:
-        files = {'file': f}
-        data = {'format': '${converterType.to.toLowerCase()}'}
-        
-        response = requests.post(
-            'https://svgai.org/api/convert',
-            files=files,
-            data=data
-        )
-    
-    with open(output_path, 'wb') as out:
-        out.write(response.content)
-    
-    return output_path
-
-# Usage
-result = convert_file('input.${converterType.from.toLowerCase()}', 'output.${converterType.to.toLowerCase()}')
-print(f'Converted file saved to: {result}')`}</code>
-                    </pre>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="cli" className="mt-4">
-                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
-                    <pre className="text-sm">
-                      <code>{`# Convert ${converterType.from} to ${converterType.to} using curl
-curl -X POST \\
-  -F "file=@input.${converterType.from.toLowerCase()}" \\
-  -F "format=${converterType.to.toLowerCase()}" \\
-  https://svgai.org/api/convert \\
-  -o output.${converterType.to.toLowerCase()}
-
-# Process each file
-curl -X POST \\
-  -F "file=@input.${converterType.from.toLowerCase()}" \\
-  -F "format=${converterType.to.toLowerCase()}" \\
-  https://svgai.org/api/convert \\
-  -o "output.${converterType.to.toLowerCase()}"`}</code>
-                    </pre>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
+          
         </div>
       </section>
 
@@ -662,29 +567,6 @@ curl -X POST \\
             ))}
           </div>
           
-          {/* Pro Tip Callout */}
-          <Card className="mt-12 border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
-            <CardContent className="p-8">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                  <Lightbulb className="w-6 h-6 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold mb-2">Pro Tip: Automation is Key</h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-4">
-                    For frequent {converterType.from} to {converterType.to} conversions, consider setting up automated workflows. 
-                    This can save hours of manual work and ensure consistent quality across all your converted files.
-                  </p>
-                  <Button variant="outline" asChild>
-                    <Link href="/learn/automation-guide">
-                      Learn About Automation
-                      <ChevronRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </section>
     </div>

@@ -37,8 +37,8 @@ export const svgToEmfHandler: ConversionHandler = async (
   options: ConversionOptions = {}
 ): Promise<ConversionResult> => {
   try {
-    // Basic SVG validation
-    validateSvgFile(input)
+    // Skip client-side SVG validation - let CloudConvert handle file validation
+    // validateSvgFile(input)
 
     // Ensure we have a Buffer to work with
     const buffer = typeof input === 'string' 
@@ -68,6 +68,13 @@ export const svgToEmfHandler: ConversionHandler = async (
         }
       }
     )
+
+    if (!result.data) {
+      throw new ConversionError(
+        'CloudConvert SVG to EMF returned no data',
+        'CLOUDCONVERT_NO_DATA'
+      )
+    }
 
     return {
       success: true,

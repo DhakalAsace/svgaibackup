@@ -1,0 +1,106 @@
+<svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.95" />
+      <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:0.9" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Workflow steps -->
+  <g filter="url(#shadow)">
+    <!-- Step 1: Planning -->
+    <rect x="80" y="150" width="180" height="120" rx="8" fill="url(#cardGradient)"/>
+    <text x="170" y="185" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="bold" 
+          text-anchor="middle" fill="#1e293b">Planning</text>
+    <circle cx="170" cy="220" r="25" fill="#22c55e"/>
+    <text x="170" y="228" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="bold" 
+          text-anchor="middle" fill="#ffffff">1</text>
+    
+    <!-- Step 2: Generation -->
+    <rect x="320" y="150" width="180" height="120" rx="8" fill="url(#cardGradient)"/>
+    <text x="410" y="185" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="bold" 
+          text-anchor="middle" fill="#1e293b">Generation</text>
+    <circle cx="410" cy="220" r="25" fill="#3b82f6"/>
+    <text x="410" y="228" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="bold" 
+          text-anchor="middle" fill="#ffffff">2</text>
+    
+    <!-- Step 3: Refinement -->
+    <rect x="560" y="150" width="180" height="120" rx="8" fill="url(#cardGradient)"/>
+    <text x="650" y="185" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="bold" 
+          text-anchor="middle" fill="#1e293b">Refinement</text>
+    <circle cx="650" cy="220" r="25" fill="#8b5cf6"/>
+    <text x="650" y="228" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="bold" 
+          text-anchor="middle" fill="#ffffff">3</text>
+    
+    <!-- Step 4: Deployment -->
+    <rect x="800" y="150" width="180" height="120" rx="8" fill="url(#cardGradient)"/>
+    <text x="890" y="185" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="bold" 
+          text-anchor="middle" fill="#1e293b">Deployment</text>
+    <circle cx="890" cy="220" r="25" fill="#f59e0b"/>
+    <text x="890" y="228" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="bold" 
+          text-anchor="middle" fill="#ffffff">4</text>
+  </g>
+  
+  <!-- Connecting arrows -->
+  <path d="M 260 210 L 320 210" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.8"/>
+  <polygon points="320,210 315,205 315,215" fill="#ffffff" opacity="0.8"/>
+  
+  <path d="M 500 210 L 560 210" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.8"/>
+  <polygon points="560,210 555,205 555,215" fill="#ffffff" opacity="0.8"/>
+  
+  <path d="M 740 210 L 800 210" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.8"/>
+  <polygon points="800,210 795,205 795,215" fill="#ffffff" opacity="0.8"/>
+  
+  <!-- Title -->
+  <text x="600" y="100" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="bold" 
+        text-anchor="middle" fill="#ffffff">
+    Professional AI SVG Workflow
+  </text>
+  
+  <!-- Performance metrics -->
+  <g filter="url(#shadow)">
+    <rect x="200" y="360" width="800" height="180" rx="12" fill="url(#cardGradient)"/>
+    <text x="600" y="395" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="bold" 
+          text-anchor="middle" fill="#1e293b">Performance Metrics</text>
+    
+    <!-- Metric 1 -->
+    <text x="300" y="435" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="bold" 
+          text-anchor="middle" fill="#22c55e">70%</text>
+    <text x="300" y="460" font-family="Inter, Arial, sans-serif" font-size="16" 
+          text-anchor="middle" fill="#64748b">Time Reduction</text>
+    
+    <!-- Metric 2 -->
+    <text x="500" y="435" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="bold" 
+          text-anchor="middle" fill="#3b82f6">90%</text>
+    <text x="500" y="460" font-family="Inter, Arial, sans-serif" font-size="16" 
+          text-anchor="middle" fill="#64748b">Fewer Revisions</text>
+    
+    <!-- Metric 3 -->
+    <text x="700" y="435" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="bold" 
+          text-anchor="middle" fill="#8b5cf6">95%</text>
+    <text x="700" y="460" font-family="Inter, Arial, sans-serif" font-size="16" 
+          text-anchor="middle" fill="#64748b">Consistency</text>
+    
+    <!-- Metric 4 -->
+    <text x="900" y="435" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="bold" 
+          text-anchor="middle" fill="#f59e0b">400%</text>
+    <text x="900" y="460" font-family="Inter, Arial, sans-serif" font-size="16" 
+          text-anchor="middle" fill="#64748b">Output Increase</text>
+  </g>
+  
+  <!-- Brand -->
+  <text x="1050" y="580" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="600" 
+        text-anchor="middle" fill="#ffffff" opacity="0.8">
+    SVGai.org
+  </text>
+</svg>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Complex illustration example -->
+<!-- Combines multiple elements to create a scene -->
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sky background -->
+  <rect width="200" height="140" fill="#87CEEB"/>
+  
+  <!-- Sun -->
+  <circle cx="160" cy="40" r="20" fill="#FFD700"/>
+  
+  <!-- Cloud -->
+  <ellipse cx="50" cy="40" rx="25" ry="15" fill="white" opacity="0.8"/>
+  <ellipse cx="70" cy="40" rx="20" ry="12" fill="white" opacity="0.8"/>
+  
+  <!-- Ground -->
+  <rect y="140" width="200" height="60" fill="#8FBC8F"/>
+  
+  <!-- Tree -->
+  <rect x="90" y="110" width="20" height="40" fill="#8B4513"/>
+  <circle cx="100" cy="100" r="30" fill="#228B22"/>
+  
+  <!-- House -->
+  <rect x="30" y="100" width="40" height="40" fill="#CD853F"/>
+  <polygon points="25,100 50,75 75,100" fill="#8B0000"/>
+  <rect x="40" y="120" width="10" height="20" fill="#654321"/>
+  
+  <!-- Path -->
+  <path d="M45 140 Q 100 150, 150 140" stroke="#696969" stroke-width="3" fill="none"/>
+</svg>

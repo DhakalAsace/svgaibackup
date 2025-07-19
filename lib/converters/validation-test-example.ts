@@ -148,8 +148,7 @@ export const FORMAT_SPECIFIC_TIPS: Record<ImageFormat, string> = {
   html: 'HTML can be rendered and converted to visual formats.',
   ttf: 'TTF font files contain vector glyph data that can be extracted.',
   emf: 'EMF files are Windows Enhanced Metafiles with vector and raster data.',
-  wmf: 'WMF files are Windows Metafiles, an older vector graphics format.',
-  heic: 'HEIC files are Apple\'s high-efficiency image format.'
+  wmf: 'WMF files are Windows Metafiles, an older vector graphics format.'
 }
 
 /**
