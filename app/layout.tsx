@@ -82,6 +82,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={montserrat.variable}>
       <head>
+        {/* Viewport meta tag for mobile responsiveness - CRITICAL FOR SEO */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        
         {/* Critical CSS inline for faster FCP */}
         <style dangerouslySetInnerHTML={{ __html: `
           /* Critical CSS for above-the-fold content */
@@ -140,25 +143,51 @@ export default function RootLayout({
         <link rel="modulepreload" href="/_next/static/chunks/framework.js" />
         <link rel="modulepreload" href="/_next/static/chunks/main.js" />
         
-        {/* WebSite structured data for Google site name */}
+        {/* WebSite and Organization structured data */}
         <script type="application/ld+json">{`
           {
             "@context": "https://schema.org",
-            "@type": ["WebSite", "SoftwareApplication"],
-            "name": "SVG AI",
-            "url": "https://svgai.org/",
-            "applicationCategory": "WebApplication",
-            "operatingSystem": "All",
-            "description": "Transform your ideas into stunning SVG graphics instantly with our AI-powered generator. Create logos, icons, and illustrations from simple text descriptions.",
-            "offers": {
-              "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "USD"
-            }
+            "@graph": [
+              {
+                "@type": "WebSite",
+                "@id": "https://svgai.org/#website",
+                "name": "SVG AI",
+                "alternateName": "SVGAI",
+                "url": "https://svgai.org/",
+                "description": "Transform your ideas into stunning SVG graphics instantly with our AI-powered generator. Create logos, icons, and illustrations from simple text descriptions.",
+                "potentialAction": {
+                  "@type": "SearchAction",
+                  "target": "https://svgai.org/search?q={search_term_string}",
+                  "query-input": "required name=search_term_string"
+                }
+              },
+              {
+                "@type": "Organization",
+                "@id": "https://svgai.org/#organization",
+                "name": "SVG AI",
+                "url": "https://svgai.org/",
+                "logo": {
+                  "@type": "ImageObject",
+                  "url": "https://svgai.org/logo.svg",
+                  "width": 156,
+                  "height": 80
+                },
+                "sameAs": [
+                  "https://twitter.com/svgai_app",
+                  "https://github.com/svgai"
+                ],
+                "contactPoint": {
+                  "@type": "ContactPoint",
+                  "contactType": "customer support",
+                  "email": "support@svgai.org",
+                  "availableLanguage": ["English"]
+                }
+              }
+            ]
           }
         `}</script>
       </head>
-      <body className={`font-sans`} suppressHydrationWarning>
+      <body className={`font-sans overflow-x-hidden`} suppressHydrationWarning>
         <Providers>
           <div className="flex flex-col min-h-screen">
             <NavbarWrapper />

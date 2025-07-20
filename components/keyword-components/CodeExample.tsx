@@ -93,19 +93,19 @@ function highlightCode(code: string, language: CodeLanguage): React.ReactNode {
     // Highlight keywords
     config.keywords.forEach(keyword => {
       const regex = new RegExp(`\\b(${keyword})\\b`, 'g')
-      processedLine = processedLine.replace(regex, '<span class="text-blue-600">$1</span>')
+      processedLine = processedLine.replace(regex, '<span className="text-blue-600">$1</span>')
     })
     
     // Highlight strings
-    processedLine = processedLine.replace(/(["'])([^"']*)\1/g, '<span class="text-green-600">$1$2$1</span>')
+    processedLine = processedLine.replace(/(["'])([^"']*)\1/g, '<span className="text-green-600">$1$2$1</span>')
     
     // Highlight comments
     if (config.comment && processedLine.trim().startsWith(config.comment)) {
-      processedLine = `<span class="text-gray-500">${processedLine}</span>`
+      processedLine = `<span className="text-gray-500">${processedLine}</span>`
     }
     
     // Highlight numbers
-    processedLine = processedLine.replace(/\b(\d+)\b/g, '<span class="text-purple-600">$1</span>')
+    processedLine = processedLine.replace(/\b(\d+)\b/g, '<span className="text-purple-600">$1</span>')
     
     return (
       <div key={lineIndex} dangerouslySetInnerHTML={{ __html: processedLine }} />

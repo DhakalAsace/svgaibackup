@@ -240,20 +240,8 @@ export default function HeroOptimized() {
       sessionStorage.setItem('pendingAspectRatio', aspectRatio);
     }
 
-    // Check if user is signed in BEFORE generating
-    if (!userId) {
-      sessionStorage.setItem('pendingPrompt', prompt);
-      sessionStorage.setItem('pendingStyle', style);
-      sessionStorage.setItem('pendingSize', size);
-      sessionStorage.setItem('pendingAspectRatio', aspectRatio);
-      
-      setIsSoftPrompt(false);
-      setShowSignupModal(true);
-      return;
-    }
-
-    // For authenticated users, check credit balance
-    if (userGenerations) {
+    // For authenticated users, check credit balance on frontend
+    if (userId && userGenerations) {
       const requiredCredits = 2;
       const remainingCredits = userGenerations.limit - userGenerations.used;
       const hasEnoughCredits = remainingCredits >= requiredCredits;
@@ -303,7 +291,7 @@ export default function HeroOptimized() {
       if (response.status === 429) {
         const errorMessage = responseData.error || "";
         
-        if (errorMessage.includes("Sign up to get")) {
+        if (errorMessage.includes("Sign up to continue")) {
           setIsSoftPrompt(false);
           setShowSignupModal(true);
         } else if (errorMessage.includes("no credits remaining") || errorMessage.includes("lifetime credits")) {
@@ -317,7 +305,10 @@ export default function HeroOptimized() {
       }
 
       if (!response.ok) {
-        throw new Error(responseData.error || `Failed to generate SVG (Status: ${response.status})`)
+        const errorMessage = typeof responseData.error === 'string' 
+          ? responseData.error 
+          : (responseData.error?.message || `Failed to generate SVG (Status: ${response.status})`);
+        throw new Error(errorMessage);
       }
       
       if (responseData.success) {
@@ -341,12 +332,6 @@ export default function HeroOptimized() {
           if (!userId) {
             const totalGenerations = parseInt(localStorage.getItem('totalGenerations') || '0');
             localStorage.setItem('totalGenerations', (totalGenerations + 1).toString());
-            
-            if (totalGenerations === 0) {
-              setIsSoftPrompt(true);
-              setShowSignupModal(true);
-              sessionStorage.setItem('showSignupModal', 'true');
-            }
           } else if (userGenerations) {
             setUserGenerations(prev => prev ? {...prev, used: prev.used + 2} : null)
             
@@ -364,12 +349,23 @@ export default function HeroOptimized() {
         }
       } else {
         console.error("API response indicates failure:", responseData);
-        throw new Error(responseData.error || "Failed to generate SVG")
+        const errorMsg = typeof responseData.error === 'string' 
+          ? responseData.error 
+          : (responseData.error?.message || "Failed to generate SVG");
+        throw new Error(errorMsg);
       }
     } catch (err) {
       console.error("Error in generation process:", err)
       if (!limitReachedError) {
-        const errMsg = err instanceof Error ? err.message : "Failed to generate SVG";
+        let errMsg = "Failed to generate SVG";
+        
+        if (err instanceof Error) {
+          errMsg = err.message;
+        } else if (typeof err === 'string') {
+          errMsg = err;
+        } else if (err && typeof err === 'object' && 'message' in err) {
+          errMsg = String(err.message);
+        }
         
         if (errMsg.includes("SVG URL")) {
           setError("The SVG was generated but couldn't be retrieved. Please try again.");
@@ -477,7 +473,7 @@ export default function HeroOptimized() {
                 <Textarea
                   id="prompt-input"
                   className="w-full rounded-lg border border-gray-300 bg-[#FEFEFE] shadow-md py-4 px-4 text-base md:text-lg text-[#4E342E] placeholder-gray-400 caret-[#FF7043] focus:border-[#FF7043] focus:ring-2 focus:ring-[#FFA726]/50 focus:outline-none resize-none min-h-[100px] transition-all"
-                  placeholder="Try: a futuristic cityscape, a minimal logo, an abstract wave pattern..."
+                  placeholder="Describe the SVG you want to create"
                   value={prompt}
                   onChange={e => setPrompt(e.target.value)}
                   aria-label="Enter text prompt for SVG generation"
@@ -519,20 +515,22 @@ export default function HeroOptimized() {
                 />
               )}
               
-              {/* Credit cost indicator */}
-              <div className="mt-3 flex items-center justify-between text-sm">
-                <div className="flex items-center text-gray-600">
-                  <Sparkles className="w-4 h-4 mr-1.5 text-[#FF7043]" />
-                  <span>2 credits required</span>
-                </div>
-                {userGenerations && (
-                  <div className="text-right">
-                    <span className="text-gray-500">
-                      {Math.max(0, userGenerations.limit - userGenerations.used)} credits remaining
-                    </span>
+              {/* Credit cost indicator - only show for signed-in users */}
+              {userId && (
+                <div className="mt-3 flex items-center justify-between text-sm">
+                  <div className="flex items-center text-gray-600">
+                    <Sparkles className="w-4 h-4 mr-1.5 text-[#FF7043]" />
+                    <span>2 credits required</span>
                   </div>
-                )}
-              </div>
+                  {userGenerations && (
+                    <div className="text-right">
+                      <span className="text-gray-500">
+                        {Math.max(0, userGenerations.limit - userGenerations.used)} credits remaining
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
               
               {/* Generate button */}
               {userGenerations && (userGenerations.limit - userGenerations.used) < 2 ? (

@@ -164,12 +164,7 @@ function ResultsContent() {
       urlFromStorage = sessionStorage.getItem('resultSvgUrl');
       console.log('[ResultsPage] Retrieved SVG URL from sessionStorage:', urlFromStorage); // DEBUG LOG
       
-      // Check if we should show signup modal for anonymous users
-      const shouldShowSignup = sessionStorage.getItem('showSignupModal');
-      if (shouldShowSignup === 'true') {
-        sessionStorage.removeItem('showSignupModal'); // Clear flag
-        setTimeout(() => setShowSignupModal(true), 500); // Show after brief delay
-      }
+      // Remove automatic signup modal for anonymous users
     }
     setSvgUrl(urlFromStorage); // Set state regardless for potential display
 
@@ -215,14 +210,6 @@ function ResultsContent() {
             setShowTimedUpgradeModal(true);
           }, 2000); // 2 seconds delay
         }
-      } else {
-        // For anonymous users, show signup modal after 2 seconds
-        setTimeout(() => {
-          if (!showSignupModal) { // Don't show if signup modal is already showing
-            setShowSignupModal(true);
-            setIsSoftPrompt(true);
-          }
-        }, 2000); // 2 seconds
       }
     };
     
@@ -312,20 +299,22 @@ function ResultsContent() {
           )}
         </div>
 
-        {/* Credit cost indicator */}
-        <div className="text-sm text-gray-700 flex items-center justify-center mt-2 mb-4">
-          <CheckCircle className="w-4 h-4 mr-1 text-green-600" />
-          <span>
-            This {contentType === 'icon' ? 'icon' : 'SVG'} cost {contentType === 'icon' ? '1 credit' : '2 credits'}. 
-            {userProfile && userProfile.subscription_status === 'active' ? (() => {
-              const remainingCredits = (userProfile.monthly_credits || 0) - (userProfile.monthly_credits_used || 0);
-              return `You have ${remainingCredits} ${remainingCredits === 1 ? 'credit' : 'credits'} left this month.`;
-            })() : ''}
-          </span>
-        </div>
+        {/* Credit cost indicator - Only for authenticated users */}
+        {userProfile && (
+          <div className="text-sm text-gray-700 flex items-center justify-center mt-2 mb-4">
+            <CheckCircle className="w-4 h-4 mr-1 text-green-600" />
+            <span>
+              This {contentType === 'icon' ? 'icon' : 'SVG'} cost {contentType === 'icon' ? '1 credit' : '2 credits'}. 
+              {userProfile.subscription_status === 'active' ? (() => {
+                const remainingCredits = (userProfile.monthly_credits || 0) - (userProfile.monthly_credits_used || 0);
+                return `You have ${remainingCredits} ${remainingCredits === 1 ? 'credit' : 'credits'} left this month.`;
+              })() : ''}
+            </span>
+          </div>
+        )}
 
-        {/* Generation Upsell Component */}
-        {userProfile ? (
+        {/* Generation Upsell Component - Only for authenticated users */}
+        {userProfile && (
           <div className="mb-6">
             <GenerationUpsell
               creditsUsed={userProfile.lifetime_credits_used || userProfile.monthly_credits_used || 0}
@@ -333,16 +322,6 @@ function ResultsContent() {
               isSubscribed={userProfile.subscription_status === 'active'}
               limitType={userProfile.subscription_status === 'active' ? 'monthly' : 'lifetime'}
               tier={userProfile.subscription_tier}
-            />
-          </div>
-        ) : (
-          <div className="mb-6">
-            <GenerationUpsell
-              creditsUsed={1}
-              creditLimit={1}
-              isSubscribed={false}
-              limitType="lifetime"
-              tier={null}
             />
           </div>
         )}
@@ -449,8 +428,8 @@ function ResultsContent() {
                 </Link>
               </div>
               
-              {/* Upgrade CTA for non-subscribed users */}
-              {(!userProfile || userProfile.subscription_status !== 'active') && (
+              {/* Upgrade CTA only for authenticated non-subscribed users */}
+              {userProfile && userProfile.subscription_status !== 'active' && (
                 <div className="bg-gradient-to-r from-[#FFF8F6] to-[#FFEDE7] p-4 rounded-lg border border-[#FFE0B2]">
                   <div className="flex items-center justify-between flex-wrap gap-3">
                     <div>
@@ -465,7 +444,7 @@ function ResultsContent() {
                       href="/pricing"
                       className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
                     >
-                      Upgrade Now
+                      Get More Credits
                     </Link>
                   </div>
                 </div>

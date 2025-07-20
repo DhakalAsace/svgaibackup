@@ -63,7 +63,7 @@ const ANIMATION_EXAMPLES: AnimationExample[] = [
     category: "basic",
     svg: `<svg width="100" height="100" viewBox="0 0 100 100">
   <path id="gear" d="M50 20 L60 30 L60 40 L50 50 L40 40 L40 30 Z" 
-        fill="#3B82F6" stroke="#1E40AF" stroke-width="2"/>
+        fill="#3B82F6" stroke="#1E40AF" strokeWidth="2"/>
 </svg>`,
     css: `#gear {
   animation: rotate 2s linear infinite;
@@ -93,7 +93,7 @@ const ANIMATION_EXAMPLES: AnimationExample[] = [
     category: "emphasis",
     svg: `<svg width="100" height="100" viewBox="0 0 100 100">
   <path id="heart" d="M50 80 C20 60, 20 30, 50 50 C80 30, 80 60, 50 80 Z" 
-        fill="#EF4444" stroke="#DC2626" stroke-width="2"/>
+        fill="#EF4444" stroke="#DC2626" strokeWidth="2"/>
 </svg>`,
     css: `#heart {
   animation: pulse 1.5s ease-in-out infinite;
@@ -123,8 +123,8 @@ const ANIMATION_EXAMPLES: AnimationExample[] = [
     category: "path",
     svg: `<svg width="100" height="100" viewBox="0 0 100 100">
   <path id="line" d="M10 50 Q50 10 90 50 T170 50" 
-        fill="none" stroke="#10B981" stroke-width="3"
-        stroke-dasharray="200" stroke-dashoffset="200"/>
+        fill="none" stroke="#10B981" strokeWidth="3"
+        strokeDasharray="200" strokeDashoffset="200"/>
 </svg>`,
     css: `#line {
   animation: draw 3s ease-out forwards;
@@ -152,7 +152,7 @@ const ANIMATION_EXAMPLES: AnimationExample[] = [
     category: "advanced",
     svg: `<svg width="100" height="100" viewBox="0 0 100 100">
   <path id="morph" d="M25 50 Q50 25 75 50 T125 50" 
-        fill="#8B5CF6" stroke="#7C3AED" stroke-width="2">
+        fill="#8B5CF6" stroke="#7C3AED" strokeWidth="2">
     <animate attributeName="d" 
              values="M25 50 Q50 25 75 50 T125 50;
                      M25 50 Q50 75 75 50 T125 50;

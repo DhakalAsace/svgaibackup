@@ -152,7 +152,7 @@ export const LIBRARY_CONFIGS = {
   },
   jimp: {
     name: 'jimp',
-    importFn: () => import('jimp/browser/lib/jimp')
+    importFn: () => import('jimp')
   },
   
   // CAD/3D libraries

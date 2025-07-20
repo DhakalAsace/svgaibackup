@@ -110,17 +110,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const today = new Date().toISOString().split('T')[0]; // Get YYYY-MM-DD format
-
-    // 1. Check current count
-    const { data: limitData, error: limitSelectError } = await supabaseAdmin
-      .from('daily_generation_limits')
-      .select('count')
-      .eq('identifier', identifier)
-      .eq('identifier_type', identifier_type)
-      .eq('generation_date', today)
-      .single()
-
     // Use the new credit system function
     const { data: limitResult, error: limitRpcError } = await supabaseAdmin.rpc(
       'check_credits_v3',
@@ -155,7 +144,7 @@ export async function POST(req: NextRequest) {
       
       let errorMessage = '';
       if (limitType === 'anonymous_daily') {
-        errorMessage = "You've used your free generation. Sign up to get 6 free credits!";
+        errorMessage = "Sign up to continue generating for free and get 6 bonus credits!";
       } else if (limitType === 'lifetime_credits') {
         errorMessage = "You've used all your free credits. Upgrade to Pro for more!";
       } else if (limitType === 'monthly_credits') {

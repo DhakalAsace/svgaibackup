@@ -73,6 +73,17 @@ const nextConfig = {
 
   async redirects() {
     return [
+      // Redirect duplicate /converters routes to /convert
+      {
+        source: '/converters/:slug',
+        destination: '/convert/:slug',
+        permanent: true,
+      },
+      {
+        source: '/converters',
+        destination: '/convert',
+        permanent: true,
+      },
       // Redirect learn pages to blog/guides
       {
         source: '/learn/:slug',

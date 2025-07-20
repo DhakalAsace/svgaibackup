@@ -32,7 +32,7 @@ const BLOG_DIR = path.join(process.cwd(), 'content/blog')
 const LEARN_DIR = path.join(process.cwd(), 'content/learn')
 
 // For debugging - enable to log additional information
-const DEBUG = true
+const DEBUG = false
 
 // Helper function to log debug info
 function debug(...args: any[]) {

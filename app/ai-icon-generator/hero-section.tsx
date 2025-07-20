@@ -111,16 +111,8 @@ export default function HeroSection() {
       sessionStorage.setItem('pendingAspectRatio', aspectRatio);
     }
 
-    // NEW: Check if user is signed in BEFORE generating
-    if (!userId) {
-      // Show signup modal immediately
-      setIsSoftPrompt(false);
-      setShowSignupModal(true);
-      return;
-    }
-
-    // For authenticated users, check credit balance
-    if (userGenerations) {
+    // For authenticated users only, check credit balance on frontend
+    if (userId && userGenerations) {
       const requiredCredits = 1; // Icon generation cost
       const remainingCredits = userGenerations.limit - userGenerations.used;
       const hasEnoughCredits = remainingCredits >= requiredCredits;
@@ -166,7 +158,7 @@ export default function HeroSection() {
         const errorMessage = responseData.error || "";
         
         // Determine which modal to show based on the error message
-        if (errorMessage.includes("Sign up to get 3 generations") || errorMessage.includes("free generation")) {
+        if (errorMessage.includes("Sign up to continue")) {
           // Anonymous user - show signup modal
           setIsSoftPrompt(false);
           setShowSignupModal(true);
@@ -209,14 +201,6 @@ export default function HeroSection() {
           if (!userId) {
             const totalGenerations = parseInt(localStorage.getItem('totalGenerations') || '0');
             localStorage.setItem('totalGenerations', (totalGenerations + 1).toString());
-            
-            // Show soft prompt immediately after first generation for anonymous users
-            if (totalGenerations === 0) {
-              setIsSoftPrompt(true);
-              setShowSignupModal(true);
-              // Store in sessionStorage to show on results page
-              sessionStorage.setItem('showSignupModal', 'true');
-            }
           } else if (userGenerations) {
             // Update local state for signed-in users
             setUserGenerations(prev => prev ? {...prev, used: prev.used + 1} : null); // Icon costs 1 credit
@@ -384,20 +368,22 @@ export default function HeroSection() {
                 </div>
               )}
 
-              {/* Credit cost indicator */}
-              <div className="mt-3 flex items-center justify-between text-sm">
-                <div className="flex items-center text-gray-600">
-                  <Sparkles className="w-4 h-4 mr-1.5 text-[#FF7043]" />
-                  <span>1 credit required</span>
-                </div>
-                {userGenerations && (
-                  <div className="text-right">
-                    <span className="text-gray-500">
-                      {Math.max(0, userGenerations.limit - userGenerations.used)} credits remaining
-                    </span>
+              {/* Credit cost indicator - only show for signed-in users */}
+              {userId && (
+                <div className="mt-3 flex items-center justify-between text-sm">
+                  <div className="flex items-center text-gray-600">
+                    <Sparkles className="w-4 h-4 mr-1.5 text-[#FF7043]" />
+                    <span>1 credit required</span>
                   </div>
-                )}
-              </div>
+                  {userGenerations && (
+                    <div className="text-right">
+                      <span className="text-gray-500">
+                        {Math.max(0, userGenerations.limit - userGenerations.used)} credits remaining
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Generate button */}
               {userGenerations && (userGenerations.limit - userGenerations.used) < 1 ? (

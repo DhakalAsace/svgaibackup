@@ -1,0 +1,35 @@
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="performanceBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#059669" />
+      <stop offset="100%" stopColor="#0891B2" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#performanceBg)" opacity="0.1"/>
+  
+  <!-- Performance metrics visualization -->
+  <g transform="translate(100, 120)">
+    <rect x="0" y="0" width="150" height="100" fill="#F3F4F6" stroke="#E5E7EB" rx="8"/>
+    <rect x="20" y="35" width="110" height="15" fill="#059669" rx="2"/>
+    <rect x="20" y="55" width="85" height="12" fill="#F59E0B" rx="2"/>
+    <rect x="20" y="72" width="70" height="12" fill="#EF4444" rx="2"/>
+  </g>
+  
+  <g transform="translate(300, 120)">
+    <rect x="0" y="0" width="150" height="100" fill="#F3F4F6" stroke="#E5E7EB" rx="8"/>
+    <rect x="20" y="35" width="120" height="15" fill="#059669" rx="2"/>
+    <rect x="20" y="55" width="90" height="12" fill="#F59E0B" rx="2"/>
+    <rect x="20" y="72" width="75" height="12" fill="#EF4444" rx="2"/>
+  </g>
+  
+  <g transform="translate(500, 120)">
+    <rect x="0" y="0" width="150" height="100" fill="#F3F4F6" stroke="#E5E7EB" rx="8"/>
+    <rect x="20" y="35" width="125" height="15" fill="#059669" rx="2"/>
+    <rect x="20" y="55" width="105" height="12" fill="#F59E0B" rx="2"/>
+    <rect x="20" y="72" width="95" height="12" fill="#EF4444" rx="2"/>
+  </g>
+  
+  <text x="400" y="300" textAnchor="middle" fontSize="28" fontWeight="bold" fill="#1F2937">
+    AI SVG Performance Analysis
+  </text>
+</svg>

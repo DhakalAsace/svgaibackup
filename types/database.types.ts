@@ -105,6 +105,39 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_generation_limits: {
+        Row: {
+          id: number
+          identifier: string
+          identifier_type: string
+          generation_date: string
+          generation_type: string
+          count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          identifier: string
+          identifier_type: string
+          generation_date?: string
+          generation_type?: string
+          count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          identifier?: string
+          identifier_type?: string
+          generation_date?: string
+          generation_type?: string
+          count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       webhook_events: {
         Row: {
           id: string

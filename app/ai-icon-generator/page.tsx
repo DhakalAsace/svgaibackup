@@ -62,9 +62,9 @@ export const metadata: Metadata = {
   // Keywords (Include primary, secondary, and 'free' terms)
   keywords: iconPageKeywords,
   
-  // Canonical URL using relative path (metadataBase is set in layout.tsx)
+  // Canonical URL using absolute path
   alternates: {
-    canonical: '/ai-icon-generator'
+    canonical: 'https://svgai.org/ai-icon-generator'
   },
   
   // Open Graph Tags (optimized for social sharing)
@@ -116,14 +116,6 @@ export default function IconGeneratorPage() {
               "price": "0",
               "priceCurrency": "USD",
               "availability": "https://schema.org/InStock"
-            },
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.8", 
-              "bestRating": "5",
-              "worstRating": "1",
-              "ratingCount": "1250",
-              "reviewCount": "756"
             },
             "keywords": iconPageKeywords.join(", "),
             "featureList": [

@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent horizontal overflow and handle Radix UI scroll lock */
+@layer base {
+  /* Prevent layout shift when Radix UI locks scroll */
+  body[data-scroll-locked] {
+    /* Prevent the padding that causes horizontal scroll */
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
 /* Progress bar shimmer animation */
 @keyframes shimmer {
   0% {
@@ -46,6 +56,21 @@
   /* Optimize SVG rendering */
   svg {
     shape-rendering: optimizeSpeed;
+  }
+  
+  /* Prevent horizontal overflow from dropdowns */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  
+  /* Fix for dropdown menu positioning */
+  [data-radix-popper-content-wrapper] {
+    pointer-events: none !important;
+  }
+  
+  [data-radix-popper-content-wrapper] > * {
+    pointer-events: auto !important;
   }
 }
 
@@ -193,8 +218,53 @@
     word-break: break-word;
   }
   
-  /* Prevent text overflow on mobile */
-  @media (max-width: 640px) {
+  /* Mobile tap target optimization and text fixes */
+  @media (max-width: 768px) {
+    /* Minimum tap target sizes for mobile - CRITICAL FOR SEO */
+    button, a, input, select, textarea, [role="button"], [role="link"] {
+      min-height: 48px;
+      min-width: 48px;
+    }
+    
+    /* Ensure adequate spacing between interactive elements */
+    button + button, a + a, input + input {
+      margin-left: 8px;
+    }
+    
+    /* Fix small text on mobile - minimum 16px to prevent zoom */
+    body {
+      font-size: 16px !important;
+    }
+    
+    .text-xs {
+      font-size: 14px !important;
+    }
+    
+    .text-sm {
+      font-size: 16px !important;
+    }
+    
+    /* Better touch targets with invisible padding */
+    .touch-target {
+      position: relative;
+    }
+    
+    .touch-target::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      right: -8px;
+      bottom: -8px;
+    }
+    
+    /* Prevent horizontal scrolling */
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+    
+    /* Responsive text size */
     .text-responsive {
       @apply text-sm;
     }

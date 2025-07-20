@@ -19,7 +19,9 @@ export default function HtmlSitemap() {
   const galleries = getAllGalleryThemes()
     .sort((a, b) => b.searchVolume - a.searchVolume)
   
-  const learnArticles = getAllMdxFiles('learn')
+  // Get guide articles from blog
+  const allBlogPosts = getAllMdxFiles('blog')
+  const guideArticles = allBlogPosts.filter(post => post.slug.startsWith('guides/'))
   
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: 'https://svgai.org' },
@@ -97,13 +99,13 @@ export default function HtmlSitemap() {
         {/* Learn Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">
-            Learn Articles ({learnArticles.length} guides)
+            Learn Articles ({guideArticles.length} guides)
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {learnArticles.map(article => (
+            {guideArticles.map(article => (
               <Link 
                 key={article.slug}
-                href={`/learn/${article.slug}`}
+                href={`/blog/${article.slug}`}
                 className="block p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors"
               >
                 <h3 className="font-medium text-blue-600 hover:underline">

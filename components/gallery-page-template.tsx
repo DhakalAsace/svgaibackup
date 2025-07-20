@@ -29,10 +29,10 @@ function generateSampleSVGs(theme: GalleryTheme): SVGItem[] {
     star: `<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/>`,
     flower: `<circle cx="12" cy="12" r="3" fill="currentColor"/><circle cx="12" cy="5" r="3" fill="currentColor" opacity="0.8"/><circle cx="19" cy="12" r="3" fill="currentColor" opacity="0.8"/><circle cx="12" cy="19" r="3" fill="currentColor" opacity="0.8"/><circle cx="5" cy="12" r="3" fill="currentColor" opacity="0.8"/>`,
     butterfly: `<path d="M12 2C6 2 2 6 2 12s4 10 10 10c1 0 2-1 2-2s-1-2-2-2c-4 0-8-4-8-8s4-8 8-8 8 4 8 8c0 1 1 2 2 2s2-1 2-2c0-6-4-10-10-10z" fill="currentColor"/>`,
-    arrow: `<path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>`,
-    circle: `<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>`,
+    arrow: `<path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" strokeWidth="2" fill="none"/>`,
+    circle: `<circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/>`,
     cat: `<path d="M12 2l-4 4v6c0 3.3 2.7 6 6 6h4c3.3 0 6-2.7 6-6V6l-4-4h-8zm-2 8c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm8 0c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2z" fill="currentColor"/>`,
-    sun: `<circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v6m0 6v6m-9-9h6m6 0h6m-4.22-4.22l-4.22 4.22m0 0l-4.22 4.22m0-4.22l4.22-4.22m4.22 0l4.22 4.22" stroke="currentColor" stroke-width="2"/>`,
+    sun: `<circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v6m0 6v6m-9-9h6m6 0h6m-4.22-4.22l-4.22 4.22m0 0l-4.22 4.22m0-4.22l4.22-4.22m4.22 0l4.22 4.22" stroke="currentColor" strokeWidth="2"/>`,
   }
 
   const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FECA57", "#DDA0DD", "#98D8C8", "#FFE66D"]

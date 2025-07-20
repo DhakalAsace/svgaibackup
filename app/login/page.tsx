@@ -2,7 +2,7 @@ import { LoginForm } from "@/components/auth/login-form";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Login | SVG AI",
+  title: "Login",
   description: "Sign in to your SVG AI account to manage your vector graphics.",
 };
 

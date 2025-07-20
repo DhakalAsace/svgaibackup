@@ -47,7 +47,7 @@ const Dashboard = dynamic(() => import("@/components/dashboard/minimalist-dashbo
 });
 
 export const metadata: Metadata = {
-  title: "Dashboard | SVG AI",
+  title: "Dashboard",
   description: "Manage your SVG designs",
 };
 

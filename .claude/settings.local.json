@@ -146,7 +146,9 @@
       "Bash(NODE_ENV=production npm run build)",
       "Bash(export NEXT_TELEMETRY_DISABLED=1)",
       "Bash(export DISABLE_COLLECT_NEXT_TELEMETRY=1)",
-      "Bash(NODE_OPTIONS=\"--max_old_space_size=4096\" npm run build)"
+      "Bash(NODE_OPTIONS=\"--max_old_space_size=4096\" npm run build)",
+      "Bash(git checkout:*)",
+      "Bash(./tests/test-anonymous-limits.sh:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -8,7 +8,7 @@ import { ExternalLink, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Performance Dashboard | SVG AI',
+  title: 'Performance Dashboard',
   description: 'Monitor Core Web Vitals and SEO performance metrics',
 }
 

@@ -1,0 +1,12 @@
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="blogGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#059669" />
+      <stop offset="100%" stopColor="#0891B2" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#blogGradient)" opacity="0.1"/>
+  <text x="400" y="200" textAnchor="middle" fontSize="48" fontWeight="bold" fill="#1F2937">
+    AI SVG Performance
+  </text>
+</svg>

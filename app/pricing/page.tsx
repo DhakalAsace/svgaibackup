@@ -47,17 +47,14 @@ export const metadata: Metadata = {
 export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFF8F6] to-white">
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            SVG AI <span className="text-[#FF7043]">Pricing</span> - Start Free Today
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">
+            Simple, Transparent <span className="text-[#FF7043]">Pricing</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Affordable AI SVG generator with transparent pricing. Free plan available, paid plans starting at just $12/month. No hidden fees, cancel anytime.
+          <p className="text-lg text-gray-600">
+            Start free. Upgrade when you need more credits.
           </p>
-          <div className="mt-4 text-sm text-gray-500">
-            ✓ Free forever plan ✓ Best value pricing ✓ Cancel anytime
-          </div>
         </div>
         
         <PricingSection />

@@ -166,19 +166,26 @@ export function UserMenu() {
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="relative h-10 w-10 rounded-full"
+          className="relative h-8 w-8 rounded-full hover:bg-gray-100"
           onClick={() => refreshCredits()}
         >
-          <Avatar className="h-10 w-10">
-            <AvatarFallback>{userInitials}</AvatarFallback>
+          <Avatar className="h-8 w-8">
+            <AvatarFallback className="text-sm">{userInitials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64" align="end" forceMount>
+      <DropdownMenuContent 
+        className="w-64" 
+        align="end" 
+        alignOffset={-5} 
+        sideOffset={5} 
+        collisionPadding={10}
+        forceMount
+      >
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-2">
             <div className="flex items-center justify-between">

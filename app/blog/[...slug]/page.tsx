@@ -79,9 +79,48 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     },
   });
 
+  // Generate Article structured data
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.metadata.title,
+    "description": post.metadata.description,
+    "image": post.metadata.image || "https://svgai.org/og-blog.png",
+    "datePublished": post.metadata.date,
+    "dateModified": post.metadata.date,
+    "author": {
+      "@type": post.metadata.author?.includes(',') ? "Person" : "Organization",
+      "name": post.metadata.author || "SVG AI Team"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "SVG AI",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://svgai.org/logo.svg"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://svgai.org/blog/${fullSlug}`
+    },
+    ...(post.metadata.tags && { 
+      "keywords": post.metadata.tags.join(", "),
+      "about": post.metadata.tags.map((tag: string) => ({
+        "@type": "Thing",
+        "name": tag
+      }))
+    })
+  };
+
   return (
-    <SvgAwareMDXProvider>
-      <div className="container px-4 py-12 mx-auto">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <SvgAwareMDXProvider>
+        <div className="container px-4 py-12 mx-auto">
         {/* Back to blog link */}
         <div className="mb-8">
           <Link href="/blog" className="inline-flex items-center text-sm font-medium text-primary hover:underline">
@@ -140,5 +179,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </article>
       </div>
     </SvgAwareMDXProvider>
+    </>
   );
 }

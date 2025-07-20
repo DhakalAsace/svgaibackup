@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
       
       let errorMessage = '';
       if (limitType === 'anonymous_daily') {
-        errorMessage = "You've used your free generation. Sign up to get 6 free credits!";
+        errorMessage = "Sign up to continue generating for free and get 6 bonus credits!";
       } else if (limitType === 'lifetime_credits') {
         errorMessage = "You've used all your free credits. Upgrade to Pro for more!";
       } else if (limitType === 'monthly_credits') {

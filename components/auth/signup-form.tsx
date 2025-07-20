@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useSearchParams } from "next/navigation";
@@ -53,26 +54,31 @@ function SignUpFormContent() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-4">
-      <h2 className="text-lg font-semibold mb-1">Sign Up</h2>
+    <Card className="w-full max-w-md mx-auto">
+      <CardHeader>
+        <CardTitle>Sign Up</CardTitle>
+        <CardDescription>
+          Generate more SVGs and icons with AI. Save all your designs to access anytime.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-      {error && (
-        <Alert variant="destructive" className="mb-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {isSuccess ? (
-        <Alert className="mb-4">
-          <AlertDescription>
-            Success! Please check your email for a confirmation link to complete your registration.
-          </AlertDescription>
-        </Alert>
-      ) : (
-        <form onSubmit={handleSignUp} className="space-y-4">
-          {/* Google first */}
-          <Button
+        {isSuccess ? (
+          <Alert className="mb-4">
+            <AlertDescription>
+              Success! Please check your email for a confirmation link to complete your registration.
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <div className="space-y-4">
+            {/* Google first */}
+            <Button
             type="button"
             variant="outline"
             className="w-full"
@@ -113,12 +119,13 @@ function SignUpFormContent() {
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-gray-500">Or sign up with email</span>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Or sign up with email</span>
             </div>
           </div>
 
-          <div className="space-y-2">
+          <form onSubmit={handleSignUp} className="space-y-4">
+            <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -134,7 +141,6 @@ function SignUpFormContent() {
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -144,14 +150,19 @@ function SignUpFormContent() {
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Creating account..." : "Sign Up"}
           </Button>
-        </form>
-      )}
-
-      <p className="text-sm text-center text-gray-600 mt-2">
-        Already have an account?{' '}
-        <a href="/login" className="text-[#0084FF] hover:underline">Log in</a>
-      </p>
-    </div>
+          </form>
+        </div>
+        )}
+      </CardContent>
+      <CardFooter className="flex justify-center">
+        <p className="text-sm text-gray-600">
+          Already have an account?{" "}
+          <a href="/login" className="text-[#0084FF] hover:underline">
+            Login
+          </a>
+        </p>
+      </CardFooter>
+    </Card>
   );
 }
 

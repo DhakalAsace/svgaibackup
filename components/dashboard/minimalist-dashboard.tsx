@@ -442,25 +442,17 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Minimalist Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-              <h1 className="text-xl font-semibold text-gray-900 ml-2 lg:ml-0">Dashboard</h1>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              
-            </div>
+      {/* Mobile Header - Only shown on small screens */}
+      <header className="bg-white border-b border-gray-200 lg:hidden">
+        <div className="px-4 sm:px-6">
+          <div className="flex items-center h-16">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
           </div>
         </div>
       </header>
@@ -486,21 +478,27 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                 <X className="h-5 w-5" />
               </Button>
               
-              {/* Credit Display for Free Users */}
-              {userTier === 'free' && (
-                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              {/* Credit Display - Show for all users on mobile */}
+              {creditInfo && (
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg lg:hidden">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-700">Credits</span>
-                    <span className="text-sm text-gray-900">{displayCreditInfo.remaining}/{displayCreditInfo.limit}</span>
+                    <span className="text-sm text-gray-900">{creditInfo.creditsRemaining} left</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
-                    <div className="bg-primary-500 h-2 rounded-full" style={{ width: `${(displayCreditInfo.used / displayCreditInfo.limit) * 100}%` }}></div>
+                    <div className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] h-2 rounded-full transition-all" 
+                         style={{ width: `${(creditInfo.creditsRemaining / creditInfo.creditLimit) * 100}%` }}></div>
                   </div>
-                  <Link href="/pricing" className="block">
-                    <Button size="sm" className="w-full">
-                      Upgrade Now
-                    </Button>
-                  </Link>
+                  <p className="text-xs text-gray-500 mb-3">
+                    {creditInfo.isSubscribed ? 'Resets monthly' : 'One-time credits'}
+                  </p>
+                  {!creditInfo.isSubscribed && creditInfo.creditsRemaining < 10 && (
+                    <Link href="/pricing" className="block">
+                      <Button size="sm" className="w-full">
+                        Get More Credits
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               )}
               
@@ -510,6 +508,11 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                   Quick Tools
                 </h3>
                 <div className="space-y-1">
+                  <Link href="/ai-icon-generator" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
+                    <Plus className="w-4 h-4 mr-3 text-gray-400" />
+                    AI Icon Generator
+                    <span className="ml-auto text-xs text-gray-500">1 credit</span>
+                  </Link>
                   <Link href="/tools/svg-editor" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
                     <Code className="w-4 h-4 mr-3 text-gray-400" />
                     SVG Editor
@@ -517,6 +520,14 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                   <Link href="/tools/svg-optimizer" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
                     <FileDown className="w-4 h-4 mr-3 text-gray-400" />
                     Optimizer
+                  </Link>
+                  <Link href="/convert/svg-to-png" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
+                    <ArrowRight className="w-4 h-4 mr-3 text-gray-400" />
+                    SVG to PNG
+                  </Link>
+                  <Link href="/convert/png-to-svg" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
+                    <ArrowRight className="w-4 h-4 mr-3 text-gray-400" />
+                    PNG to SVG
                   </Link>
                   <Link href="/tools/svg-to-video" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
                     <Film className="w-4 h-4 mr-3 text-gray-400" />
@@ -536,14 +547,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                   Popular Converters
                 </h3>
                 <div className="space-y-1">
-                  <Link href="/convert/png-to-svg" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
-                    <ArrowRight className="w-4 h-4 mr-3 text-gray-400" />
-                    PNG to SVG
-                  </Link>
-                  <Link href="/convert/svg-to-png" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
-                    <ArrowRight className="w-4 h-4 mr-3 text-gray-400" />
-                    SVG to PNG
-                  </Link>
                   <Link href="/convert/jpg-to-svg" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
                     <ArrowRight className="w-4 h-4 mr-3 text-gray-400" />
                     JPG to SVG
@@ -551,6 +554,14 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                   <Link href="/convert/svg-to-pdf" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
                     <ArrowRight className="w-4 h-4 mr-3 text-gray-400" />
                     SVG to PDF
+                  </Link>
+                  <Link href="/convert/webp-to-svg" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
+                    <ArrowRight className="w-4 h-4 mr-3 text-gray-400" />
+                    WebP to SVG
+                  </Link>
+                  <Link href="/convert/svg-to-jpg" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
+                    <ArrowRight className="w-4 h-4 mr-3 text-gray-400" />
+                    SVG to JPG
                   </Link>
                 </div>
                 <Link href="/convert" className="block mt-3 text-sm text-primary-600 hover:text-primary-700">
@@ -566,19 +577,11 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
           <div className="p-4 sm:p-6 lg:p-8">
 
             {/* Quick Actions */}
-            <div className="flex gap-3 mb-6">
+            <div className="mb-6">
               <Link href="/">
-                <Button>
+                <Button className="w-full sm:w-auto">
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Generate SVG
-                  <span className="ml-2 text-xs opacity-75">2 credits</span>
-                </Button>
-              </Link>
-              <Link href="/ai-icon-generator">
-                <Button variant="outline">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Icon
-                  <span className="ml-2 text-xs opacity-75">1 credit</span>
+                  Generate New SVG
                 </Button>
               </Link>
             </div>
@@ -590,7 +593,7 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                   <div>
                     <CardTitle>Your Creations</CardTitle>
                     <p className="text-sm text-gray-500 mt-1">
-                      {contentItems.length} items • {userTier === 'pro' ? '30-day' : '7-day'} retention
+                      {userTier === 'pro' ? '30-day' : '7-day'} retention
                     </p>
                   </div>
                   

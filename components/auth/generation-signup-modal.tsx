@@ -127,10 +127,10 @@ export function GenerationSignupModal({
   // Determine modal content based on authentication status
   const title = isAuthenticatedFreeUser
     ? "Monthly limit reached!"
-    : "Create & save your designs";
+    : "Continue generating for free!";
   const description = isAuthenticatedFreeUser
     ? "You've used all 6 of your free credits. Subscribe for monthly credits!"
-    : "Sign up or log in to continue generating awesome SVGs.";
+    : "Sign up to continue generating for free and get 6 bonus credits!";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

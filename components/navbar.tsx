@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCredits } from "@/contexts/CreditContext";
 import { BrandLogo } from "@/components/brand-logo";
 import { usePathname } from "next/navigation";
-import { Crown, Menu, Code, FileDown, Film, Sparkles, ChevronDown } from "lucide-react";
+import { Crown, Menu, Code, FileDown, Film, Sparkles, ChevronDown, LayoutDashboard } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { ManageSubscriptionButton } from "@/components/manage-subscription-button";
@@ -88,7 +88,7 @@ const freeTools = [
     href: '/tools/svg-to-video',
     icon: Film,
     badge: 'Premium',
-    description: 'Convert animated SVGs to MP4/GIF'
+    description: 'AI transforms SVGs into dynamic videos'
   }
 ];
 
@@ -97,6 +97,7 @@ export default function Navbar() {
   const { creditInfo, loading: creditsLoading } = useCredits();
   const pathname = usePathname() || "";  // Ensure pathname is never undefined
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subscriptionTier, setSubscriptionTier] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const supabase = createClientComponentClient();
@@ -106,11 +107,12 @@ export default function Navbar() {
       if (session?.user?.id) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('subscription_status')
+          .select('subscription_status, subscription_tier')
           .eq('id', session.user.id)
           .single();
         
         setIsSubscribed(profile?.subscription_status === 'active');
+        setSubscriptionTier(profile?.subscription_tier || null);
       }
       setLoading(false);
     };
@@ -199,48 +201,107 @@ export default function Navbar() {
         </TooltipProvider>
 
         <div className="flex items-center gap-3">
-          {/* Primary CTA - Generate SVG (always visible) */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  size="sm" 
-                  asChild 
-                  className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:opacity-90 text-white border-0 shadow-sm"
-                >
-                  <Link href="/">
-                    <Sparkles className="w-4 h-4 mr-1.5" />
-                    Generate SVG
-                  </Link>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="font-medium">Create custom SVG images with AI</p>
-                <p className="text-xs text-muted-foreground">From text descriptions • No upload needed</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          {/* Primary CTA - Generate SVG (hidden on dashboard, homepage, login, and signup) */}
+          {pathname !== '/dashboard' && pathname !== '/' && pathname !== '/login' && pathname !== '/signup' && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    size="sm" 
+                    asChild 
+                    className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:opacity-90 text-white border-0 shadow-sm"
+                  >
+                    <Link href="/">
+                      <Sparkles className="w-4 h-4 mr-1.5" />
+                      Generate SVG
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="font-medium">Create custom SVG images with AI</p>
+                  <p className="text-xs text-muted-foreground">From text descriptions • No upload needed</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
           
-          {/* Dashboard for logged in users */}
-          {session && (
-            <Button variant="outline" size="sm" asChild className="hidden md:flex hover:bg-[#FF7043]/10">
+          {/* Dashboard for logged in users (hidden on dashboard page) */}
+          {session && pathname !== '/dashboard' && (
+            <Button variant="ghost" size="sm" asChild className="hidden md:flex hover:bg-gray-100/50 text-gray-600">
               <Link href="/dashboard">Dashboard</Link>
             </Button>
           )}
 
-          {/* Single Sign In button */}
+          {/* Login and Signup buttons */}
           {!session && (
-            <Button size="sm" variant="outline" asChild className="hover:bg-[#FF7043]/10">
-              <Link href="/login">Sign In</Link>
-            </Button>
+            <>
+              {pathname !== '/login' && pathname !== '/signup' && (
+                <Button size="sm" variant="ghost" asChild className="hover:bg-gray-100/50">
+                  <Link href="/login">Login</Link>
+                </Button>
+              )}
+              {pathname === '/signup' && (
+                <Button size="sm" variant="ghost" asChild className="hover:bg-gray-100/50">
+                  <Link href="/login">Login</Link>
+                </Button>
+              )}
+              {(pathname === '/' || pathname === '/login' || pathname === '/pricing') && (
+                <Button size="sm" asChild className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:opacity-90 text-white border-0 shadow-sm">
+                  <Link href="/signup">Sign Up</Link>
+                </Button>
+              )}
+            </>
           )}
 
-          {/* Subscription management and credits */}
-          {session && isSubscribed && <ManageSubscriptionButton />}
-          {session && !creditsLoading && creditInfo && (
-            <span className="hidden lg:inline text-sm text-gray-600">
-              {creditInfo.creditsRemaining} credits
-            </span>
+          {/* Credits and user section */}
+          {session && (
+            <>
+              {/* Credits display */}
+              {!creditsLoading && creditInfo && (
+                <div className="hidden md:flex items-center gap-3">
+                  {/* Special display for pricing page */}
+                  {pathname === '/pricing' ? (
+                    <div className="flex items-center gap-2">
+                      {isSubscribed ? (
+                        <Badge variant="default" className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] border-0">
+                          <Crown className="w-3 h-3 mr-1" />
+                          Current Plan: {subscriptionTier === 'pro' ? 'Pro' : 'Starter'}
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="border-orange-200 text-orange-600">
+                          <span className="font-medium">{creditInfo.creditsRemaining}</span>
+                          <span className="ml-1">free credits left</span>
+                        </Badge>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <span className="font-medium">{creditInfo.creditsRemaining}</span>
+                        <span className="ml-1">credits left</span>
+                      </div>
+                      
+                      {/* Get More button when low on credits (hidden on pricing page) */}
+                      {!isSubscribed && creditInfo.creditsRemaining < 10 && (
+                        <Button 
+                          size="sm" 
+                          asChild 
+                          className="h-8 text-sm bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0 shadow-sm hover:from-orange-600 hover:to-orange-700 transition-all duration-200"
+                        >
+                          <Link href="/pricing">
+                            <Sparkles className="w-3 h-3 mr-1" />
+                            Get More Credits
+                          </Link>
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+              
+              {/* Divider */}
+              <div className="hidden md:block h-8 w-px bg-gray-200" />
+            </>
           )}
           
           <UserMenu />
@@ -269,15 +330,17 @@ export default function Navbar() {
                 
                 {/* Mobile Navigation Links */}
                 <nav className="flex flex-col space-y-1">
-                  {/* Primary CTA for mobile */}
-                  <Link 
-                    href="/"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="py-3 px-2 text-base font-medium bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white rounded-md transition-opacity hover:opacity-90 mb-2"
-                  >
-                    <Sparkles className="w-4 h-4 inline mr-2" />
-                    Generate SVG
-                  </Link>
+                  {/* Primary CTA for mobile (hidden on dashboard, homepage, login, and signup) */}
+                  {pathname !== '/dashboard' && pathname !== '/' && pathname !== '/login' && pathname !== '/signup' && (
+                    <Link 
+                      href="/"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="py-3 px-2 text-base font-medium bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white rounded-md transition-opacity hover:opacity-90 mb-2"
+                    >
+                      <Sparkles className="w-4 h-4 inline mr-2" />
+                      Generate SVG
+                    </Link>
+                  )}
                   
                   {navigationLinks.map((link) => {
                     // Special handling for Tools link with dropdown
@@ -356,7 +419,7 @@ export default function Navbar() {
                 
                 {/* Mobile Actions */}
                 <div className="pt-4 border-t space-y-3">
-                  {session && (
+                  {session && pathname !== '/dashboard' && (
                     <Button 
                       variant="outline" 
                       asChild 
@@ -368,14 +431,37 @@ export default function Navbar() {
                   )}
                   
                   {!session && (
-                    <Button 
-                      variant="outline"
-                      asChild 
-                      className="w-full hover:bg-[#FF7043]/10"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Link href="/login">Sign In</Link>
-                    </Button>
+                    <>
+                      {pathname !== '/login' && pathname !== '/signup' && (
+                        <Button 
+                          variant="ghost"
+                          asChild 
+                          className="w-full hover:bg-gray-100/50"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <Link href="/login">Login</Link>
+                        </Button>
+                      )}
+                      {pathname === '/signup' && (
+                        <Button 
+                          variant="ghost"
+                          asChild 
+                          className="w-full hover:bg-gray-100/50"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <Link href="/login">Login</Link>
+                        </Button>
+                      )}
+                      {(pathname === '/' || pathname === '/login') && (
+                        <Button 
+                          asChild 
+                          className="w-full bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:opacity-90 text-white border-0"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <Link href="/signup">Sign Up</Link>
+                        </Button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import MonitoringDashboard from '@/components/monitoring-dashboard'
 
 export const metadata: Metadata = {
-  title: 'System Monitoring | SVG AI',
+  title: 'System Monitoring',
   description: 'Monitor system health, performance, and alerts',
 }
 

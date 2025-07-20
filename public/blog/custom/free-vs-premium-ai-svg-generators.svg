@@ -1,0 +1,42 @@
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="comparisonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#D97706" />
+      <stop offset="100%" stopColor="#059669" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="800" height="400" fill="url(#comparisonGradient)" opacity="0.1"/>
+  
+  <text x="400" y="60" textAnchor="middle" style="font-size: 2.25rem; font-weight: bold; fill: #1F2937;">
+    Free vs. Premium AI SVG Generators
+  </text>
+  
+  <text x="400" y="85" textAnchor="middle" style="font-size: 1.125rem; fill: #4B5563;">
+    A Developer's Honest Review
+  </text>
+  
+  <g transform="translate(150, 150)">
+    <rect x="0" y="0" width="200" height="150" fill="#FBBF24" rx="8" opacity="0.8"/>
+    <text x="100" y="30" textAnchor="middle" style="font-size: 1.25rem; font-weight: bold; fill: #1F2937;">Free Tools</text>
+    <text x="100" y="60" textAnchor="middle" style="font-size: 0.875rem; fill: #4B5563;">- Limited API</text>
+    <text x="100" y="80" textAnchor="middle" style="font-size: 0.875rem; fill: #4B5563;">- Slower Performance</text>
+    <text x="100" y="100" textAnchor="middle" style="font-size: 0.875rem; fill: #4B5563;">- Inconsistent Quality</text>
+    <text x="100" y="120" textAnchor="middle" style="font-size: 0.875rem; fill: #4B5563;">- Hidden Costs</text>
+  </g>
+  
+  <g transform="translate(450, 150)">
+    <rect x="0" y="0" width="200" height="150" fill="#10B981" rx="8" opacity="0.8"/>
+    <text x="100" y="30" textAnchor="middle" style="font-size: 1.25rem; font-weight: bold; fill: white;">Premium Tools</text>
+    <text x="100" y="60" textAnchor="middle" style="font-size: 0.875rem; fill: white;">- Full API Access</text>
+    <text x="100" y="80" textAnchor="middle" style="font-size: 0.875rem; fill: white;">- Optimized Speed</text>
+    <text x="100" y="100" textAnchor="middle" style="font-size: 0.875rem; fill: white;">- High-Quality Output</text>
+    <text x="100" y="120" textAnchor="middle" style="font-size: 0.875rem; fill: white;">- Predictable Pricing</text>
+  </g>
+  
+  <line x1="400" y1="120" x2="400" y2="330" stroke="#9CA3AF" strokeWidth="2" strokeDasharray="5,5"/>
+  
+  <text x="400" y="360" textAnchor="middle" style="font-size: 1.125rem; font-weight: 500; fill: #1F2937;">
+    Total Cost of Ownership Analysis
+  </text>
+</svg>

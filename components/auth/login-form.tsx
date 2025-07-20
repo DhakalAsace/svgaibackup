@@ -16,7 +16,7 @@ function LoginFormWithRedirect() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signIn: login, signInWithGoogle: loginWithGoogle } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -30,13 +30,13 @@ function LoginFormWithRedirect() {
     redirectPath += (redirectPath.includes('?') ? '&' : '?') + 'preservePrompt=true';
   }
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
 
     try {
-      await signIn(email, password);
+      await login(email, password);
       // Redirect to the original destination or dashboard if none
       router.push(redirectPath);
     } catch (error: any) {
@@ -46,13 +46,13 @@ function LoginFormWithRedirect() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleLogin = async () => {
     setError(null);
     try {
-      await signInWithGoogle(redirectPath);
+      await loginWithGoogle(redirectPath);
       // Redirect happens automatically with OAuth
     } catch (error: any) {
-      setError(error.message || "An error occurred with Google sign in");
+      setError(error.message || "An error occurred with Google login");
     }
   };
 
@@ -61,7 +61,7 @@ function LoginFormWithRedirect() {
       <CardHeader>
         <CardTitle>Log In</CardTitle>
         <CardDescription>
-          Sign in to your account to manage your SVG creations
+          Login to your account to manage your SVG creations
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -72,52 +72,12 @@ function LoginFormWithRedirect() {
           </Alert>
         )}
 
-        <form onSubmit={handleSignIn} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="u2022u2022u2022u2022u2022u2022u2022u2022"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <div className="text-right">
-              <a href="/reset-password" className="text-sm text-[#0084FF] hover:underline">
-                Forgot password?
-              </a>
-            </div>
-          </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Signing in..." : "Sign In"}
-          </Button>
-
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
-            </div>
-          </div>
-
+        <div className="space-y-4">
           <Button
             type="button"
             variant="outline"
             className="w-full"
-            onClick={handleGoogleSignIn}
+            onClick={handleGoogleLogin}
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path
@@ -138,9 +98,50 @@ function LoginFormWithRedirect() {
               />
               <path d="M1 1h22v22H1z" fill="none" />
             </svg>
-            Sign in with Google
+            Login with Google
           </Button>
-        </form>
+
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Or login with email</span>
+            </div>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <div className="text-right">
+              <a href="/reset-password" className="text-sm text-[#0084FF] hover:underline">
+                Forgot password?
+              </a>
+            </div>
+          </div>
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Log In"}
+          </Button>
+          </form>
+        </div>
       </CardContent>
       <CardFooter className="flex justify-center">
         <p className="text-sm text-gray-600">

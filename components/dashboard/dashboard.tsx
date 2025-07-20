@@ -620,10 +620,10 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
                   <div className="pt-2">
                     <Link href="/pricing" className="block">
                       <Button size="sm" className="w-full bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white hover:opacity-90">
-                        Upgrade Now
+                        Get More Credits
                       </Button>
                     </Link>
-                    <p className="text-xs text-gray-500 text-center mt-1.5">Get monthly credits</p>
+                    <p className="text-xs text-gray-500 text-center mt-1.5">Monthly plans available</p>
                   </div>
                 )}
                 

@@ -95,7 +95,7 @@ export function GenerationUpsell({
               <Button size="sm" className="w-full bg-[#FF7043] hover:bg-[#FF5722] font-medium" asChild>
                 <Link href="/pricing">
                   <Sparkles className="mr-2 h-3 w-3" />
-                  View Plans
+                  Get More Credits
                 </Link>
               </Button>
             </div>
@@ -213,7 +213,7 @@ export function UpgradeModal({ isOpen, onClose, triggerDelay = 5000, generationT
           <div className="space-y-4">
             <div className="text-center">
               <h3 className="text-lg font-medium text-gray-900 mb-2">Choose Your Plan</h3>
-              <p className="text-sm text-gray-600">Get unlimited monthly credits</p>
+              <p className="text-sm text-gray-600">Get monthly credits that refresh automatically</p>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
@@ -260,7 +260,7 @@ export function UpgradeModal({ isOpen, onClose, triggerDelay = 5000, generationT
             size="lg"
           >
             <Sparkles className="mr-2 h-4 w-4" />
-            View Plans & Continue Creating
+            Get More Credits
           </Button>
 
           <p className="text-center text-xs text-gray-500">
