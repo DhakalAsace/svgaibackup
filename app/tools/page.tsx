@@ -156,7 +156,7 @@ export default function ToolsPage() {
               We're constantly adding new tools based on user feedback. Have a suggestion for an SVG tool you'd like to see?
             </p>
             <Link href="mailto:hello@svgai.org?subject=Tool%20Suggestion">
-              <Button className={getButtonStyles('outline', 'md')}>
+              <Button className={getButtonStyles('secondary', 'md')}>
                 Suggest a Tool
               </Button>
             </Link>

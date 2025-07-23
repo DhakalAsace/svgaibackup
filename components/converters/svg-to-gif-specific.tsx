@@ -5,20 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Download, Settings, Play, Pause, RotateCcw, Video } from 'lucide-react'
+import { Download, Settings, Image, RotateCcw, Video } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { svgToGifHandler } from '@/lib/converters/svg-to-gif-client'
 import Link from 'next/link'
-
-const qualityPresets = {
-  'high': { quality: 1, workers: 4, colors: 256 },
-  'medium': { quality: 10, workers: 2, colors: 128 },
-  'low': { quality: 20, workers: 1, colors: 64 },
-  'animation': { quality: 15, workers: 2, colors: 64 }
-}
 
 interface SvgToGifSpecificProps {
   svgContent: string
@@ -37,14 +30,11 @@ export function SvgToGifSpecific({
   const [showAdvanced, setShowAdvanced] = useState(false)
   
   // Conversion options
-  const [width, setWidth] = useState<number>(800)
-  const [height, setHeight] = useState<number>(600)
-  const [quality, setQuality] = useState<string>('medium')
-  const [frameRate, setFrameRate] = useState<number>(12)
-  const [duration, setDuration] = useState<number>(2)
-  const [colors, setColors] = useState<number>(256)
-  const [enableDither, setEnableDither] = useState(false)
-  const [workers, setWorkers] = useState<number>(2)
+  const [width, setWidth] = useState<number | undefined>(undefined)
+  const [height, setHeight] = useState<number | undefined>(undefined)
+  const [fit, setFit] = useState<'max' | 'crop' | 'scale'>('max')
+  const [stripMetadata, setStripMetadata] = useState(true)
+  const [pixelDensity, setPixelDensity] = useState<number>(300)
 
   const handleConvert = useCallback(async () => {
     if (!svgContent) {
@@ -58,16 +48,12 @@ export function SvgToGifSpecific({
     onConversionStart?.()
 
     try {
-      const preset = qualityPresets[quality as keyof typeof qualityPresets]
-      
       const result = await svgToGifHandler(Buffer.from(svgContent, 'utf-8'), {
         width,
         height,
-        colors: colors || preset.colors,
-        dither: enableDither,
-        quality: preset.quality === 1 ? 95 : preset.quality === 10 ? 85 : 75, // Map old quality to CloudConvert quality (1-100)
-        density: 150, // DPI for rasterization
-        fit: 'scale',
+        fit,
+        strip: stripMetadata,
+        pixelDensity,
         onProgress: (progressValue) => {
           setProgress(Math.round(progressValue * 100))
         }
@@ -97,17 +83,14 @@ export function SvgToGifSpecific({
       setIsConverting(false)
       setProgress(0)
     }
-  }, [svgContent, width, height, quality, colors, enableDither, onConversionStart, onConversionComplete])
+  }, [svgContent, width, height, fit, stripMetadata, pixelDensity, onConversionStart, onConversionComplete])
 
   const resetOptions = () => {
-    setWidth(800)
-    setHeight(600)
-    setQuality('medium')
-    setFrameRate(12)
-    setDuration(2)
-    setColors(256)
-    setEnableDither(false)
-    setWorkers(2)
+    setWidth(undefined)
+    setHeight(undefined)
+    setFit('max')
+    setStripMetadata(true)
+    setPixelDensity(300)
   }
 
   return (
@@ -116,11 +99,12 @@ export function SvgToGifSpecific({
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <Play className="w-5 h-5" />
+              {/* eslint-disable-next-line jsx-a11y/alt-text */}
+              <Image className="w-5 h-5" />
               SVG to GIF Converter
             </CardTitle>
             <CardDescription>
-              Convert SVG files to animated GIF format with customizable settings
+              Convert SVG images to GIF format with customizable resolution and quality settings
             </CardDescription>
           </div>
           <Button
@@ -142,8 +126,9 @@ export function SvgToGifSpecific({
               <Input
                 id="width"
                 type="number"
-                value={width}
-                onChange={(e) => setWidth(Number(e.target.value))}
+                value={width || ''}
+                onChange={(e) => setWidth(e.target.value ? Number(e.target.value) : undefined)}
+                placeholder="Auto"
                 min="1"
                 max="4096"
               />
@@ -154,84 +139,48 @@ export function SvgToGifSpecific({
               <Input
                 id="height"
                 type="number"
-                value={height}
-                onChange={(e) => setHeight(Number(e.target.value))}
+                value={height || ''}
+                onChange={(e) => setHeight(e.target.value ? Number(e.target.value) : undefined)}
+                placeholder="Auto"
                 min="1"
                 max="4096"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="quality">Quality Preset</Label>
-              <Select value={quality} onValueChange={setQuality}>
+              <Label htmlFor="fit">Resize Mode</Label>
+              <Select value={fit} onValueChange={(value) => setFit(value as any)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select quality" />
+                  <SelectValue placeholder="Select resize mode" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="high">High (Best quality)</SelectItem>
-                  <SelectItem value="medium">Medium (Balanced)</SelectItem>
-                  <SelectItem value="low">Low (Smallest file)</SelectItem>
-                  <SelectItem value="animation">Animation (Optimized)</SelectItem>
+                  <SelectItem value="max">Max (Fit within bounds)</SelectItem>
+                  <SelectItem value="crop">Crop (Fill and crop excess)</SelectItem>
+                  <SelectItem value="scale">Scale (Exact dimensions)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="frameRate">Frame Rate (fps)</Label>
+              <Label htmlFor="pixelDensity">Pixel Density (DPI)</Label>
               <Input
-                id="frameRate"
+                id="pixelDensity"
                 type="number"
-                value={frameRate}
-                onChange={(e) => setFrameRate(Number(e.target.value))}
-                min="1"
-                max="60"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="duration">Duration (seconds)</Label>
-              <Input
-                id="duration"
-                type="number"
-                value={duration}
-                onChange={(e) => setDuration(Number(e.target.value))}
-                min="0.1"
-                max="30"
-                step="0.1"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="colors">Colors (2-256)</Label>
-              <Input
-                id="colors"
-                type="number"
-                value={colors}
-                onChange={(e) => setColors(Number(e.target.value))}
-                min="2"
-                max="256"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="workers">Worker Threads</Label>
-              <Input
-                id="workers"
-                type="number"
-                value={workers}
-                onChange={(e) => setWorkers(Number(e.target.value))}
-                min="0"
-                max="8"
+                value={pixelDensity}
+                onChange={(e) => setPixelDensity(Number(e.target.value))}
+                min="72"
+                max="600"
+                step="1"
               />
             </div>
             
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="dither"
-                checked={enableDither}
-                onCheckedChange={(checked) => setEnableDither(checked as boolean)}
+                id="stripMetadata"
+                checked={stripMetadata}
+                onCheckedChange={(checked) => setStripMetadata(checked as boolean)}
               />
-              <Label htmlFor="dither">Enable Dithering</Label>
+              <Label htmlFor="stripMetadata">Remove metadata</Label>
             </div>
             
             <div className="flex justify-end">
@@ -266,33 +215,35 @@ export function SvgToGifSpecific({
             className="flex-1"
           >
             {isConverting ? (
-              <Pause className="w-4 h-4 mr-2" />
+              <>Processing...</>
             ) : (
-              <Download className="w-4 h-4 mr-2" />
+              <>
+                <Download className="w-4 h-4 mr-2" />
+                Convert & Download GIF
+              </>
             )}
-            {isConverting ? 'Converting...' : 'Convert & Download GIF'}
           </Button>
         </div>
 
         {!isConverting && (
           <div className="space-y-3">
             <div className="text-xs text-gray-500 space-y-1">
-              <p>• Supports both static SVG and animated SVG with CSS/SMIL animations</p>
-              <p>• Secure conversion - we never save your files</p>
-              <p>• Larger images and longer animations will take more time to process</p>
+              <p>• Converts static SVG images to GIF format</p>
+              <p>• High-quality conversion using ImageMagick engine</p>
+              <p>• Secure cloud-based processing</p>
             </div>
             
             <Alert className="bg-blue-50 border-blue-200">
               <Video className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-sm">
-                <strong>Need higher quality video?</strong> Try our{' '}
+                <strong>Looking for video export?</strong> Try our{' '}
                 <Link 
                   href="/tools/svg-to-video" 
                   className="text-blue-600 hover:text-blue-700 underline font-medium"
                 >
                   SVG to MP4 converter
                 </Link>{' '}
-                for HD video with AI-powered animations and better compression.
+                for high-quality video output with advanced features.
               </AlertDescription>
             </Alert>
           </div>

@@ -1,6 +1,7 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: process.env.SITE_URL || 'https://svgai.org',
+  sourceDir: '.next-build',
   generateRobotsTxt: true,
   generateIndexSitemap: false, // Don't need index until 5000+ URLs
   
@@ -55,9 +56,6 @@ module.exports = {
           '/offline',
           '/login',
           '/signup',
-          '/privacy-policy',
-          '/terms-of-service',
-          '/converters/',
         ],
       },
     ],
@@ -133,18 +131,29 @@ module.exports = {
       }
     }
     
-    // Learn pages (when they exist)
-    if (path.startsWith('/learn/')) {
+    
+    // Pricing page
+    if (path === '/pricing') {
       return {
         loc: path,
         priority: 0.8,
-        changefreq: 'monthly',
+        changefreq: 'weekly',
         lastmod: new Date().toISOString(),
       }
     }
     
-    // Pricing and other important pages
-    if (path === '/pricing' || path === '/animate') {
+    // Animation tool - key feature
+    if (path === '/animate') {
+      return {
+        loc: path,
+        priority: 0.9,
+        changefreq: 'weekly',
+        lastmod: new Date().toISOString(),
+      }
+    }
+    
+    // Tools pages - important for user engagement
+    if (path.startsWith('/tools/')) {
       return {
         loc: path,
         priority: 0.8,
@@ -160,6 +169,27 @@ module.exports = {
       changefreq: 'monthly',
       lastmod: new Date().toISOString(),
     }
+  },
+  
+  // Additional paths to include in sitemap
+  additionalPaths: async (config) => {
+    const converters = [
+      'png-to-svg', 'svg-to-png', 'svg-converter', 'jpg-to-svg', 'image-to-svg',
+      'svg-to-jpg', 'jpeg-to-svg', 'svg-to-pdf', 'pdf-to-svg', 'webp-to-svg',
+      'svg-to-webp', 'gif-to-svg', 'svg-to-gif', 'bmp-to-svg', 'svg-to-bmp',
+      'ico-to-svg', 'svg-to-ico', 'eps-to-svg', 'svg-to-eps', 'ai-to-svg',
+      'svg-to-ai', 'dxf-to-svg', 'svg-to-dxf', 'tiff-to-svg', 'svg-to-tiff',
+      'jpg-to-png', 'png-to-jpg', 'jpg-to-webp', 'png-to-pdf',
+      'jpg-to-pdf', 'jpg-to-ico', 'png-to-ico', 'ico-to-jpg', 'ico-to-png',
+      'webp-to-jpg', 'webp-to-png', 'avif-to-jpg', 'avif-to-png', 'heic-to-jpg',
+      'heic-to-png', 'jfif-to-jpg', 'jfif-to-png'
+    ]
+    
+    return converters.map(converter => ({
+      loc: `/convert/${converter}`,
+      priority: converter.includes('png-to-svg') || converter.includes('svg-to-png') ? 0.9 : 0.7,
+      changefreq: 'monthly',
+    }))
   },
   
   // Output directory

@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir: '.next-build',
   eslint: {
     ignoreDuringBuilds: false, // Enable ESLint during builds
   },
@@ -9,13 +10,29 @@ const nextConfig = {
   experimental: {
     optimizeCss: false, // Disable experimental CSS optimization
     scrollRestoration: false, // Disable experimental scroll restoration
+    serverComponentsExternalPackages: ['sharp'], // Ensure sharp is handled correctly
   },
+  
+  // Allow development access from local network
+  allowedDevOrigins: [
+    'http://localhost:3000',
+    'http://10.0.0.168:3000',
+  ],
+  
+  // Production optimizations
+  productionBrowserSourceMaps: false, // Disable source maps in production
+  
   // Remove complex user config import
   // Remove MDX for now
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
   
   // Add webpack configuration to handle native modules
-  webpack: (config, { isServer, webpack }) => {
+  webpack: (config, { isServer, webpack, dev }) => {
+    // Disable source maps in production
+    if (!dev && !isServer) {
+      config.devtool = false;
+    }
+    
     // Handle native modules that cause build hangs
     if (!isServer) {
       config.resolve.fallback = {
@@ -113,6 +130,18 @@ const nextConfig = {
       {
         source: '/convert/svg-to-mp4',
         destination: '/tools/svg-to-video',
+        permanent: true,
+      },
+      
+      // Redirect old privacy and terms URLs to new ones
+      {
+        source: '/privacy-policy',
+        destination: '/privacy',
+        permanent: true,
+      },
+      {
+        source: '/terms-of-service',
+        destination: '/terms',
         permanent: true,
       },
     ];

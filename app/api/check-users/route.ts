@@ -28,20 +28,15 @@ type LimitedAuthUser = {
 export async function GET() {
   try {
     // Check admin authentication
-    const { isAuthenticated, isAdmin, user } = await checkAdminAuth();
-    
-    if (!isAuthenticated) {
-      logger.warn('Unauthenticated user data access attempt');
-      return unauthorized('Authentication required');
-    }
+    const isAdmin = await checkAdminAuth();
     
     if (!isAdmin) {
-      logger.warn('Non-admin user data access attempt', { userId: user?.id });
+      logger.warn('Unauthorized user data access attempt');
       return forbidden('Admin privileges required');
     }
     
     // Log the authorized access
-    logger.info('Admin accessing user data', { adminId: user?.id });
+    logger.info('Admin accessing user data');
     
     // Create Supabase client with service role for auth schema access
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

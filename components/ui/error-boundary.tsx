@@ -1,22 +1,18 @@
 "use client"
-
 import React from "react"
 import { AlertCircle, RefreshCw, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import Link from "next/link"
-
 interface ErrorBoundaryState {
   hasError: boolean
   error: Error | null
 }
-
 interface ErrorBoundaryProps {
   children: React.ReactNode
   fallback?: React.ComponentType<{ error: Error; reset: () => void }>
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void
 }
-
 export class ErrorBoundary extends React.Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
@@ -25,34 +21,26 @@ export class ErrorBoundary extends React.Component<
     super(props)
     this.state = { hasError: false, error: null }
   }
-
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error }
   }
-
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("ErrorBoundary caught an error:", error, errorInfo)
     this.props.onError?.(error, errorInfo)
   }
-
   reset = () => {
     this.setState({ hasError: false, error: null })
   }
-
   render() {
     if (this.state.hasError && this.state.error) {
       if (this.props.fallback) {
         const FallbackComponent = this.props.fallback
         return <FallbackComponent error={this.state.error} reset={this.reset} />
       }
-
       return <DefaultErrorFallback error={this.state.error} reset={this.reset} />
     }
-
     return this.props.children
   }
 }
-
 // Default error fallback component
 export function DefaultErrorFallback({
   error,
@@ -71,7 +59,6 @@ export function DefaultErrorFallback({
             {error.message || "An unexpected error occurred"}
           </AlertDescription>
         </Alert>
-        
         <div className="flex gap-2">
           <Button onClick={reset} variant="outline" className="flex-1">
             <RefreshCw className="mr-2 h-4 w-4" />
@@ -88,7 +75,6 @@ export function DefaultErrorFallback({
     </div>
   )
 }
-
 // Converter-specific error boundary
 export function ConverterErrorFallback({
   error,
@@ -106,7 +92,6 @@ export function ConverterErrorFallback({
           {error.message || "Failed to process your file. Please try again."}
         </AlertDescription>
       </Alert>
-      
       <div className="mt-4 flex gap-2">
         <Button onClick={reset} variant="outline">
           <RefreshCw className="mr-2 h-4 w-4" />
@@ -116,7 +101,6 @@ export function ConverterErrorFallback({
     </div>
   )
 }
-
 // Gallery-specific error boundary
 export function GalleryErrorFallback({
   error,
@@ -141,7 +125,6 @@ export function GalleryErrorFallback({
     </div>
   )
 }
-
 // withErrorBoundary HOC for easy wrapping
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
@@ -152,8 +135,6 @@ export function withErrorBoundary<P extends object>(
       <Component {...props} />
     </ErrorBoundary>
   )
-  
   WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name || "Component"})`
-  
   return WrappedComponent
 }

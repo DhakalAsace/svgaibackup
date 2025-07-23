@@ -24,7 +24,7 @@ This document provides a high-level overview of the credit system implementation
 
 ### Task 3: Pricing and Stripe Updates
 **File**: [03-pricing-and-stripe-updates.md](./03-pricing-and-stripe-updates.md)
-- New pricing: Starter $12/$119, Pro $29/$289
+- New pricing: Starter $19/$189, Pro $39/$389
 - Annual billing implementation
 - Subscription management (upgrades/downgrades at period end)
 - Stripe webhook modifications
@@ -46,10 +46,10 @@ This document provides a high-level overview of the credit system implementation
 
 ### Stripe Dashboard
 1. Create new price IDs:
-   - Starter Monthly: $12/month
-   - Starter Annual: $119/year
-   - Pro Monthly: $29/month
-   - Pro Annual: $289/year
+   - Starter Monthly: $19/month
+   - Starter Annual: $189/year
+   - Pro Monthly: $39/month
+   - Pro Annual: $389/year
 
 2. Update webhook endpoint if needed
 

@@ -1,379 +1,1 @@
-/**
- * SVG to TIFF Converter Implementation
- * 
- * This module provides SVG to TIFF conversion using:
- * 1. Sharp library for server-side conversion (primary method)
- * 2. CloudConvert SVG → TIFF (fallback for browser/server issues)
- */
-
-import { LazyLoadedConverter } from './base-converter'
-import type { 
-  ConversionOptions, 
-  ConversionResult,
-  ImageFormat 
-} from './types'
-import { 
-  ConversionError, 
-  FileValidationError,
-  UnsupportedFormatError 
-} from './errors'
-import { detectFileTypeFromBuffer } from './validation'
-import { convertWithCloudConvert } from './cloudconvert-client'
-
-// Check if we're in a browser environment
-const isBrowser = typeof window !== 'undefined'
-
-/**
- * Extended conversion options for SVG to TIFF
- */
-interface SvgToTiffOptions extends ConversionOptions {
-  /** DPI for rasterization (default: 300 for TIFF) */
-  dpi?: number
-  /** TIFF compression method */
-  compression?: 'none' | 'lzw' | 'deflate' | 'jpeg' | 'ccittfax4'
-  /** TIFF predictor (for lzw/deflate compression) */
-  predictor?: 'none' | 'horizontal' | 'float'
-  /** Bit depth (1, 2, 4, or 8) */
-  bitdepth?: 1 | 2 | 4 | 8
-}
-
-/**
- * SVG to TIFF Converter
- * Extends LazyLoadedConverter to handle dynamic library loading
- */
-class SVGToTIFFConverter extends LazyLoadedConverter {
-  name = 'SVG to TIFF'
-  from: ImageFormat = 'svg'
-  to: ImageFormat = 'tiff'
-  description = 'Convert scalable vector graphics to TIFF format with various compression options and high DPI support'
-
-  private sharp: any = null
-
-  /**
-   * Load required libraries (sharp for server, browser handler for client)
-   */
-  protected async loadLibraries(): Promise<void> {
-    if (isBrowser) {
-      // In browser, we'll use the browser handler
-      return
-    }
-    this.sharp = await import('sharp').then(m => m.default)
-  }
-
-  /**
-   * Validate that the input is an SVG
-   */
-  private validateSvgInput(input: Buffer | string): string {
-    // If string, check if it's valid SVG
-    if (typeof input === 'string') {
-      const trimmed = input.trim()
-      if (!trimmed.includes('<svg') && !trimmed.includes('<?xml')) {
-        throw new FileValidationError('Invalid SVG: Missing SVG tag')
-      }
-      return trimmed
-    }
-    
-    // If buffer, detect format
-    const format = detectFileTypeFromBuffer(input)
-    
-    if (format !== 'svg') {
-      throw new UnsupportedFormatError(
-        format || 'unknown',
-        ['svg'],
-        `Expected SVG format but received ${format || 'unknown format'}`
-      )
-    }
-    
-    return input.toString('utf8')
-  }
-
-  /**
-   * Process SVG string to ensure proper dimensions and viewBox
-   */
-  private processSvgString(svg: string, options: SvgToTiffOptions): { svg: string; metadata: { width?: number; height?: number } } {
-  const metadata: { width?: number; height?: number } = {}
-  
-  // Extract dimensions from SVG
-  const widthMatch = svg.match(/width="([^"]+)"/)
-  const heightMatch = svg.match(/height="([^"]+)"/)
-  const viewBoxMatch = svg.match(/viewBox="([^"]+)"/)
-  
-  let processedSvg = svg
-  
-  // Parse dimensions
-  if (widthMatch) {
-    const width = parseFloat(widthMatch[1])
-    if (!isNaN(width)) metadata.width = width
-  }
-  
-  if (heightMatch) {
-    const height = parseFloat(heightMatch[1])
-    if (!isNaN(height)) metadata.height = height
-  }
-  
-  // If no dimensions but viewBox exists, extract from viewBox
-  if (!metadata.width && !metadata.height && viewBoxMatch) {
-    const [, , vbWidth, vbHeight] = viewBoxMatch[1].split(' ').map(parseFloat)
-    if (!isNaN(vbWidth) && !isNaN(vbHeight)) {
-      metadata.width = vbWidth
-      metadata.height = vbHeight
-    }
-  }
-  
-  // Apply user-specified dimensions if provided
-  if (options.width || options.height) {
-    const targetWidth = options.width || metadata.width
-    const targetHeight = options.height || metadata.height
-    
-    if (targetWidth && targetHeight) {
-      // Update or add dimensions
-      if (widthMatch) {
-        processedSvg = processedSvg.replace(/width="[^"]+"/, `width="${targetWidth}"`)
-      } else {
-        processedSvg = processedSvg.replace('<svg', `<svg width="${targetWidth}"`)
-      }
-      
-      if (heightMatch) {
-        processedSvg = processedSvg.replace(/height="[^"]+"/, `height="${targetHeight}"`)
-      } else {
-        processedSvg = processedSvg.replace('<svg', `<svg height="${targetHeight}"`)
-      }
-      
-      metadata.width = targetWidth
-      metadata.height = targetHeight
-    }
-  }
-  
-  // Ensure SVG has dimensions for sharp
-  if (!metadata.width || !metadata.height) {
-    // Default dimensions if none found
-    const defaultSize = 512
-    metadata.width = metadata.width || defaultSize
-    metadata.height = metadata.height || defaultSize
-    
-    if (!widthMatch) {
-      processedSvg = processedSvg.replace('<svg', `<svg width="${metadata.width}"`)
-    }
-    if (!heightMatch) {
-      processedSvg = processedSvg.replace('<svg', `<svg height="${metadata.height}"`)
-    }
-  }
-  
-    return { svg: processedSvg, metadata }
-  }
-
-  /**
-   * CloudConvert fallback method
-   */
-  private async convertViaCloudConvert(
-    input: Buffer | string,
-    options: SvgToTiffOptions
-  ): Promise<ConversionResult> {
-    try {
-      // Validate and get SVG string
-      const svgString = this.validateSvgInput(input)
-      const svgBuffer = Buffer.from(svgString, 'utf8')
-      
-      this.reportProgress(options, 0.1)
-      
-      const result = await convertWithCloudConvert(
-        svgBuffer,
-        'svg',
-        'tiff',
-        'input.svg',
-        {
-          width: options.width,
-          height: options.height,
-          preserveAspectRatio: options.preserveAspectRatio,
-          quality: options.quality,
-          onProgress: (progress) => {
-            this.reportProgress(options, 0.1 + progress * 0.9) // 0.1 to 1.0
-          }
-        }
-      )
-      
-      if (!result.success) {
-        throw new ConversionError(
-          `CloudConvert SVG to TIFF failed: ${result.error}`,
-          'CLOUDCONVERT_SVG_TO_TIFF_FAILED'
-        )
-      }
-      
-      return {
-        ...result,
-        metadata: {
-          ...result.metadata,
-          method: 'cloudconvert',
-          compression: options.compression || 'lzw',
-          dpi: options.dpi || 300
-        }
-      }
-      
-    } catch (error) {
-      if (error instanceof ConversionError) {
-        throw error
-      }
-      
-      throw new ConversionError(
-        `CloudConvert SVG to TIFF failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'CLOUDCONVERT_FAILED'
-      )
-    }
-  }
-
-  /**
-   * Perform the actual conversion after libraries are loaded
-   */
-  protected async performConversionWithLibraries(
-    input: Buffer,
-    options: SvgToTiffOptions
-  ): Promise<ConversionResult> {
-    // Use browser implementation if in browser environment
-    if (isBrowser) {
-      try {
-        const { svgToTiffBrowserHandler } = await import('./svg-to-tiff-browser')
-        return svgToTiffBrowserHandler(input, options)
-      } catch (browserError) {
-        console.warn('Browser SVG to TIFF conversion failed, falling back to CloudConvert:', browserError)
-        return await this.convertViaCloudConvert(input, options)
-      }
-    }
-    
-    try {
-      // Try sharp conversion first (server-side)
-      
-      // Validate and get SVG string
-      const svgString = this.validateSvgInput(input)
-      
-      // Process SVG string for proper dimensions
-      const { svg: processedSvg, metadata } = this.processSvgString(svgString, options)
-      
-      // Convert SVG string to Buffer
-      const svgBuffer = Buffer.from(processedSvg, 'utf8')
-      
-      // Report progress before conversion
-      this.reportProgress(options, 0.5)
-      await this.trackConversionProgress(0.5)
-      
-      // Calculate density from DPI (default higher for TIFF)
-      const density = options.dpi || 300
-      
-      // Prepare sharp instance
-      let sharpInstance = this.sharp(svgBuffer, {
-        density: density
-      })
-      
-      // Apply background if specified
-      if (options.background) {
-        const bgColor = options.background.toLowerCase()
-        
-        if (bgColor !== 'transparent') {
-          sharpInstance = sharpInstance.flatten({
-            background: options.background
-          })
-        }
-      }
-      
-      // Apply resize if dimensions specified and preserve aspect ratio is set
-      if ((options.width || options.height) && options.preserveAspectRatio !== false) {
-        sharpInstance = sharpInstance.resize(
-          options.width || null,
-          options.height || null,
-          {
-            fit: 'inside',
-            withoutEnlargement: false
-          }
-        )
-      }
-      
-      // Report progress during conversion
-      this.reportProgress(options, 0.7)
-      await this.trackConversionProgress(0.7)
-      
-      // Configure TIFF output options
-      const tiffOptions: any = {
-        compression: options.compression || 'lzw',
-        quality: options.quality ?? 90
-      }
-      
-      // Add predictor if using lzw or deflate compression
-      if (options.compression === 'lzw' || options.compression === 'deflate') {
-        tiffOptions.predictor = options.predictor || 'horizontal'
-      }
-      
-      // Set bit depth if specified
-      if (options.bitdepth) {
-        tiffOptions.bitdepth = options.bitdepth
-      }
-      
-      // Convert to TIFF
-      const tiffBuffer = await sharpInstance
-        .tiff(tiffOptions)
-        .toBuffer()
-      
-      // Get metadata from the output
-      const outputMetadata = await this.sharp(tiffBuffer).metadata()
-
-      return this.createSuccessResult(
-        tiffBuffer,
-        'image/tiff',
-        {
-          width: outputMetadata.width,
-          height: outputMetadata.height,
-          method: 'sharp',
-          compression: options.compression || 'lzw',
-          dpi: density
-        }
-      )
-      
-    } catch (sharpError) {
-      console.warn('Sharp SVG to TIFF conversion failed, falling back to CloudConvert:', sharpError)
-      
-      // Fallback to CloudConvert
-      return await this.convertViaCloudConvert(input, options)
-    }
-  }
-}
-
-// Create and export the converter instance
-const svgToTiffConverterInstance = new SVGToTIFFConverter()
-
-/**
- * Export the handler for backward compatibility
- */
-export const svgToTiffHandler = svgToTiffConverterInstance.handler
-
-/**
- * Client-side SVG to TIFF conversion wrapper
- * This function can be used in browser environments
- */
-export async function convertSvgToTiffClient(
-  input: File | string,
-  options: SvgToTiffOptions = {}
-): Promise<ConversionResult> {
-  if (input instanceof File) {
-    // Read file as text for SVG
-    const text = await input.text()
-    return svgToTiffConverterInstance.handler(text, options)
-  }
-  
-  // Direct string input
-  return svgToTiffConverterInstance.handler(input, options)
-}
-
-/**
- * Server-side SVG to TIFF conversion wrapper
- * This function is optimized for server environments
- */
-export async function convertSvgToTiffServer(
-  input: Buffer | string,
-  options: SvgToTiffOptions = {}
-): Promise<ConversionResult> {
-  // Direct conversion using the handler
-  return svgToTiffConverterInstance.handler(input, options)
-}
-
-/**
- * SVG to TIFF converter configuration
- */
-export const svgToTiffConverter = svgToTiffConverterInstance
+/** * SVG to TIFF Converter Implementation *  * This module provides SVG to TIFF conversion using: * 1. Sharp library for server-side conversion (primary method) * 2. CloudConvert SVG → TIFF (fallback for browser/server issues) */import { LazyLoadedConverter } from './base-converter'import type {   ConversionOptions,   ConversionResult,  ImageFormat } from './types'import {   ConversionError,   FileValidationError,  UnsupportedFormatError } from './errors'import { detectFileTypeFromBuffer } from './validation'import { convertWithCloudConvert } from './cloudconvert-client'// Check if we're in a browser environmentconst isBrowser = typeof window !== 'undefined'/** * Extended conversion options for SVG to TIFF */interface SvgToTiffOptions extends ConversionOptions {  /** DPI for rasterization (default: 300 for TIFF) */  dpi?: number  /** TIFF compression method */  compression?: 'none' | 'lzw' | 'deflate' | 'jpeg' | 'ccittfax4'  /** TIFF predictor (for lzw/deflate compression) */  predictor?: 'none' | 'horizontal' | 'float'  /** Bit depth (1, 2, 4, or 8) */  bitdepth?: 1 | 2 | 4 | 8}/** * SVG to TIFF Converter * Extends LazyLoadedConverter to handle dynamic library loading */class SVGToTIFFConverter extends LazyLoadedConverter {  name = 'SVG to TIFF'  from: ImageFormat = 'svg'  to: ImageFormat = 'tiff'  description = 'Convert scalable vector graphics to TIFF format with various compression options and high DPI support'  private sharp: any = null  /**   * Load required libraries (sharp for server, browser handler for client)   */  protected async loadLibraries(): Promise<void> {    if (isBrowser) {      // In browser, we'll use the browser handler      return    }    this.sharp = await import('sharp').then(m => m.default)  }  /**   * Validate that the input is an SVG   */  private validateSvgInput(input: Buffer | string): string {    // If string, check if it's valid SVG    if (typeof input === 'string') {      const trimmed = input.trim()      if (!trimmed.includes('<svg') && !trimmed.includes('<?xml')) {        throw new FileValidationError('Invalid SVG: Missing SVG tag')      }      return trimmed    }    // If buffer, detect format    const format = detectFileTypeFromBuffer(input)    if (format !== 'svg') {      throw new UnsupportedFormatError(        format || 'unknown',        ['svg'],        `Expected SVG format but received ${format || 'unknown format'}`      )    }    return input.toString('utf8')  }  /**   * Process SVG string to ensure proper dimensions and viewBox   */  private processSvgString(svg: string, options: SvgToTiffOptions): { svg: string; metadata: { width?: number; height?: number } } {  const metadata: { width?: number; height?: number } = {}  // Extract dimensions from SVG  const widthMatch = svg.match(/width="([^"]+)"/)  const heightMatch = svg.match(/height="([^"]+)"/)  const viewBoxMatch = svg.match(/viewBox="([^"]+)"/)  let processedSvg = svg  // Parse dimensions  if (widthMatch) {    const width = parseFloat(widthMatch[1])    if (!isNaN(width)) metadata.width = width  }  if (heightMatch) {    const height = parseFloat(heightMatch[1])    if (!isNaN(height)) metadata.height = height  }  // If no dimensions but viewBox exists, extract from viewBox  if (!metadata.width && !metadata.height && viewBoxMatch) {    const [, , vbWidth, vbHeight] = viewBoxMatch[1].split(' ').map(parseFloat)    if (!isNaN(vbWidth) && !isNaN(vbHeight)) {      metadata.width = vbWidth      metadata.height = vbHeight    }  }  // Apply user-specified dimensions if provided  if (options.width || options.height) {    const targetWidth = options.width || metadata.width    const targetHeight = options.height || metadata.height    if (targetWidth && targetHeight) {      // Update or add dimensions      if (widthMatch) {        processedSvg = processedSvg.replace(/width="[^"]+"/, `width="${targetWidth}"`)      } else {        processedSvg = processedSvg.replace('<svg', `<svg width="${targetWidth}"`)      }      if (heightMatch) {        processedSvg = processedSvg.replace(/height="[^"]+"/, `height="${targetHeight}"`)      } else {        processedSvg = processedSvg.replace('<svg', `<svg height="${targetHeight}"`)      }      metadata.width = targetWidth      metadata.height = targetHeight    }  }  // Ensure SVG has dimensions for sharp  if (!metadata.width || !metadata.height) {    // Default dimensions if none found    const defaultSize = 512    metadata.width = metadata.width || defaultSize    metadata.height = metadata.height || defaultSize    if (!widthMatch) {      processedSvg = processedSvg.replace('<svg', `<svg width="${metadata.width}"`)    }    if (!heightMatch) {      processedSvg = processedSvg.replace('<svg', `<svg height="${metadata.height}"`)    }  }    return { svg: processedSvg, metadata }  }  /**   * CloudConvert fallback method   */  private async convertViaCloudConvert(    input: Buffer | string,    options: SvgToTiffOptions  ): Promise<ConversionResult> {    try {      // Validate and get SVG string      const svgString = this.validateSvgInput(input)      const svgBuffer = Buffer.from(svgString, 'utf8')      this.reportProgress(options, 0.1)      const result = await convertWithCloudConvert(        svgBuffer,        'svg',        'tiff',        'input.svg',        {          width: options.width,          height: options.height,          preserveAspectRatio: options.preserveAspectRatio,          quality: options.quality,          onProgress: (progress) => {            this.reportProgress(options, 0.1 + progress * 0.9) // 0.1 to 1.0          }        }      )      if (!result.success) {        throw new ConversionError(          `CloudConvert SVG to TIFF failed: ${result.error}`,          'CLOUDCONVERT_SVG_TO_TIFF_FAILED'        )      }      return {        ...result,        metadata: {          ...result.metadata,          method: 'cloudconvert',          compression: options.compression || 'lzw',          dpi: options.dpi || 300        }      }    } catch (error) {      if (error instanceof ConversionError) {        throw error      }      throw new ConversionError(        `CloudConvert SVG to TIFF failed: ${error instanceof Error ? error.message : 'Unknown error'}`,        'CLOUDCONVERT_FAILED'      )    }  }  /**   * Perform the actual conversion after libraries are loaded   */  protected async performConversionWithLibraries(    input: Buffer,    options: SvgToTiffOptions  ): Promise<ConversionResult> {    // Use browser implementation if in browser environment    if (isBrowser) {      try {        const { svgToTiffBrowserHandler } = await import('./svg-to-tiff-browser')        return svgToTiffBrowserHandler(input, options)      } catch (browserError) {        return await this.convertViaCloudConvert(input, options)      }    }    try {      // Try sharp conversion first (server-side)      // Validate and get SVG string      const svgString = this.validateSvgInput(input)      // Process SVG string for proper dimensions      const { svg: processedSvg, metadata } = this.processSvgString(svgString, options)      // Convert SVG string to Buffer      const svgBuffer = Buffer.from(processedSvg, 'utf8')      // Report progress before conversion      this.reportProgress(options, 0.5)      await this.trackConversionProgress(0.5)      // Calculate density from DPI (default higher for TIFF)      const density = options.dpi || 300      // Prepare sharp instance      let sharpInstance = this.sharp(svgBuffer, {        density: density      })      // Apply background if specified      if (options.background) {        const bgColor = options.background.toLowerCase()        if (bgColor !== 'transparent') {          sharpInstance = sharpInstance.flatten({            background: options.background          })        }      }      // Apply resize if dimensions specified and preserve aspect ratio is set      if ((options.width || options.height) && options.preserveAspectRatio !== false) {        sharpInstance = sharpInstance.resize(          options.width || null,          options.height || null,          {            fit: 'inside',            withoutEnlargement: false          }        )      }      // Report progress during conversion      this.reportProgress(options, 0.7)      await this.trackConversionProgress(0.7)      // Configure TIFF output options      const tiffOptions: any = {        compression: options.compression || 'lzw',        quality: options.quality ?? 90      }      // Add predictor if using lzw or deflate compression      if (options.compression === 'lzw' || options.compression === 'deflate') {        tiffOptions.predictor = options.predictor || 'horizontal'      }      // Set bit depth if specified      if (options.bitdepth) {        tiffOptions.bitdepth = options.bitdepth      }      // Convert to TIFF      const tiffBuffer = await sharpInstance        .tiff(tiffOptions)        .toBuffer()      // Get metadata from the output      const outputMetadata = await this.sharp(tiffBuffer).metadata()      return this.createSuccessResult(        tiffBuffer,        'image/tiff',        {          width: outputMetadata.width,          height: outputMetadata.height,          method: 'sharp',          compression: options.compression || 'lzw',          dpi: density        }      )    } catch (sharpError) {      // Fallback to CloudConvert      return await this.convertViaCloudConvert(input, options)    }  }}// Create and export the converter instanceconst svgToTiffConverterInstance = new SVGToTIFFConverter()/** * Export the handler for backward compatibility */export const svgToTiffHandler = svgToTiffConverterInstance.handler/** * Client-side SVG to TIFF conversion wrapper * This function can be used in browser environments */export async function convertSvgToTiffClient(  input: File | string,  options: SvgToTiffOptions = {}): Promise<ConversionResult> {  if (input instanceof File) {    // Read file as text for SVG    const text = await input.text()    return svgToTiffConverterInstance.handler(text, options)  }  // Direct string input  return svgToTiffConverterInstance.handler(input, options)}/** * Server-side SVG to TIFF conversion wrapper * This function is optimized for server environments */export async function convertSvgToTiffServer(  input: Buffer | string,  options: SvgToTiffOptions = {}): Promise<ConversionResult> {  // Direct conversion using the handler  return svgToTiffConverterInstance.handler(input, options)}/** * SVG to TIFF converter configuration */export const svgToTiffConverter = svgToTiffConverterInstance

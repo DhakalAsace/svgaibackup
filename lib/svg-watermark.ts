@@ -1,93 +1,1 @@
-export function addWatermark(svgContent: string, isSubscribed: boolean): string {
-  // Don't add watermark for subscribed users
-  if (isSubscribed) return svgContent;
-  
-  try {
-    // Parse the SVG
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(svgContent, 'image/svg+xml');
-    const svg = doc.documentElement;
-    
-    // Get SVG dimensions
-    const viewBox = svg.getAttribute('viewBox');
-    let width = 100;
-    let height = 100;
-    
-    if (viewBox) {
-      const [, , w, h] = viewBox.split(' ').map(Number);
-      width = w || 100;
-      height = h || 100;
-    } else {
-      // Try to get from width/height attributes
-      const w = parseFloat(svg.getAttribute('width') || '100');
-      const h = parseFloat(svg.getAttribute('height') || '100');
-      width = w;
-      height = h;
-    }
-    
-    // Create watermark group
-    const g = doc.createElementNS('http://www.w3.org/2000/svg', 'g');
-    g.setAttribute('opacity', '0.5');
-    
-    // Create background rect for better readability
-    const rect = doc.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    rect.setAttribute('x', '5');
-    rect.setAttribute('y', String(height - 25));
-    rect.setAttribute('width', '130');
-    rect.setAttribute('height', '20');
-    rect.setAttribute('fill', 'white');
-    rect.setAttribute('opacity', '0.8');
-    
-    // Create watermark text
-    const text = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', '10');
-    text.setAttribute('y', String(height - 10));
-    text.setAttribute('font-family', 'Arial, sans-serif');
-    text.setAttribute('font-size', '12');
-    text.setAttribute('fill', '#666666');
-    text.textContent = 'Created with SVGai.org';
-    
-    // Add elements to group
-    g.appendChild(rect);
-    g.appendChild(text);
-    
-    // Add watermark to SVG
-    svg.appendChild(g);
-    
-    // Serialize back to string
-    return new XMLSerializer().serializeToString(doc);
-  } catch (error) {
-    console.error('Error adding watermark:', error);
-    // Return original if watermarking fails
-    return svgContent;
-  }
-}
-
-// For Node.js environment (API routes)
-export function addWatermarkNode(svgContent: string, isSubscribed: boolean): string {
-  // Don't add watermark for subscribed users
-  if (isSubscribed) return svgContent;
-  
-  try {
-    // Simple string manipulation for Node.js environment
-    const watermarkSvg = `
-      <g opacity="0.5">
-        <rect x="5" y="calc(100% - 25px)" width="130" height="20" fill="white" opacity="0.8"/>
-        <text x="10" y="calc(100% - 10px)" font-family="Arial, sans-serif" font-size="12" fill="#666666">Created with SVGai.org</text>
-      </g>
-    `;
-    
-    // Insert before closing </svg> tag
-    const closingTag = '</svg>';
-    const insertPosition = svgContent.lastIndexOf(closingTag);
-    
-    if (insertPosition === -1) {
-      return svgContent; // Return original if no closing tag found
-    }
-    
-    return svgContent.slice(0, insertPosition) + watermarkSvg + svgContent.slice(insertPosition);
-  } catch (error) {
-    console.error('Error adding watermark:', error);
-    return svgContent;
-  }
-}
+export function addWatermark(svgContent: string, isSubscribed: boolean): string {  // Don't add watermark for subscribed users  if (isSubscribed) return svgContent;  try {    // Parse the SVG    const parser = new DOMParser();    const doc = parser.parseFromString(svgContent, 'image/svg+xml');    const svg = doc.documentElement;    // Get SVG dimensions    const viewBox = svg.getAttribute('viewBox');    let width = 100;    let height = 100;    if (viewBox) {      const [, , w, h] = viewBox.split(' ').map(Number);      width = w || 100;      height = h || 100;    } else {      // Try to get from width/height attributes      const w = parseFloat(svg.getAttribute('width') || '100');      const h = parseFloat(svg.getAttribute('height') || '100');      width = w;      height = h;    }    // Create watermark group    const g = doc.createElementNS('http://www.w3.org/2000/svg', 'g');    g.setAttribute('opacity', '0.5');    // Create background rect for better readability    const rect = doc.createElementNS('http://www.w3.org/2000/svg', 'rect');    rect.setAttribute('x', '5');    rect.setAttribute('y', String(height - 25));    rect.setAttribute('width', '130');    rect.setAttribute('height', '20');    rect.setAttribute('fill', 'white');    rect.setAttribute('opacity', '0.8');    // Create watermark text    const text = doc.createElementNS('http://www.w3.org/2000/svg', 'text');    text.setAttribute('x', '10');    text.setAttribute('y', String(height - 10));    text.setAttribute('font-family', 'Arial, sans-serif');    text.setAttribute('font-size', '12');    text.setAttribute('fill', '#666666');    text.textContent = 'Created with SVGai.org';    // Add elements to group    g.appendChild(rect);    g.appendChild(text);    // Add watermark to SVG    svg.appendChild(g);    // Serialize back to string    return new XMLSerializer().serializeToString(doc);  } catch (error) {    // Return original if watermarking fails    return svgContent;  }}// For Node.js environment (API routes)export function addWatermarkNode(svgContent: string, isSubscribed: boolean): string {  // Don't add watermark for subscribed users  if (isSubscribed) return svgContent;  try {    // Simple string manipulation for Node.js environment    const watermarkSvg = `      <g opacity="0.5">        <rect x="5" y="calc(100% - 25px)" width="130" height="20" fill="white" opacity="0.8"/>        <text x="10" y="calc(100% - 10px)" font-family="Arial, sans-serif" font-size="12" fill="#666666">Created with SVGai.org</text>      </g>    `;    // Insert before closing </svg> tag    const closingTag = '</svg>';    const insertPosition = svgContent.lastIndexOf(closingTag);    if (insertPosition === -1) {      return svgContent; // Return original if no closing tag found    }    return svgContent.slice(0, insertPosition) + watermarkSvg + svgContent.slice(insertPosition);  } catch (error) {    return svgContent;  }}

@@ -2,10 +2,8 @@
  * Comprehensive A/B Testing Framework
  * Supports experiments, feature flags, and gradual rollouts
  */
-
 import { createBrowserClient } from '@/lib/supabase'
 import { analytics } from '@/lib/analytics/analytics-service'
-
 // Types
 export interface ABTestVariant {
   id: string
@@ -14,7 +12,6 @@ export interface ABTestVariant {
   isControl?: boolean
   properties?: Record<string, any>
 }
-
 export interface ABTestConfig {
   id: string
   name: string
@@ -31,14 +28,12 @@ export interface ABTestConfig {
   winnerSelectionMode?: 'manual' | 'automatic'
   metadata?: Record<string, any>
 }
-
 export interface TargetingRule {
   type: 'user_property' | 'device' | 'location' | 'custom'
   property: string
   operator: 'equals' | 'contains' | 'in' | 'not_in' | 'greater_than' | 'less_than'
   value: any
 }
-
 export interface SuccessMetric {
   id: string
   name: string
@@ -47,7 +42,6 @@ export interface SuccessMetric {
   goalValue?: number
   higherIsBetter?: boolean // Default true
 }
-
 export interface ABTestResult {
   testId: string
   variantId: string
@@ -59,7 +53,6 @@ export interface ABTestResult {
   conversionValue?: number
   metadata?: Record<string, any>
 }
-
 export interface VariantStats {
   variantId: string
   variantName: string
@@ -71,7 +64,6 @@ export interface VariantStats {
   isWinner?: boolean
   uplift?: number // Percentage uplift vs control
 }
-
 // User context for targeting
 export interface UserContext {
   userId?: string
@@ -88,7 +80,6 @@ export interface UserContext {
     city?: string
   }
 }
-
 // Statistical calculations
 class StatisticalCalculator {
   /**
@@ -103,21 +94,17 @@ class StatisticalCalculator {
     const pooledProbability = 
       (controlRate * controlSize + variantRate * variantSize) / 
       (controlSize + variantSize)
-    
     const standardError = Math.sqrt(
       pooledProbability * (1 - pooledProbability) * 
       (1 / controlSize + 1 / variantSize)
     )
-    
     return (variantRate - controlRate) / standardError
   }
-
   /**
    * Calculate confidence level from Z-score
    */
   static getConfidenceLevel(zScore: number): number {
     const zAbs = Math.abs(zScore)
-    
     // Simplified normal CDF approximation
     if (zAbs >= 2.58) return 99
     if (zAbs >= 1.96) return 95
@@ -125,7 +112,6 @@ class StatisticalCalculator {
     if (zAbs >= 1.28) return 80
     return Math.round(50 + zAbs * 20)
   }
-
   /**
    * Check if result is statistically significant
    */
@@ -140,11 +126,9 @@ class StatisticalCalculator {
       controlStats.participants,
       variantStats.participants
     )
-    
     const confidence = this.getConfidenceLevel(zScore)
     return confidence >= confidenceLevel
   }
-
   /**
    * Calculate minimum sample size needed
    */
@@ -157,43 +141,35 @@ class StatisticalCalculator {
     // Z-scores for confidence and power
     const zAlpha = confidenceLevel >= 99 ? 2.58 : confidenceLevel >= 95 ? 1.96 : 1.64
     const zBeta = power >= 90 ? 1.28 : power >= 80 ? 0.84 : 0.52
-    
     const p1 = baselineRate
     const p2 = baselineRate * (1 + minimumDetectableEffect)
     const pooledP = (p1 + p2) / 2
-    
     const sampleSize = 
       2 * Math.pow(zAlpha + zBeta, 2) * pooledP * (1 - pooledP) / 
       Math.pow(p2 - p1, 2)
-    
     return Math.ceil(sampleSize)
   }
 }
-
 // A/B Test Manager
 export class ABTestManager {
   private static instance: ABTestManager
   private tests: Map<string, ABTestConfig> = new Map()
   private results: Map<string, ABTestResult[]> = new Map()
   private userAssignments: Map<string, Map<string, string>> = new Map()
-
   private constructor() {
     this.loadTests()
   }
-
   static getInstance(): ABTestManager {
     if (!this.instance) {
       this.instance = new ABTestManager()
     }
     return this.instance
   }
-
   /**
    * Load test configurations from storage
    */
   private async loadTests() {
     if (typeof window === 'undefined') return
-
     try {
       // Load from localStorage for now, can be replaced with API call
       const stored = localStorage.getItem('ab_tests')
@@ -203,7 +179,6 @@ export class ABTestManager {
           this.tests.set(test.id, test)
         })
       }
-
       // Load user assignments
       const assignments = localStorage.getItem('ab_test_assignments')
       if (assignments) {
@@ -213,20 +188,16 @@ export class ABTestManager {
         })
       }
     } catch (error) {
-      console.error('Failed to load A/B tests:', error)
-    }
+      }
   }
-
   /**
    * Save tests to storage
    */
   private saveTests() {
     if (typeof window === 'undefined') return
-
     try {
       const tests = Array.from(this.tests.values())
       localStorage.setItem('ab_tests', JSON.stringify(tests))
-
       // Save assignments
       const assignments: Record<string, Record<string, string>> = {}
       this.userAssignments.forEach((tests, userId) => {
@@ -234,10 +205,8 @@ export class ABTestManager {
       })
       localStorage.setItem('ab_test_assignments', JSON.stringify(assignments))
     } catch (error) {
-      console.error('Failed to save A/B tests:', error)
-    }
+      }
   }
-
   /**
    * Create or update a test
    */
@@ -247,37 +216,30 @@ export class ABTestManager {
     if (Math.abs(totalWeight - 100) > 0.01) {
       throw new Error('Variant weights must sum to 100')
     }
-
     // Ensure one control variant
     const hasControl = config.variants.some(v => v.isControl)
     if (!hasControl && config.variants.length > 0) {
       config.variants[0].isControl = true
     }
-
     this.tests.set(config.id, config)
     this.saveTests()
   }
-
   /**
    * Get variant assignment for user
    */
   getVariant(testId: string, context: UserContext): ABTestVariant | null {
     const test = this.tests.get(testId)
     if (!test || test.status !== 'active') return null
-
     // Check if test is within date range
     if (test.startDate && new Date() < test.startDate) return null
     if (test.endDate && new Date() > test.endDate) return null
-
     // Check targeting rules
     if (!this.matchesTargeting(test, context)) return null
-
     // Check traffic allocation
     if (test.trafficAllocation && test.trafficAllocation < 100) {
       const inTest = this.hashUserId(context.userId || context.sessionId, testId + '_traffic') < test.trafficAllocation
       if (!inTest) return null
     }
-
     // Check for existing assignment
     const userId = context.userId || context.sessionId
     const userTests = this.userAssignments.get(userId)
@@ -285,7 +247,6 @@ export class ABTestManager {
       const variantId = userTests.get(testId)!
       return test.variants.find(v => v.id === variantId) || null
     }
-
     // Assign variant based on weights
     const variant = this.assignVariant(test, userId)
     if (variant) {
@@ -295,23 +256,18 @@ export class ABTestManager {
       }
       this.userAssignments.get(userId)!.set(testId, variant.id)
       this.saveTests()
-
       // Track assignment
       this.trackAssignment(test, variant, context)
     }
-
     return variant
   }
-
   /**
    * Check if user matches targeting rules
    */
   private matchesTargeting(test: ABTestConfig, context: UserContext): boolean {
     if (!test.targetingRules || test.targetingRules.length === 0) return true
-
     return test.targetingRules.every(rule => {
       let value: any
-      
       switch (rule.type) {
         case 'user_property':
           value = context.properties?.[rule.property]
@@ -325,7 +281,6 @@ export class ABTestManager {
         default:
           return false
       }
-
       switch (rule.operator) {
         case 'equals':
           return value === rule.value
@@ -344,24 +299,20 @@ export class ABTestManager {
       }
     })
   }
-
   /**
    * Assign variant based on weights
    */
   private assignVariant(test: ABTestConfig, userId: string): ABTestVariant | null {
     const hash = this.hashUserId(userId, test.id)
     let cumulative = 0
-
     for (const variant of test.variants) {
       cumulative += variant.weight
       if (hash < cumulative) {
         return variant
       }
     }
-
     return test.variants[test.variants.length - 1] || null
   }
-
   /**
    * Hash user ID to get consistent random number 0-100
    */
@@ -376,7 +327,6 @@ export class ABTestManager {
     }
     return Math.abs(hash) % 100
   }
-
   /**
    * Track variant assignment
    */
@@ -388,7 +338,6 @@ export class ABTestManager {
       session_id: context.sessionId,
       ...variant.properties,
     })
-
     // Store result
     const result: ABTestResult = {
       testId: test.id,
@@ -399,13 +348,11 @@ export class ABTestManager {
       assignedAt: new Date(),
       metadata: context.properties,
     }
-
     if (!this.results.has(test.id)) {
       this.results.set(test.id, [])
     }
     this.results.get(test.id)!.push(result)
   }
-
   /**
    * Track conversion for a test
    */
@@ -417,19 +364,14 @@ export class ABTestManager {
   ): void {
     const test = this.tests.get(testId)
     if (!test) return
-
     const userId = context.userId || context.sessionId
     const userTests = this.userAssignments.get(userId)
     const variantId = userTests?.get(testId)
-    
     if (!variantId) return
-
     const variant = test.variants.find(v => v.id === variantId)
     if (!variant) return
-
     const metric = test.successMetrics.find(m => m.id === metricId)
     if (!metric) return
-
     // Track conversion
     analytics.trackABTest(test.id, variant.id, 'converted', {
       test_name: test.name,
@@ -440,36 +382,30 @@ export class ABTestManager {
       user_id: context.userId,
       session_id: context.sessionId,
     })
-
     // Update results
     const results = this.results.get(testId) || []
     const result = results.find(
       r => r.userId === userId || r.sessionId === context.sessionId
     )
-    
     if (result) {
       result.converted = true
       result.conversionValue = value
     }
   }
-
   /**
    * Get test statistics
    */
   getTestStats(testId: string): VariantStats[] {
     const test = this.tests.get(testId)
     if (!test) return []
-
     const results = this.results.get(testId) || []
     const stats: VariantStats[] = []
-
     for (const variant of test.variants) {
       const variantResults = results.filter(r => r.variantId === variant.id)
       const conversions = variantResults.filter(r => r.converted).length
       const totalValue = variantResults
         .filter(r => r.converted)
         .reduce((sum, r) => sum + (r.conversionValue || 0), 0)
-
       const variantStat: VariantStats = {
         variantId: variant.id,
         variantName: variant.name,
@@ -478,61 +414,49 @@ export class ABTestManager {
         conversionRate: variantResults.length > 0 ? conversions / variantResults.length : 0,
         averageValue: conversions > 0 ? totalValue / conversions : 0,
       }
-
       stats.push(variantStat)
     }
-
     // Calculate statistical significance
     const control = stats.find(s => {
       const variant = test.variants.find(v => v.id === s.variantId)
       return variant?.isControl
     })
-
     if (control) {
       for (const stat of stats) {
         if (stat.variantId === control.variantId) continue
-
         const isSignificant = StatisticalCalculator.isSignificant(
           control,
           stat,
           test.confidenceLevel || 95
         )
-
         if (isSignificant) {
           stat.confidence = test.confidenceLevel || 95
           stat.uplift = ((stat.conversionRate - control.conversionRate) / control.conversionRate) * 100
         }
       }
     }
-
     // Determine winner if automatic mode
     if (test.winnerSelectionMode === 'automatic' && test.minimumSampleSize) {
       const hasEnoughData = stats.every(s => s.participants >= (test.minimumSampleSize || 0))
-      
       if (hasEnoughData) {
         const significantVariants = stats
           .filter(s => s.confidence && s.confidence >= (test.confidenceLevel || 95))
           .sort((a, b) => (b.uplift || 0) - (a.uplift || 0))
-
         if (significantVariants.length > 0) {
           significantVariants[0].isWinner = true
         }
       }
     }
-
     return stats
   }
-
   /**
    * Complete a test
    */
   completeTest(testId: string, winnerId?: string): void {
     const test = this.tests.get(testId)
     if (!test) return
-
     test.status = 'completed'
     test.endDate = new Date()
-
     if (winnerId) {
       const winner = test.variants.find(v => v.id === winnerId)
       if (winner) {
@@ -544,9 +468,7 @@ export class ABTestManager {
         }
       }
     }
-
     this.saveTests()
-
     // Track completion
     analytics.track('ab_test_completed', {
       test_id: testId,
@@ -557,36 +479,30 @@ export class ABTestManager {
         : null,
     })
   }
-
   /**
    * Get all tests
    */
   getAllTests(): ABTestConfig[] {
     return Array.from(this.tests.values())
   }
-
   /**
    * Get active tests
    */
   getActiveTests(): ABTestConfig[] {
     return this.getAllTests().filter(t => t.status === 'active')
   }
-
   /**
    * Update test status
    */
   updateTestStatus(testId: string, status: ABTestConfig['status']): void {
     const test = this.tests.get(testId)
     if (!test) return
-
     test.status = status
     if (status === 'active' && !test.startDate) {
       test.startDate = new Date()
     }
-
     this.saveTests()
   }
-
   /**
    * Clear test data (for testing)
    */
@@ -597,7 +513,6 @@ export class ABTestManager {
     })
     this.saveTests()
   }
-
   /**
    * Calculate sample size for test
    */
@@ -613,10 +528,8 @@ export class ABTestManager {
     )
   }
 }
-
 // Singleton instance
 export const abTestManager = ABTestManager.getInstance()
-
 // Feature flags using A/B testing framework
 export class FeatureFlags {
   /**
@@ -634,11 +547,9 @@ export class FeatureFlags {
       ],
       successMetrics: [],
     }
-
     const variant = abTestManager.getVariant(test.id, context)
     return variant?.id === 'on'
   }
-
   /**
    * Get feature value with variants
    */
@@ -654,7 +565,6 @@ export class FeatureFlags {
       isControl: index === 0,
       properties: { value },
     }))
-
     const test: ABTestConfig = {
       id: `feature_value_${featureName}`,
       name: `Feature Value: ${featureName}`,
@@ -662,12 +572,10 @@ export class FeatureFlags {
       variants,
       successMetrics: [],
     }
-
     const variant = abTestManager.getVariant(test.id, context)
     return variant?.properties?.value || null
   }
 }
-
 // Gradual rollout helper
 export class GradualRollout {
   /**
@@ -689,7 +597,6 @@ export class GradualRollout {
     const hashValue = Math.abs(hash) % 100
     return hashValue < percentage
   }
-
   /**
    * Create rollout test
    */

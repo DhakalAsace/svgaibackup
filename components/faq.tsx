@@ -26,7 +26,7 @@ export default function Faq() {
     {
       question: "Is there a limit to how many SVGs I can generate?",
       answer:
-        "Free users can try 1 generation without signup. Sign up for a free account to get 3 total generations per month. Starter plan offers 100 credits per month for $12, and Pro plan includes 350 credits per month for $29.",
+        "Free users can try 1 generation without signup. Sign up for a free account to get 3 total generations per month. Starter plan offers 100 credits per month for $19, and Pro plan includes 350 credits per month for $39.",
     },
     {
       question: "How accurate is the AI at interpreting my descriptions?",

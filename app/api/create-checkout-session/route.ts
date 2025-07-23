@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createRouteClient } from '@/lib/supabase-server';
 import Stripe from 'stripe';
 import { STRIPE_CONFIG } from '@/lib/stripe-config';
 import { logPaymentEvent } from '@/lib/payment-audit';
@@ -14,8 +13,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabase = await createRouteClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

@@ -12,7 +12,17 @@ const compat = new FlatCompat({
 const eslintConfig = [
   // Global ignores
   {
-    ignores: ['.next/**', 'node_modules/**', '.vercel/**', 'out/**']
+    ignores: [
+      '.next/**', 
+      '.next-build/**',
+      'node_modules/**', 
+      '.vercel/**', 
+      'out/**',
+      'public/pdf.worker.min.js',
+      'public/pdf.worker.min.js.old',
+      'public/*.worker.js',
+      'public/*.worker.min.js'
+    ]
   },
   
   // Extend Next.js core web vitals configuration

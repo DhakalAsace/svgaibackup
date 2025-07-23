@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createRouteClient } from '@/lib/supabase-server';
 import { cookies } from 'next/headers';
 import Stripe from 'stripe';
 
@@ -16,7 +16,7 @@ const PRICE_IDS = {
 };
 
 export async function POST(req: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies });
+  const supabase = await createRouteClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -25,19 +25,34 @@ export async function POST(req: NextRequest) {
 
   const { action, newTier, newInterval } = await req.json();
 
-  // Get user's current subscription
+  // Get user's Stripe customer ID
   const { data: profile } = await supabase
     .from('profiles')
-    .select('subscription_id, stripe_customer_id')
+    .select('stripe_customer_id, subscription_tier, subscription_status')
     .eq('id', user.id)
     .single();
 
-  if (!profile?.subscription_id) {
+  if (!profile?.stripe_customer_id) {
+    return NextResponse.json({ error: 'No Stripe customer found' }, { status: 400 });
+  }
+
+  if (profile.subscription_status !== 'active' && profile.subscription_status !== 'trialing') {
     return NextResponse.json({ error: 'No active subscription' }, { status: 400 });
   }
 
   try {
-    const subscription = await stripe.subscriptions.retrieve(profile.subscription_id);
+    // Get the customer's active subscription from Stripe
+    const subscriptions = await stripe.subscriptions.list({
+      customer: profile.stripe_customer_id,
+      status: 'active',
+      limit: 1
+    });
+
+    if (subscriptions.data.length === 0) {
+      return NextResponse.json({ error: 'No active subscription found' }, { status: 400 });
+    }
+
+    const subscription = subscriptions.data[0];
 
     if (action === 'cancel') {
       // Cancel at period end

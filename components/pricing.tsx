@@ -1,19 +1,16 @@
 "use client"
-
 import { Check, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from 'next/navigation'
 import { toast } from '@/components/ui/use-toast'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-
+import { createClientComponentClient } from '@/lib/supabase'
 export default function Pricing() {
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'annual'>('monthly');
   const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClientComponentClient();
-  
   const plans = [
     {
       name: "Free",
@@ -31,9 +28,9 @@ export default function Pricing() {
     },
     {
       name: "Starter",
-      price: { monthly: "$12", annual: "$119" },
+      price: { monthly: "$19", annual: "$189" },
       period: { monthly: "per month", annual: "per year" },
-      savings: "Save $25/year",
+      savings: "Save $39/year",
       description: "For individuals and small projects",
       features: [
         "100 credits per month",
@@ -49,9 +46,9 @@ export default function Pricing() {
     },
     {
       name: "Pro",
-      price: { monthly: "$29", annual: "$289" },
+      price: { monthly: "$39", annual: "$389" },
       period: { monthly: "per month", annual: "per year" },
-      savings: "Save $59/year",
+      savings: "Save $79/year",
       description: "For professionals and businesses",
       features: [
         "350 credits per month",
@@ -66,26 +63,21 @@ export default function Pricing() {
       showBillingToggle: true,
     },
   ]
-
   const handleSubscribe = async (tier?: 'starter' | 'pro') => {
     const interval = billingInterval === 'annual' ? 'annual' : 'monthly';
     // Check if user is logged in
     const { data: { user } } = await supabase.auth.getUser();
-    
     if (!user) {
       // Redirect to login with return URL
       router.push(`/login?returnUrl=/pricing&plan=${tier || 'free'}`);
       return;
     }
-
     if (!tier) {
       // Free plan - just redirect to dashboard
       router.push('/dashboard');
       return;
     }
-
     setLoading(tier);
-
     try {
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
@@ -94,7 +86,6 @@ export default function Pricing() {
         },
         body: JSON.stringify({ tier, interval }),
       });
-
       if (!response.ok) {
         const data = await response.json();
         // If the server indicates the user already has a subscription, send them to the portal/ dashboard
@@ -109,9 +100,7 @@ export default function Pricing() {
         }
         throw new Error(data.error || 'Failed to create checkout session');
       }
-
       const { url } = await response.json();
-      
       if (url) {
         // Redirect to Stripe Checkout
         window.location.href = url;
@@ -119,7 +108,6 @@ export default function Pricing() {
         throw new Error('No checkout URL returned');
       }
     } catch (error) {
-      console.error('Subscription error:', error);
       toast({
         title: "Error",
         description: "Failed to start subscription process. Please try again.",
@@ -128,7 +116,6 @@ export default function Pricing() {
       setLoading(null);
     }
   };
-
   return (
     <section id="pricing" className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-4">
@@ -143,7 +130,6 @@ export default function Pricing() {
             Choose the right text to SVG AI plan for your creative needs. Start free, upgrade when you need more.
           </p>
         </div>
-        
         {/* Billing toggle */}
         <div className="flex justify-center mb-8">
           <div className="bg-gray-100 p-1 rounded-lg inline-flex">
@@ -170,11 +156,10 @@ export default function Pricing() {
             </button>
           </div>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <div
-              key={index}
+              key={`${plan.name}-${billingInterval}-${index}`}
               className={`bg-white rounded-xl overflow-hidden shadow-sm border flex flex-col ${
                 plan.highlighted ? "border-[#FF7043] shadow-lg scale-105" : "border-gray-200/80 hover:shadow-md transition-shadow duration-300"
               }`}
@@ -202,7 +187,6 @@ export default function Pricing() {
                   )}
                 </div>
                 <p className="text-gray-600 mb-6 text-sm flex-grow">{plan.description}</p>
-
                 <Button
                   className={`w-full mb-6 ${
                     plan.highlighted
@@ -217,7 +201,6 @@ export default function Pricing() {
                   ) : null}
                   {plan.cta}
                 </Button>
-
                 <ul className="space-y-3">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-start">
@@ -230,7 +213,6 @@ export default function Pricing() {
             </div>
           ))}
         </div>
-
         <div className="mt-12 md:mt-16 text-center">
           <p className="text-gray-600 mb-3">Need a custom plan for your enterprise?</p>
           <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-800 transition-colors">

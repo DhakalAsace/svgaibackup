@@ -6,54 +6,32 @@
  * authorized admin user IDs.
  */
 
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient } from '@/lib/supabase-server';
 import { cookies } from 'next/headers';
-import { Database } from '@/types/database.types';
-
-/**
- * Result of admin authentication check
- */
-export interface AdminAuthResult {
-  isAuthenticated: boolean;
-  isAdmin: boolean;
-  user: {
-    id: string;
-    email?: string;
-  } | null;
-}
 
 /**
  * Check if a user is authenticated and has admin privileges
  * 
- * @returns Object containing authentication status and user information
+ * @returns Boolean indicating if the user is an admin
  */
-export async function checkAdminAuth(): Promise<AdminAuthResult> {
+export async function checkAdminAuth(): Promise<boolean> {
   try {
     // Get current session from cookies
-    const supabase = createRouteHandlerClient<Database>({ cookies });
+    const supabase = await createServerClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (!user || authError) {
-      return { isAuthenticated: false, isAdmin: false, user: null };
+      return false;
     }
     
     // Get admin user IDs from environment variable
     // These should be set in .env.local as a comma-separated list
-    const ADMIN_USER_IDS = process.env.ADMIN_USER_IDS?.split(',') || [];
+    const ADMIN_USER_IDS = process.env.ADMIN_USER_IDS?.split(',').map(id => id.trim()) || [];
     
     // Check if user is in admin list
-    const isAdmin = ADMIN_USER_IDS.includes(user.id);
-    
-    return { 
-      isAuthenticated: true, 
-      isAdmin, 
-      user: {
-        id: user.id,
-        email: user.email
-      }
-    };
+    return ADMIN_USER_IDS.includes(user.id);
   } catch (error) {
     console.error('Admin auth check error:', error);
-    return { isAuthenticated: false, isAdmin: false, user: null };
+    return false;
   }
 }

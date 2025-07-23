@@ -1,7 +1,6 @@
 "use client";
-
 import { useState, useEffect, useCallback, lazy, Suspense } from "react";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '@/lib/supabase';
 import { Database } from '@/types/database.types';
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -60,7 +59,6 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-
 // Type definitions
 type SvgDesign = {
   id: string;
@@ -74,7 +72,6 @@ type SvgDesign = {
   tags: string[] | null;
   user_id: string;
 };
-
 type GeneratedVideo = {
   id: string;
   prompt: string;
@@ -90,14 +87,12 @@ type GeneratedVideo = {
     original_svg?: string;
   };
 };
-
 type ContentItem = {
   id: string;
   type: 'svg' | 'icon' | 'video';
   content: SvgDesign | GeneratedVideo;
   created_at: string;
 };
-
 type DashboardProps = {
   initialSvgs: SvgDesign[];
   userId?: string;
@@ -113,7 +108,6 @@ type DashboardProps = {
     stripe_customer_id?: string | null;
   };
 };
-
 // Metrics Card Component
 const MetricCard = ({ label, value, change, trend, icon: Icon, color }: {
   label: string;
@@ -129,13 +123,11 @@ const MetricCard = ({ label, value, change, trend, icon: Icon, color }: {
     purple: 'bg-purple-50 text-purple-600',
     green: 'bg-green-50 text-green-600'
   };
-
   const trendColors = {
     up: 'text-green-600',
     down: 'text-red-600',
     neutral: 'text-gray-500'
   };
-
   return (
     <Card className="group border-gray-200 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
       <CardContent className="p-6">
@@ -155,11 +147,9 @@ const MetricCard = ({ label, value, change, trend, icon: Icon, color }: {
     </Card>
   );
 };
-
 // Quick Actions Component
 const QuickActions = () => {
   const router = useRouter();
-  
   return (
     <div className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-6 mb-6">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -207,7 +197,6 @@ const QuickActions = () => {
     </div>
   );
 };
-
 // Enhanced Creation Card
 const CreationCard = ({ item, onDownload, onDelete, userTier }: {
   item: ContentItem;
@@ -216,11 +205,9 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
   userTier: string;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-
   if (item.type === 'video') {
     const video = item.content as GeneratedVideo;
     const isExpired = new Date(video.expires_at) < new Date();
-    
     return (
       <div
         className={cn(
@@ -240,13 +227,11 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
               <p className="text-xs text-gray-500">{video.resolution}</p>
             </div>
           </div>
-          
           <div className="absolute top-2 right-2">
             <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100">
               Video
             </Badge>
           </div>
-          
           {!isExpired && (
             <div className={cn(
               "absolute inset-0 bg-black/50 flex items-center justify-center gap-2 transition-opacity",
@@ -275,10 +260,20 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
               >
                 <Download className="w-4 h-4" />
               </Button>
+              <Button
+                size="sm"
+                variant="secondary"
+                className="bg-white/90 hover:bg-white hover:text-red-600"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(video.id);
+                }}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
             </div>
           )}
         </div>
-        
         <div className="p-4">
           <h3 className="font-medium text-gray-900 truncate">
             {video.metadata.original_svg || 'AI Video'}
@@ -297,9 +292,7 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
       </div>
     );
   }
-
   const svg = item.content as SvgDesign;
-  
   return (
     <div
       className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all cursor-pointer"
@@ -320,7 +313,6 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
             <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
           </div>
         )}
-        
         <div className="absolute top-2 right-2">
           <Badge className={cn(
             "hover:bg-current",
@@ -329,7 +321,6 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
             {item.type === 'icon' ? 'Icon' : 'SVG'}
           </Badge>
         </div>
-        
         <div className={cn(
           "absolute inset-0 bg-black/50 flex items-center justify-center gap-2 transition-opacity",
           isHovered ? "opacity-100" : "opacity-0"
@@ -370,7 +361,6 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
           </Button>
         </div>
       </div>
-      
       <div className="p-4">
         <h3 className="font-medium text-gray-900 truncate">{svg.title}</h3>
         {svg.description && (
@@ -395,7 +385,6 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
     </div>
   );
 };
-
 // Empty State Component
 const EmptyState = () => (
   <div className="text-center py-16">
@@ -421,7 +410,6 @@ const EmptyState = () => (
     </div>
   </div>
 );
-
 // Main Dashboard Component
 export default function ProfessionalDashboard({ initialSvgs, userId, userProfile: initialUserProfile }: DashboardProps) {
   const [svgs, setSvgs] = useState<SvgDesign[]>(initialSvgs);
@@ -436,13 +424,10 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [userProfile, setUserProfile] = useState(initialUserProfile);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
   const router = useRouter();
   const { creditInfo, refreshCredits } = useCredits();
   const supabase = createClientComponentClient<Database>();
-
   const PAGE_SIZE = 12;
-
   // Fetch videos
   const fetchVideos = useCallback(async () => {
     try {
@@ -451,20 +436,16 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
         .select('*')
         .order('created_at', { ascending: false })
         .limit(20);
-
       if (error) throw error;
       setVideos(data || []);
     } catch (error) {
-      console.error('Error fetching videos:', error);
     }
   }, [supabase]);
-
   useEffect(() => {
     fetchVideos();
     const interval = setInterval(fetchVideos, 10000);
     return () => clearInterval(interval);
   }, [fetchVideos]);
-
   // Combine and filter content
   useEffect(() => {
     const svgItems: ContentItem[] = svgs.map(svg => ({
@@ -473,21 +454,17 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
       content: svg,
       created_at: svg.created_at
     }));
-
     const videoItems: ContentItem[] = videos.map(video => ({
       id: video.id,
       type: 'video',
       content: video,
       created_at: video.created_at
     }));
-
     let allItems = [...svgItems, ...videoItems];
-
     // Apply filters
     if (filterType !== 'all') {
       allItems = allItems.filter(item => item.type === filterType);
     }
-
     if (searchQuery) {
       allItems = allItems.filter(item => {
         if (item.type === 'video') {
@@ -502,7 +479,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
         }
       });
     }
-
     // Sort items
     allItems.sort((a, b) => {
       switch (sortBy) {
@@ -522,18 +498,15 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
           return 0;
       }
     });
-
     setContentItems(allItems);
     setCurrentPage(1);
   }, [svgs, videos, filterType, searchQuery, sortBy]);
-
   // Paginate content
   useEffect(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
     const end = start + PAGE_SIZE;
     setDisplayedItems(contentItems.slice(start, end));
   }, [contentItems, currentPage]);
-
   // Download handlers
   const downloadSvg = async (svg: SvgDesign) => {
     const blob = new Blob([svg.svg_content], { type: "image/svg+xml" });
@@ -546,7 +519,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
-
   const downloadVideo = async (video: GeneratedVideo) => {
     try {
       const response = await fetch(video.video_url);
@@ -560,7 +532,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading video:', error);
       toast({
         title: "Download failed",
         description: "Failed to download video",
@@ -568,7 +539,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
       });
     }
   };
-
   const handleDownload = (item: ContentItem) => {
     if (item.type === 'video') {
       downloadVideo(item.content as GeneratedVideo);
@@ -576,27 +546,21 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
       downloadSvg(item.content as SvgDesign);
     }
   };
-
   // Delete handler
   const deleteSvg = async (id: string) => {
     if (!confirm("Are you sure you want to delete this item?")) return;
-    
     setIsLoading(true);
     try {
       const { error } = await supabase
         .from("svg_designs")
         .delete()
         .eq("id", id);
-      
       if (error) throw error;
-      
       toast({
         title: "Item deleted successfully",
       });
-      
       setSvgs(prev => prev.filter(svg => svg.id !== id));
     } catch (error) {
-      console.error("Error deleting item:", error);
       toast({
         title: "Error deleting item",
         description: "Please try again.",
@@ -607,10 +571,33 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
     }
   };
 
+  // Delete video handler
+  const deleteVideo = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this video?")) return;
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from("generated_videos")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+      toast({
+        title: "Video deleted successfully",
+      });
+      setVideos(prev => prev.filter(video => video.id !== id));
+    } catch (error) {
+      toast({
+        title: "Error deleting video",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   // Get user tier and credit info
   const contextCredits = creditInfo;
   const isSubscribed = contextCredits?.isSubscribed ?? userProfile?.subscription_status === 'active';
-  
   const displayCreditInfo = contextCredits ? {
     used: contextCredits.creditsUsed,
     limit: contextCredits.creditLimit,
@@ -626,25 +613,20 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
     type: isSubscribed ? 'monthly' : 'lifetime' as const,
     remaining: 0
   };
-  
   if (!contextCredits) {
     displayCreditInfo.remaining = Math.max(0, displayCreditInfo.limit - displayCreditInfo.used);
   }
-
   const userTier = contextCredits?.isSubscribed ? 
     (contextCredits.subscriptionTier === 'pro' ? 'pro' : 'starter') : 
     (userProfile?.subscription_status === 'active' ? 
       (userProfile.subscription_tier === 'pro' ? 'pro' : 'starter') : 
       'free');
-
   // Calculate metrics
   const totalCreations = contentItems.length;
   const totalSvgs = contentItems.filter(item => item.type !== 'video').length;
   const totalVideos = videos.length;
   const storageUsed = "2.4 GB"; // This would be calculated from actual data
-
   const hasMore = contentItems.length > displayedItems.length + (currentPage - 1) * PAGE_SIZE;
-
   return (
     <div className="min-h-screen bg-gray-50 animate-fade-in">
       {/* Enhanced Header */}
@@ -662,19 +644,16 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
               </Button>
               <h1 className="text-xl font-semibold text-gray-900 ml-2 lg:ml-0">Dashboard</h1>
             </div>
-            
             <div className="flex items-center gap-4">
               <div className="hidden md:flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5">
                 <CreditCard className="w-4 h-4 text-gray-500" />
                 <span className="text-sm font-medium text-gray-900">{displayCreditInfo.remaining}</span>
                 <span className="text-sm text-gray-500">credits</span>
               </div>
-              
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
               </Button>
-              
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon">
@@ -703,7 +682,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
           </div>
         </div>
       </header>
-
       <div className="flex">
         {/* Sidebar */}
         <aside className={cn(
@@ -713,7 +691,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
           {sidebarOpen && (
             <div className="absolute inset-0 bg-gray-600 bg-opacity-75 lg:hidden" onClick={() => setSidebarOpen(false)} />
           )}
-          
           <div className="relative h-full overflow-y-auto bg-white">
             <div className="p-4">
               <Button
@@ -724,7 +701,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
               >
                 <X className="h-5 w-5" />
               </Button>
-              
               {/* Quick Tools */}
               <div className="mb-8">
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
@@ -756,7 +732,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
                   </Link>
                 </div>
               </div>
-
               {/* Popular Converters */}
               <div className="mb-8">
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
@@ -788,7 +763,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
                   View all 40 converters →
                 </Link>
               </div>
-
               {/* Storage Widget */}
               <div className="bg-gray-50 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
@@ -802,7 +776,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
             </div>
           </div>
         </aside>
-
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto">
           <div className="p-4 sm:p-6 lg:p-8">
@@ -849,10 +822,8 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
                 />
               </div>
             </div>
-
             {/* Quick Actions */}
             <QuickActions />
-
             {/* Creations Section */}
             <Card>
               <CardHeader>
@@ -863,7 +834,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
                       {contentItems.length} items • {userTier === 'pro' ? '30-day' : '7-day'} retention
                     </p>
                   </div>
-                  
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                     <div className="relative flex-1 sm:flex-initial">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -875,7 +845,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />
                     </div>
-                    
                     <div className="flex gap-2">
                       <Select value={filterType} onValueChange={setFilterType}>
                         <SelectTrigger className="w-[120px]">
@@ -889,7 +858,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
                           <SelectItem value="video">Videos</SelectItem>
                         </SelectContent>
                       </Select>
-                      
                       <Select value={sortBy} onValueChange={setSortBy}>
                         <SelectTrigger className="w-[140px]">
                           <SelectValue />
@@ -900,7 +868,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
                           <SelectItem value="name">Name</SelectItem>
                         </SelectContent>
                       </Select>
-                      
                       <div className="flex border rounded-md">
                         <Button
                           variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
@@ -923,7 +890,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
                   </div>
                 </div>
               </CardHeader>
-              
               <CardContent>
                 {contentItems.length === 0 ? (
                   <EmptyState />
@@ -936,7 +902,7 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
                             <CreationCard
                               item={item}
                               onDownload={handleDownload}
-                              onDelete={deleteSvg}
+                              onDelete={(id) => item.type === 'video' ? deleteVideo(id) : deleteSvg(id)}
                               userTier={userTier}
                             />
                           </div>
@@ -1018,7 +984,6 @@ export default function ProfessionalDashboard({ initialSvgs, userId, userProfile
                         ))}
                       </div>
                     )}
-                    
                     {hasMore && (
                       <div className="mt-8 text-center">
                         <Button

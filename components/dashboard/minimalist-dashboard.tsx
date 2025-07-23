@@ -1,7 +1,6 @@
 "use client";
-
 import { useState, useEffect, useCallback } from "react";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '@/lib/supabase';
 import { Database } from '@/types/database.types';
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -52,7 +51,6 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-
 // Type definitions
 type SvgDesign = {
   id: string;
@@ -66,7 +64,6 @@ type SvgDesign = {
   tags: string[] | null;
   user_id: string;
 };
-
 type GeneratedVideo = {
   id: string;
   prompt: string;
@@ -82,14 +79,12 @@ type GeneratedVideo = {
     original_svg?: string;
   };
 };
-
 type ContentItem = {
   id: string;
   type: 'svg' | 'icon' | 'video';
   content: SvgDesign | GeneratedVideo;
   created_at: string;
 };
-
 type DashboardProps = {
   initialSvgs: SvgDesign[];
   userId?: string;
@@ -101,12 +96,9 @@ type DashboardProps = {
     monthly_credits?: number;
     monthly_credits_used?: number;
     credits_reset_at?: string;
-    subscription_interval?: string;
     stripe_customer_id?: string | null;
   };
 };
-
-
 // Minimalist Creation Card
 const CreationCard = ({ item, onDownload, onDelete, userTier }: {
   item: ContentItem;
@@ -118,7 +110,6 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
     const video = item.content as GeneratedVideo;
     const isExpired = new Date(video.expires_at) < new Date();
     const daysRemaining = Math.ceil((new Date(video.expires_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-    
     return (
       <div className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
         <div className="aspect-square bg-gray-50 p-8 flex items-center justify-center relative">
@@ -127,7 +118,6 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
             Video
           </Badge>
         </div>
-        
         <div className="p-4">
           <h3 className="font-medium text-gray-900 truncate">
             {video.metadata.original_svg || 'AI Video'}
@@ -147,20 +137,26 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
                   <Download className="h-4 w-4" />
                 </Button>
               )}
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8 hover:text-red-600"
+                onClick={() => onDelete(video.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
       </div>
     );
   }
-
   const svg = item.content as SvgDesign;
   const createdDate = new Date(svg.created_at);
   const retentionDays = userTier === 'pro' ? 30 : 7;
   const expiryDate = new Date(createdDate.getTime() + retentionDays * 24 * 60 * 60 * 1000);
   const daysRemaining = Math.ceil((expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
   const isExpired = daysRemaining <= 0;
-  
   return (
     <div className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
       <div className="aspect-square bg-gray-50 p-4 flex items-center justify-center relative">
@@ -174,13 +170,12 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
           <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
         )}
         <Badge className={cn(
-          "absolute top-2 right-2 hover:bg-current",
-          item.type === 'icon' ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"
+          "absolute top-2 right-2",
+          item.type === 'icon' ? "bg-blue-100 text-blue-700 hover:bg-blue-100" : "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
         )}>
           {item.type === 'icon' ? 'Icon' : 'SVG'}
         </Badge>
       </div>
-      
       <div className="p-4">
         <h3 className="font-medium text-gray-900 truncate">{svg.title}</h3>
         <div className="flex items-center justify-between mt-2">
@@ -210,7 +205,6 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
     </div>
   );
 };
-
 // Empty State
 const EmptyState = () => (
   <div className="text-center py-24">
@@ -225,7 +219,6 @@ const EmptyState = () => (
     </Link>
   </div>
 );
-
 // Main Dashboard Component
 export default function MinimalistDashboard({ initialSvgs, userId, userProfile: initialUserProfile }: DashboardProps) {
   const [svgs, setSvgs] = useState<SvgDesign[]>(initialSvgs);
@@ -240,13 +233,10 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [userProfile, setUserProfile] = useState(initialUserProfile);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
   const router = useRouter();
   const { creditInfo } = useCredits();
   const supabase = createClientComponentClient<Database>();
-
   const PAGE_SIZE = 12;
-
   // Fetch videos
   const fetchVideos = useCallback(async () => {
     try {
@@ -255,43 +245,35 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
         .select('*')
         .order('created_at', { ascending: false })
         .limit(20);
-
       if (error) throw error;
       setVideos(data || []);
     } catch (error) {
-      console.error('Error fetching videos:', error);
     }
   }, [supabase]);
-
   useEffect(() => {
     fetchVideos();
     const interval = setInterval(fetchVideos, 10000);
     return () => clearInterval(interval);
   }, [fetchVideos]);
-
   // Combine and filter content
   useEffect(() => {
     const svgItems: ContentItem[] = svgs.map(svg => ({
       id: svg.id,
-      type: svg.prompt?.toLowerCase().includes('icon') ? 'icon' : 'svg',
+      type: svg.tags?.includes('icon') ? 'icon' : 'svg',
       content: svg,
       created_at: svg.created_at
     }));
-
     const videoItems: ContentItem[] = videos.map(video => ({
       id: video.id,
       type: 'video',
       content: video,
       created_at: video.created_at
     }));
-
     let allItems = [...svgItems, ...videoItems];
-
     // Apply filters
     if (filterType !== 'all') {
       allItems = allItems.filter(item => item.type === filterType);
     }
-
     if (searchQuery) {
       allItems = allItems.filter(item => {
         if (item.type === 'video') {
@@ -304,7 +286,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
         }
       });
     }
-
     // Sort items
     allItems.sort((a, b) => {
       switch (sortBy) {
@@ -324,18 +305,15 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
           return 0;
       }
     });
-
     setContentItems(allItems);
     setCurrentPage(1);
   }, [svgs, videos, filterType, searchQuery, sortBy]);
-
   // Paginate content
   useEffect(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
     const end = start + PAGE_SIZE;
     setDisplayedItems(contentItems.slice(start, end));
   }, [contentItems, currentPage]);
-
   // Download handlers
   const downloadSvg = async (svg: SvgDesign) => {
     const blob = new Blob([svg.svg_content], { type: "image/svg+xml" });
@@ -348,7 +326,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
-
   const downloadVideo = async (video: GeneratedVideo) => {
     try {
       const response = await fetch(video.video_url);
@@ -362,7 +339,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading video:', error);
       toast({
         title: "Download failed",
         description: "Failed to download video",
@@ -370,7 +346,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
       });
     }
   };
-
   const handleDownload = (item: ContentItem) => {
     if (item.type === 'video') {
       downloadVideo(item.content as GeneratedVideo);
@@ -378,27 +353,21 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
       downloadSvg(item.content as SvgDesign);
     }
   };
-
   // Delete handler
   const deleteSvg = async (id: string) => {
     if (!confirm("Are you sure you want to delete this item?")) return;
-    
     setIsLoading(true);
     try {
       const { error } = await supabase
         .from("svg_designs")
         .delete()
         .eq("id", id);
-      
       if (error) throw error;
-      
       toast({
         title: "Item deleted",
       });
-      
       setSvgs(prev => prev.filter(svg => svg.id !== id));
     } catch (error) {
-      console.error("Error deleting item:", error);
       toast({
         title: "Error deleting item",
         variant: "destructive",
@@ -408,10 +377,32 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
     }
   };
 
+  // Delete video handler
+  const deleteVideo = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this video?")) return;
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from("generated_videos")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+      toast({
+        title: "Video deleted",
+      });
+      setVideos(prev => prev.filter(video => video.id !== id));
+    } catch (error) {
+      toast({
+        title: "Error deleting video",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   // Get user tier and credit info
   const contextCredits = creditInfo;
   const isSubscribed = contextCredits?.isSubscribed ?? userProfile?.subscription_status === 'active';
-  
   const displayCreditInfo = contextCredits ? {
     used: contextCredits.creditsUsed,
     limit: contextCredits.creditLimit,
@@ -427,19 +418,15 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
     type: isSubscribed ? 'monthly' : 'lifetime' as const,
     remaining: 0
   };
-  
   if (!contextCredits) {
     displayCreditInfo.remaining = Math.max(0, displayCreditInfo.limit - displayCreditInfo.used);
   }
-
   const userTier = contextCredits?.isSubscribed ? 
     (contextCredits.subscriptionTier === 'pro' ? 'pro' : 'starter') : 
     (userProfile?.subscription_status === 'active' ? 
       (userProfile.subscription_tier === 'pro' ? 'pro' : 'starter') : 
       'free');
-
   const hasMore = contentItems.length > displayedItems.length + (currentPage - 1) * PAGE_SIZE;
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile Header - Only shown on small screens */}
@@ -456,7 +443,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
           </div>
         </div>
       </header>
-
       <div className="flex">
         {/* Minimalist Sidebar */}
         <aside className={cn(
@@ -466,7 +452,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
           {sidebarOpen && (
             <div className="absolute inset-0 bg-gray-600 bg-opacity-75 lg:hidden" onClick={() => setSidebarOpen(false)} />
           )}
-          
           <div className="relative h-full overflow-y-auto bg-white">
             <div className="p-4">
               <Button
@@ -477,7 +462,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
               >
                 <X className="h-5 w-5" />
               </Button>
-              
               {/* Credit Display - Show for all users on mobile */}
               {creditInfo && (
                 <div className="mb-6 p-4 bg-gray-50 rounded-lg lg:hidden">
@@ -501,7 +485,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                   )}
                 </div>
               )}
-              
               {/* Quick Tools */}
               <div className="mb-8">
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
@@ -540,7 +523,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                   </Link>
                 </div>
               </div>
-
               {/* Popular Converters */}
               <div>
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
@@ -571,11 +553,9 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
             </div>
           </div>
         </aside>
-
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto">
           <div className="p-4 sm:p-6 lg:p-8">
-
             {/* Quick Actions */}
             <div className="mb-6">
               <Link href="/">
@@ -585,7 +565,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                 </Button>
               </Link>
             </div>
-
             {/* Creations Section */}
             <Card>
               <CardHeader>
@@ -596,7 +575,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                       {userTier === 'pro' ? '30-day' : '7-day'} retention
                     </p>
                   </div>
-                  
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                     <div className="relative flex-1 sm:flex-initial">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -608,7 +586,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />
                     </div>
-                    
                     <div className="flex gap-2">
                       <div className="relative">
                         <Select value={filterType} onValueChange={setFilterType}>
@@ -626,7 +603,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                           <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full"></div>
                         )}
                       </div>
-                      
                       <div className="relative">
                         <Select value={sortBy} onValueChange={setSortBy}>
                           <SelectTrigger className="w-[120px]">
@@ -642,7 +618,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                           <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full"></div>
                         )}
                       </div>
-                      
                       <div className="flex border border-gray-200 rounded-md">
                         <Button
                           variant="ghost"
@@ -671,7 +646,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                   </div>
                 </div>
               </CardHeader>
-              
               <CardContent>
                 {contentItems.length === 0 ? (
                   <EmptyState />
@@ -684,7 +658,7 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                             key={item.id}
                             item={item}
                             onDownload={handleDownload}
-                            onDelete={deleteSvg}
+                            onDelete={(id) => item.type === 'video' ? deleteVideo(id) : deleteSvg(id)}
                             userTier={userTier}
                           />
                         ))}
@@ -696,7 +670,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                           const title = isVideo ? 
                             (item.content as GeneratedVideo).metadata.original_svg || 'AI Video' : 
                             (item.content as SvgDesign).title;
-                          
                           let daysRemaining = 0;
                           if (isVideo) {
                             const video = item.content as GeneratedVideo;
@@ -709,7 +682,6 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                             daysRemaining = Math.ceil((expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
                           }
                           const isExpired = daysRemaining <= 0;
-                          
                           return (
                             <div 
                               key={item.id} 
@@ -737,23 +709,20 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                                 >
                                   <Download className="h-4 w-4" />
                                 </Button>
-                                {!isVideo && (
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 hover:text-red-600"
-                                    onClick={() => deleteSvg(item.id)}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                )}
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 hover:text-red-600"
+                                  onClick={() => isVideo ? deleteVideo(item.id) : deleteSvg(item.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
                               </div>
                             </div>
                           );
                         })}
                       </div>
                     )}
-                    
                     {hasMore && (
                       <div className="mt-8 text-center">
                         <Button

@@ -1,5 +1,4 @@
 "use client"
-
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -10,7 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
 import { Check, Copy, ChevronDown, ChevronRight, Code2, Terminal, Play, AlertCircle } from "lucide-react"
-
 // Types for code examples
 export interface CodeExampleProps {
   title?: string
@@ -24,7 +22,6 @@ export interface CodeExampleProps {
   maxHeight?: string
   className?: string
 }
-
 export interface CodeExample {
   language: CodeLanguage
   code: string
@@ -34,22 +31,18 @@ export interface CodeExample {
   output?: string
   error?: string
 }
-
 export interface InstallationInfo {
   npm?: string
   yarn?: string
   pnpm?: string
   cdn?: string
 }
-
 export interface ImportStatement {
   language: CodeLanguage
   imports: string
 }
-
 export type CodeLanguage = "javascript" | "typescript" | "python" | "html" | "css" | "bash" | "json"
 export type Framework = "react" | "vue" | "angular" | "vanilla" | "node"
-
 // Language configs for basic syntax highlighting
 const languageConfigs: Record<CodeLanguage, { keywords: string[], comment: string }> = {
   javascript: {
@@ -81,38 +74,30 @@ const languageConfigs: Record<CodeLanguage, { keywords: string[], comment: strin
     comment: ""
   }
 }
-
 // Simple syntax highlighting function
 function highlightCode(code: string, language: CodeLanguage): React.ReactNode {
   const config = languageConfigs[language]
   const lines = code.split('\n')
-  
   return lines.map((line, lineIndex) => {
     let processedLine = line
-    
     // Highlight keywords
     config.keywords.forEach(keyword => {
       const regex = new RegExp(`\\b(${keyword})\\b`, 'g')
       processedLine = processedLine.replace(regex, '<span className="text-blue-600">$1</span>')
     })
-    
     // Highlight strings
     processedLine = processedLine.replace(/(["'])([^"']*)\1/g, '<span className="text-green-600">$1$2$1</span>')
-    
     // Highlight comments
     if (config.comment && processedLine.trim().startsWith(config.comment)) {
       processedLine = `<span className="text-gray-500">${processedLine}</span>`
     }
-    
     // Highlight numbers
     processedLine = processedLine.replace(/\b(\d+)\b/g, '<span className="text-purple-600">$1</span>')
-    
     return (
       <div key={lineIndex} dangerouslySetInnerHTML={{ __html: processedLine }} />
     )
   })
 }
-
 export function CodeExample({
   title,
   description,
@@ -128,7 +113,6 @@ export function CodeExample({
   const [copiedStates, setCopiedStates] = React.useState<Record<string, boolean>>({})
   const [isExpanded, setIsExpanded] = React.useState(defaultExpanded)
   const [activeTab, setActiveTab] = React.useState(0)
-
   const handleCopy = async (code: string, id: string) => {
     try {
       await navigator.clipboard.writeText(code)
@@ -137,14 +121,11 @@ export function CodeExample({
         setCopiedStates(prev => ({ ...prev, [id]: false }))
       }, 2000)
     } catch (err) {
-      console.error('Failed to copy:', err)
-    }
+      }
   }
-
   const CodeBlock = ({ example, index }: { example: CodeExample; index: number }) => {
     const codeId = `code-${index}`
     const lines = example.code.split('\n')
-    
     return (
       <div className="relative">
         {example.filename && (
@@ -175,7 +156,6 @@ export function CodeExample({
             </Button>
           </div>
         )}
-        
         <ScrollArea className="w-full" style={{ maxHeight }}>
           <div className="relative">
             <pre className="p-4 text-sm">
@@ -202,7 +182,6 @@ export function CodeExample({
             </pre>
           </div>
         </ScrollArea>
-        
         {example.output && (
           <div className="border-t bg-green-50 p-4">
             <div className="mb-2 flex items-center gap-2 text-sm font-medium text-green-800">
@@ -214,7 +193,6 @@ export function CodeExample({
             </pre>
           </div>
         )}
-        
         {example.error && (
           <Alert variant="destructive" className="m-4 mt-0">
             <AlertCircle className="h-4 w-4" />
@@ -226,7 +204,6 @@ export function CodeExample({
       </div>
     )
   }
-
   const content = (
     <Card className={cn("overflow-hidden", className)}>
       {(title || description) && (
@@ -235,7 +212,6 @@ export function CodeExample({
           {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
         </div>
       )}
-      
       {installation && (
         <div className="border-b bg-muted/30 p-4">
           <h4 className="mb-3 text-sm font-semibold">Installation</h4>
@@ -298,7 +274,6 @@ export function CodeExample({
           </div>
         </div>
       )}
-      
       {imports && imports.length > 0 && (
         <div className="border-b bg-muted/30 p-4">
           <h4 className="mb-3 text-sm font-semibold">Import Statements</h4>
@@ -324,7 +299,6 @@ export function CodeExample({
           </div>
         </div>
       )}
-      
       {examples.length === 1 ? (
         <CodeBlock example={examples[0]} index={0} />
       ) : (
@@ -355,7 +329,6 @@ export function CodeExample({
       )}
     </Card>
   )
-
   if (collapsible) {
     return (
       <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
@@ -372,6 +345,5 @@ export function CodeExample({
       </Collapsible>
     )
   }
-
   return content
 }

@@ -5,7 +5,6 @@
  * Implements the ConversionHandler interface with common functionality
  * including validation, error handling, progress tracking, and analytics.
  */
-
 import type { 
   ConversionHandler, 
   ConversionOptions, 
@@ -25,7 +24,6 @@ import {
   isConversionSupported,
   validateConversionParams
 } from './validation'
-
 /**
  * Abstract base class for all converters
  * Provides common functionality and enforces converter contract
@@ -35,11 +33,9 @@ export abstract class BaseConverter implements Converter {
   abstract from: ImageFormat
   abstract to: ImageFormat
   abstract description?: string
-  
   // All converters are client-side for free operation
   readonly isClientSide: boolean = true
   readonly isPremium: boolean = false
-  
   /**
    * Abstract method that derived classes must implement
    * This contains the actual conversion logic
@@ -48,7 +44,6 @@ export abstract class BaseConverter implements Converter {
     input: Buffer,
     options: ConversionOptions
   ): Promise<ConversionResult>
-  
   /**
    * Main conversion handler implementing ConversionHandler interface
    * Provides validation, error handling, and progress tracking
@@ -57,7 +52,6 @@ export abstract class BaseConverter implements Converter {
     // Use bind to ensure 'this' context is preserved and overrides work
     return this.handleConversion.bind(this)
   }
-  
   /**
    * The actual conversion handler method
    */
@@ -67,45 +61,34 @@ export abstract class BaseConverter implements Converter {
   ): Promise<ConversionResult> {
     let startTime: number | undefined
     let inputSize: number | undefined
-    
     try {
       // Normalize input to Buffer
       const buffer = this.normalizeInput(input)
       inputSize = buffer.length
-      
       // Track conversion start
       startTime = Date.now()
       await this.trackConversionStart(inputSize, options)
-      
       // Initial validation - this will call the overridden method in derived classes
       await this.validateInput(buffer, options)
-      
       // Report initial progress
       this.reportProgress(options, 0.1)
       await this.trackConversionProgress(0.1)
-      
       // Perform the conversion
       const result = await this.performConversion(buffer, options)
-      
       // Final progress
       this.reportProgress(options, 1)
       await this.trackConversionProgress(1)
-      
       // Track analytics with input size
       await this.trackConversionComplete(true, result, undefined, inputSize)
-      
       return result
-      
     } catch (error) {
       // Track failed conversion with input size
       await this.trackConversionComplete(false, null, error, inputSize)
-      
       // Re-throw known errors
       if (error instanceof ConversionError || 
           error instanceof FileValidationError) {
         throw error
       }
-      
       // Wrap unknown errors
       throw new ConversionError(
         getUserFriendlyError(error),
@@ -113,7 +96,6 @@ export abstract class BaseConverter implements Converter {
       )
     }
   }
-  
   /**
    * Normalize input to Buffer format
    */
@@ -124,7 +106,6 @@ export abstract class BaseConverter implements Converter {
     }
     return input
   }
-  
   /**
    * Validate input buffer and conversion parameters
    */
@@ -132,22 +113,14 @@ export abstract class BaseConverter implements Converter {
     buffer: Buffer,
     options: ConversionOptions
   ): Promise<void> {
-    console.log(`[BaseConverter.validateInput] Called for ${this.from} to ${this.to}`)
-    console.log(`[BaseConverter.validateInput] Allowed formats: [${this.from}]`)
-    
     // Validate file format and size
     const validation = validateFile(buffer, {
       allowedFormats: [this.from],
       targetFormat: this.to
     })
-    
-    console.log('[BaseConverter.validateInput] Validation result:', validation)
-    
     if (!validation.isValid) {
-      console.error('[BaseConverter.validateInput] Validation failed:', validation.error)
       throw new FileValidationError(validation.error!)
     }
-    
     // Check if conversion is supported
     const conversionSupport = isConversionSupported(this.from, this.to)
     if (!conversionSupport.supported) {
@@ -156,7 +129,6 @@ export abstract class BaseConverter implements Converter {
         'UNSUPPORTED_CONVERSION'
       )
     }
-    
     // Validate conversion parameters
     const paramValidation = validateConversionParams(options, this.from, this.to)
     if (!paramValidation.isValid) {
@@ -166,7 +138,6 @@ export abstract class BaseConverter implements Converter {
       )
     }
   }
-  
   /**
    * Report conversion progress
    */
@@ -179,11 +150,9 @@ export abstract class BaseConverter implements Converter {
         options.onProgress(Math.min(1, Math.max(0, progress)))
       } catch (error) {
         // Ignore progress callback errors
-        console.warn('Progress callback error:', error)
-      }
+        }
     }
   }
-  
   /**
    * Track conversion start
    */
@@ -198,7 +167,6 @@ export abstract class BaseConverter implements Converter {
       // Never let analytics errors affect conversion
     }
   }
-  
   /**
    * Track conversion progress
    */
@@ -210,7 +178,6 @@ export abstract class BaseConverter implements Converter {
       // Never let analytics errors affect conversion
     }
   }
-  
   /**
    * Track conversion completion
    */
@@ -223,7 +190,6 @@ export abstract class BaseConverter implements Converter {
     try {
       // Import analytics dynamically to avoid circular dependencies
       const { trackConversionComplete } = await import('./analytics')
-      
       // Track the conversion completion with input size
       trackConversionComplete(
         this.name,
@@ -233,24 +199,13 @@ export abstract class BaseConverter implements Converter {
         result,
         error
       )
-      
       // Log in development for debugging
       if (process.env.NODE_ENV === 'development') {
-        console.log('Conversion tracked:', {
-          converter: this.name,
-          from: this.from,
-          to: this.to,
-          success,
-          inputSize,
-          outputSize: result?.metadata?.size,
-          error: error ? handleConverterError(error) : undefined
-        })
-      }
+        }
     } catch {
       // Never let analytics errors affect conversion
     }
   }
-  
   /**
    * Track library loading (for LazyLoadedConverter)
    */
@@ -267,7 +222,6 @@ export abstract class BaseConverter implements Converter {
       // Never let analytics errors affect conversion
     }
   }
-  
   /**
    * Helper method to create a successful result
    */
@@ -289,7 +243,6 @@ export abstract class BaseConverter implements Converter {
       }
     }
   }
-  
   /**
    * Helper method to get MIME type for output format
    */
@@ -317,11 +270,9 @@ export abstract class BaseConverter implements Converter {
       emf: 'image/x-emf',
       wmf: 'image/x-wmf'
     }
-    
     return mimeTypes[this.to] || 'application/octet-stream'
   }
 }
-
 /**
  * Base class for converters that need to load external libraries
  * Extends BaseConverter with lazy loading capabilities
@@ -329,53 +280,43 @@ export abstract class BaseConverter implements Converter {
 export abstract class LazyLoadedConverter extends BaseConverter {
   private libraryLoaded: boolean = false
   private loadingPromise: Promise<void> | null = null
-  
   /**
    * Abstract method to load required libraries
    * Derived classes implement this with dynamic imports
    */
   protected abstract loadLibraries(): Promise<void>
-  
   /**
    * Ensure libraries are loaded before conversion
    */
   protected async ensureLibrariesLoaded(): Promise<void> {
     if (this.libraryLoaded) return
-    
     // If already loading, wait for it
     if (this.loadingPromise) {
       await this.loadingPromise
       return
     }
-    
     // Track library loading start time
     const loadStartTime = Date.now()
-    
     // Start loading
     this.loadingPromise = this.loadLibraries()
       .then(async () => {
         this.libraryLoaded = true
         const loadTime = Date.now() - loadStartTime
-        
         // Track successful library load
         await this.trackLibraryLoad('main', loadTime, true)
       })
       .catch(async (error) => {
         this.loadingPromise = null
         const loadTime = Date.now() - loadStartTime
-        
         // Track failed library load
         await this.trackLibraryLoad('main', loadTime, false, error.message)
-        
         throw new ConversionError(
           `Failed to load required libraries for ${this.name}: ${error.message}`,
           'LIBRARY_LOAD_FAILED'
         )
       })
-    
     await this.loadingPromise
   }
-  
   /**
    * Override performConversion to ensure libraries are loaded
    */
@@ -385,21 +326,16 @@ export abstract class LazyLoadedConverter extends BaseConverter {
   ): Promise<ConversionResult> {
     // Ensure libraries are loaded
     await this.ensureLibrariesLoaded()
-    
     // Report progress after library load
     this.reportProgress(options, 0.3)
     await this.trackConversionProgress(0.3)
-    
     // Call the actual conversion implementation
     const result = await this.performConversionWithLibraries(input, options)
-    
     // Track progress at 90% before final processing
     this.reportProgress(options, 0.9)
     await this.trackConversionProgress(0.9)
-    
     return result
   }
-  
   /**
    * Abstract method for conversion logic after libraries are loaded
    */

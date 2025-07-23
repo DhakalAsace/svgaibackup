@@ -151,8 +151,8 @@ export default function HtmlSitemap() {
         <section className="mt-12 pt-8 border-t">
           <h2 className="text-2xl font-semibold mb-4">Additional Resources</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Link href="/privacy-policy" className="hover:text-blue-600">Privacy Policy</Link>
-            <Link href="/terms-of-service" className="hover:text-blue-600">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-blue-600">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-blue-600">Terms of Service</Link>
             <Link href="/cookie-policy" className="hover:text-blue-600">Cookie Policy</Link>
             <Link href="/contact" className="hover:text-blue-600">Contact Us</Link>
           </div>

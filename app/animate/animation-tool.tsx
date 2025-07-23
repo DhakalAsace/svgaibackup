@@ -1,5 +1,4 @@
 "use client"
-
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -35,8 +34,7 @@ import {
   X
 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-
+import { createClientComponentClient } from "@/lib/supabase"
 // Animation preset type
 interface AnimationPreset {
   name: string
@@ -45,7 +43,6 @@ interface AnimationPreset {
   animation: string
   setup?: string
 }
-
 // Animation presets
 const ANIMATION_PRESETS: Record<string, AnimationPreset> = {
   // Entrance animations
@@ -100,7 +97,6 @@ const ANIMATION_PRESETS: Record<string, AnimationPreset> = {
       }`,
     animation: "bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards"
   },
-  
   // Emphasis animations
   "pulse": {
     name: "Pulse",
@@ -146,7 +142,6 @@ const ANIMATION_PRESETS: Record<string, AnimationPreset> = {
       }`,
     animation: "glow 2s ease-in-out infinite"
   },
-  
   // Continuous animations
   "rotate": {
     name: "Rotate",
@@ -180,7 +175,6 @@ const ANIMATION_PRESETS: Record<string, AnimationPreset> = {
       }`,
     animation: "morph 4s ease-in-out infinite"
   },
-  
   // Path animations
   "draw": {
     name: "Draw Path",
@@ -204,7 +198,6 @@ const ANIMATION_PRESETS: Record<string, AnimationPreset> = {
     setup: "stroke-dasharray: 5, 5;"
   }
 }
-
 // Easing functions
 const EASING_FUNCTIONS = {
   "linear": "linear",
@@ -215,7 +208,6 @@ const EASING_FUNCTIONS = {
   "bounce": "cubic-bezier(0.68, -0.55, 0.265, 1.55)",
   "elastic": "cubic-bezier(0.68, -0.55, 0.265, 1.55)"
 }
-
 interface AnimationElement {
   id: string
   selector: string
@@ -228,7 +220,6 @@ interface AnimationElement {
   fillMode: string
   customAnimation?: string
 }
-
 export default function AnimationTool() {
   const router = useRouter()
   const supabase = createClientComponentClient()
@@ -243,16 +234,13 @@ export default function AnimationTool() {
   const [previewScale, setPreviewScale] = useState(1)
   const svgContainerRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-
   // Parse SVG elements when code changes
   useEffect(() => {
     if (!svgCode) return
-
     try {
       const parser = new DOMParser()
       const doc = parser.parseFromString(svgCode, "image/svg+xml")
       const elements: string[] = []
-
       // Get all animatable elements
       const animatableElements = doc.querySelectorAll("path, circle, rect, ellipse, line, polyline, polygon, text, g")
       animatableElements.forEach((el, index) => {
@@ -262,9 +250,7 @@ export default function AnimationTool() {
         }
         elements.push(`#${id}`)
       })
-
       setSvgElements(elements)
-      
       // Update SVG code with IDs
       const serializer = new XMLSerializer()
       const updatedSvg = serializer.serializeToString(doc.documentElement)
@@ -272,15 +258,12 @@ export default function AnimationTool() {
         setSvgCode(updatedSvg)
       }
     } catch (error) {
-      console.error("Error parsing SVG:", error)
-    }
+      }
   }, [svgCode])
-
   // Handle file upload
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
-
     const reader = new FileReader()
     reader.onload = (e) => {
       const content = e.target?.result as string
@@ -289,11 +272,9 @@ export default function AnimationTool() {
     }
     reader.readAsText(file)
   }
-
   // Add animation to element
   const addAnimation = () => {
     if (!selectedElement) return
-
     const newAnimation: AnimationElement = {
       id: `anim-${Date.now()}`,
       selector: selectedElement,
@@ -305,33 +286,27 @@ export default function AnimationTool() {
       direction: "normal",
       fillMode: "forwards"
     }
-
     setAnimations([...animations, newAnimation])
   };
-
   // Update animation property
   const updateAnimation = (id: string, property: keyof AnimationElement, value: any) => {
     setAnimations(animations.map(anim => 
       anim.id === id ? { ...anim, [property]: value } : anim
     ))
   };
-
   // Remove animation
   const removeAnimation = (id: string) => {
     setAnimations(animations.filter(anim => anim.id !== id))
   };
-
   // Generate CSS code
   const generateCSS = () => {
     let css = ""
     const usedPresets = new Set<string>()
-
     animations.forEach(anim => {
       if (anim.preset && ANIMATION_PRESETS[anim.preset]) {
         usedPresets.add(anim.preset)
       }
     })
-
     // Add keyframes
     usedPresets.forEach(preset => {
       const presetData = ANIMATION_PRESETS[preset]
@@ -339,13 +314,10 @@ export default function AnimationTool() {
         css += presetData.keyframes + "\n\n"
       }
     })
-
     // Add animations
     animations.forEach(anim => {
       const preset = ANIMATION_PRESETS[anim.preset]
-      
       css += `${anim.selector} {\n`
-      
       if (anim.customAnimation) {
         css += `  animation: ${anim.customAnimation};\n`
       } else {
@@ -358,28 +330,22 @@ export default function AnimationTool() {
         css += `  animation-direction: ${anim.direction};\n`
         css += `  animation-fill-mode: ${anim.fillMode};\n`
       }
-      
       css += `}\n\n`
     })
-
     return css
   };
-
   // Generate animated SVG
   const generateAnimatedSVG = () => {
     const css = generateCSS()
     const parser = new DOMParser()
     const doc = parser.parseFromString(svgCode, "image/svg+xml")
-    
     // Add style element
     const styleElement = doc.createElementNS("http://www.w3.org/2000/svg", "style")
     styleElement.textContent = css
     doc.documentElement.insertBefore(styleElement, doc.documentElement.firstChild)
-    
     const serializer = new XMLSerializer()
     return serializer.serializeToString(doc.documentElement)
   };
-
   // Copy to clipboard
   const copyToClipboard = async () => {
     const animatedSVG = generateAnimatedSVG()
@@ -391,7 +357,6 @@ export default function AnimationTool() {
       description: "Animated SVG code copied to clipboard"
     })
   };
-
   // Export animated SVG
   const exportSVG = () => {
     const animatedSVG = generateAnimatedSVG()
@@ -403,35 +368,29 @@ export default function AnimationTool() {
     a.click()
     URL.revokeObjectURL(url)
   };
-
   // Video export (premium feature)
   const handleVideoExport = async () => {
     const { data: { user } } = await supabase.auth.getUser()
-    
     if (!user) {
       router.push("/login?returnUrl=/animate&feature=video-export")
       return
     }
-
     // Check if user has premium subscription
     const { data: profile } = await supabase
       .from("profiles")
       .select("subscription_tier")
       .eq("id", user.id)
       .single()
-
     if (!profile || profile.subscription_tier === "free") {
       router.push("/pricing?feature=video-export")
       return
     }
-
     // Implement video export functionality
     toast({
       title: "Video Export",
       description: "Video export feature coming soon for premium users!"
     })
   };
-
   return (
     <div id="tool" className="py-8">
       <Card className="max-w-6xl mx-auto">
@@ -461,7 +420,6 @@ export default function AnimationTool() {
               </div>
             </div>
           </div>
-
           <div className="p-6">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-0">
               <TabsList className="hidden">
@@ -469,7 +427,6 @@ export default function AnimationTool() {
                 <TabsTrigger value="preview">Animate</TabsTrigger>
                 <TabsTrigger value="export">Export</TabsTrigger>
               </TabsList>
-
               {/* Upload Tab */}
               <TabsContent value="upload" className="mt-6">
                 <div className="max-w-2xl mx-auto space-y-6">
@@ -477,7 +434,6 @@ export default function AnimationTool() {
                     <h3 className="text-xl font-semibold mb-2">Upload Your SVG</h3>
                     <p className="text-muted-foreground">Choose a file or paste your SVG code below</p>
                   </div>
-
                   <div className="grid md:grid-cols-2 gap-6">
                     {/* File Upload */}
                     <Card className="p-6 text-center hover:border-primary/50 transition-colors cursor-pointer" onClick={() => fileInputRef.current?.click()}>
@@ -492,7 +448,6 @@ export default function AnimationTool() {
                       <h4 className="font-medium mb-1">Upload File</h4>
                       <p className="text-sm text-muted-foreground">Click to browse SVG files</p>
                     </Card>
-
                     {/* Code Paste */}
                     <Card className="p-6 text-center">
                       <Code className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
@@ -500,7 +455,6 @@ export default function AnimationTool() {
                       <p className="text-sm text-muted-foreground">Enter SVG code below</p>
                     </Card>
                   </div>
-
                   {/* Code Input */}
                   <div>
                     <Textarea
@@ -510,7 +464,6 @@ export default function AnimationTool() {
                       className="font-mono text-sm min-h-[200px] resize-none"
                     />
                   </div>
-
                   {svgCode && (
                     <Button 
                       onClick={() => setActiveTab("preview")}
@@ -523,7 +476,6 @@ export default function AnimationTool() {
                   )}
                 </div>
               </TabsContent>
-
               {/* Preview & Animate Tab */}
               <TabsContent value="preview" className="mt-6">
                 <div className="space-y-6">
@@ -565,7 +517,6 @@ export default function AnimationTool() {
                           </div>
                         </div>
                       </div>
-
                       {/* SVG Preview */}
                       <div 
                         ref={svgContainerRef}
@@ -583,11 +534,9 @@ export default function AnimationTool() {
                       </div>
                     </div>
                   </div>
-
                   {/* Animation Controls */}
                   <div className="max-w-4xl mx-auto">
                     <h3 className="text-lg font-semibold mb-4">Add Animations</h3>
-
                     {/* Quick Start - Element Selection */}
                     <Card className="p-4 bg-primary/5 border-primary/20">
                       <div className="flex items-start gap-4">
@@ -616,7 +565,6 @@ export default function AnimationTool() {
                         )}
                       </div>
                     </Card>
-
                     {/* Animation Timeline */}
                     {animations.length > 0 && (
                       <div className="mt-6">
@@ -642,7 +590,6 @@ export default function AnimationTool() {
                                     <X className="h-4 w-4" />
                                   </Button>
                                 </div>
-
                                 {/* Compact Controls Grid */}
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                   {/* Animation Type */}
@@ -665,7 +612,6 @@ export default function AnimationTool() {
                                       </SelectContent>
                                     </Select>
                                   </div>
-
                                   {/* Duration */}
                                   <div>
                                     <Label className="text-xs">Duration</Label>
@@ -681,7 +627,6 @@ export default function AnimationTool() {
                                       <span className="text-xs text-muted-foreground">s</span>
                                     </div>
                                   </div>
-
                                   {/* Delay */}
                                   <div>
                                     <Label className="text-xs">Delay</Label>
@@ -697,7 +642,6 @@ export default function AnimationTool() {
                                       <span className="text-xs text-muted-foreground">s</span>
                                     </div>
                                   </div>
-
                                   {/* Easing */}
                                   <div>
                                     <Label className="text-xs">Easing</Label>
@@ -718,7 +662,6 @@ export default function AnimationTool() {
                                     </Select>
                                   </div>
                                 </div>
-
                                 {/* Advanced Options - Collapsed by default */}
                                 <div className="flex gap-3">
                                   <Select
@@ -756,7 +699,6 @@ export default function AnimationTool() {
                         </div>
                       </div>
                     )}
-
                     {/* Continue button to Export */}
                     {animations.length > 0 && (
                       <div className="mt-6 text-center">
@@ -773,7 +715,6 @@ export default function AnimationTool() {
                   </div>
                 </div>
               </TabsContent>
-
               {/* Export Tab */}
               <TabsContent value="export" className="mt-6">
                 <div className="max-w-4xl mx-auto space-y-6">
@@ -781,7 +722,6 @@ export default function AnimationTool() {
                     <h3 className="text-xl font-semibold mb-2">Export Your Animation</h3>
                     <p className="text-muted-foreground">Download your animated SVG or upgrade for video export</p>
                   </div>
-
                   {/* Export Options Grid */}
                   <div className="grid md:grid-cols-2 gap-6">
                     {/* Free SVG Export */}
@@ -796,13 +736,11 @@ export default function AnimationTool() {
                             </p>
                           </div>
                         </div>
-                        
                         <div className="space-y-3">
                           <Button onClick={exportSVG} className="w-full" size="lg">
                             <Download className="mr-2 h-4 w-4" />
                             Download SVG
                           </Button>
-                          
                           <Button onClick={copyToClipboard} variant="outline" className="w-full">
                             {copied ? (
                               <><Check className="mr-2 h-4 w-4" /> Copied!</>
@@ -811,11 +749,9 @@ export default function AnimationTool() {
                             )}
                           </Button>
                         </div>
-
                         <Badge variant="success" className="text-xs">Free • Unlimited exports</Badge>
                       </div>
                     </Card>
-
                     {/* Premium Video Export */}
                     <Card className="p-6 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
                       <div className="space-y-4">
@@ -831,7 +767,6 @@ export default function AnimationTool() {
                             </p>
                           </div>
                         </div>
-                        
                         <ul className="text-sm space-y-2">
                           <li className="flex items-center gap-2">
                             <Check className="w-4 h-4 text-primary" />
@@ -846,7 +781,6 @@ export default function AnimationTool() {
                             Transparent backgrounds
                           </li>
                         </ul>
-                        
                         <Button 
                           onClick={handleVideoExport} 
                           className="w-full"
@@ -858,7 +792,6 @@ export default function AnimationTool() {
                       </div>
                     </Card>
                   </div>
-
                   {/* Pro Tip */}
                   <Alert className="mt-6">
                     <Zap className="h-4 w-4" />
@@ -866,7 +799,6 @@ export default function AnimationTool() {
                       <strong>Pro tip:</strong> Use "infinite" iteration count for looping animations that will be converted to video.
                     </AlertDescription>
                   </Alert>
-
                   {/* Code Preview Toggle */}
                   {showCode && (
                     <div className="mt-6">
@@ -885,7 +817,6 @@ export default function AnimationTool() {
                       </pre>
                     </div>
                   )}
-                  
                   {!showCode && (
                     <div className="text-center">
                       <Button

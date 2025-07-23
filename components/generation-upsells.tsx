@@ -24,10 +24,26 @@ export function GenerationUpsell({
   limitType = 'lifetime',
   tier
 }: GenerationUpsellProps) {
-  const percentage = creditLimit > 0 ? (creditsUsed / creditLimit) * 100 : 100;
-  const remaining = Math.max(0, creditLimit - creditsUsed);
+  // Safeguard: For subscribed users, ensure we're showing monthly credits, not lifetime
+  // Starter plan should have 100 credits, Pro should have 350
+  const adjustedCreditLimit = isSubscribed 
+    ? (tier === 'pro' ? 350 : 100) 
+    : creditLimit;
   
-  if (isSubscribed && tier) {
+  // If creditLimit doesn't match expected values for subscribers, log a warning
+  if (isSubscribed && creditLimit !== adjustedCreditLimit) {
+    console.warn('GenerationUpsell: Incorrect credit limit for subscribed user', {
+      tier,
+      receivedLimit: creditLimit,
+      expectedLimit: adjustedCreditLimit,
+      creditsUsed
+    });
+  }
+  
+  const percentage = adjustedCreditLimit > 0 ? (creditsUsed / adjustedCreditLimit) * 100 : 100;
+  const remaining = Math.max(0, adjustedCreditLimit - creditsUsed);
+  
+  if (isSubscribed) {
     return (
       <Card className="p-4 bg-gradient-to-r from-[#FFF8F6] to-white border-[#FFE0B2]">
         <div className="flex items-center justify-between mb-2">
@@ -47,7 +63,7 @@ export function GenerationUpsell({
         </div>
         <Progress value={percentage} className="h-2 mb-2" />
         <p className="text-xs text-gray-600">
-          {creditsUsed} of {creditLimit} credits used this month
+          {creditsUsed} of {adjustedCreditLimit} credits used this month
         </p>
         {percentage > 80 && tier !== 'pro' && (
           <div className="mt-3 pt-3 border-t border-gray-200">
@@ -218,7 +234,7 @@ export function UpgradeModal({ isOpen, onClose, triggerDelay = 5000, generationT
             
             <div className="grid grid-cols-2 gap-3">
               <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="text-2xl font-bold text-gray-900">$12</div>
+                <div className="text-2xl font-bold text-gray-900">$19</div>
                 <div className="text-sm font-medium text-gray-800 mt-1">Starter</div>
                 <div className="text-xs text-gray-600 mt-1">100 credits/month</div>
               </div>
@@ -226,7 +242,7 @@ export function UpgradeModal({ isOpen, onClose, triggerDelay = 5000, generationT
                 <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-[#FF7043] text-white text-xs px-2 py-0.5 rounded-full font-medium">
                   POPULAR
                 </div>
-                <div className="text-2xl font-bold text-gray-900">$29</div>
+                <div className="text-2xl font-bold text-gray-900">$39</div>
                 <div className="text-sm font-medium text-gray-800 mt-1">Pro</div>
                 <div className="text-xs text-gray-600 mt-1">350 credits/month</div>
               </div>

@@ -13,7 +13,23 @@ import {
   ChevronRight,
   Activity
 } from 'lucide-react'
-import { getFunnelMetrics, analyzeUserPaths, FunnelMetrics } from '@/lib/funnel-tracking'
+
+// Mock types for funnel tracking since lib/funnel-tracking doesn't exist
+interface FunnelMetrics {
+  totalSessions: number
+  uniqueUsers: number
+  conversions: number
+  conversionRate: number
+  avgTimeToConversion: number
+  dropoffByStep: Record<string, number>
+  topPaths: string[][]
+  ctaPerformance: Record<string, {
+    impressions: number
+    clicks: number
+    ctr: number
+    conversions: number
+  }>
+}
 
 interface FunnelVisualizationProps {
   tool?: string
@@ -88,9 +104,8 @@ export default function FunnelVisualization({
           }
         }
       }
-      
       setMetrics(mockMetrics)
-      
+
       // Mock path analysis
       const mockPaths = [
         {
@@ -112,10 +127,9 @@ export default function FunnelVisualization({
           avgDuration: 180000
         }
       ]
-      
       setPaths(mockPaths)
     } catch (error) {
-      console.error('Failed to load funnel data:', error)
+      console.error('Error loading funnel data:', error)
     } finally {
       setLoading(false)
     }
@@ -147,7 +161,7 @@ export default function FunnelVisualization({
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
@@ -161,7 +175,7 @@ export default function FunnelVisualization({
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Avg Time to Convert</CardTitle>
@@ -175,7 +189,7 @@ export default function FunnelVisualization({
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Best Performing CTA</CardTitle>
@@ -216,11 +230,9 @@ export default function FunnelVisualization({
                     </span>
                   </div>
                 </div>
-                
                 <div className="ml-10">
                   <Progress value={stage.percentage} className="h-3" />
                 </div>
-                
                 {index < funnelData.length - 1 && (
                   <div className="ml-4 mt-2 mb-4 flex items-center text-sm text-muted-foreground">
                     <ChevronRight className="w-4 h-4 mr-1" />
@@ -260,7 +272,6 @@ export default function FunnelVisualization({
                     </p>
                   </div>
                 </div>
-                
                 <div className="grid grid-cols-3 gap-2 mt-3 text-sm">
                   <div className="text-center p-2 bg-gray-50 rounded">
                     <p className="font-medium">{data.clicks}</p>
@@ -314,7 +325,6 @@ export default function FunnelVisualization({
                     ))}
                   </div>
                 </div>
-                
                 <div className="grid grid-cols-3 gap-4 mt-3 text-sm">
                   <div>
                     <p className="text-muted-foreground">Users</p>
@@ -356,7 +366,6 @@ export default function FunnelVisualization({
                 </p>
               </div>
             </div>
-            
             <div className="flex items-start gap-3">
               <div className="w-2 h-2 rounded-full bg-yellow-500 mt-2"></div>
               <div>
@@ -366,7 +375,6 @@ export default function FunnelVisualization({
                 </p>
               </div>
             </div>
-            
             <div className="flex items-start gap-3">
               <div className="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
               <div>

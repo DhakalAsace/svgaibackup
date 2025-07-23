@@ -1,13 +1,14 @@
 import Features from "@/components/features"
 import UseCases from "@/components/use-cases"
 import HowItWorks from "@/components/how-it-works"
-import Pricing from "@/components/pricing"
 import Faq from "@/components/faq"
 import Hero from "@/components/hero-optimized"
 import dynamic from 'next/dynamic'
 import type { Metadata } from 'next'
 
-// Dynamically import non-critical components
+// Import Pricing directly - hydration fix is in the component itself
+import Pricing from "@/components/pricing"
+
 const SVGExamplesWrapper = dynamic(() => import("@/components/svg-examples-wrapper"), {
   loading: () => <div className="py-12 bg-gray-50"></div>
 })

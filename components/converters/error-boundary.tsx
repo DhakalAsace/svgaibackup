@@ -4,7 +4,6 @@
  * Provides graceful error handling and recovery UI for converter failures.
  * Includes retry mechanisms, fallback strategies, and user-friendly messaging.
  */
-
 import React, { Component, ReactNode, ErrorInfo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -18,7 +17,6 @@ import {
   getUserFriendlyError,
   ERROR_MESSAGES
 } from '@/lib/converters/errors'
-
 interface Props {
   children: ReactNode
   fallback?: ReactNode
@@ -28,7 +26,6 @@ interface Props {
   isolate?: boolean
   showDetails?: boolean
 }
-
 interface State {
   hasError: boolean
   error: Error | null
@@ -37,7 +34,6 @@ interface State {
   showDetails: boolean
   lastResetKeys?: Array<string | number>
 }
-
 /**
  * Main Error Boundary Component for Converters
  */
@@ -53,14 +49,12 @@ export class ConverterErrorBoundary extends Component<Props, State> {
       lastResetKeys: props.resetKeys
     }
   }
-  
   static getDerivedStateFromProps(props: Props, state: State): Partial<State> | null {
     // Reset error boundary when resetKeys change
     if (props.resetKeys && state.lastResetKeys) {
       const hasChanged = props.resetKeys.some(
         (key, index) => key !== state.lastResetKeys![index]
       )
-      
       if (hasChanged) {
         return {
           hasError: false,
@@ -70,10 +64,8 @@ export class ConverterErrorBoundary extends Component<Props, State> {
         }
       }
     }
-    
     return null
   }
-  
   static getDerivedStateFromError(error: Error): State {
     return {
       hasError: true,
@@ -83,25 +75,20 @@ export class ConverterErrorBoundary extends Component<Props, State> {
       showDetails: false
     }
   }
-  
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error details in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('Converter Error Boundary caught:', error, errorInfo)
-    }
-    
+      }
     // Update state with error info
     this.setState(prevState => ({
       errorInfo,
       errorCount: prevState.errorCount + 1
     }))
-    
     // Call optional error handler
     if (this.props.onError) {
       this.props.onError(error, errorInfo)
     }
   }
-  
   handleReset = () => {
     this.setState({
       hasError: false,
@@ -110,24 +97,18 @@ export class ConverterErrorBoundary extends Component<Props, State> {
       showDetails: false
     })
   }
-  
   toggleDetails = () => {
     this.setState(prev => ({ showDetails: !prev.showDetails }))
   }
-  
   getErrorMessage(): string {
     const { error } = this.state
-    
     if (!error) return ERROR_MESSAGES.UNKNOWN_ERROR
-    
     // Use user-friendly error messages
     return getUserFriendlyError(error)
   }
-  
   getRecoverySuggestions(): string[] {
     const { error } = this.state
     const suggestions: string[] = []
-    
     if (error instanceof FileSizeError) {
       suggestions.push('Try compressing your file before converting')
       suggestions.push('Use an image editor to reduce dimensions')
@@ -149,22 +130,18 @@ export class ConverterErrorBoundary extends Component<Props, State> {
       suggestions.push('Check your internet connection')
       suggestions.push('Try with a different file')
     }
-    
     return suggestions
   }
-  
   render() {
     if (this.state.hasError && this.state.error) {
       // Use custom fallback if provided
       if (this.props.fallback) {
         return <>{this.props.fallback}</>
       }
-      
       const errorMessage = this.getErrorMessage()
       const suggestions = this.getRecoverySuggestions()
       const { error, errorInfo, errorCount, showDetails } = this.state
       const isConverterError = error instanceof ConverterError
-      
       return (
         <div className="w-full max-w-2xl mx-auto p-4">
           <Alert variant="destructive" className="mb-4">
@@ -172,7 +149,6 @@ export class ConverterErrorBoundary extends Component<Props, State> {
             <AlertTitle>Conversion Error</AlertTitle>
             <AlertDescription className="mt-2">
               <p className="mb-3">{errorMessage}</p>
-              
               {/* Recovery suggestions */}
               {suggestions.length > 0 && (
                 <div className="mt-4">
@@ -184,7 +160,6 @@ export class ConverterErrorBoundary extends Component<Props, State> {
                   </ul>
                 </div>
               )}
-              
               {/* Action buttons */}
               <div className="mt-4 flex gap-2">
                 <Button
@@ -196,7 +171,6 @@ export class ConverterErrorBoundary extends Component<Props, State> {
                   <RefreshCw className="h-4 w-4" />
                   Try Again
                 </Button>
-                
                 {process.env.NODE_ENV === 'development' && (
                   <Button
                     onClick={this.toggleDetails}
@@ -218,7 +192,6 @@ export class ConverterErrorBoundary extends Component<Props, State> {
                   </Button>
                 )}
               </div>
-              
               {/* Error details (dev mode) */}
               {showDetails && process.env.NODE_ENV === 'development' && (
                 <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono overflow-auto">
@@ -244,11 +217,9 @@ export class ConverterErrorBoundary extends Component<Props, State> {
         </div>
       )
     }
-    
     return this.props.children
   }
 }
-
 /**
  * Lightweight error boundary for isolated components
  */
@@ -260,17 +231,13 @@ export class IsolatedErrorBoundary extends Component<
     super(props)
     this.state = { hasError: false }
   }
-  
   static getDerivedStateFromError(): { hasError: boolean } {
     return { hasError: true }
   }
-  
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     if (process.env.NODE_ENV === 'development') {
-      console.error('Isolated Error:', error, errorInfo)
-    }
+      }
   }
-  
   render() {
     if (this.state.hasError) {
       return this.props.fallback || (
@@ -279,24 +246,19 @@ export class IsolatedErrorBoundary extends Component<
         </div>
       )
     }
-    
     return this.props.children
   }
 }
-
 /**
  * Hook to reset error boundary from child components
  */
 export function useErrorBoundaryReset() {
   const [resetKey, setResetKey] = React.useState(0)
-  
   const reset = React.useCallback(() => {
     setResetKey(prev => prev + 1)
   }, [])
-  
   return { resetKey, reset }
 }
-
 /**
  * HOC to wrap components with error boundary
  */
@@ -309,8 +271,6 @@ export function withConverterErrorBoundary<P extends object>(
       <Component {...props} />
     </ConverterErrorBoundary>
   )
-  
   WrappedComponent.displayName = `withConverterErrorBoundary(${Component.displayName || Component.name})`
-  
   return WrappedComponent
 }

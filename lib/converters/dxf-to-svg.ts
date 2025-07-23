@@ -5,7 +5,6 @@
  * DXF is a CAD file format developed by Autodesk for data interoperability
  * between AutoCAD and other programs.
  */
-
 import type { 
   ConversionHandler, 
   ConversionOptions, 
@@ -17,7 +16,6 @@ import {
   FileValidationError,
   UnsupportedFormatError 
 } from './errors'
-
 /**
  * Extended conversion options for DXF to SVG
  */
@@ -31,7 +29,6 @@ interface DxfToSvgOptions extends ConversionOptions {
   /** Convert curves to polylines (default: false) */
   curvesToPolylines?: boolean
 }
-
 /**
  * Simple DXF entity representation
  */
@@ -61,7 +58,6 @@ interface DxfEntity {
   hatchPattern?: string
   solid?: boolean
 }
-
 /**
  * Parse DXF file content
  */
@@ -69,32 +65,25 @@ function parseDxf(content: string): DxfEntity[] {
   const lines = content.split(/\r?\n/)
   const entities: DxfEntity[] = []
   let i = 0
-  
   // Debug: collect all entity types found
   const foundEntityTypes = new Set<string>()
-  
   // Find ENTITIES section
   while (i < lines.length && lines[i].trim() !== 'ENTITIES') {
     i++
   }
-  
   if (i >= lines.length) {
     throw new FileValidationError('Invalid DXF: No ENTITIES section found')
   }
-  
   i++ // Skip ENTITIES line
-  
   while (i < lines.length && lines[i].trim() !== 'ENDSEC') {
     // Check if this line is a code
     if (lines[i] && lines[i + 1]) {
       const code = parseInt(lines[i].trim())
       const value = lines[i + 1].trim()
-      
       if (code === 0 && value !== 'ENDSEC') {
         // Entity type
         const entityType = value
         foundEntityTypes.add(entityType)
-        
         try {
           let entity: DxfEntity | null = null
           switch (entityType) {
@@ -126,15 +115,12 @@ function parseDxf(content: string): DxfEntity[] {
               // Continue parsing even if entity type is unsupported
               break
           }
-          
           if (entity) {
             entities.push(entity)
           }
         } catch (error) {
           // Continue parsing even if individual entity fails
-          console.warn(`Failed to parse ${entityType} entity:`, error)
-        }
-        
+          }
         // Skip to next entity by finding the next code 0
         i += 2
         while (i < lines.length - 1) {
@@ -146,10 +132,8 @@ function parseDxf(content: string): DxfEntity[] {
         continue
       }
     }
-    
     i += 2
   }
-  
   // Enhanced error reporting
   if (entities.length === 0) {
     const entityTypesFound = Array.from(foundEntityTypes).join(', ')
@@ -158,10 +142,8 @@ function parseDxf(content: string): DxfEntity[] {
       'DXF_NO_SUPPORTED_ENTITIES'
     )
   }
-  
   return entities
 }
-
 /**
  * Parse LINE entity
  */
@@ -169,32 +151,24 @@ function parseLine(lines: string[], startIndex: number): DxfEntity {
   const entity: DxfEntity = { type: 'LINE', points: [] }
   let i = startIndex + 2
   let x1 = 0, y1 = 0, x2 = 0, y2 = 0
-  
   while (i < lines.length - 1) {
     const code = parseInt(lines[i])
-    
     if (code === 0) break // Next entity
-    
     const value = parseFloat(lines[i + 1])
-    
     switch (code) {
       case 10: x1 = value; break
       case 20: y1 = value; break
       case 11: x2 = value; break
       case 21: y2 = value; break
     }
-    
     i += 2
   }
-  
   entity.points = [
     { x: x1, y: y1 },
     { x: x2, y: y2 }
   ]
-  
   return entity
 }
-
 /**
  * Parse CIRCLE entity
  */
@@ -202,29 +176,21 @@ function parseCircle(lines: string[], startIndex: number): DxfEntity {
   const entity: DxfEntity = { type: 'CIRCLE' }
   let i = startIndex + 2
   let cx = 0, cy = 0, radius = 0
-  
   while (i < lines.length - 1) {
     const code = parseInt(lines[i])
-    
     if (code === 0) break
-    
     const value = parseFloat(lines[i + 1])
-    
     switch (code) {
       case 10: cx = value; break
       case 20: cy = value; break
       case 40: radius = value; break
     }
-    
     i += 2
   }
-  
   entity.center = { x: cx, y: cy }
   entity.radius = radius
-  
   return entity
 }
-
 /**
  * Parse ARC entity
  */
@@ -232,13 +198,10 @@ function parseArc(lines: string[], startIndex: number): DxfEntity {
   const entity: DxfEntity = { type: 'ARC' }
   let i = startIndex + 2
   let cx = 0, cy = 0, radius = 0, startAngle = 0, endAngle = 0
-  
   while (i < lines.length - 1) {
     const code = parseInt(lines[i])
     const value = parseFloat(lines[i + 1])
-    
     if (code === 0) break
-    
     switch (code) {
       case 10: cx = value; break
       case 20: cy = value; break
@@ -246,29 +209,23 @@ function parseArc(lines: string[], startIndex: number): DxfEntity {
       case 50: startAngle = value; break
       case 51: endAngle = value; break
     }
-    
     i += 2
   }
-  
   entity.center = { x: cx, y: cy }
   entity.radius = radius
   entity.startAngle = startAngle
   entity.endAngle = endAngle
-  
   return entity
 }
-
 /**
  * Parse POLYLINE entity
  */
 function parsePolyline(lines: string[], startIndex: number): DxfEntity {
   const entity: DxfEntity = { type: 'POLYLINE', points: [] }
   let i = startIndex + 2
-  
   while (i < lines.length - 1) {
     const code = parseInt(lines[i])
     const value = lines[i + 1]
-    
     if (code === 0) {
       if (value.trim() === 'VERTEX') {
         // Parse vertex
@@ -278,37 +235,28 @@ function parsePolyline(lines: string[], startIndex: number): DxfEntity {
         break
       }
     }
-    
     i += 2
   }
-  
   return entity
 }
-
 /**
  * Parse VERTEX
  */
 function parseVertex(lines: string[], startIndex: number): {x: number, y: number} {
   let i = startIndex + 2
   let x = 0, y = 0
-  
   while (i < lines.length - 1) {
     const code = parseInt(lines[i])
     const value = parseFloat(lines[i + 1])
-    
     if (code === 0) break
-    
     switch (code) {
       case 10: x = value; break
       case 20: y = value; break
     }
-    
     i += 2
   }
-  
   return { x, y }
 }
-
 /**
  * Parse SPLINE entity
  */
@@ -323,14 +271,11 @@ function parseSpline(lines: string[], startIndex: number): DxfEntity {
   let i = startIndex + 2
   let numControlPoints = 0
   let numKnots = 0
-  
   // First pass: get metadata
   while (i < lines.length - 1) {
     const code = parseInt(lines[i])
     const value = lines[i + 1]
-    
     if (code === 0) break // Next entity
-    
     switch (code) {
       case 71: // Degree
         entity.degree = parseInt(value)
@@ -342,21 +287,16 @@ function parseSpline(lines: string[], startIndex: number): DxfEntity {
         numControlPoints = parseInt(value)
         break
     }
-    
     i += 2
   }
-  
   // Second pass: collect control points and knots
   i = startIndex + 2
   let controlPointIndex = 0
   let knotIndex = 0
-  
   while (i < lines.length - 1) {
     const code = parseInt(lines[i])
     const value = parseFloat(lines[i + 1])
-    
     if (code === 0) break
-    
     switch (code) {
       case 10: // Control point X
         if (!entity.controlPoints![controlPointIndex]) {
@@ -380,13 +320,10 @@ function parseSpline(lines: string[], startIndex: number): DxfEntity {
         entity.weights.push(value)
         break
     }
-    
     i += 2
   }
-  
   return entity
 }
-
 /**
  * Parse TEXT/MTEXT entity
  */
@@ -399,14 +336,10 @@ function parseText(lines: string[], startIndex: number): DxfEntity {
   let alignmentH = 0, alignmentV = 0
   let style = 'Standard'
   let widthFactor = 1.0
-  
   while (i < lines.length - 1) {
     const code = parseInt(lines[i])
-    
     if (code === 0) break
-    
     const value = lines[i + 1].trim()
-    
     switch (code) {
       case 10: x = parseFloat(value); break
       case 20: y = parseFloat(value); break
@@ -424,15 +357,12 @@ function parseText(lines: string[], startIndex: number): DxfEntity {
       case 21: // Alignment point Y
         break
     }
-    
     i += 2
   }
-  
   // Process MTEXT formatting codes
   if (entityType === 'MTEXT') {
     text = processMTextFormatting(text)
   }
-  
   entity.points = [{ x, y }]
   entity.text = text
   entity.height = height
@@ -441,16 +371,13 @@ function parseText(lines: string[], startIndex: number): DxfEntity {
   entity.alignmentV = alignmentV
   entity.style = style
   entity.widthFactor = widthFactor
-  
   return entity
 }
-
 /**
  * Process MTEXT formatting codes and convert to basic HTML-like formatting
  */
 function processMTextFormatting(text: string): string {
   if (!text) return ''
-  
   // Remove or convert common MTEXT formatting codes
   let processed = text
     // Remove control codes
@@ -474,10 +401,8 @@ function processMTextFormatting(text: string): string {
     // Remove remaining formatting codes
     .replace(/\\[^;]*;/g, '')
     .replace(/[{}]/g, '') // Remove remaining braces
-  
   return processed.trim()
 }
-
 /**
  * Parse HATCH entity (simplified)
  */
@@ -486,13 +411,10 @@ function parseHatch(lines: string[], startIndex: number): DxfEntity {
   let i = startIndex + 2
   let solid = false
   let pattern = ''
-  
   while (i < lines.length - 1) {
     const code = parseInt(lines[i])
     const value = lines[i + 1]
-    
     if (code === 0) break
-    
     switch (code) {
       case 2: // Pattern name
         pattern = value.trim()
@@ -502,27 +424,21 @@ function parseHatch(lines: string[], startIndex: number): DxfEntity {
         solid = parseInt(value) === 1
         break
     }
-    
     i += 2
   }
-  
   entity.hatchPattern = pattern
   entity.solid = solid
-  
   return entity
 }
-
 /**
  * Convert SPLINE control points to SVG Bezier path
  * Simplified implementation using cubic bezier approximation
  */
 function splineToBezierPath(controlPoints: Array<{x: number, y: number}>, knots?: number[], degree: number = 3): string {
   if (controlPoints.length < 2) return ''
-  
   // Simple implementation: convert to cubic bezier curves
   // For more accuracy, this would need proper NURBS evaluation
   let path = `M ${controlPoints[0].x} ${controlPoints[0].y}`
-  
   if (controlPoints.length === 2) {
     // Linear case
     path += ` L ${controlPoints[1].x} ${controlPoints[1].y}`
@@ -531,7 +447,6 @@ function splineToBezierPath(controlPoints: Array<{x: number, y: number}>, knots?
     const p0 = controlPoints[0]
     const p1 = controlPoints[1] 
     const p2 = controlPoints[2]
-    
     // Convert quadratic to cubic bezier
     const cp1 = {
       x: p0.x + (2/3) * (p1.x - p0.x),
@@ -541,7 +456,6 @@ function splineToBezierPath(controlPoints: Array<{x: number, y: number}>, knots?
       x: p2.x + (2/3) * (p1.x - p2.x),
       y: p2.y + (2/3) * (p1.y - p2.y)
     }
-    
     path += ` C ${cp1.x} ${cp1.y} ${cp2.x} ${cp2.y} ${p2.x} ${p2.y}`
   } else {
     // Multiple points - create smooth curve through all points
@@ -550,7 +464,6 @@ function splineToBezierPath(controlPoints: Array<{x: number, y: number}>, knots?
       const p1 = controlPoints[Math.min(i + 1, controlPoints.length - 1)]
       const p2 = controlPoints[Math.min(i + 2, controlPoints.length - 1)]
       const p3 = controlPoints[Math.min(i + 3, controlPoints.length - 1)]
-      
       if (i + 3 < controlPoints.length) {
         // Full cubic bezier segment
         path += ` C ${p1.x} ${p1.y} ${p2.x} ${p2.y} ${p3.x} ${p3.y}`
@@ -564,10 +477,8 @@ function splineToBezierPath(controlPoints: Array<{x: number, y: number}>, knots?
       }
     }
   }
-  
   return path
 }
-
 /**
  * Convert DXF entities to SVG elements
  */
@@ -575,10 +486,8 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
   const scale = options.scale || 1
   const strokeWidth = options.strokeWidth || 1
   const defaultColor = options.defaultColor || '#000000'
-  
   // Calculate bounds
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
-  
   entities.forEach(entity => {
     if (entity.points) {
       entity.points.forEach(point => {
@@ -603,10 +512,8 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
       })
     }
   })
-  
   const width = (maxX - minX) * scale
   const height = (maxY - minY) * scale
-  
   let svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" 
      width="${width}" 
@@ -614,10 +521,8 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
      viewBox="${minX * scale} ${minY * scale} ${width} ${height}">
   <g transform="scale(${scale})">
 `
-  
   entities.forEach(entity => {
     const color = entity.color || defaultColor
-    
     switch (entity.type) {
       case 'LINE':
         if (entity.points && entity.points.length >= 2) {
@@ -626,7 +531,6 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
           stroke="${color}" stroke-width="${strokeWidth}" fill="none"/>\n`
         }
         break
-        
       case 'CIRCLE':
         if (entity.center && entity.radius) {
           svg += `    <circle cx="${entity.center.x}" cy="${entity.center.y}" 
@@ -634,7 +538,6 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
           stroke="${color}" stroke-width="${strokeWidth}" fill="none"/>\n`
         }
         break
-        
       case 'ARC':
         if (entity.center && entity.radius && 
             entity.startAngle !== undefined && entity.endAngle !== undefined) {
@@ -645,12 +548,10 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
           const x2 = entity.center.x + entity.radius * Math.cos(end)
           const y2 = entity.center.y + entity.radius * Math.sin(end)
           const largeArc = Math.abs(end - start) > Math.PI ? 1 : 0
-          
           svg += `    <path d="M ${x1} ${y1} A ${entity.radius} ${entity.radius} 0 ${largeArc} 1 ${x2} ${y2}" 
           stroke="${color}" stroke-width="${strokeWidth}" fill="none"/>\n`
         }
         break
-        
       case 'POLYLINE':
         if (entity.points && entity.points.length > 0) {
           let path = `M ${entity.points[0].x} ${entity.points[0].y}`
@@ -661,7 +562,6 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
           stroke="${color}" stroke-width="${strokeWidth}" fill="none"/>\n`
         }
         break
-        
       case 'SPLINE':
         if (entity.controlPoints && entity.controlPoints.length > 1) {
           const path = splineToBezierPath(entity.controlPoints, entity.knots, entity.degree || 3)
@@ -669,7 +569,6 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
           stroke="${color}" stroke-width="${strokeWidth}" fill="none"/>\n`
         }
         break
-        
       case 'TEXT':
       case 'MTEXT':
         if (entity.points && entity.points.length > 0 && entity.text) {
@@ -678,18 +577,15 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
           const fontSize = entity.height || 10
           const rotation = entity.rotation || 0
           const widthFactor = entity.widthFactor || 1.0
-          
           // Determine text anchor based on horizontal alignment
           let textAnchor = 'start'
           if (entity.alignmentH === 1) textAnchor = 'middle'
           else if (entity.alignmentH === 2) textAnchor = 'end'
-          
           // Determine dominant baseline based on vertical alignment
           let dominantBaseline = 'alphabetic'
           if (entity.alignmentV === 1) dominantBaseline = 'text-bottom'
           else if (entity.alignmentV === 2) dominantBaseline = 'middle'
           else if (entity.alignmentV === 3) dominantBaseline = 'text-top'
-          
           // Build transform string
           let transforms = []
           if (rotation !== 0) {
@@ -699,7 +595,6 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
             transforms.push(`scale(${widthFactor} 1)`)
           }
           const transform = transforms.length > 0 ? ` transform="${transforms.join(' ')}"` : ''
-          
           // Handle multiline text (for MTEXT)
           const lines = entity.text.split('\n')
           if (lines.length === 1) {
@@ -719,7 +614,6 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
           }
         }
         break
-        
       case 'HATCH':
         if (entity.solid) {
           // For now, just render as a simple filled shape
@@ -729,13 +623,10 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
         break
     }
   })
-  
   svg += `  </g>
 </svg>`
-  
   return svg
 }
-
 /**
  * Validates that the input is a DXF file
  */
@@ -743,19 +634,15 @@ function validateDxfInput(input: Buffer | string): string {
   const content = typeof input === 'string' 
     ? input 
     : input.toString('utf8')
-  
   // Check for DXF header
   if (!content.includes('0\nSECTION') && !content.includes('0\r\nSECTION')) {
     throw new FileValidationError('Invalid DXF: Missing SECTION marker')
   }
-  
   if (!content.includes('ENTITIES')) {
     throw new FileValidationError('Invalid DXF: Missing ENTITIES section')
   }
-  
   return content
 }
-
 /**
  * Converts DXF to SVG
  * Implements the ConversionHandler interface
@@ -767,25 +654,20 @@ export const dxfToSvgHandler: ConversionHandler = async (
   try {
     // Validate and get DXF content
     const dxfContent = validateDxfInput(input)
-    
     // Parse DXF entities
     const entities = parseDxf(dxfContent)
-    
     if (entities.length === 0) {
       throw new ConversionError(
         'No drawable entities found in DXF file',
         'DXF_NO_ENTITIES'
       )
     }
-    
     // Convert to SVG
     const svgString = entitiesToSvg(entities, options)
     const svgBuffer = Buffer.from(svgString, 'utf8')
-    
     // Extract dimensions from generated SVG
     const widthMatch = svgString.match(/width="([^"]+)"/)
     const heightMatch = svgString.match(/height="([^"]+)"/)
-    
     return {
       success: true,
       data: svgBuffer,
@@ -797,27 +679,23 @@ export const dxfToSvgHandler: ConversionHandler = async (
         height: heightMatch ? parseFloat(heightMatch[1]) : undefined
       }
     }
-    
   } catch (error) {
     if (error instanceof FileValidationError || 
         error instanceof ConversionError) {
       throw error
     }
-    
     if (error instanceof Error) {
       throw new ConversionError(
         `DXF to SVG conversion failed: ${error.message}`,
         'DXF_TO_SVG_FAILED'
       )
     }
-    
     throw new ConversionError(
       'An unexpected error occurred during DXF to SVG conversion',
       'DXF_TO_SVG_UNKNOWN_ERROR'
     )
   }
 }
-
 /**
  * Client-side DXF to SVG conversion wrapper
  */
@@ -828,7 +706,6 @@ export async function convertDxfToSvgClient(
   const text = await file.text()
   return dxfToSvgHandler(text, options)
 }
-
 /**
  * Server-side DXF to SVG conversion wrapper
  */
@@ -838,7 +715,6 @@ export async function convertDxfToSvgServer(
 ): Promise<ConversionResult> {
   return dxfToSvgHandler(input, options)
 }
-
 /**
  * DXF to SVG converter configuration
  */

@@ -1,5 +1,4 @@
 "use client"
-
 import React, { useState, useCallback, useRef, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -40,20 +39,17 @@ import type {
 import { getMimeTypeFromFormat } from "@/lib/converters/validation"
 import { getClientConverter } from "@/lib/converters/client-wrapper"
 import type { PublicConverterConfig } from "@/app/convert/public-converter-config"
-
 interface ConversionResult {
   blob: Blob
   url: string
   filename: string
   size: number
 }
-
 interface ConverterInterfaceProps {
   config: PublicConverterConfig
   className?: string
   onConversionComplete?: (result: ConversionResult) => void
 }
-
 export default function ConverterInterface({
   config,
   className,
@@ -76,7 +72,6 @@ export default function ConverterInterface({
   const [conversionTip, setConversionTip] = useState<string>("")
   const [showHelpTooltip, setShowHelpTooltip] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  
   const {
     trackFileSelected,
     trackConversionStarted,
@@ -84,15 +79,12 @@ export default function ConverterInterface({
     trackDownload,
     trackError
   } = useConversionTracking()
-
   // Converter will be loaded dynamically when needed
   const [converter, setConverter] = useState<{ handler: ConversionHandler; name: string } | null>(null)
   const [converterLoading, setConverterLoading] = useState(false)
-  
   // Load converter when component mounts or formats change
   useEffect(() => {
     let mounted = true
-    
     async function loadConverter() {
       setConverterLoading(true)
       try {
@@ -104,7 +96,6 @@ export default function ConverterInterface({
           setConverter(conv)
         }
       } catch (error) {
-        console.error('Failed to load converter:', error)
         if (mounted) {
           setConverter(null)
         }
@@ -114,14 +105,11 @@ export default function ConverterInterface({
         }
       }
     }
-    
     loadConverter()
-    
     return () => {
       mounted = false
     }
   }, [config.fromFormat, config.toFormat])
-
   // Determine accepted file formats
   const acceptedFormats = useMemo(() => {
     if (config.fromFormat === 'Multiple' || config.fromFormat === 'Image') {
@@ -133,9 +121,7 @@ export default function ConverterInterface({
       return [`.${config.fromFormat.toLowerCase()}`, config.fromFormat === 'JPG' ? '.jpeg' : null].filter(Boolean) as string[]
     }
   }, [config.fromFormat])
-
   const maxFileSize = 100 // MB
-
   // Conversion tips for progress feedback
   const conversionTips = [
     `Converting ${config.fromFormat} to ${config.toFormat} with professional quality...`,
@@ -144,7 +130,6 @@ export default function ConverterInterface({
     "Applying advanced vectorization algorithms...",
     "Processing with industry-standard conversion tools..."
   ]
-
   // Format information for tooltips
   const formatInfo = {
     PNG: "Portable Network Graphics - Best for images with transparency",
@@ -156,7 +141,6 @@ export default function ConverterInterface({
     BMP: "Bitmap format - Uncompressed raster graphics",
     AI: "Adobe Illustrator format - Professional vector graphics files"
   }
-
   // Premium features that could be highlighted
   const premiumFeatures = [
     "Create custom SVGs with AI generation",
@@ -165,7 +149,6 @@ export default function ConverterInterface({
     "Advanced SVG editing capabilities",
     "Commercial-use design library"
   ]
-
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -175,41 +158,25 @@ export default function ConverterInterface({
       setDragActive(false)
     }
   }, [])
-
   const handleFile = useCallback((file: File) => {
-    console.log('[ConverterInterface] handleFile called')
-    console.log('[ConverterInterface] File:', file.name, file.type, file.size)
-    console.log('[ConverterInterface] Config fromFormat:', config.fromFormat)
-    console.log('[ConverterInterface] Accepted formats:', acceptedFormats)
-    
     setError(null)
     setResult(null)
-    
     // Validate file type
     const fileExtension = file.name.split('.').pop()?.toLowerCase()
-    console.log('[ConverterInterface] File extension:', fileExtension)
-    
     let isValidFormat = acceptedFormats.some(format => 
       format.toLowerCase() === `.${fileExtension}`
     )
-    console.log('[ConverterInterface] Initial format check:', isValidFormat)
-    
     // Special case for AI files: if this is an AI converter and the file has .pdf extension,
     // check if it might be an AI file based on the content or original name
     if (!isValidFormat && (config.fromFormat === 'AI' || config.fromFormat === 'ai') && fileExtension === 'pdf') {
       // Allow PDF files for AI converter since AI files are often PDF-based
       isValidFormat = true
-      console.log('[ConverterInterface] Allowing PDF for AI converter')
-    }
-    
+      }
     // Also allow .ai files if this is an AI converter but the extension check failed
     if (!isValidFormat && (config.fromFormat === 'AI' || config.fromFormat === 'ai') && fileExtension === 'ai') {
       isValidFormat = true
-      console.log('[ConverterInterface] Allowing AI file for AI converter')
-    }
-    
+      }
     if (!isValidFormat) {
-      console.log('[ConverterInterface] Format validation failed')
       if (config.fromFormat === 'AI' || config.fromFormat === 'ai') {
         setError(`Please upload a valid Adobe Illustrator (.ai) file or PDF file that was created by Illustrator`)
       } else {
@@ -217,17 +184,14 @@ export default function ConverterInterface({
       }
       return
     }
-    
     // Validate file size
     const fileSizeMB = file.size / (1024 * 1024)
     if (fileSizeMB > maxFileSize) {
       setError(`File size must be less than ${maxFileSize}MB`)
       return
     }
-    
     setFile(file)
     trackFileSelected(file)
-    
     // Create preview for image files
     if (file.type.startsWith('image/')) {
       const reader = new FileReader()
@@ -237,115 +201,77 @@ export default function ConverterInterface({
       reader.readAsDataURL(file)
     }
   }, [acceptedFormats, config.fromFormat, trackFileSelected])
-
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setDragActive(false)
-    
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFile(e.dataTransfer.files[0])
     }
   }, [handleFile])
-
   const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       handleFile(e.target.files[0])
     }
   }, [handleFile])
-
   const handleConvert = async () => {
     if (!file || !converter) return
-    
-    console.log('[ConverterInterface] handleConvert called')
-    console.log('[ConverterInterface] File:', file.name)
-    console.log('[ConverterInterface] Converter:', converter.name)
-    
     setConverting(true)
     setError(null)
     setProgress(0)
     setConversionTip(conversionTips[0])
     trackConversionStarted()
-    
     const startTime = Date.now()
-    
     try {
       // Read file as ArrayBuffer
       const arrayBuffer = await file.arrayBuffer()
       const buffer = Buffer.from(arrayBuffer)
-      
-      console.log('[ConverterInterface] Buffer created, size:', buffer.length)
-      
       // Prepare conversion options
       const conversionOptions: ConversionOptions = {
         ...options,
         onProgress: (p) => {
           const progressPercent = Math.round(p * 100)
           setProgress(progressPercent)
-          
           // Cycle through conversion tips based on progress
           const tipIndex = Math.min(Math.floor(p * conversionTips.length), conversionTips.length - 1)
           setConversionTip(conversionTips[tipIndex])
         }
       }
-      
-      console.log('[ConverterInterface] Calling converter.handler...')
-      console.log('[ConverterInterface] Converter handler type:', typeof converter.handler)
-      
       // Perform conversion
       let result: ConverterResult
       try {
         result = await converter.handler(buffer, conversionOptions)
-        console.log('[ConverterInterface] Conversion result:', {
-          success: result.success,
-          error: result.error,
-          dataLength: result.data?.length,
-          mimeType: result.mimeType
-        })
-      } catch (handlerError) {
-        console.error('[ConverterInterface] Handler threw error:', handlerError)
-        console.error('[ConverterInterface] Handler error stack:', handlerError instanceof Error ? handlerError.stack : 'No stack')
+        } catch (handlerError) {
         throw handlerError
       }
-      
       if (!result.success || !result.data) {
-        console.error('[ConverterInterface] Conversion failed with result:', result)
         throw new Error(result.error || 'Conversion failed')
       }
-      
       // Create blob from result
       const outputMimeType = getMimeTypeFromFormat(config.toFormat.toLowerCase() as ImageFormat)
       const blob = result.data instanceof Buffer
         ? new Blob([result.data], { type: outputMimeType })
         : new Blob([result.data], { type: outputMimeType })
-      
       const url = URL.createObjectURL(blob)
       const outputFilename = file.name.replace(/\.[^/.]+$/, `.${config.toFormat.toLowerCase()}`)
-      
       const conversionResult: ConversionResult = {
         blob,
         url,
         filename: outputFilename,
         size: blob.size
       }
-      
       setResult(conversionResult)
       setProgress(100)
-      
       const conversionTime = Date.now() - startTime
       trackConversionCompleted(true, blob.size, conversionTime)
-      
       // Show upsell after 3 seconds for certain file types or sizes
       if (blob.size > 5 * 1024 * 1024 || conversionTime > 3000) { // 5MB+ or 3s+ conversion
         setTimeout(() => setShowUpsell(true), 3000)
       }
-      
       if (onConversionComplete) {
         onConversionComplete(conversionResult)
       }
     } catch (err) {
-      console.error('[ConverterInterface] Conversion error:', err)
-      console.error('[ConverterInterface] Error stack:', err instanceof Error ? err.stack : 'No stack')
       const errorMessage = err instanceof Error ? err.message : 'Conversion failed'
       setError(errorMessage)
       trackError(errorMessage, { file: file.name })
@@ -354,10 +280,8 @@ export default function ConverterInterface({
       setConverting(false)
     }
   }
-
   const handleDownload = () => {
     if (!result) return
-    
     trackDownload()
     const a = document.createElement('a')
     a.href = result.url
@@ -366,7 +290,6 @@ export default function ConverterInterface({
     a.click()
     document.body.removeChild(a)
   }
-
   const handleReset = () => {
     setFile(null)
     setPreviewUrl(null)
@@ -377,11 +300,9 @@ export default function ConverterInterface({
       fileInputRef.current.value = ''
     }
   }
-
   const updateOption = (key: string, value: any) => {
     setOptions(prev => ({ ...prev, [key]: value }))
   }
-
   // Clean up preview URL on unmount
   useEffect(() => {
     return () => {
@@ -393,7 +314,6 @@ export default function ConverterInterface({
       }
     }
   }, [previewUrl, result])
-
   if (converterLoading) {
     return (
       <Card className={cn("w-full max-w-4xl mx-auto", className)}>
@@ -406,7 +326,6 @@ export default function ConverterInterface({
       </Card>
     )
   }
-
   if (!converter) {
     return (
       <Card className={cn("w-full max-w-4xl mx-auto", className)}>
@@ -421,7 +340,6 @@ export default function ConverterInterface({
       </Card>
     )
   }
-
   return (
     <TooltipProvider>
       <div className={cn("w-full max-w-4xl mx-auto", className)}>
@@ -496,7 +414,6 @@ export default function ConverterInterface({
                 </Tooltip>
               </div>
             </div>
-
             {/* Upload Area */}
             {!file && (
               <div
@@ -558,7 +475,6 @@ export default function ConverterInterface({
               </label>
             </div>
           )}
-
           {/* File Preview & Options */}
           {file && !result && (
             <div className="space-y-6">
@@ -584,7 +500,6 @@ export default function ConverterInterface({
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-
               {/* Preview */}
               {previewUrl && (
                 <div className="bg-gray-50 dark:bg-gray-100 rounded-lg p-4">
@@ -595,7 +510,6 @@ export default function ConverterInterface({
                   />
                 </div>
               )}
-
               {/* Conversion Options */}
               <div className="space-y-4">
                 <button
@@ -608,7 +522,6 @@ export default function ConverterInterface({
                     {showOptions ? '(hide)' : '(show)'}
                   </span>
                 </button>
-                
                 {showOptions && (
                   <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-100 rounded-lg">
                     {/* Quality Slider (for formats that support it) */}
@@ -627,7 +540,6 @@ export default function ConverterInterface({
                         />
                       </div>
                     )}
-
                     {/* Dimension Inputs */}
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
@@ -661,7 +573,6 @@ export default function ConverterInterface({
                         <Label htmlFor="aspect-ratio">Maintain aspect ratio</Label>
                       </div>
                     </div>
-
                     {/* Background Color (for formats that support it) */}
                     {['jpg', 'jpeg', 'bmp'].includes(config.toFormat.toLowerCase()) && (
                       <div>
@@ -675,7 +586,6 @@ export default function ConverterInterface({
                         />
                       </div>
                     )}
-
                     {/* Additional format-specific options */}
                     {config.fromFormat.toLowerCase() === 'png' && config.toFormat.toLowerCase() === 'svg' && (
                       <div className="space-y-4">
@@ -700,7 +610,6 @@ export default function ConverterInterface({
                   </div>
                 )}
               </div>
-
               {/* Convert Button */}
               <Button
                 onClick={handleConvert}
@@ -710,7 +619,6 @@ export default function ConverterInterface({
               >
                 {converting ? 'Converting...' : `Convert to ${config.toFormat}`}
               </Button>
-
               {/* Enhanced Progress Bar */}
               {converting && (
                 <div className="space-y-4">
@@ -721,7 +629,6 @@ export default function ConverterInterface({
                     </div>
                     <Progress value={progress} className="w-full h-2" />
                   </div>
-                  
                   <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
                     <div className="flex items-start gap-3">
                       <div className="animate-spin">
@@ -741,7 +648,6 @@ export default function ConverterInterface({
               )}
             </div>
           )}
-
           {/* Enhanced Conversion Result */}
           {result && (
             <div className="space-y-6">
@@ -751,7 +657,6 @@ export default function ConverterInterface({
                   🎉 Conversion successful! Your file is ready to download.
                 </AlertDescription>
               </Alert>
-
               {/* Enhanced File Info */}
               <div className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 rounded-lg p-4 border">
                 <div className="flex items-center justify-between mb-3">
@@ -778,7 +683,6 @@ export default function ConverterInterface({
                     </Badge>
                   </div>
                 </div>
-
                 {/* Preview Option for supported formats */}
                 {['SVG', 'PNG', 'JPG', 'WebP'].includes(config.toFormat) && (
                   <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">
@@ -791,7 +695,6 @@ export default function ConverterInterface({
                     </button>
                   </div>
                 )}
-
                 {/* File Preview */}
                 {showPreview && ['SVG', 'PNG', 'JPG', 'WebP'].includes(config.toFormat) && (
                   <div className="mt-3 p-3 bg-white dark:bg-gray-900 rounded border">
@@ -803,7 +706,6 @@ export default function ConverterInterface({
                   </div>
                 )}
               </div>
-
               {/* Enhanced Action Buttons */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Button 
@@ -818,7 +720,6 @@ export default function ConverterInterface({
                   Convert Another File
                 </Button>
               </div>
-
               {/* Success Tips */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -846,7 +747,6 @@ export default function ConverterInterface({
               </div>
             </div>
           )}
-
           {/* Premium Upsell */}
           {showUpsell && (
             <div className="mt-6 p-4 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
@@ -897,7 +797,6 @@ export default function ConverterInterface({
               </div>
             </div>
           )}
-
           {/* Error Alert */}
           {error && (
             <Alert variant="destructive" className="mt-4">
@@ -907,7 +806,6 @@ export default function ConverterInterface({
           )}
         </CardContent>
       </Card>
-
       {/* Related Tools Section */}
       <div className="mt-8">
         <h2 className="text-2xl font-bold text-center mb-4">Related Tools</h2>

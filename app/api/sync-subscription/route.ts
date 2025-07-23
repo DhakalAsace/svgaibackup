@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createRouteClient } from '@/lib/supabase-server';
 import { createClient } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -29,8 +28,7 @@ const PRICE_TO_TIER: Record<string, { tier: string; credits: number }> = {
 
 export async function POST(req: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabase = await createRouteClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

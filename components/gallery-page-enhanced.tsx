@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { Download, Search, Sparkles, Grid, List, Info, Zap, FileDown, Edit, Share2, Heart, TrendingUp, Clock, Users, Filter, SortAsc, ChevronRight, Palette, Copy, X } from "lucide-react"
@@ -20,11 +19,9 @@ import GalleryItem from "@/components/gallery/gallery-item"
 import { useGalleryPerformance } from "@/hooks/use-gallery-performance"
 import { useInfiniteScroll } from "@/hooks/use-infinite-scroll"
 import styles from "@/app/gallery/gallery.module.css"
-
 interface GalleryPageEnhancedProps {
   theme: GalleryTheme
 }
-
 interface SVGItem {
   id: string
   filename: string
@@ -38,7 +35,6 @@ interface SVGItem {
   isNew: boolean
   featured?: boolean
 }
-
 export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -50,12 +46,9 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
   const [useVirtualization, setUseVirtualization] = useState(false)
   const [displayCount, setDisplayCount] = useState(20)
   const [sortBy, setSortBy] = useState<"featured" | "newest" | "popular">("featured")
-  
   const relatedThemes = getRelatedThemes(theme.slug)
-  
   // Track performance metrics
   useGalleryPerformance()
-  
   // Infinite scroll for pagination
   const { loadMoreRef, isLoading } = useInfiniteScroll({
     hasMore: displayCount < filteredItems.length,
@@ -63,14 +56,11 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
       setDisplayCount(prev => Math.min(prev + 20, filteredItems.length))
     }
   })
-  
   // Get items to display (either paginated or all)
   const displayedItems = useVirtualization ? filteredItems : filteredItems.slice(0, displayCount)
-
   // Convert gallery data to SVGItems
   useEffect(() => {
     const gallerySVGs = getGallerySVGs(theme.slug)
-    
     if (gallerySVGs.length > 0) {
       const items: SVGItem[] = gallerySVGs.map((svg, index) => ({
         id: `${theme.slug}-${index + 1}`,
@@ -84,10 +74,8 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
         isNew: index < 3, // First 3 items are marked as new
         featured: svg.featured
       }))
-      
       setSvgItems(items)
       setFilteredItems(items)
-      
       // Enable virtualization for large galleries
       setUseVirtualization(items.length > 50)
     } else {
@@ -96,10 +84,8 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
       setFilteredItems([])
     }
   }, [theme])
-
   useEffect(() => {
     let filtered = svgItems
-    
     if (searchQuery) {
       filtered = filtered.filter(item =>
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -107,11 +93,9 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
         item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
       )
     }
-    
     if (selectedStyle !== "all") {
       filtered = filtered.filter(item => item.tags.includes(selectedStyle))
     }
-    
     // Apply sorting
     filtered = [...filtered].sort((a, b) => {
       switch (sortBy) {
@@ -124,30 +108,24 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
           return (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
       }
     })
-    
     setFilteredItems(filtered)
     // Reset display count when filters change
     setDisplayCount(20)
   }, [searchQuery, selectedStyle, sortBy, svgItems])
-
   const openPreviewModal = (item: SVGItem) => {
     setSelectedSVG(item)
     setIsModalOpen(true)
   }
-
   const closePreviewModal = () => {
     setIsModalOpen(false)
     setSelectedSVG(null)
   }
-
   // Get long-form content based on theme
   const getLongFormContent = () => {
     const themeType = theme.slug.split("-")[0]
     const isPlural = theme.slug.includes("svg-")
-    
     return {
       intro: `Welcome to the most comprehensive collection of ${theme.title.toLowerCase()} available online. Whether you're a professional designer, developer, or creative enthusiast, our curated library of ${isPlural ? theme.title : theme.title + " designs"} provides everything you need for your projects.`,
-      
       benefits: [
         {
           title: "Infinitely Scalable",
@@ -172,9 +150,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
       ]
     }
   }
-  
   const content = getLongFormContent()
-  
   // Extract unique styles from all SVG tags
   const getAllStyles = () => {
     const allTags = new Set<string>()
@@ -186,9 +162,7 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
     const styleTags = Array.from(allTags).filter(tag => !nonStyleTags.has(tag))
     return ['all', ...styleTags.slice(0, 6)] // Limit to 6 styles plus 'all'
   }
-  
   const styleOptions = getAllStyles()
-
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Professional Breadcrumb Navigation */}
@@ -215,7 +189,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
           </ol>
         </div>
       </nav>
-
       {/* Enhanced Hero Section */}
       <section className={`relative overflow-hidden ${styles.hero}`}>
         <div className="container relative z-10 px-4 py-16 sm:px-6 md:py-24">
@@ -250,8 +223,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
           </div>
         </div>
       </section>
-
-
       {/* Enhanced Search, Filter, and View Controls */}
       <section className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 overflow-x-hidden">
         <div className="container px-4 py-6 sm:px-6">
@@ -306,7 +277,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
           </div>
         </div>
       </section>
-
       {/* Enhanced SVG Gallery */}
       <section id="gallery" className={`container px-4 pb-20 pt-12 sm:px-6 ${styles.section}`}>
         <div className="mx-auto max-w-7xl">
@@ -424,7 +394,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                                       description: `${item.filename} has been downloaded successfully.`
                                     })
                                   } catch (error) {
-                                    console.error('Download failed:', error)
                                     toast({
                                       title: "Download failed",
                                       description: "Please try again.",
@@ -443,7 +412,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                     </div>
                   ))}
                 </div>
-                
                 {/* Professional Infinite Scroll Indicator */}
                 {!useVirtualization && displayCount < filteredItems.length && (
                   <div ref={loadMoreRef} className="mt-12 flex justify-center">
@@ -529,7 +497,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                                 description: `${item.filename} has been downloaded successfully.`
                               })
                             } catch (error) {
-                              console.error('Download failed:', error)
                               toast({
                                 title: "Download failed",
                                 description: "Please try again.",
@@ -546,7 +513,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                   </Card>
                 ))}
               </div>
-              
               {/* List View Infinite Scroll */}
               {!useVirtualization && displayCount < filteredItems.length && (
                 <div ref={loadMoreRef} className="mt-12 flex justify-center">
@@ -566,7 +532,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
           )}
         </div>
       </section>
-
       {/* Professional Benefits Section */}
       <section className="border-t bg-gradient-to-b from-muted/20 to-background">
         <div className="container px-4 py-20 sm:px-6">
@@ -591,7 +556,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
           </div>
         </div>
       </section>
-
       {/* Professional AI CTA Section */}
       <section className="relative overflow-hidden border-t bg-gradient-to-br from-primary/5 via-background to-primary/5">
         <div className="container relative z-10 px-4 py-20 sm:px-6">
@@ -607,7 +571,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
               Create unlimited custom {theme.title.toLowerCase()} with our AI-powered generator.
               Get exactly what you need in seconds, not hours.
             </p>
-            
             {/* Sample Prompts Grid */}
             <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {theme.samplePrompts.map((prompt, index) => (
@@ -618,7 +581,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                 </Card>
               ))}
             </div>
-            
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/">
                 <Button size="lg" className={`gap-2 px-8 py-6 text-lg ${styles.ctaButton}`}>
@@ -635,12 +597,10 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
             </div>
           </div>
         </div>
-        
         {/* Background decorations */}
         <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute -bottom-20 -left-20 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
       </section>
-
       {/* Professional Resources Grid */}
       <section className="border-t bg-muted/20">
         <div className="container px-4 py-20 sm:px-6">
@@ -665,7 +625,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                   </Link>
                 </CardContent>
               </Card>
-              
               <Card className="group transition-all hover:shadow-lg">
                 <CardContent className="p-8 text-center">
                   <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/10">
@@ -682,7 +641,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
                   </Link>
                 </CardContent>
               </Card>
-              
               <Card className="group transition-all hover:shadow-lg">
                 <CardContent className="p-8 text-center">
                   <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/10">
@@ -703,7 +661,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
           </div>
         </div>
       </section>
-
       {/* Related Collections with Enhanced Design */}
       {relatedThemes.length > 0 && (
         <section className="border-t">
@@ -739,7 +696,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
           </div>
         </section>
       )}
-
       {/* Internal Links Section */}
       <section className="border-t bg-muted/20 py-16">
         <div className="container px-6">
@@ -750,7 +706,6 @@ export default function GalleryPageEnhanced({ theme }: GalleryPageEnhancedProps)
           />
         </div>
       </section>
-
       {/* SVG Preview Modal */}
       {selectedSVG && (
         <SVGPreviewModal

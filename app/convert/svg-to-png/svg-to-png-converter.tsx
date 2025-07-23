@@ -1,5 +1,4 @@
 "use client"
-
 import ConverterUI from "@/components/converter-ui"
 import { svgToPngHandler } from "@/lib/converters/svg-to-png"
 import { Label } from "@/components/ui/label"
@@ -11,7 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useState } from "react"
-
 export default function SvgToPngConverter() {
   const [dpi, setDpi] = useState("96")
   const [backgroundColor, setBackgroundColor] = useState("transparent")
@@ -20,7 +18,6 @@ export default function SvgToPngConverter() {
     try {
       // Read file as text for SVG
       const text = await file.text()
-      
       // Convert using the svg-to-png handler
       const result = await svgToPngHandler(text, {
         width: options.width,
@@ -30,16 +27,13 @@ export default function SvgToPngConverter() {
         dpi: parseInt(dpi) || 96,
         background: backgroundColor || 'transparent'
       })
-      
       if (!result.success || !result.data) {
         throw new Error(result.error || 'Conversion failed')
       }
-      
       // Create blob and download URL
       const blob = new Blob([result.data], { type: 'image/png' })
       const url = URL.createObjectURL(blob)
       const filename = file.name.replace(/\.svg$/i, '.png')
-      
       return {
         blob,
         url,
@@ -47,11 +41,9 @@ export default function SvgToPngConverter() {
         size: blob.size
       }
     } catch (error) {
-      console.error('Conversion error:', error)
       throw new Error(error instanceof Error ? error.message : 'Failed to convert SVG to PNG')
     }
   }
-
   return (
     <ConverterUI
       fromFormat="svg"

@@ -10,10 +10,8 @@
  * 3. Wait for task completion
  * 4. Export and download result
  */
-
 import type { ConversionHandler, ConversionOptions, ConversionResult } from './types'
 import { ConversionError } from './errors'
-
 /**
  * Client-side WMF to SVG converter that uses the API endpoint
  */
@@ -22,31 +20,22 @@ export const wmfToSvgHandler: ConversionHandler = async (
   options: ConversionOptions = {}
 ): Promise<ConversionResult> => {
   try {
-    console.log('[WMF-to-SVG-Client] Starting WMF to SVG conversion')
-    
     // Convert input to Blob for FormData
     const inputBuffer = typeof input === 'string' ? Buffer.from(input, 'base64') : input
     const blob = new Blob([inputBuffer], { type: 'application/x-wmf' })
-    
     // Create form data
     const formData = new FormData()
     formData.append('file', blob, 'image.wmf')
-    
     // Add conversion options
     if (options.width) formData.append('width', options.width.toString())
     if (options.height) formData.append('height', options.height.toString())
     if (options.preserveAspectRatio !== undefined) {
       formData.append('preserveAspectRatio', options.preserveAspectRatio.toString())
     }
-    
-    console.log('[WMF-to-SVG-Client] Uploading file to API endpoint')
-    
     // Progress tracking
     const startTime = Date.now()
-    
     // Simulate progress for better UX
     const progressInterval = simulateProgress(options.onProgress, startTime)
-    
     try {
       // Make API request to our endpoint (which will use CloudConvert)
       const response = await fetch('/api/convert/wmf-to-svg', {
@@ -55,25 +44,15 @@ export const wmfToSvgHandler: ConversionHandler = async (
         // Add timeout for large files
         signal: AbortSignal.timeout(300000) // 5 minute timeout
       })
-      
       // Clear progress simulation
       if (progressInterval) {
         clearInterval(progressInterval)
       }
-      
       // Log response details
       const contentType = response.headers.get('content-type') || ''
-      console.log('[WMF-to-SVG-Client] Response received:', {
-        status: response.status,
-        statusText: response.statusText,
-        contentType,
-        contentLength: response.headers.get('content-length')
-      })
-      
       // Handle non-OK responses
       if (!response.ok) {
         let errorMessage = `Request failed with status ${response.status}`
-        
         try {
           // Try to get error details from response
           if (contentType.includes('application/json')) {
@@ -86,23 +65,16 @@ export const wmfToSvgHandler: ConversionHandler = async (
             }
           }
         } catch (e) {
-          console.error('[WMF-to-SVG-Client] Error parsing error response:', e)
+          // Ignore error parsing failures
         }
-        
         throw new ConversionError(errorMessage, 'API_REQUEST_FAILED')
       }
-      
       // Handle successful response
       let svgData: string
-      
       // CloudConvert returns SVG directly
       if (contentType.includes('image/svg+xml') || contentType.includes('text/xml') || !contentType) {
         svgData = await response.text()
-        console.log('[WMF-to-SVG-Client] Received SVG data:', {
-          length: svgData.length,
-          preview: svgData.substring(0, 100)
-        })
-      } else if (contentType.includes('application/json')) {
+        } else if (contentType.includes('application/json')) {
         // Handle JSON response (legacy format)
         const jsonData = await response.json()
         if (jsonData.data) {
@@ -115,22 +87,16 @@ export const wmfToSvgHandler: ConversionHandler = async (
       } else {
         // Treat any other content as SVG
         svgData = await response.text()
-        console.log('[WMF-to-SVG-Client] Received data with content-type:', contentType)
-      }
-      
+        }
       // Validate SVG data
       if (!svgData || (!svgData.includes('<svg') && !svgData.includes('<?xml'))) {
         throw new ConversionError('Invalid SVG data received', 'INVALID_SVG_DATA')
       }
-      
       const conversionTime = Date.now() - startTime
-      console.log('[WMF-to-SVG-Client] Conversion completed in', conversionTime, 'ms')
-      
       // Report final progress
       if (options.onProgress) {
         options.onProgress(1.0)
       }
-      
       return {
         success: true,
         data: svgData,
@@ -144,7 +110,6 @@ export const wmfToSvgHandler: ConversionHandler = async (
           originalFormat: 'wmf'
         }
       }
-      
     } catch (error) {
       // Clear progress simulation on error
       if (progressInterval) {
@@ -152,10 +117,7 @@ export const wmfToSvgHandler: ConversionHandler = async (
       }
       throw error
     }
-    
   } catch (error) {
-    console.error('[WMF-to-SVG-Client] Conversion error:', error)
-    
     // Handle timeout errors
     if (error instanceof Error && error.name === 'AbortError') {
       throw new ConversionError(
@@ -163,18 +125,15 @@ export const wmfToSvgHandler: ConversionHandler = async (
         'CONVERSION_TIMEOUT'
       )
     }
-    
     if (error instanceof ConversionError) {
       throw error
     }
-    
     throw new ConversionError(
       `Failed to convert WMF file: ${error instanceof Error ? error.message : 'Unknown error'}`,
       'WMF_TO_SVG_FAILED'
     )
   }
 }
-
 /**
  * Progress simulation for better UX
  * CloudConvert doesn't provide real-time progress, so we simulate it
@@ -184,11 +143,9 @@ function simulateProgress(
   startTime: number
 ): NodeJS.Timeout | null {
   if (!onProgress) return null
-  
   const interval = setInterval(() => {
     const elapsed = Date.now() - startTime
     let progress = 0.1
-    
     // Simulate progress based on typical conversion times
     if (elapsed < 2000) {
       // Upload phase (0-2s): 10-30%
@@ -203,13 +160,10 @@ function simulateProgress(
       // Long conversion: stay at 90%
       progress = 0.9
     }
-    
     onProgress(Math.min(progress, 0.9))
   }, 250)
-  
   return interval
 }
-
 /**
  * WMF to SVG converter configuration for client-side use
  */
@@ -221,6 +175,5 @@ export const wmfToSvgConverter = {
   isClientSide: true, // Client-side wrapper that calls API
   description: 'Convert Windows Metafile files to SVG format using CloudConvert API'
 }
-
 // Export handler directly for convenience
 export default wmfToSvgHandler

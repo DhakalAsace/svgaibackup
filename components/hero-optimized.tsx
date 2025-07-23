@@ -1,11 +1,10 @@
 "use client"
-
 import { useState, useEffect, useRef, useMemo, useCallback, memo } from "react"
 import { Button } from "@/components/ui/button"
-import { Check, Loader, Settings, ArrowRight, ChevronDown, ChevronUp, Sparkles, Download, ChevronLeft, ChevronRight } from "lucide-react"
+import { Check, Loader, Settings, ArrowRight, ChevronDown, ChevronUp, Sparkles, Download, ChevronLeft, ChevronRight, HelpCircle } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { useRouter } from "next/navigation"
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '@/lib/supabase';
 import { Database } from '@/types/database.types';
 import Image from "next/image"
 import { BrandLogo } from "@/components/brand-logo"
@@ -14,30 +13,28 @@ import Link from "next/link"
 import dynamic from 'next/dynamic'
 import { usePromptRestoration } from '@/hooks/use-prompt-restoration'
 import { useCredits } from '@/contexts/CreditContext'
-
+import { getSvgStyleOptions, getStyleTooltip } from "@/lib/style-mappings"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 // Dynamically import modals to reduce initial bundle size
 const GenerationSignupModal = dynamic(
   () => import('@/components/auth/generation-signup-modal').then(mod => ({ default: mod.GenerationSignupModal })),
   { ssr: false }
 )
-
 const UpgradeModal = dynamic(
   () => import('@/components/generation-upsells').then(mod => ({ default: mod.UpgradeModal })),
   { ssr: false }
 )
-
-function formatStyleLabel(style: string) {
-  return style
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, c => c.toUpperCase());
-}
-
 // Memoized sample prompts component
 const SamplePrompts = memo(({ onSelectPrompt }: { onSelectPrompt: (prompt: string) => void }) => {
   const samplePrompts = [
     {
       label: "Cute Red Panda",
-      prompt: "Cute cartoon red panda mascot waving, flat design, vibrant orange and brown, friendly expression."
+      prompt: "Adorable red panda sitting on bamboo branch, fluffy tail, warm orange and brown colors, kawaii style illustration."
     },
     {
       label: "Eco Brand Logo",
@@ -56,7 +53,6 @@ const SamplePrompts = memo(({ onSelectPrompt }: { onSelectPrompt: (prompt: strin
       prompt: "3 kawaii stickers: smiling cat with heart, cheerful corgi, happy cloud raining hearts, pastel colors."
     }
   ];
-
   return (
     <div className="mt-3 flex flex-wrap gap-2">
       {samplePrompts.map((samplePrompt, idx) => (
@@ -71,9 +67,7 @@ const SamplePrompts = memo(({ onSelectPrompt }: { onSelectPrompt: (prompt: strin
     </div>
   );
 });
-
 SamplePrompts.displayName = 'SamplePrompts';
-
 // Memoized advanced options component
 const AdvancedOptions = memo(({ 
   style, 
@@ -90,8 +84,7 @@ const AdvancedOptions = memo(({
   onSizeChange: (value: string) => void;
   onAspectRatioChange: (value: string) => void;
 }) => {
-  const styleOptions = ["any", "engraving", "line_art", "line_circuit", "linocut"];
-  
+  const styleOptions = getSvgStyleOptions();
   const sortedSizeOptions = useMemo(() => {
     const sizeOptions = ["1024x1024", "1365x1024", "1024x1365", "1536x1024", "1024x1536", "1820x1024", "1024x1820", "1024x2048", "2048x1024", "1434x1024", "1024x1434", "1024x1280", "1280x1024", "1024x1707", "1707x1024"];
     return [...sizeOptions].sort((a, b) => {
@@ -100,7 +93,6 @@ const AdvancedOptions = memo(({
       return (widthA * heightA) - (widthB * heightB);
     });
   }, []);
-
   const sortedAspectRatioOptions = useMemo(() => {
     const aspectRatioOptions = ["Not set", "1:1", "4:3", "3:4", "3:2", "2:3", "16:9", "9:16", "1:2", "2:1", "7:5", "5:7", "4:5", "5:4", "3:5", "5:3"];
     return [...aspectRatioOptions].sort((a, b) => {
@@ -109,11 +101,22 @@ const AdvancedOptions = memo(({
       return a.localeCompare(b);
     });
   }, []);
-
   return (
     <div className="mt-4 grid grid-cols-3 gap-4 border-t border-gray-100 pt-4">
       <div>
-        <label htmlFor="style-select" className="block text-sm font-medium text-gray-700 mb-1">Style</label>
+        <div className="flex items-center gap-1 mb-1">
+          <label htmlFor="style-select" className="text-sm font-medium text-gray-700">Style</label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="h-3 w-3 text-gray-400 cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs max-w-xs">{getStyleTooltip(style, false)}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <select
           id="style-select"
           className="w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 py-1.5"
@@ -121,8 +124,8 @@ const AdvancedOptions = memo(({
           onChange={e => onStyleChange(e.target.value)}
         >
           {styleOptions.map((option) => (
-            <option key={option} value={option}>
-              {option === 'any' ? 'Any Style' : formatStyleLabel(option)}
+            <option key={option.value} value={option.value}>
+              {option.label}
             </option>
           ))}
         </select>
@@ -156,9 +159,7 @@ const AdvancedOptions = memo(({
     </div>
   );
 });
-
 AdvancedOptions.displayName = 'AdvancedOptions';
-
 export default function HeroOptimized() {
   const [prompt, setPrompt] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
@@ -180,7 +181,6 @@ export default function HeroOptimized() {
   const [userGenerations, setUserGenerations] = useState<{used: number, limit: number} | null>(null)
   const [isSubscribed, setIsSubscribed] = useState(false)
   const isInitialLoad = useRef(true);
-  
   // Use the preloaded SVG examples instead of hardcoding them
   const examplesData = useSVGExamples();
   const featuredExamples = useMemo(() => 
@@ -192,22 +192,19 @@ export default function HeroOptimized() {
         description: "Clean, modern fox logo created with AI. Perfect for businesses looking for a distinctive mark."
       },
       {
-        src: "/svg-examples/cute-red-panda-mascot.svg",
-        alt: "Cute red panda mascot SVG generated by AI",
-        type: "Brand Mascot",
-        description: "Charming red panda mascot, perfect for playful branding or apps. Instantly created by AI from text."
+        src: "/svg-examples/dog.svg",
+        alt: "Adorable illustrated dog character with expressive eyes and playful stance SVG generated by AI",
+        type: "Character Illustration",
+        description: "Charming dog illustration perfect for pet brands, children's content, or friendly mascots. AI creates personality-filled characters."
       }
     ], [examplesData]);
-
   // Use credit context
   const { creditInfo, refreshCredits } = useCredits()
-
   // Check for logged in user and their generation status
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user }, error: authError } = await supabase.auth.getUser()
       setUserId(user?.id || null)
-      
       if (user?.id && !authError && creditInfo) {
         setUserGenerations({
           used: creditInfo.creditsUsed,
@@ -216,22 +213,17 @@ export default function HeroOptimized() {
         setIsSubscribed(creditInfo.isSubscribed)
       }
     }
-
     checkUser()
   }, [creditInfo, supabase.auth])
-
   // Use prompt restoration hook
   usePromptRestoration(setPrompt, setStyle, setSize, setAspectRatio);
-
   // Memoized callbacks to prevent re-renders
   const handleStyleChange = useCallback((value: string) => setStyle(value), []);
   const handleSizeChange = useCallback((value: string) => setSize(value), []);
   const handleAspectRatioChange = useCallback((value: string) => setAspectRatio(value), []);
   const handlePromptSelect = useCallback((prompt: string) => setPrompt(prompt), []);
-
   const handleGenerate = useCallback(async () => {
     if (!prompt.trim()) return
-
     // Persist prompt and settings so they can be restored later
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('pendingPrompt', prompt);
@@ -239,13 +231,11 @@ export default function HeroOptimized() {
       sessionStorage.setItem('pendingSize', size);
       sessionStorage.setItem('pendingAspectRatio', aspectRatio);
     }
-
     // For authenticated users, check credit balance on frontend
     if (userId && userGenerations) {
       const requiredCredits = 2;
       const remainingCredits = userGenerations.limit - userGenerations.used;
       const hasEnoughCredits = remainingCredits >= requiredCredits;
-      
       if (!hasEnoughCredits) {
         if (!isSubscribed) {
           setShowUpgradeModal(true);
@@ -255,11 +245,9 @@ export default function HeroOptimized() {
         return;
       }
     }
-
     setIsGenerating(true)
     setError("")
     setLimitReachedError("")
-
     try {
       const response = await fetch("/api/generate-svg", {
         method: "POST",
@@ -273,24 +261,19 @@ export default function HeroOptimized() {
           aspect_ratio: aspectRatio
         }),
       })
-
       let responseData;
       try {
         responseData = await response.json();
       } catch (jsonError) {
         try {
           const textResponse = await response.text();
-          console.error("Non-JSON response received:", textResponse);
           throw new Error(`Server returned non-JSON response: ${textResponse.substring(0, 100)}...`);
         } catch (textError) {
-          console.error("Failed to get response as text:", textError);
           throw new Error(`Failed to parse server response (Status: ${response.status})`);
         }
       }
-      
       if (response.status === 429) {
         const errorMessage = responseData.error || "";
-        
         if (errorMessage.includes("Sign up to continue")) {
           setIsSoftPrompt(false);
           setShowSignupModal(true);
@@ -299,66 +282,49 @@ export default function HeroOptimized() {
         } else if (errorMessage.includes("monthly credits")) {
           setError("You've used all your monthly credits. They'll refresh at the start of your next billing period.");
         }
-        
         setIsGenerating(false)
         return
       }
-
       if (!response.ok) {
         const errorMessage = typeof responseData.error === 'string' 
           ? responseData.error 
           : (responseData.error?.message || `Failed to generate SVG (Status: ${response.status})`);
         throw new Error(errorMessage);
       }
-      
       if (responseData.success) {
-        console.log("API response:", responseData);
-        
         const data = responseData.data || {};
-        
         if (data.svgUrl) {
           const { svgUrl, remainingGenerations } = data;
-          
-          console.log('[Hero] Storing SVG URL in sessionStorage:', svgUrl);
           sessionStorage.setItem('resultSvgUrl', svgUrl);
-          
           const queryParams = new URLSearchParams();
           const remainingStr = remainingGenerations?.toString() ?? '';
           if (remainingStr) {
             queryParams.set('remaining', remainingStr);
           }
           queryParams.set('prompt', prompt);
-
           if (!userId) {
             const totalGenerations = parseInt(localStorage.getItem('totalGenerations') || '0');
             localStorage.setItem('totalGenerations', (totalGenerations + 1).toString());
           } else if (userGenerations) {
             setUserGenerations(prev => prev ? {...prev, used: prev.used + 2} : null)
-            
             window.dispatchEvent(new Event('creditUsed'))
             refreshCredits()
           }
-          
           const pushPath = `/results?${queryParams.toString()}`;
-          console.log('[Hero] Pushing path:', pushPath);
           router.push(pushPath);
         } else {
-          console.error("API response indicates success but SVG URL is missing:", responseData);
           setError("The SVG was generated but the URL was not returned correctly. Please try again.");
           setIsGenerating(false);
         }
       } else {
-        console.error("API response indicates failure:", responseData);
         const errorMsg = typeof responseData.error === 'string' 
           ? responseData.error 
           : (responseData.error?.message || "Failed to generate SVG");
         throw new Error(errorMsg);
       }
     } catch (err) {
-      console.error("Error in generation process:", err)
       if (!limitReachedError) {
         let errMsg = "Failed to generate SVG";
-        
         if (err instanceof Error) {
           errMsg = err.message;
         } else if (typeof err === 'string') {
@@ -366,7 +332,6 @@ export default function HeroOptimized() {
         } else if (err && typeof err === 'object' && 'message' in err) {
           errMsg = String(err.message);
         }
-        
         if (errMsg.includes("SVG URL")) {
           setError("The SVG was generated but couldn't be retrieved. Please try again.");
         } else if (errMsg.includes("fetch")) {
@@ -374,7 +339,6 @@ export default function HeroOptimized() {
         } else {
           setError(errMsg);
         }
-        
         setIsGenerating(false)
       }
     } finally {
@@ -383,28 +347,22 @@ export default function HeroOptimized() {
       }
     }
   }, [prompt, style, size, aspectRatio, userId, userGenerations, isSubscribed, router, refreshCredits, limitReachedError]);
-
   // Auto-advance the slider every 5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % featuredExamples.length);
     }, 5000);
-    
     return () => clearInterval(timer);
   }, [featuredExamples.length]);
-
   const handleSlideChange = useCallback((index: number) => {
     setActiveSlide(index);
   }, []);
-  
   const handleNextSlide = useCallback(() => {
     setActiveSlide((prev) => (prev + 1) % featuredExamples.length);
   }, [featuredExamples.length]);
-  
   const handlePrevSlide = useCallback(() => {
     setActiveSlide((prev) => (prev - 1 + featuredExamples.length) % featuredExamples.length);
   }, [featuredExamples.length]);
-
   return (
     <section className="bg-gradient-to-b from-[#f8f9fa] to-white py-6 md:py-10">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -437,7 +395,6 @@ export default function HeroOptimized() {
             </div>
           </div>
         </div>
-        
         {/* Main heading - clean and impactful */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-4 leading-tight">
           <span className="text-black">AI </span>
@@ -445,11 +402,9 @@ export default function HeroOptimized() {
           <br />
           <span className="text-black">Effortless Text to SVG Conversion</span>
         </h1>
-        
         <p className="text-center text-[#495057] text-lg md:text-xl max-w-2xl mx-auto mb-6">
           Effortlessly convert text to SVG with AI. Generate unique vector <Link href="/ai-icon-generator" className="text-[#FF7043] hover:underline" target="_blank" rel="noopener noreferrer">icons</Link>, logos, and illustrations instantly.
         </p>
-        
         {/* Breadcrumbs for better SEO and navigation */}
         <nav aria-label="Breadcrumb" className="flex justify-center mb-8">
           <ol className="flex items-center space-x-2 text-sm text-gray-500">
@@ -464,7 +419,6 @@ export default function HeroOptimized() {
             </li>
           </ol>
         </nav>
-
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
           {/* Main input area - 3/5 width on desktop */}
           <div className="lg:col-span-3 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -490,10 +444,8 @@ export default function HeroOptimized() {
                   </button>
                 )}
               </div>
-              
               {/* Sample prompts */}
               <SamplePrompts onSelectPrompt={handlePromptSelect} />
-              
               {/* Advanced Settings Toggle Button */}
               <button 
                 onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
@@ -502,7 +454,6 @@ export default function HeroOptimized() {
                 <Settings size={16} className="mr-2" />
                 Advanced Settings
               </button>
-
               {/* Collapsible Advanced Options Section */}
               {showAdvancedOptions && (
                 <AdvancedOptions
@@ -514,7 +465,6 @@ export default function HeroOptimized() {
                   onAspectRatioChange={handleAspectRatioChange}
                 />
               )}
-              
               {/* Credit cost indicator - only show for signed-in users */}
               {userId && (
                 <div className="mt-3 flex items-center justify-between text-sm">
@@ -531,26 +481,17 @@ export default function HeroOptimized() {
                   )}
                 </div>
               )}
-              
               {/* Generate button */}
               {userGenerations && (userGenerations.limit - userGenerations.used) < 2 ? (
-                <div className="mt-5 space-y-3">
-                  <button
-                    className="w-full py-3.5 bg-gray-100 text-gray-400 font-medium text-base rounded-lg cursor-not-allowed"
-                    disabled
-                  >
-                    Insufficient Credits
-                  </button>
-                  <Link
-                    href="/pricing"
-                    className="w-full inline-block text-center py-3.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium text-base rounded-lg hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 transition-all"
-                  >
-                    <span className="flex items-center justify-center">
-                      <Sparkles className="mr-2 h-5 w-5" />
-                      Get More Credits
-                    </span>
-                  </Link>
-                </div>
+                <Link
+                  href="/pricing"
+                  className="w-full mt-5 inline-block text-center py-3.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium text-base rounded-lg hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 transition-all"
+                >
+                  <span className="flex items-center justify-center">
+                    <Sparkles className="mr-2 h-5 w-5" />
+                    Get More Credits
+                  </span>
+                </Link>
               ) : (
                 <button
                   className="w-full mt-5 py-3.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium text-base rounded-lg shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
@@ -570,14 +511,12 @@ export default function HeroOptimized() {
                   )}
                 </button>
               )}
-              
               {/* 20-second progress bar */}
               {isGenerating && (
                 <div className="w-full h-1 bg-gray-200 rounded mt-3 overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-[#FF7043] to-[#FFA726] progress-animation" />
                 </div>
               )}
-
               {/* Local styles for progress animation */}
               {isGenerating && (
                 <style>{`
@@ -590,7 +529,6 @@ export default function HeroOptimized() {
                   }
                 `}</style>
               )}
-              
               {/* Error message */}
               {(error || limitReachedError) && (
                 <div className="mt-3 text-sm text-red-600 bg-red-50 p-3 rounded-md">
@@ -599,12 +537,10 @@ export default function HeroOptimized() {
               )}
             </div>
           </div>
-          
           {/* Example showcase - 2/5 width on desktop */}
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="p-6">
               <h2 className="text-base font-medium text-gray-800 mb-4">Example SVGs</h2>
-              
               {/* Main image showcase with cleaner controls */}
               <div className="relative aspect-square bg-[#FAFAFA] rounded-lg mb-4 flex items-center justify-center border border-gray-100">
                 <Image
@@ -617,7 +553,6 @@ export default function HeroOptimized() {
                   placeholder="blur"
                   blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2Y1ZjVmNSIvPjwvc3ZnPg=="
                 />
-                
                 {/* Navigation buttons - more subtle */}
                 <button
                   className="absolute left-2 z-10 bg-white/90 hover:bg-white w-8 h-8 flex items-center justify-center rounded-full shadow-sm border border-gray-200 transition-colors"
@@ -626,7 +561,6 @@ export default function HeroOptimized() {
                 >
                   <ChevronLeft className="w-4 h-4 text-gray-600" />
                 </button>
-                
                 <button
                   className="absolute right-2 z-10 bg-white/90 hover:bg-white w-8 h-8 flex items-center justify-center rounded-full shadow-sm border border-gray-200 transition-colors"
                   onClick={handleNextSlide}
@@ -635,7 +569,6 @@ export default function HeroOptimized() {
                   <ChevronRight className="w-4 h-4 text-gray-600" />
                 </button>
               </div>
-              
               {/* Indicator dots - minimal */}
               <div className="flex justify-center gap-1.5 mb-3">
                 {featuredExamples.map((_, idx) => (
@@ -649,7 +582,6 @@ export default function HeroOptimized() {
                   />
                 ))}
               </div>
-              
               {/* Example info */}
               <div className="text-center">
                 <span className="inline-block text-xs font-medium text-[#4E342E] bg-[#FFF8F1] border border-[#FF7043] px-2 py-0.5 rounded-full mb-2">
@@ -662,7 +594,6 @@ export default function HeroOptimized() {
             </div>
           </div>
         </div>
-        
         {/* SEO enhanced feature links */}
         <div className="max-w-4xl mx-auto mt-10 mb-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
@@ -674,7 +605,6 @@ export default function HeroOptimized() {
                 <ArrowRight className="ml-1 h-3 w-3" />
               </Link>
             </div>
-            
             <div className="p-4 bg-white rounded-lg border border-gray-100 shadow-sm">
               <h3 className="font-medium text-base mb-2">AI Logo Creation</h3>
               <p className="text-sm text-gray-600 mb-2">Design professional SVG logos with artificial intelligence</p>
@@ -683,7 +613,6 @@ export default function HeroOptimized() {
                 <ArrowRight className="ml-1 h-3 w-3" />
               </span>
             </div>
-            
             <div className="p-4 bg-white rounded-lg border border-gray-100 shadow-sm">
               <h3 className="font-medium text-base mb-2">SVG Tutorials</h3>
               <p className="text-sm text-gray-600 mb-2">Learn how to create and use SVG graphics effectively</p>
@@ -695,7 +624,6 @@ export default function HeroOptimized() {
           </div>
         </div>
       </div>
-      
       {/* Signup Modal */}
       <GenerationSignupModal
         isOpen={showSignupModal}
@@ -706,8 +634,8 @@ export default function HeroOptimized() {
         isAuthenticated={!!userId}
         isSubscribed={isSubscribed}
         preservePrompt={true}
+        source="homepage"
       />
-      
       {/* Upgrade Modal for authenticated users who hit their limit */}
       <UpgradeModal
         isOpen={showUpgradeModal}

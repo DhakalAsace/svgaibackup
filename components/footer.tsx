@@ -101,21 +101,11 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold text-secondary mb-4">Company</h4>
+            <h4 className="font-semibold text-secondary mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="#" className="text-sm text-secondary/70 hover:text-primary">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-sm text-secondary/70 hover:text-primary">
-                  Careers
-                </Link>
-              </li>
-              <li>
                 <Link href="/privacy" className="text-sm text-secondary/70 hover:text-primary">
-                  Privacy Policy
+                  Privacy & Cookies
                 </Link>
               </li>
               <li>

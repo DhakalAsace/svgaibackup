@@ -1,23 +1,1 @@
-'use client';
-
-import { useEffect } from 'react';
-
-/**
- * A placeholder SpeedInsights component that will be replaced by the actual
- * @vercel/speed-insights component when deployed to Vercel.
- * 
- * This component doesn't require the actual package during development
- * but will work when deployed to Vercel because the package will be
- * installed during the build process.
- */
-export function CustomSpeedInsights() {
-  useEffect(() => {
-    // Only log in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('SpeedInsights placeholder loaded. Will be replaced with actual component in production.');
-    }
-  }, []);
-
-  // Return null in development, the actual component will be used in production
-  return null;
-}
+'use client';import { useEffect } from 'react';/** * A placeholder SpeedInsights component that will be replaced by the actual * @vercel/speed-insights component when deployed to Vercel. *  * This component doesn't require the actual package during development * but will work when deployed to Vercel because the package will be * installed during the build process. */export function CustomSpeedInsights() {  useEffect(() => {    // Only log in development    if (process.env.NODE_ENV === 'development') {    }  }, []);  // Return null in development, the actual component will be used in production  return null;}

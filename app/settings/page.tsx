@@ -1,8 +1,6 @@
 import { Metadata } from "next";
 import { SettingsForm } from "@/components/settings/settings-form";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import { Database } from "@/types/database.types";
+import { createServerClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
 
 
@@ -12,8 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
-  // Fix cookies implementation to match Supabase's expected Promise<ReadonlyRequestCookies> type
-  const supabase = createServerComponentClient<Database>({ cookies });
+  // Create Supabase client with Next.js 15 compatible async cookies
+  const supabase = await createServerClient();
   
   // Get the authenticated user - this validates the session with Supabase Auth server
   const { data: { user }, error: authError } = await supabase.auth.getUser();

@@ -141,5 +141,11 @@
     "app/gone/page.tsx": {
       "maxDuration": 10
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/cleanup-videos",
+      "schedule": "0 2 * * *"
+    }
+  ]
 }

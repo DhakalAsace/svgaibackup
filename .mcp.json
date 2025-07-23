@@ -13,7 +13,7 @@
       "command": "npx",
       "args": ["-y", "@stripe/mcp", "--tools=all"],
       "env": {
-        "STRIPE_SECRET_KEY": "sk_test_51RPjwdIe6gMo8ijpGjDFFHcpYIoWHgU8dp0Aw4M4yi0vjrE2EdjoTEYnLOPcWcv8yje0miQH3AEwA5CRUcJ6ZZsv00kFqBc8QE"
+        "STRIPE_SECRET_KEY": "sk_test_51Rn2qHIrMacwgVYPHcnISW8F3GdYBu32Y93Uyyiw1FVglPSZCkXYTZQWtdd64o0tWlUv8BLvAHzrmVxthm8wET6o00wAjJhoiv"
       }
     },
     "playwright": {

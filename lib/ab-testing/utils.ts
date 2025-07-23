@@ -1,10 +1,8 @@
 /**
  * A/B Testing Utilities
  */
-
 import { ABTestConfig, ABTestVariant, UserContext } from './index'
 import { abTestManager } from './index'
-
 // QA Testing utilities
 export class ABTestingQA {
   /**
@@ -12,78 +10,61 @@ export class ABTestingQA {
    */
   static forceVariant(testId: string, variantId: string) {
     if (typeof window === 'undefined') return
-    
     const params = new URLSearchParams(window.location.search)
     params.set(`ab_force_${testId}`, variantId)
-    
     const newUrl = `${window.location.pathname}?${params.toString()}`
     window.history.replaceState({}, '', newUrl)
   }
-
   /**
    * Enable debug mode
    */
   static enableDebugMode() {
     if (typeof window === 'undefined') return
-    
     const params = new URLSearchParams(window.location.search)
     params.set('ab_debug', 'true')
-    
     const newUrl = `${window.location.pathname}?${params.toString()}`
     window.history.replaceState({}, '', newUrl)
   }
-
   /**
    * Preview a specific variant
    */
   static previewVariant(variantId: string) {
     if (typeof window === 'undefined') return
-    
     const params = new URLSearchParams(window.location.search)
     params.set('ab_preview', variantId)
-    
     const newUrl = `${window.location.pathname}?${params.toString()}`
     window.history.replaceState({}, '', newUrl)
   }
-
   /**
    * Clear all A/B testing parameters
    */
   static clearTestingParams() {
     if (typeof window === 'undefined') return
-    
     const params = new URLSearchParams(window.location.search)
-    
     // Remove all A/B testing params
     Array.from(params.keys()).forEach(key => {
       if (key.startsWith('ab_')) {
         params.delete(key)
       }
     })
-    
     const newUrl = params.toString() 
       ? `${window.location.pathname}?${params.toString()}`
       : window.location.pathname
-      
     window.history.replaceState({}, '', newUrl)
   }
-
   /**
    * Get forced variant from URL
    */
   static getForcedVariant(testId: string): string | null {
     if (typeof window === 'undefined') return null
-    
     const params = new URLSearchParams(window.location.search)
     return params.get(`ab_force_${testId}`)
   }
 }
-
 // GDPR Compliance utilities
 export class ABTestingPrivacy {
   private static CONSENT_KEY = 'ab_testing_consent'
   private static OPTED_OUT_KEY = 'ab_testing_opted_out'
-
   /**
    * Check if user has consented to A/B testing
    */
@@ -91,13 +72,11 @@ export class ABTestingPrivacy {
     if (typeof window === 'undefined') return false
     return localStorage.getItem(this.CONSENT_KEY) === 'true'
   }
-
   /**
    * Set user consent
    */
   static setConsent(consent: boolean) {
     if (typeof window === 'undefined') return
-    
     if (consent) {
       localStorage.setItem(this.CONSENT_KEY, 'true')
       localStorage.removeItem(this.OPTED_OUT_KEY)
@@ -106,7 +85,6 @@ export class ABTestingPrivacy {
       localStorage.setItem(this.OPTED_OUT_KEY, 'true')
     }
   }
-
   /**
    * Check if user has opted out
    */
@@ -114,13 +92,11 @@ export class ABTestingPrivacy {
     if (typeof window === 'undefined') return false
     return localStorage.getItem(this.OPTED_OUT_KEY) === 'true'
   }
-
   /**
    * Clear all A/B testing data
    */
   static clearAllData() {
     if (typeof window === 'undefined') return
-    
     // Clear localStorage
     const keys = Object.keys(localStorage)
     keys.forEach(key => {
@@ -128,7 +104,6 @@ export class ABTestingPrivacy {
         localStorage.removeItem(key)
       }
     })
-    
     // Clear sessionStorage
     const sessionKeys = Object.keys(sessionStorage)
     sessionKeys.forEach(key => {
@@ -137,7 +112,6 @@ export class ABTestingPrivacy {
       }
     })
   }
-
   /**
    * Get privacy-safe user context
    */
@@ -153,11 +127,9 @@ export class ABTestingPrivacy {
     return context
   }
 }
-
 // Performance monitoring
 export class ABTestingPerformance {
   private static marks: Map<string, number> = new Map()
-
   /**
    * Mark start of variant rendering
    */
@@ -165,18 +137,15 @@ export class ABTestingPerformance {
     const key = `${testId}_${variantId}_start`
     this.marks.set(key, performance.now())
   }
-
   /**
    * Mark end of variant rendering
    */
   static markVariantEnd(testId: string, variantId: string) {
     const startKey = `${testId}_${variantId}_start`
     const start = this.marks.get(startKey)
-    
     if (start) {
       const duration = performance.now() - start
       this.marks.delete(startKey)
-      
       // Track performance metric
       if (typeof window !== 'undefined' && (window as any).analytics) {
         (window as any).analytics.trackPerformance('variant_render_time', {
@@ -185,24 +154,19 @@ export class ABTestingPerformance {
           duration_ms: duration,
         })
       }
-      
       return duration
     }
-    
     return null
   }
-
   /**
    * Check if variant loading is impacting performance
    */
   static checkPerformanceImpact(threshold: number = 100): boolean {
     const entries = performance.getEntriesByType('measure')
     const abEntries = entries.filter(e => e.name.startsWith('ab_'))
-    
     return abEntries.some(e => e.duration > threshold)
   }
 }
-
 // Test validation utilities
 export class ABTestValidator {
   /**
@@ -210,18 +174,15 @@ export class ABTestValidator {
    */
   static validateTest(test: ABTestConfig): { valid: boolean; errors: string[] } {
     const errors: string[] = []
-
     // Validate variants
     if (!test.variants || test.variants.length < 2) {
       errors.push('Test must have at least 2 variants')
     }
-
     // Validate weights
     const totalWeight = test.variants.reduce((sum, v) => sum + v.weight, 0)
     if (Math.abs(totalWeight - 100) > 0.01) {
       errors.push(`Variant weights must sum to 100 (current: ${totalWeight})`)
     }
-
     // Validate control variant
     const controlCount = test.variants.filter(v => v.isControl).length
     if (controlCount === 0) {
@@ -229,29 +190,24 @@ export class ABTestValidator {
     } else if (controlCount > 1) {
       errors.push('Test can only have one control variant')
     }
-
     // Validate success metrics
     if (!test.successMetrics || test.successMetrics.length === 0) {
       errors.push('Test must have at least one success metric')
     }
-
     // Validate dates
     if (test.startDate && test.endDate && test.startDate >= test.endDate) {
       errors.push('End date must be after start date')
     }
-
     // Validate traffic allocation
     if (test.trafficAllocation !== undefined && 
         (test.trafficAllocation < 0 || test.trafficAllocation > 100)) {
       errors.push('Traffic allocation must be between 0 and 100')
     }
-
     return {
       valid: errors.length === 0,
       errors,
     }
   }
-
   /**
    * Validate variant assignment consistency
    */
@@ -264,7 +220,6 @@ export class ABTestValidator {
     return expectedVariant === actualVariant
   }
 }
-
 // URL utilities
 export class ABTestingURL {
   /**
@@ -276,45 +231,35 @@ export class ABTestingURL {
     urlObj.searchParams.set(`utm_ab_variant`, variantId)
     return urlObj.toString()
   }
-
   /**
    * Extract variant info from URL
    */
   static getVariantFromURL(): { testId: string; variantId: string } | null {
     if (typeof window === 'undefined') return null
-    
     const params = new URLSearchParams(window.location.search)
     const testId = params.get('utm_ab_test')
     const variantId = params.get('utm_ab_variant')
-    
     if (testId && variantId) {
       return { testId, variantId }
     }
-    
     return null
   }
 }
-
 // Emergency kill switch
 export class ABTestingKillSwitch {
   private static KILL_SWITCH_KEY = 'ab_testing_kill_switch'
-
   /**
    * Activate kill switch to disable all tests
    */
   static activate(reason: string) {
     if (typeof window === 'undefined') return
-    
     localStorage.setItem(this.KILL_SWITCH_KEY, JSON.stringify({
       activated: true,
       reason,
       timestamp: new Date().toISOString(),
     }))
-    
     // Log to monitoring
-    console.error('[A/B Testing] Kill switch activated:', reason)
-  }
-
+    }
   /**
    * Deactivate kill switch
    */
@@ -322,16 +267,13 @@ export class ABTestingKillSwitch {
     if (typeof window === 'undefined') return
     localStorage.removeItem(this.KILL_SWITCH_KEY)
   }
-
   /**
    * Check if kill switch is active
    */
   static isActive(): boolean {
     if (typeof window === 'undefined') return false
-    
     const data = localStorage.getItem(this.KILL_SWITCH_KEY)
     if (!data) return false
-    
     try {
       const parsed = JSON.parse(data)
       return parsed.activated === true
@@ -340,16 +282,13 @@ export class ABTestingKillSwitch {
     }
   }
 }
-
 // Export utilities
 export function exportTestResults(testId: string): string {
   const test = abTestManager.getAllTests().find(t => t.id === testId)
   const stats = abTestManager.getTestStats(testId)
-  
   if (!test) {
     throw new Error(`Test ${testId} not found`)
   }
-  
   const csv = [
     ['Test Name', test.name],
     ['Test ID', test.id],
@@ -367,6 +306,5 @@ export function exportTestResults(testId: string): string {
       s.uplift !== undefined ? `${s.uplift.toFixed(2)}%` : 'N/A',
     ])
   ].map(row => row.join(',')).join('\n')
-  
   return csv
 }

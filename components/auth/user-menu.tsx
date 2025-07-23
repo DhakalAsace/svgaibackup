@@ -13,10 +13,10 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Settings, LogOut, Crown, Sparkles, LayoutDashboard } from "lucide-react";
+import { Settings, LogOut, Crown, Sparkles, LayoutDashboard, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect, useCallback } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClientComponentClient } from "@/lib/supabase";
 import { useCredits } from "@/contexts/CreditContext";
 
 export function UserMenu() {
@@ -27,6 +27,7 @@ export function UserMenu() {
   const [creditsUsed, setCreditsUsed] = useState(0);
   const [creditLimit, setCreditLimit] = useState(6);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isPortalLoading, setIsPortalLoading] = useState(false);
   const supabase = createClientComponentClient();
 
   // Create a callback to fetch subscription status
@@ -40,11 +41,10 @@ export function UserMenu() {
         .single();
 
       if (error) {
-        console.error('Error fetching profile:', error);
+        // Error fetching profile
       }
 
       if (profile) {
-        console.log('Profile fetched:', profile);
         const isActive = profile.subscription_status === 'active';
         setIsSubscribed(isActive);
         setSubscriptionTier(isActive ? (profile.subscription_tier || 'starter') : null);
@@ -165,6 +165,32 @@ export function UserMenu() {
     router.push("/");
   };
 
+  // Handle manage subscription
+  const handleManageSubscription = async () => {
+    setIsPortalLoading(true);
+    try {
+      const response = await fetch('/api/create-portal-session', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to open billing portal');
+      }
+
+      const { url } = await response.json();
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error('No portal URL returned');
+      }
+    } catch (error) {
+      console.error('Portal error:', error);
+    } finally {
+      setIsPortalLoading(false);
+    }
+  };
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -236,7 +262,15 @@ export function UserMenu() {
           <Settings className="mr-2 h-4 w-4" />
           Settings
         </DropdownMenuItem>
-        {!subscriptionTier && (
+        {subscriptionTier ? (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleManageSubscription} disabled={isPortalLoading}>
+              <CreditCard className="mr-2 h-4 w-4" />
+              {isPortalLoading ? 'Loading...' : 'Manage Subscription'}
+            </DropdownMenuItem>
+          </>
+        ) : (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push('/pricing')} className="text-[#FF7043]">

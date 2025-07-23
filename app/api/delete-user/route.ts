@@ -71,15 +71,20 @@ export async function POST(request: Request) {
 
   // --- Check authentication and authorization ---
   try {
-    // First verify the user is authenticated and has admin privileges
-    const { isAuthenticated, isAdmin, user } = await checkAdminAuth();
+    // Create a client to check the current user
+    const { createServerClient } = await import('@/lib/supabase-server');
+    const supabase = await createServerClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
-    if (!isAuthenticated) {
+    if (!user || authError) {
       logger.warn('Unauthenticated user deletion attempt');
       return unauthorized('Authentication required');
     }
     
-    requestingUserId = user?.id;
+    requestingUserId = user.id;
+    
+    // Check if user is admin
+    const isAdmin = await checkAdminAuth();
     
     // Only allow user to delete themselves OR admin to delete any user
     if (!isAdmin && userId !== requestingUserId) {

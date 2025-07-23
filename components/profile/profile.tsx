@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { useAuth } from "@/contexts/AuthContext";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '@/lib/supabase';
 import { Database } from '@/types/database.types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

@@ -1,5 +1,5 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient as createSupabaseBrowserClient } from '@supabase/ssr'
 import { type Database } from '@/types/database.types'
 
 // For server-side usage with direct API access (service role)
@@ -14,12 +14,18 @@ export const createServerClient = () => {
   return createSupabaseClient<Database>(supabaseUrl, supabaseKey)
 }
 
-// For client components - uses the auth helpers which handle cookies properly
+// For client components - uses @supabase/ssr
 export const createBrowserClient = () => {
-  return createClientComponentClient<Database>({
-    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  })
+  return createSupabaseBrowserClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
+
+// Backward compatibility export for components using old auth-helpers
+// Ignoring the generic type parameter since we always use Database type
+export function createClientComponentClient<T = any>() {
+  return createBrowserClient()
 }
 
 // Alias for backward compatibility

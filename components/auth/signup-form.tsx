@@ -24,7 +24,7 @@ function SignUpFormContent() {
   const preservePrompt = searchParams.get('preservePrompt');
   
   // Construct redirect path with preservePrompt if needed
-  let redirectPath = returnUrl || '/dashboard';
+  let redirectPath = returnUrl || '/';
   if (preservePrompt === 'true' && !redirectPath.includes('preservePrompt')) {
     redirectPath += (redirectPath.includes('?') ? '&' : '?') + 'preservePrompt=true';
   }

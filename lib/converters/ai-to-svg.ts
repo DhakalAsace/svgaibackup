@@ -5,7 +5,6 @@
  * Uses CloudConvert API for high-quality conversion.
  * Handles artboards, layers, and Illustrator-specific metadata.
  */
-
 import type { 
   ConversionHandler,
   ConversionOptions, 
@@ -20,7 +19,6 @@ import {
 } from './errors'
 import { validateFile, detectFileTypeFromBuffer } from './validation'
 import { convertWithCloudConvert } from './cloudconvert-client'
-
 /**
  * Extended conversion options for AI to SVG
  */
@@ -32,30 +30,24 @@ interface AiToSvgOptions extends ConversionOptions {
   /** Extract embedded images (default: false) */
   extractImages?: boolean
 }
-
 /**
  * Validate AI file input
  */
 function validateAiInput(input: Buffer | string): void {
   const buffer = typeof input === 'string' ? Buffer.from(input, 'base64') : input
-  
   // Basic file validation
   const validation = validateFile(buffer, {
     allowedFormats: ['ai', 'pdf'],
     maxSize: 100 * 1024 * 1024 // 100MB
   })
-  
   if (!validation.isValid) {
     throw new FileValidationError(validation.error!)
   }
-  
   // Detect file type
   const format = detectFileTypeFromBuffer(buffer)
-  
   if (!format) {
     throw new FileValidationError('Unable to detect file format')
   }
-  
   // Allow both AI and PDF formats (AI files are PDF-compatible)
   if (format !== 'ai' && format !== 'pdf') {
     throw new UnsupportedFormatError(
@@ -63,7 +55,6 @@ function validateAiInput(input: Buffer | string): void {
     )
   }
 }
-
 /**
  * AI to SVG conversion handler using CloudConvert
  */
@@ -74,17 +65,12 @@ export const aiToSvgHandler: ConversionHandler = async (
   try {
     // Convert string input to Buffer if needed
     const inputBuffer = typeof input === 'string' ? Buffer.from(input, 'base64') : input
-    
     // Validate input
     validateAiInput(inputBuffer)
-    
     // Report initial progress
     if (options.onProgress) {
       options.onProgress(0.1)
     }
-    
-    console.log('[AI-to-SVG] Starting CloudConvert conversion...')
-    
     // Use CloudConvert for AI to SVG conversion
     const result = await convertWithCloudConvert(
       inputBuffer,
@@ -100,26 +86,22 @@ export const aiToSvgHandler: ConversionHandler = async (
         }
       }
     )
-    
     if (!result.success) {
       throw new ConversionError(
         `CloudConvert AI to SVG failed: ${result.error}`,
         'CLOUDCONVERT_AI_TO_SVG_FAILED'
       )
     }
-    
     if (!result.data) {
       throw new ConversionError(
         'CloudConvert AI to SVG returned no data',
         'CLOUDCONVERT_NO_DATA'
       )
     }
-    
     // Ensure we return string data for SVG
     const svgData = typeof result.data === 'string' 
       ? result.data 
       : result.data.toString('utf8')
-    
     return {
       success: true,
       data: svgData,
@@ -134,7 +116,6 @@ export const aiToSvgHandler: ConversionHandler = async (
         extractImages: options.extractImages === true
       }
     }
-    
   } catch (error) {
     // Handle known errors
     if (error instanceof FileValidationError || 
@@ -142,7 +123,6 @@ export const aiToSvgHandler: ConversionHandler = async (
         error instanceof ConversionError) {
       throw error
     }
-    
     // Handle unknown errors
     const message = error instanceof Error ? error.message : 'Unknown error'
     throw new ConversionError(
@@ -151,7 +131,6 @@ export const aiToSvgHandler: ConversionHandler = async (
     )
   }
 }
-
 /**
  * Client-side AI to SVG conversion wrapper
  */
@@ -163,7 +142,6 @@ export async function convertAiToSvgClient(
   const buffer = Buffer.from(arrayBuffer)
   return aiToSvgHandler(buffer, options)
 }
-
 /**
  * Server-side AI to SVG conversion wrapper
  */
@@ -173,7 +151,6 @@ export async function convertAiToSvgServer(
 ): Promise<ConversionResult> {
   return aiToSvgHandler(buffer, options)
 }
-
 /**
  * AI to SVG converter configuration
  */

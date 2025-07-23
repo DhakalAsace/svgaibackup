@@ -1,16 +1,13 @@
 // Schema validation utilities for structured data
-
 export interface SchemaValidationResult {
   isValid: boolean
   errors: string[]
   warnings: string[]
 }
-
 // Validate that required fields are present and properly formatted
 export function validateSchema(schema: any): SchemaValidationResult {
   const errors: string[] = []
   const warnings: string[] = []
-  
   // Check for required @context and @type
   if (!schema['@context']) {
     errors.push('Missing @context field')
@@ -18,10 +15,8 @@ export function validateSchema(schema: any): SchemaValidationResult {
   if (!schema['@type']) {
     errors.push('Missing @type field')
   }
-  
   // Validate specific schema types
   const schemaType = schema['@type']
-  
   switch (schemaType) {
     case 'Organization':
       validateOrganization(schema, errors, warnings)
@@ -51,19 +46,16 @@ export function validateSchema(schema: any): SchemaValidationResult {
       validateCollection(schema, errors, warnings)
       break
   }
-  
   // Check aggregate ratings
   if (schema.aggregateRating) {
     validateAggregateRating(schema.aggregateRating, errors, warnings)
   }
-  
   return {
     isValid: errors.length === 0,
     errors,
     warnings
   }
 }
-
 function validateOrganization(schema: any, errors: string[], warnings: string[]) {
   if (!schema.name) errors.push('Organization: Missing name')
   if (!schema.url) errors.push('Organization: Missing url')
@@ -72,14 +64,12 @@ function validateOrganization(schema: any, errors: string[], warnings: string[])
     warnings.push('Organization: Missing sameAs links (recommended for E-E-A-T)')
   }
 }
-
 function validateApplication(schema: any, errors: string[], warnings: string[]) {
   if (!schema.name) errors.push('Application: Missing name')
   if (!schema.description) errors.push('Application: Missing description')
   if (!schema.offers) warnings.push('Application: Missing offers information')
   if (!schema.applicationCategory) warnings.push('Application: Missing applicationCategory')
 }
-
 function validateHowTo(schema: any, errors: string[], warnings: string[]) {
   if (!schema.name) errors.push('HowTo: Missing name')
   if (!schema.step || !Array.isArray(schema.step)) {
@@ -92,7 +82,6 @@ function validateHowTo(schema: any, errors: string[], warnings: string[]) {
   }
   if (!schema.totalTime) warnings.push('HowTo: Missing totalTime')
 }
-
 function validateFAQ(schema: any, errors: string[], warnings: string[]) {
   if (!schema.mainEntity || !Array.isArray(schema.mainEntity)) {
     errors.push('FAQPage: Missing or invalid mainEntity array')
@@ -108,7 +97,6 @@ function validateFAQ(schema: any, errors: string[], warnings: string[]) {
     })
   }
 }
-
 function validateProduct(schema: any, errors: string[], warnings: string[]) {
   if (!schema.name) errors.push('Product: Missing name')
   if (!schema.description) errors.push('Product: Missing description')
@@ -123,7 +111,6 @@ function validateProduct(schema: any, errors: string[], warnings: string[]) {
   }
   if (!schema.brand) warnings.push('Product: Missing brand information')
 }
-
 function validateVideo(schema: any, errors: string[], warnings: string[]) {
   if (!schema.name) errors.push('VideoObject: Missing name')
   if (!schema.description) errors.push('VideoObject: Missing description')
@@ -134,7 +121,6 @@ function validateVideo(schema: any, errors: string[], warnings: string[]) {
     errors.push('VideoObject: Missing both contentUrl and embedUrl')
   }
 }
-
 function validateArticle(schema: any, errors: string[], warnings: string[]) {
   if (!schema.headline) errors.push('Article: Missing headline')
   if (!schema.author) warnings.push('Article: Missing author (important for E-E-A-T)')
@@ -142,24 +128,20 @@ function validateArticle(schema: any, errors: string[], warnings: string[]) {
   if (!schema.image) warnings.push('Article: Missing image')
   if (!schema.publisher) warnings.push('Article: Missing publisher (important for E-E-A-T)')
 }
-
 function validateCollection(schema: any, errors: string[], warnings: string[]) {
   if (!schema.name) errors.push('Collection: Missing name')
   if (!schema.mainEntity && !schema.image) {
     warnings.push('Collection: Missing mainEntity or image array')
   }
 }
-
 function validateAggregateRating(rating: any, errors: string[], warnings: string[]) {
   if (!rating.ratingValue) errors.push('AggregateRating: Missing ratingValue')
   if (!rating.ratingCount && !rating.reviewCount) {
     errors.push('AggregateRating: Missing both ratingCount and reviewCount')
   }
-  
   // Check for realistic values
   const ratingValue = parseFloat(rating.ratingValue)
   const ratingCount = parseInt(rating.ratingCount || rating.reviewCount || '0')
-  
   if (ratingValue > 5 || ratingValue < 1) {
     errors.push('AggregateRating: ratingValue must be between 1 and 5')
   }
@@ -170,22 +152,18 @@ function validateAggregateRating(rating: any, errors: string[], warnings: string
     warnings.push('AggregateRating: Very low review count may not be impactful')
   }
 }
-
 // Helper to generate JSON-LD script tag
 export function generateJsonLdScript(schema: any): string {
   return `<script type="application/ld+json">${JSON.stringify(schema, null, 2)}</script>`
 }
-
 // Helper to combine multiple schemas
 export function combineSchemas(...schemas: any[]): any[] {
   return schemas.filter(Boolean).map(schema => {
     const validation = validateSchema(schema)
     if (!validation.isValid) {
-      console.error('Schema validation failed:', validation.errors)
-    }
+      }
     if (validation.warnings.length > 0) {
-      console.warn('Schema warnings:', validation.warnings)
-    }
+      }
     return schema
   })
 }

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { Session, User, AuthError } from "@supabase/supabase-js";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClientComponentClient } from "@/lib/supabase";
 import { Database } from "@/types/database.types";
 
 type AuthContextType = {
@@ -31,7 +31,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // with the initial session state upon subscription.
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
-        console.log('Auth state changed:', event, newSession ? 'Session exists' : 'No session');
         setSession(newSession);
         setUser(newSession?.user ?? null);
         setIsLoading(false); // Set loading to false once we have the state
@@ -53,10 +52,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
-
       if (error) throw error;
     } catch (error) {
-      console.error("Error signing up:", error);
       throw error;
     }
   };
@@ -67,10 +64,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email,
         password,
       });
-
       if (error) throw error;
     } catch (error) {
-      console.error("Error signing in:", error);
       throw error;
     }
   };
@@ -78,7 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async (redirectPath?: string) => {
     try {
       // Store the redirect path in localStorage before OAuth redirect
-      if (redirectPath && redirectPath !== '/dashboard') {
+      if (redirectPath && redirectPath !== '/') {
         localStorage.setItem('authRedirectPath', redirectPath);
       }
       
@@ -88,10 +83,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
-
       if (error) throw error;
     } catch (error) {
-      console.error("Error signing in with Google:", error);
       throw error;
     }
   };
@@ -101,7 +94,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     } catch (error) {
-      console.error("Error signing out:", error);
       throw error;
     }
   };

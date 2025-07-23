@@ -22,6 +22,7 @@ interface GenerationSignupModalProps {
   isAuthenticated?: boolean;
   isSubscribed?: boolean;
   preservePrompt?: boolean; // NEW PROP
+  source?: 'homepage' | 'icon-generator' | 'results'; // NEW PROP for smart redirection
 }
 
 export function GenerationSignupModal({
@@ -33,24 +34,40 @@ export function GenerationSignupModal({
   isAuthenticated = false,
   isSubscribed = false,
   preservePrompt = false,
+  source = 'homepage',
 }: GenerationSignupModalProps) {
   const router = useRouter();
 
+  // Determine the return URL based on the source
+  const getReturnUrl = () => {
+    switch (source) {
+      case 'icon-generator':
+        return '/ai-icon-generator';
+      case 'results':
+        return '/'; // Results page redirects to homepage
+      case 'homepage':
+      default:
+        return '/';
+    }
+  };
+
   const handleSignup = () => {
     onClose();
-    // Include preservePrompt flag in URL
+    // Include preservePrompt flag and source-based returnUrl in URL
+    const returnUrl = getReturnUrl();
     const url = preservePrompt 
-      ? '/signup?returnUrl=/&preservePrompt=true' 
-      : '/signup?returnUrl=/';
+      ? `/signup?returnUrl=${encodeURIComponent(returnUrl)}&preservePrompt=true` 
+      : `/signup?returnUrl=${encodeURIComponent(returnUrl)}`;
     router.push(url);
   };
 
   const handleLogin = () => {
     onClose();
-    // Include preservePrompt flag in URL
+    // Include preservePrompt flag and source-based returnUrl in URL
+    const returnUrl = getReturnUrl();
     const url = preservePrompt 
-      ? '/login?returnUrl=/&preservePrompt=true' 
-      : '/login?returnUrl=/';
+      ? `/login?returnUrl=${encodeURIComponent(returnUrl)}&preservePrompt=true` 
+      : `/login?returnUrl=${encodeURIComponent(returnUrl)}`;
     router.push(url);
   };
 

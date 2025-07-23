@@ -1,5 +1,5 @@
 import Replicate from "replicate"
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createRouteClient } from '@/lib/supabase-server'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextRequest } from 'next/server'
@@ -68,14 +68,20 @@ function createApiError(status: number, message: string) {
 }
 
 export async function POST(req: NextRequest) {
+  // Declare deductResult outside try/catch so it's accessible in error handling
+  let deductResult: any = null;
+  let isSubscribed = false;
+  let user: any = null;
+  let identifier: string = '';
+  let identifier_type: 'user_id' | 'ip_address' = 'ip_address';
+  
   try {
     const cookieStore = cookies();
-    const supabaseUserClient = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabaseUserClient = await createRouteClient();
 
-    const { data: { user }, error: authError } = await supabaseUserClient.auth.getUser()
-
-    let identifier: string
-    let identifier_type: 'user_id' | 'ip_address'
+    const authResult = await supabaseUserClient.auth.getUser()
+    user = authResult.data.user;
+    const authError = authResult.error;
 
     if (user?.id && !authError) {
       identifier = user.id
@@ -110,55 +116,64 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Use the new credit system function
-    const { data: limitResult, error: limitRpcError } = await supabaseAdmin.rpc(
-      'check_credits_v3',
-      {
-        p_user_id: user?.id || null,
-        p_identifier: identifier,
-        p_identifier_type: identifier_type,
-        p_generation_type: 'icon' // This endpoint generates icons
-      }
-    );
+    // First check if user has credits WITHOUT deducting them
+    // We'll use a modified query that doesn't update the count
+    const { data: checkResult, error: checkError } = await supabaseAdmin
+      .from('profiles')
+      .select('*, subscription_status')
+      .eq('id', user?.id || '')
+      .single();
     
-    if (limitRpcError) {
-      logger.error('Error checking credit limit', { error: limitRpcError })
-      const { response, status } = createErrorResponse(
-        limitRpcError, 
-        'Error checking usage limit', 
-        500
-      );
-      return Response.json(response, { status });
-    }
+    let canGenerate = false;
+    let remainingCredits = 0;
+    let isSubscribed = false;
     
-    // If no result or limit reached
-    if (!limitResult || limitResult.length === 0 || !limitResult[0].success) {
-      const remaining = limitResult?.[0]?.remaining_credits || 0;
-      const limitType = limitResult?.[0]?.limit_type || 'unknown';
-      
-      logger.info('Generation limit reached', { 
-        identifierType: identifier_type, 
-        limitType,
-        remaining 
-      });
-      
-      let errorMessage = '';
-      if (limitType === 'anonymous_daily') {
-        errorMessage = "Sign up to continue generating for free and get 6 bonus credits!";
-      } else if (limitType === 'lifetime_credits') {
-        errorMessage = "You've used all your free credits. Upgrade to Pro for more!";
-      } else if (limitType === 'monthly_credits') {
-        errorMessage = `You've used all your monthly credits (${limitResult[0].current_count}). Upgrade your plan or wait for next month.`;
+    if (user?.id) {
+      // For logged-in users, check their credits
+      if (checkError && checkError.code !== 'PGRST116') {
+        logger.error('Error checking user profile', { error: checkError });
+        return Response.json({ error: 'Error checking usage limit' }, { status: 500 });
       }
       
-      return tooManyRequests(errorMessage);
+      if (checkResult) {
+        isSubscribed = checkResult.subscription_status === 'active';
+        
+        if (isSubscribed) {
+          // Check monthly credits
+          remainingCredits = checkResult.monthly_credits - checkResult.monthly_credits_used;
+          canGenerate = remainingCredits >= 1;
+        } else {
+          // Check lifetime credits
+          remainingCredits = checkResult.lifetime_credits_granted - checkResult.lifetime_credits_used;
+          canGenerate = remainingCredits >= 1;
+        }
+      }
+      
+      if (!canGenerate) {
+        const errorMessage = isSubscribed 
+          ? `You've used all your monthly credits. Upgrade your plan or wait for next month.`
+          : "You've used all your free credits. Upgrade to Pro for more!";
+        return tooManyRequests(errorMessage);
+      }
+    } else {
+      // For anonymous users, check daily limit
+      const { data: anonCheck } = await supabaseAdmin
+        .from('daily_generation_limits')
+        .select('count')
+        .eq('identifier', identifier)
+        .eq('identifier_type', identifier_type)
+        .eq('generation_date', new Date().toISOString().split('T')[0])
+        .single();
+      
+      if (anonCheck && anonCheck.count >= 1) {
+        return tooManyRequests("Sign up to continue generating for free and get 6 bonus credits!");
+      }
+      
+      canGenerate = true;
+      remainingCredits = 1;
     }
-    
-    // Calculate remaining credits and subscription status
-    const remainingCredits = limitResult[0].remaining_credits || 0;
-    const isSubscribed = limitResult[0].is_subscribed || false;
 
-    logger.info('Usage count incremented', { identifierType: identifier_type, remainingCredits })
+    logger.info('Credit check passed', { identifierType: identifier_type, remainingCredits })
 
     // 3. Validate request body
     const { data: validatedData, error: validationError } = await validateRequestBody(req, generateIconSchema);
@@ -168,7 +183,28 @@ export async function POST(req: NextRequest) {
       return badRequest(validationError);
     }
     
-    // 4. Proceed with Icon SVG generation
+    // 4. DEDUCT CREDITS BEFORE GENERATION to prevent race conditions
+    const { data: deductData, error: deductError } = await supabaseAdmin.rpc(
+      'check_credits_v3',
+      {
+        p_user_id: user?.id || null,
+        p_identifier: identifier,
+        p_identifier_type: identifier_type,
+        p_generation_type: 'icon'
+      }
+    );
+    
+    deductResult = deductData; // Store in outer scope variable
+    
+    if (deductError || !deductResult?.[0]?.success) {
+      logger.error('Error deducting credits', { error: deductError, result: deductResult });
+      return tooManyRequests("Insufficient credits or rate limit exceeded");
+    }
+    
+    // Update remaining credits from the deduction
+    remainingCredits = deductResult[0].remaining_credits;
+    
+    // 5. Proceed with Icon SVG generation
     const { prompt, style = "icon", size = "1024x1024", aspect_ratio = "1:1" } = validatedData!;
 
     // Initialize Replicate client with validated API token
@@ -378,11 +414,13 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      // Credits already deducted before generation, no need to deduct again
+
       // Return the URL and remaining credits
       return successResponse(
         createSuccessResponse({
           svgUrl,
-          remainingGenerations: remainingCredits,
+          remainingGenerations: remainingCredits, // Use the credits from after deduction
           creditsUsed: 1,
           modelInfo: 'recraft-ai/recraft-20b-svg',
           isSubscribed,
@@ -392,6 +430,72 @@ export async function POST(req: NextRequest) {
     } catch (error) {
       const sanitizedError = sanitizeData(error);
       logger.error('Error generating SVG icon', { error: sanitizedError });
+      
+      // REFUND CREDITS if generation failed (only if we deducted them)
+      if (deductResult?.[0]?.success) {
+        try {
+          // Refund the credits by reversing the deduction
+          if (user?.id) {
+            if (isSubscribed) {
+              // Get current credits and subtract
+              const { data: profile } = await supabaseAdmin
+                .from('profiles')
+                .select('monthly_credits_used')
+                .eq('id', user.id)
+                .single();
+              
+              if (profile) {
+                await supabaseAdmin
+                  .from('profiles')
+                  .update({ 
+                    monthly_credits_used: Math.max(0, profile.monthly_credits_used - 1)
+                  })
+                  .eq('id', user.id);
+              }
+            } else {
+              // Get current credits and subtract
+              const { data: profile } = await supabaseAdmin
+                .from('profiles')
+                .select('lifetime_credits_used')
+                .eq('id', user.id)
+                .single();
+              
+              if (profile) {
+                await supabaseAdmin
+                  .from('profiles')
+                  .update({ 
+                    lifetime_credits_used: Math.max(0, profile.lifetime_credits_used - 1)
+                  })
+                  .eq('id', user.id);
+              }
+            }
+            logger.info('Credits refunded due to generation failure');
+          } else {
+            // For anonymous users, decrement the daily counter
+            // Get current count and decrement
+            const { data: limitData } = await supabaseAdmin
+              .from('daily_generation_limits')
+              .select('count')
+              .eq('identifier', identifier)
+              .eq('identifier_type', identifier_type)
+              .eq('generation_date', new Date().toISOString().split('T')[0])
+              .single();
+            
+            if (limitData) {
+              await supabaseAdmin
+                .from('daily_generation_limits')
+                .update({ count: Math.max(0, limitData.count - 1) })
+                .eq('identifier', identifier)
+                .eq('identifier_type', identifier_type)
+                .eq('generation_date', new Date().toISOString().split('T')[0]);
+            }
+            logger.info('Anonymous counter decremented due to generation failure');
+          }
+        } catch (refundError) {
+          logger.error('Failed to refund credits', { error: refundError });
+        }
+      }
+      
       const errorMessage =
         process.env.NODE_ENV === 'production'
           ? 'Failed to generate SVG icon'
@@ -404,7 +508,73 @@ export async function POST(req: NextRequest) {
     }
   } catch (error) {
     const sanitizedError = sanitizeData(error);
-    logger.error('Error generating SVG icon', { error: sanitizedError });
+    logger.error('Error generating SVG icon - outer catch', { error: sanitizedError });
+    
+    // REFUND CREDITS if generation failed (only if we deducted them)
+    if (deductResult?.[0]?.success) {
+      try {
+        // Refund the credits by reversing the deduction
+        if (user?.id) {
+          if (isSubscribed) {
+            // Get current credits and subtract
+            const { data: profile } = await supabaseAdmin
+              .from('profiles')
+              .select('monthly_credits_used')
+              .eq('id', user.id)
+              .single();
+            
+            if (profile) {
+              await supabaseAdmin
+                .from('profiles')
+                .update({ 
+                  monthly_credits_used: Math.max(0, profile.monthly_credits_used - 1)
+                })
+                .eq('id', user.id);
+            }
+          } else {
+            // Get current credits and subtract
+            const { data: profile } = await supabaseAdmin
+              .from('profiles')
+              .select('lifetime_credits_used')
+              .eq('id', user.id)
+              .single();
+            
+            if (profile) {
+              await supabaseAdmin
+                .from('profiles')
+                .update({ 
+                  lifetime_credits_used: Math.max(0, profile.lifetime_credits_used - 1)
+                })
+                .eq('id', user.id);
+            }
+          }
+          logger.info('Credits refunded due to generation failure');
+        } else {
+          // For anonymous users, decrement the daily counter
+          // Get current count and decrement
+          const { data: limitData } = await supabaseAdmin
+            .from('daily_generation_limits')
+            .select('count')
+            .eq('identifier', identifier)
+            .eq('identifier_type', identifier_type)
+            .eq('generation_date', new Date().toISOString().split('T')[0])
+            .single();
+          
+          if (limitData) {
+            await supabaseAdmin
+              .from('daily_generation_limits')
+              .update({ count: Math.max(0, limitData.count - 1) })
+              .eq('identifier', identifier)
+              .eq('identifier_type', identifier_type)
+              .eq('generation_date', new Date().toISOString().split('T')[0]);
+          }
+          logger.info('Anonymous counter decremented due to generation failure');
+        }
+      } catch (refundError) {
+        logger.error('Failed to refund credits', { error: refundError });
+      }
+    }
+    
     const errorMessage =
       process.env.NODE_ENV === 'production'
         ? 'Failed to generate SVG icon'

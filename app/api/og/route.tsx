@@ -6,21 +6,17 @@ import {
   GalleryOGImageTemplate,
   AIGenerationOGImageTemplate 
 } from '@/components/seo/og-image-templates';
-
 export const runtime = 'edge';
-
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const type = searchParams.get('type') || 'default';
-    
     // Tool page OG image
     if (type === 'tool') {
       const toolName = searchParams.get('name') || 'SVG Tool';
       const description = searchParams.get('desc') || 'Professional SVG editing tool';
       const features = searchParams.getAll('feat') || ['Fast conversion', 'High quality', 'Free to use'];
       const isPremium = searchParams.get('premium') === 'true';
-      
       return new ImageResponse(
         <ToolOGImageTemplate
           toolName={toolName}
@@ -34,14 +30,12 @@ export async function GET(request: NextRequest) {
         }
       );
     }
-    
     // Learn page OG image
     if (type === 'learn') {
       const title = searchParams.get('title') || 'Learn About SVG';
       const category = searchParams.get('cat') || 'Tutorial';
       const readTime = searchParams.get('time') || '5 min';
       const topics = searchParams.getAll('topic') || ['SVG basics', 'Vector graphics', 'Web optimization'];
-      
       return new ImageResponse(
         <LearnOGImageTemplate
           title={title}
@@ -55,14 +49,12 @@ export async function GET(request: NextRequest) {
         }
       );
     }
-    
     // Gallery page OG image
     if (type === 'gallery') {
       const theme = searchParams.get('theme') || 'Abstract';
       const title = searchParams.get('title') || 'SVG Gallery';
       const description = searchParams.get('desc') || 'Browse our collection of free SVG graphics';
       const exampleCount = parseInt(searchParams.get('count') || '50', 10);
-      
       return new ImageResponse(
         <GalleryOGImageTemplate
           theme={theme}
@@ -76,7 +68,6 @@ export async function GET(request: NextRequest) {
         }
       );
     }
-    
     // AI Generation OG image
     if (type === 'ai') {
       return new ImageResponse(
@@ -87,7 +78,6 @@ export async function GET(request: NextRequest) {
         }
       );
     }
-    
     // Default OG image
     return new ImageResponse(
       (
@@ -126,12 +116,10 @@ export async function GET(request: NextRequest) {
               SVG<span style={{ color: '#FF7043' }}>AI</span>
             </div>
           </div>
-          
           {/* Tagline */}
           <div style={{ fontSize: 32, color: '#4E342E', opacity: 0.8 }}>
             AI-Powered SVG Tools & Converters
           </div>
-          
           {/* Features */}
           <div
             style={{
@@ -177,7 +165,6 @@ export async function GET(request: NextRequest) {
               Learn SVG
             </div>
           </div>
-          
           {/* URL */}
           <div
             style={{
@@ -198,8 +185,6 @@ export async function GET(request: NextRequest) {
       }
     );
   } catch (e: any) {
-    console.log(`Failed to generate OG image: ${e.message}`);
-    
     // Fallback error image
     return new ImageResponse(
       (

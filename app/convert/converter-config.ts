@@ -367,13 +367,13 @@ export const converterConfigs: ConverterConfig[] = [
     fromFormat: 'SVG',
     toFormat: 'GIF',
     title: 'SVG to GIF Converter',
-    metaTitle: 'SVG to GIF Converter - Animated Export | SVG AI',
-    metaDescription: 'Convert SVG animations to GIF format. Create animated GIFs from SVG files.',
-    keywords: ['svg to gif', 'svg to gif converter', 'convert svg to gif', 'svg animation to gif', 'animated svg to gif', 'svg gif export', 'vector to gif', 'svg gif conversion', 'free svg to gif', 'svg to animated gif', 'export svg as gif', 'svg gif animation'],
+    metaTitle: 'SVG to GIF Converter - Free Online Animation Export | SVG AI',
+    metaDescription: 'Convert SVG to GIF instantly in your browser. Free online tool transforms SVG graphics and animations into animated GIF format. No upload required.',
+    keywords: ['svg to gif', 'svg to gif converter', 'convert svg to gif', 'svg gif export', 'vector to gif', 'svg gif conversion', 'free svg to gif', 'svg to gif online', 'svg image to gif', 'svg graphics to gif', 'svg file to gif', 'transform svg to gif'],
     searchVolume: 320,
     priority: 'low',
     routeType: 'convert',
-    isSupported: false // Redirects to premium AI video tool
+    isSupported: true // Uses browser-based gif.js implementation
   },
   {
     id: 'bmp-to-svg',

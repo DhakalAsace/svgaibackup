@@ -1,3 +1,25 @@
+/**
+ * Database Types for SVGAI.org
+ * 
+ * NOTE: This file includes types for monitoring tables that are planned but not yet created:
+ * - monitoring_metrics
+ * - funnel_conversions  
+ * - monitoring_alerts
+ * - web_vitals_logs
+ * - performance_alerts
+ * - error_groups
+ * - error_events
+ * - synthetic_checks
+ * - uptime_metrics
+ * - analytics_events
+ * - conversion_metrics
+ * - redirect_logs
+ * 
+ * These types are kept to support the monitoring system code, which will be activated
+ * when the tables are created. Remove these types only after confirming the monitoring
+ * code has been removed or updated.
+ */
+
 export type Json =
   | string
   | number
@@ -12,57 +34,57 @@ export type Database = {
       profiles: {
         Row: {
           id: string
-          username: string | null
-          email: string
-          full_name: string | null
-          avatar_url: string | null
-          subscription_tier: string | null
-          subscription_status: string | null
-          lifetime_credits_granted: number
-          lifetime_credits_used: number
-          monthly_credits: number
-          monthly_credits_used: number
-          credits_reset_at: string
-          subscription_interval: string
+          name: string | null
+          updated_at: string | null
           stripe_customer_id: string | null
-          created_at: string
-          updated_at: string
+          subscription_status: string | null
+          subscription_tier: string | null
+          subscription_id: string | null
+          current_period_end: string | null
+          monthly_generation_limit: number | null
+          monthly_generations_used: number | null
+          last_generation_reset: string | null
+          lifetime_credits_granted: number | null
+          lifetime_credits_used: number | null
+          monthly_credits: number | null
+          monthly_credits_used: number | null
+          credits_reset_at: string | null
         }
         Insert: {
           id: string
-          username?: string | null
-          email: string
-          full_name?: string | null
-          avatar_url?: string | null
-          subscription_tier?: string | null
-          subscription_status?: string | null
-          lifetime_credits_granted?: number
-          lifetime_credits_used?: number
-          monthly_credits?: number
-          monthly_credits_used?: number
-          credits_reset_at?: string
-          subscription_interval?: string
+          name?: string | null
+          updated_at?: string | null
           stripe_customer_id?: string | null
-          created_at?: string
-          updated_at?: string
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          subscription_id?: string | null
+          current_period_end?: string | null
+          monthly_generation_limit?: number | null
+          monthly_generations_used?: number | null
+          last_generation_reset?: string | null
+          lifetime_credits_granted?: number | null
+          lifetime_credits_used?: number | null
+          monthly_credits?: number | null
+          monthly_credits_used?: number | null
+          credits_reset_at?: string | null
         }
         Update: {
           id?: string
-          username?: string | null
-          email?: string
-          full_name?: string | null
-          avatar_url?: string | null
-          subscription_tier?: string | null
-          subscription_status?: string | null
-          lifetime_credits_granted?: number
-          lifetime_credits_used?: number
-          monthly_credits?: number
-          monthly_credits_used?: number
-          credits_reset_at?: string
-          subscription_interval?: string
+          name?: string | null
+          updated_at?: string | null
           stripe_customer_id?: string | null
-          created_at?: string
-          updated_at?: string
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          subscription_id?: string | null
+          current_period_end?: string | null
+          monthly_generation_limit?: number | null
+          monthly_generations_used?: number | null
+          last_generation_reset?: string | null
+          lifetime_credits_granted?: number | null
+          lifetime_credits_used?: number | null
+          monthly_credits?: number | null
+          monthly_credits_used?: number | null
+          credits_reset_at?: string | null
         }
         Relationships: []
       }
@@ -141,65 +163,73 @@ export type Database = {
       webhook_events: {
         Row: {
           id: string
+          stripe_event_id: string
           event_type: string
-          payload: Json
-          status: string
-          error_message: string | null
-          processing_time: number | null
-          created_at: string
+          idempotency_key: string
+          processed_at: string | null
+          event_data: Json | null
+          created_at: string | null
         }
         Insert: {
           id?: string
+          stripe_event_id: string
           event_type: string
-          payload: Json
-          status?: string
-          error_message?: string | null
-          processing_time?: number | null
-          created_at?: string
+          idempotency_key: string
+          processed_at?: string | null
+          event_data?: Json | null
+          created_at?: string | null
         }
         Update: {
           id?: string
+          stripe_event_id?: string
           event_type?: string
-          payload?: Json
-          status?: string
-          error_message?: string | null
-          processing_time?: number | null
-          created_at?: string
+          idempotency_key?: string
+          processed_at?: string | null
+          event_data?: Json | null
+          created_at?: string | null
         }
         Relationships: []
       }
       payment_audit_log: {
         Row: {
           id: string
-          event_type: string
           user_id: string | null
+          event_type: string
+          event_data: Json
           stripe_event_id: string | null
-          amount: number | null
-          currency: string | null
-          metadata: Json
-          created_at: string
+          ip_address: string | null
+          user_agent: string | null
+          created_at: string | null
         }
         Insert: {
           id?: string
-          event_type: string
           user_id?: string | null
+          event_type: string
+          event_data: Json
           stripe_event_id?: string | null
-          amount?: number | null
-          currency?: string | null
-          metadata?: Json
-          created_at?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string | null
         }
         Update: {
           id?: string
-          event_type?: string
           user_id?: string | null
+          event_type?: string
+          event_data?: Json
           stripe_event_id?: string | null
-          amount?: number | null
-          currency?: string | null
-          metadata?: Json
-          created_at?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "payment_audit_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       monitoring_metrics: {
         Row: {
@@ -615,6 +645,133 @@ export type Database = {
           referrer?: string | null
           user_agent?: string | null
           created_at?: string
+        }
+        Relationships: []
+      }
+      generated_videos: {
+        Row: {
+          id: string
+          user_id: string
+          prompt: string
+          video_url: string
+          storage_path: string
+          duration: number
+          resolution: string
+          credits_used: number
+          expires_at: string
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          prompt: string
+          video_url: string
+          storage_path: string
+          duration?: number
+          resolution?: string
+          credits_used?: number
+          expires_at: string
+          metadata?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          prompt?: string
+          video_url?: string
+          storage_path?: string
+          duration?: number
+          resolution?: string
+          credits_used?: number
+          expires_at?: string
+          metadata?: Json
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_videos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      subscriptions: {
+        Row: {
+          id: string
+          user_id: string | null
+          stripe_subscription_id: string
+          stripe_customer_id: string
+          status: string
+          tier: string
+          stripe_price_id: string
+          current_period_start: string | null
+          current_period_end: string | null
+          cancel_at_period_end: boolean | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          stripe_subscription_id: string
+          stripe_customer_id: string
+          status: string
+          tier: string
+          stripe_price_id: string
+          current_period_start?: string | null
+          current_period_end?: string | null
+          cancel_at_period_end?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          stripe_subscription_id?: string
+          stripe_customer_id?: string
+          status?: string
+          tier?: string
+          stripe_price_id?: string
+          current_period_start?: string | null
+          current_period_end?: string | null
+          cancel_at_period_end?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      storage_cleanup_queue: {
+        Row: {
+          id: string
+          storage_path: string
+          bucket_name: string
+          created_at: string
+          processed_at: string | null
+        }
+        Insert: {
+          id?: string
+          storage_path: string
+          bucket_name: string
+          created_at?: string
+          processed_at?: string | null
+        }
+        Update: {
+          id?: string
+          storage_path?: string
+          bucket_name?: string
+          created_at?: string
+          processed_at?: string | null
         }
         Relationships: []
       }

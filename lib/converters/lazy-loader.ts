@@ -176,10 +176,6 @@ export const LIBRARY_CONFIGS = {
     name: 'utif',
     importFn: () => import('utif')
   },
-  gifEncoder: {
-    name: 'gif-encoder-2',
-    importFn: () => import('gif-encoder-2')
-  },
   
   // Web libraries
   html2canvas: {
@@ -205,7 +201,6 @@ export const loadDxfParser = () => loadLibrary(LIBRARY_CONFIGS.dxfParser)
 export const loadDxfWriter = () => loadLibrary(LIBRARY_CONFIGS.dxfWriter)
 export const loadOpentype = () => loadLibrary(LIBRARY_CONFIGS.opentype)
 export const loadUtif = () => loadLibrary(LIBRARY_CONFIGS.utif)
-export const loadGifEncoder = () => loadLibrary(LIBRARY_CONFIGS.gifEncoder)
 export const loadHtml2canvas = () => loadLibrary(LIBRARY_CONFIGS.html2canvas)
 export const loadPako = () => loadLibrary(LIBRARY_CONFIGS.pako)
 

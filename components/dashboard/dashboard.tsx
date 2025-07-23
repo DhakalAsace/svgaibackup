@@ -1,7 +1,6 @@
 "use client";
-
 import { useState, useEffect, Suspense, lazy, useCallback } from "react";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '@/lib/supabase';
 import { Database } from '@/types/database.types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -14,10 +13,8 @@ import { ManageSubscriptionButton } from "@/components/manage-subscription-butto
 import { SafeSvgDisplay } from "@/components/safe-svg-display";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from 'date-fns';
-
 // Dynamically import heavy components
 const Image = lazy(() => import("next/image"));
-
 type SvgDesign = {
   id: string;
   title: string;
@@ -30,7 +27,6 @@ type SvgDesign = {
   tags: string[] | null;
   user_id: string;
 };
-
 type GeneratedVideo = {
   id: string;
   prompt: string;
@@ -46,26 +42,22 @@ type GeneratedVideo = {
     original_svg?: string;
   };
 };
-
 type ContentItem = {
   id: string;
   type: 'svg' | 'icon' | 'video';
   content: SvgDesign | GeneratedVideo;
   created_at: string;
 };
-
 type ToolUsageStats = {
   toolName: string;
   count: number;
   lastUsed?: Date;
 };
-
 type RecentToolActivity = {
   toolName: string;
   timestamp: Date;
   toolPath: string;
 };
-
 type DashboardProps = {
   initialSvgs: SvgDesign[];
   userId?: string; // Make userId optional
@@ -77,14 +69,11 @@ type DashboardProps = {
     monthly_credits?: number;
     monthly_credits_used?: number;
     credits_reset_at?: string;
-    subscription_interval?: string;
     stripe_customer_id?: string | null;
   };
 };
-
 // Number of SVGs to load initially and per page
 const PAGE_SIZE = 6;
-
 export default function Dashboard({ initialSvgs, userId, userProfile: initialUserProfile }: DashboardProps) {
   const [svgs, setSvgs] = useState<SvgDesign[]>(initialSvgs);
   const [videos, setVideos] = useState<GeneratedVideo[]>([]);
@@ -96,10 +85,8 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
   const [userProfile, setUserProfile] = useState(initialUserProfile);
   const router = useRouter();
   const { creditInfo, refreshCredits } = useCredits();
-
   // Create the client inside the component
   const supabase = createClientComponentClient<Database>();
-
   // Fetch videos
   const fetchVideos = useCallback(async () => {
     try {
@@ -109,45 +96,37 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
         .select('*')
         .order('created_at', { ascending: false })
         .limit(20);
-
       if (error) throw error;
       setVideos(data || []);
     } catch (error) {
-      console.error('Error fetching videos:', error);
     }
   }, [supabase]);
-
   // Fetch videos on mount and poll
   useEffect(() => {
     fetchVideos();
     const interval = setInterval(fetchVideos, 10000);
     return () => clearInterval(interval);
   }, [fetchVideos]);
-
   // Combine SVGs and videos into content items
   useEffect(() => {
     const svgItems: ContentItem[] = svgs.map(svg => ({
       id: svg.id,
-      type: svg.prompt?.toLowerCase().includes('icon') ? 'icon' : 'svg',
+      type: svg.tags?.includes('icon') ? 'icon' : 'svg',
       content: svg,
       created_at: svg.created_at
     }));
-
     const videoItems: ContentItem[] = videos.map(video => ({
       id: video.id,
       type: 'video',
       content: video,
       created_at: video.created_at
     }));
-
     // Combine and sort by creation date
     const allItems = [...svgItems, ...videoItems].sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
-
     setContentItems(allItems);
   }, [svgs, videos]);
-
   // Paginate content items
   useEffect(() => {
     const end = currentPage * PAGE_SIZE;
@@ -155,12 +134,10 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
     const pageItems = contentItems.slice(start, end);
     setDisplayedItems(pageItems);
   }, [contentItems, currentPage]);
-
   // Load more SVGs
   const loadMore = () => {
     setCurrentPage(prev => prev + 1);
   };
-
   // Function to download SVG
   const downloadSvg = async (svg: SvgDesign) => {
     // If we've already fetched the SVG content
@@ -176,7 +153,6 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
       URL.revokeObjectURL(url);
       return;
     }
-    
     // If we haven't cached the SVG content yet
     try {
       // Direct use of svg_content since it contains the SVG markup
@@ -190,18 +166,15 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
       // Store the content for future use
       setSvgContents(prev => ({
         ...prev,
         [svg.id]: svgContent
       }));
     } catch (error) {
-      console.error("Error downloading SVG:", error);
       alert("Failed to download SVG");
     }
   };
-
   // Function to download video
   const downloadVideo = async (url: string, filename: string) => {
     try {
@@ -215,7 +188,6 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
       document.body.removeChild(a);
       URL.revokeObjectURL(a.href);
     } catch (error) {
-      console.error('Error downloading video:', error);
       toast({
         title: "Download failed",
         description: "Failed to download video",
@@ -223,103 +195,121 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
       });
     }
   };
-
   // Function to delete SVG
   const deleteSvg = async (id: string) => {
     try {
       // Get user confirmation using browser dialog
       if (!confirm("Are you sure you want to delete this SVG?")) return;
-      
       // Show loading state
       setIsLoading(true);
-      
       // Perform the deletion
       const { error } = await supabase
         .from("svg_designs")
         .delete()
         .eq("id", id);
-      
       if (error) throw error;
-      
       // Show brief success message
       toast({
         title: "SVG deleted successfully",
         variant: "default",
       });
-      
       // Short delay before reload to let the toast appear
       setTimeout(() => {
         // Reload the page to show fresh data
         window.location.reload();
       }, 800);
-      
     } catch (error) {
-      console.error("Error deleting SVG:", error);
-      
       toast({
         title: "Error deleting SVG",
         description: "Please try again.",
         variant: "destructive",
       });
-      
       setIsLoading(false);
     }
   };
-
+  
+  // Function to delete video
+  const deleteVideo = async (id: string) => {
+    try {
+      // Get user confirmation using browser dialog
+      if (!confirm("Are you sure you want to delete this video?")) return;
+      // Show loading state
+      setIsLoading(true);
+      // Perform the deletion
+      const { error } = await supabase
+        .from("generated_videos")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+      // Show brief success message
+      toast({
+        title: "Video deleted successfully",
+        variant: "default",
+      });
+      // Update local state to remove the video
+      setVideos(prev => prev.filter(video => video.id !== id));
+      setIsLoading(false);
+    } catch (error) {
+      toast({
+        title: "Error deleting video",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    }
+  };
   // Function to refresh designs (can be called after navigation back to dashboard)
   const refreshDesigns = useCallback(async () => {
     if (!userId) return;
-    
     try {
       const { data, error } = await supabase
         .from("svg_designs")
         .select()
         .eq("user_id", userId) 
         .order("created_at", { ascending: false });
-
       if (error) throw error;
       setSvgs(data || []);
     } catch (error) {
-      console.error("Error fetching designs:", error);
     }
   }, [userId, supabase]);
-
   // Use effect to refetch designs if the session/user changes or when user navigates back to the page
   useEffect(() => {
     // Initial fetch when component mounts
     refreshDesigns();
-
     // Set up listener for when user navigates back to the page
     const handleFocus = () => {
       refreshDesigns();
     };
-
     // Add event listener for when the window regains focus
     window.addEventListener('focus', handleFocus);
-
     // Clean up event listener
     return () => {
       window.removeEventListener('focus', handleFocus);
     };
   }, [userId, refreshDesigns]);
-
   // Set up real-time subscription for profile updates
   useEffect(() => {
     if (!userId) return;
-
     // Function to fetch latest profile data
     const fetchLatestProfile = async () => {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('subscription_tier, subscription_status, lifetime_credits_granted, lifetime_credits_used, monthly_credits, monthly_credits_used, credits_reset_at, subscription_interval')
+        .select('subscription_tier, subscription_status, lifetime_credits_granted, lifetime_credits_used, monthly_credits, monthly_credits_used, credits_reset_at, stripe_customer_id')
         .eq('id', userId)
         .single();
-      
       if (profile) {
-        setUserProfile(profile as typeof userProfile);
+        setUserProfile({
+          subscription_tier: profile.subscription_tier,
+          subscription_status: profile.subscription_status,
+          lifetime_credits_granted: profile.lifetime_credits_granted ?? undefined,
+          lifetime_credits_used: profile.lifetime_credits_used ?? undefined,
+          monthly_credits: profile.monthly_credits ?? undefined,
+          monthly_credits_used: profile.monthly_credits_used ?? undefined,
+          credits_reset_at: profile.credits_reset_at ?? undefined,
+          stripe_customer_id: profile.stripe_customer_id ?? undefined,
+        });
       }
     };
-
     // Set up real-time subscription
     const channel = supabase
       .channel(`profile-updates-${userId}`)
@@ -332,7 +322,6 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
           filter: `id=eq.${userId}`,
         },
         (payload) => {
-          console.log('Profile updated:', payload);
           // Update local state with new profile data
           if (payload.eventType === 'UPDATE' && payload.new) {
             setUserProfile(prev => ({
@@ -343,20 +332,16 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
         }
       )
       .subscribe();
-
     // Also poll for updates every 30 seconds as a fallback
     const interval = setInterval(fetchLatestProfile, 30000);
-
     return () => {
       channel.unsubscribe();
       clearInterval(interval);
     };
   }, [userId, supabase]);
-
   // Use context creditInfo if available, otherwise fall back to local userProfile
   const contextCredits = creditInfo;
   const isSubscribed = contextCredits?.isSubscribed ?? userProfile?.subscription_status === 'active';
-  
   // Handle case where profile might not have credit fields populated
   const displayCreditInfo = contextCredits ? {
     used: contextCredits.creditsUsed,
@@ -373,12 +358,10 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
     type: isSubscribed ? 'monthly' : 'lifetime' as const,
     remaining: 0
   };
-  
   // Calculate remaining if not from context
   if (!contextCredits) {
     displayCreditInfo.remaining = Math.max(0, displayCreditInfo.limit - displayCreditInfo.used);
   }
-
   // Determine user tier for curated content
   const getUserTier = () => {
     // Prefer context credit info if available
@@ -392,9 +375,7 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
     }
     return 'free';
   };
-
   const userTier = getUserTier();
-
   return (
     <div className="max-w-7xl mx-auto">
       {/* Main Content Grid */}
@@ -414,7 +395,7 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
             <div className="text-center py-12">
               <div className="max-w-sm mx-auto">
                 <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <FileIcon className="w-10 h-10 text-gray-400" />
+                  <FileIcon className="w-10 h-10 text-[#FF7043]" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Start creating</h3>
                 <p className="text-sm text-gray-500 mb-6">Generate professional icons and SVGs with AI</p>
@@ -440,32 +421,41 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
               if (item.type === 'video') {
                 const video = item.content as GeneratedVideo;
                 const isExpired = new Date(video.expires_at) < new Date();
-                
                 return (
                   <Card key={item.id} className={`overflow-hidden hover:shadow-lg transition-shadow ${isExpired ? 'opacity-60' : ''}`}>
                     <CardContent className="p-0">
                       <div className="aspect-square bg-gray-50 flex items-center justify-center relative group">
                         <div className="flex flex-col items-center justify-center gap-2">
                           <div className="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center">
-                            <Film className="w-7 h-7 text-purple-600" />
+                            <Film className="w-7 h-7 text-[#FF6B35]" />
                           </div>
                           <div className="text-center">
                             <p className="text-xs font-medium text-gray-700">{video.duration}s • {video.resolution}</p>
                           </div>
                         </div>
                         <div className="absolute top-2 right-2">
-                          <Badge variant="info" className="text-xs">Video</Badge>
+                          <Badge className="text-xs bg-[#FF7043] text-white border-[#FF7043]">Video</Badge>
                         </div>
-                        {!isExpired && (
+                        <div className="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {!isExpired && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => downloadVideo(video.video_url, `ai-video-${video.id}.mp4`)}
+                              className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-sm"
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                          )}
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => downloadVideo(video.video_url, `ai-video-${video.id}.mp4`)}
-                            className="absolute bottom-2 right-2 h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => deleteVideo(video.id)}
+                            className="h-8 w-8 p-0 bg-white/90 hover:bg-white hover:text-red-600 shadow-sm"
                           >
-                            <Download className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
-                        )}
+                        </div>
                       </div>
                       <div className="p-3 border-t">
                         <p className="text-sm font-medium text-gray-900 truncate mb-1">
@@ -473,7 +463,7 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
                         </p>
                         <p className="text-xs text-gray-500 line-clamp-1">{video.prompt}</p>
                         <div className="flex items-center gap-1 text-xs text-gray-400 mt-2">
-                          <Clock className="w-3 h-3" />
+                          <Clock className="w-3 h-3 text-[#4E342E]" />
                           {isExpired ? 'Expired' : formatDistanceToNow(new Date(video.expires_at), { addSuffix: true })}
                         </div>
                       </div>
@@ -503,7 +493,7 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
                           </div>
                         )}
                         <div className="absolute top-2 right-2">
-                          <Badge variant="info" className="text-xs">
+                          <Badge className="text-xs bg-[#4E342E] text-white border-[#4E342E]">
                             {item.type === 'icon' ? 'Icon' : 'SVG'}
                           </Badge>
                         </div>
@@ -532,13 +522,12 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
                       <div className="p-3 border-t">
                         <p className="text-sm font-medium text-gray-900 truncate mb-1">{svg.title}</p>
                         <div className="flex items-center gap-1 text-xs text-gray-400">
-                          <Clock className="w-3 h-3" />
+                          <Clock className="w-3 h-3 text-[#4E342E]" />
                           {(() => {
                             const createdDate = new Date(svg.created_at);
                             const retentionDays = userProfile?.subscription_tier === 'pro' ? 30 : 7;
                             const expiryDate = new Date(createdDate.getTime() + retentionDays * 24 * 60 * 60 * 1000);
                             const isExpired = expiryDate < new Date();
-                            
                             return isExpired ? 'Expired' : formatDistanceToNow(expiryDate, { addSuffix: true });
                           })()}
                         </div>
@@ -574,7 +563,6 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
               </>
           )}
         </div>
-
         {/* Right Sidebar - 1 column */}
         <div className="lg:col-span-1">
           {/* Credit Balance Card */}
@@ -583,13 +571,13 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-medium">Credit Balance</CardTitle>
                 {userTier === 'free' && (
-                  <Badge variant="secondary" className="text-xs">Free Plan</Badge>
+                  <Badge className="text-xs bg-gray-100 text-gray-700 border-gray-200">Free Plan</Badge>
                 )}
                 {userTier === 'starter' && (
-                  <Badge variant="info" className="text-xs">Starter</Badge>
+                  <Badge className="text-xs bg-[#FF7043]/10 text-[#FF7043] border-[#FF7043]/20">Starter</Badge>
                 )}
                 {userTier === 'pro' && (
-                  <Badge variant="warning" className="text-xs">Pro</Badge>
+                  <Badge className="text-xs bg-[#FF6B35]/10 text-[#FF6B35] border-[#FF6B35]/20">Pro</Badge>
                 )}
               </div>
             </CardHeader>
@@ -615,7 +603,6 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
                     </p>
                   )}
                 </div>
-                
                 {userTier === 'free' && (
                   <div className="pt-2">
                     <Link href="/pricing" className="block">
@@ -626,7 +613,6 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
                     <p className="text-xs text-gray-500 text-center mt-1.5">Monthly plans available</p>
                   </div>
                 )}
-                
                 {userTier === 'starter' && (
                   <div className="pt-2 space-y-2">
                     <ManageSubscriptionButton />
@@ -635,7 +621,6 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
                     </Link>
                   </div>
                 )}
-                
                 {userTier === 'pro' && (
                   <div className="pt-2">
                     <ManageSubscriptionButton />
@@ -644,7 +629,6 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
               </div>
             </CardContent>
           </Card>
-
           {/* Quick Tools */}
           <Card className="mb-4">
             <CardHeader className="pb-3">
@@ -659,31 +643,30 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
               </Link>
               <Link href="/tools/svg-editor" className="block">
                 <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
-                  <Code className="w-3.5 h-3.5 mr-2 text-blue-600" />
+                  <Code className="w-3.5 h-3.5 mr-2 text-[#FF6B35]" />
                   <span className="text-sm">SVG Editor</span>
                 </Button>
               </Link>
               <Link href="/tools/svg-optimizer" className="block">
                 <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
-                  <FileDown className="w-3.5 h-3.5 mr-2 text-green-600" />
+                  <FileDown className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
                   <span className="text-sm">SVG Optimizer</span>
                 </Button>
               </Link>
               <Link href="/tools/svg-to-video" className="block">
                 <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
-                  <Film className="w-3.5 h-3.5 mr-2 text-purple-600" />
+                  <Film className="w-3.5 h-3.5 mr-2 text-[#FF6B35]" />
                   <span className="text-sm">SVG to Video</span>
                 </Button>
               </Link>
               <Link href="/animate" className="block">
                 <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
-                  <Zap className="w-3.5 h-3.5 mr-2 text-pink-600" />
+                  <Zap className="w-3.5 h-3.5 mr-2 text-[#4E342E]" />
                   <span className="text-sm">SVG Animator</span>
                 </Button>
               </Link>
             </CardContent>
           </Card>
-
           {/* Popular Converters */}
           <Card>
             <CardHeader className="pb-3">
@@ -692,31 +675,31 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
             <CardContent className="space-y-1">
               <Link href="/convert/png-to-svg" className="block">
                 <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
-                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-gray-400" />
+                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
                   <span className="text-sm text-gray-700">PNG to SVG</span>
                 </Button>
               </Link>
               <Link href="/convert/svg-to-png" className="block">
                 <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
-                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-gray-400" />
+                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
                   <span className="text-sm text-gray-700">SVG to PNG</span>
                 </Button>
               </Link>
               <Link href="/convert/jpg-to-svg" className="block">
                 <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
-                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-gray-400" />
+                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
                   <span className="text-sm text-gray-700">JPG to SVG</span>
                 </Button>
               </Link>
               <Link href="/convert/svg-to-pdf" className="block">
                 <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
-                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-gray-400" />
+                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
                   <span className="text-sm text-gray-700">SVG to PDF</span>
                 </Button>
               </Link>
               <Link href="/convert/svg-to-mp4" className="block">
                 <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
-                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-gray-400" />
+                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
                   <span className="text-sm text-gray-700">SVG to MP4</span>
                 </Button>
               </Link>

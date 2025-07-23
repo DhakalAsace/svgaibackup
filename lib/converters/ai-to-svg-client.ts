@@ -10,10 +10,8 @@
  * 3. Wait for task completion
  * 4. Export and download result
  */
-
 import type { ConversionHandler, ConversionOptions, ConversionResult } from './types'
 import { ConversionError } from './errors'
-
 /**
  * Client-side AI to SVG converter that uses the API endpoint
  */
@@ -22,123 +20,99 @@ export const aiToSvgHandler: ConversionHandler = async (
   options: ConversionOptions = {}
 ): Promise<ConversionResult> => {
   try {
-    console.log('[AI-to-SVG-Client] Starting AI to SVG conversion')
-    
     // Convert input to Blob for FormData
     const inputBuffer = typeof input === 'string' ? Buffer.from(input, 'base64') : input
     const blob = new Blob([inputBuffer], { type: 'application/postscript' }) // AI files are PostScript-based
-    
     // Create form data
     const formData = new FormData()
     formData.append('file', blob, 'design.ai')
-    
     // Add conversion options
     if (options.width) formData.append('width', options.width.toString())
     if (options.height) formData.append('height', options.height.toString())
     if (options.preserveAspectRatio !== undefined) {
       formData.append('preserveAspectRatio', options.preserveAspectRatio.toString())
     }
-    
-    console.log('[AI-to-SVG-Client] Uploading file to API endpoint')
-    
     // Progress tracking
     const startTime = Date.now()
-    let lastProgress = 0
-    
-    // Make API request to our endpoint (which will use CloudConvert)
-    const response = await fetch('/api/convert/ai-to-svg', {
-      method: 'POST',
-      body: formData,
-      // Add timeout for large files
-      signal: AbortSignal.timeout(300000) // 5 minute timeout
-    })
-    
-    // Log response details
-    const contentType = response.headers.get('content-type') || ''
-    console.log('[AI-to-SVG-Client] Response received:', {
-      status: response.status,
-      statusText: response.statusText,
-      contentType,
-      contentLength: response.headers.get('content-length')
-    })
-    
-    // Handle non-OK responses
-    if (!response.ok) {
-      let errorMessage = `Request failed with status ${response.status}`
-      
-      try {
-        // Try to get error details from response
-        if (contentType.includes('application/json')) {
-          const errorData = await response.json()
-          errorMessage = errorData.error || errorData.message || errorMessage
-        } else {
-          const errorText = await response.text()
-          if (errorText && errorText.length < 1000) {
-            errorMessage = errorText
-          }
-        }
-      } catch (e) {
-        console.error('[AI-to-SVG-Client] Error parsing error response:', e)
-      }
-      
-      throw new ConversionError(errorMessage, 'API_REQUEST_FAILED')
-    }
-    
-    // Handle successful response
-    let svgData: string
-    
-    // CloudConvert returns SVG directly
-    if (contentType.includes('image/svg+xml') || contentType.includes('text/xml') || !contentType) {
-      svgData = await response.text()
-      console.log('[AI-to-SVG-Client] Received SVG data:', {
-        length: svgData.length,
-        preview: svgData.substring(0, 100)
+    let progressInterval: NodeJS.Timeout | null = null
+    // Start progress simulation
+    progressInterval = simulateProgress(options.onProgress, startTime)
+    try {
+      // Make API request to our endpoint (which will use CloudConvert)
+      const response = await fetch('/api/convert/ai-to-svg', {
+        method: 'POST',
+        body: formData,
+        // Add timeout for large files
+        signal: AbortSignal.timeout(300000) // 5 minute timeout
       })
-    } else if (contentType.includes('application/json')) {
-      // Handle JSON response (legacy format)
-      const jsonData = await response.json()
-      if (jsonData.data) {
-        svgData = jsonData.data
-      } else if (jsonData.error) {
-        throw new ConversionError(jsonData.error, 'CONVERSION_FAILED')
+      // Log response details
+      const contentType = response.headers.get('content-type') || ''
+      // Handle non-OK responses
+      if (!response.ok) {
+        let errorMessage = `Request failed with status ${response.status}`
+        try {
+          // Try to get error details from response
+          if (contentType.includes('application/json')) {
+            const errorData = await response.json()
+            errorMessage = errorData.error || errorData.message || errorMessage
+          } else {
+            const errorText = await response.text()
+            if (errorText && errorText.length < 1000) {
+              errorMessage = errorText
+            }
+          }
+        } catch (e) {
+          // Ignore error parsing failures
+        }
+        throw new ConversionError(errorMessage, 'API_REQUEST_FAILED')
+      }
+      // Handle successful response
+      let svgData: string
+      // CloudConvert returns SVG directly
+      if (contentType.includes('image/svg+xml') || contentType.includes('text/xml') || !contentType) {
+        svgData = await response.text()
+        } else if (contentType.includes('application/json')) {
+        // Handle JSON response (legacy format)
+        const jsonData = await response.json()
+        if (jsonData.data) {
+          svgData = jsonData.data
+        } else if (jsonData.error) {
+          throw new ConversionError(jsonData.error, 'CONVERSION_FAILED')
+        } else {
+          throw new ConversionError('Invalid response format', 'INVALID_RESPONSE')
+        }
       } else {
-        throw new ConversionError('Invalid response format', 'INVALID_RESPONSE')
+        // Treat any other content as SVG
+        svgData = await response.text()
+        }
+      // Validate SVG data
+      if (!svgData || (!svgData.includes('<svg') && !svgData.includes('<?xml'))) {
+        throw new ConversionError('Invalid SVG data received', 'INVALID_SVG_DATA')
       }
-    } else {
-      // Treat any other content as SVG
-      svgData = await response.text()
-      console.log('[AI-to-SVG-Client] Received data with content-type:', contentType)
-    }
-    
-    // Validate SVG data
-    if (!svgData || (!svgData.includes('<svg') && !svgData.includes('<?xml'))) {
-      throw new ConversionError('Invalid SVG data received', 'INVALID_SVG_DATA')
-    }
-    
-    const conversionTime = Date.now() - startTime
-    console.log('[AI-to-SVG-Client] Conversion completed in', conversionTime, 'ms')
-    
-    // Report final progress
-    if (options.onProgress) {
-      options.onProgress(1.0)
-    }
-    
-    return {
-      success: true,
-      data: svgData,
-      mimeType: 'image/svg+xml',
-      metadata: {
-        format: 'svg',
-        method: 'cloudconvert',
-        size: svgData.length,
-        conversionTime,
-        engine: 'inkscape' // CloudConvert uses Inkscape for AI to SVG
+      const conversionTime = Date.now() - startTime
+      // Report final progress
+      if (options.onProgress) {
+        options.onProgress(1.0)
+      }
+      return {
+        success: true,
+        data: svgData,
+        mimeType: 'image/svg+xml',
+        metadata: {
+          format: 'svg',
+          method: 'cloudconvert',
+          size: svgData.length,
+          conversionTime,
+          engine: 'inkscape' // CloudConvert uses Inkscape for AI to SVG
+        }
+      }
+    } finally {
+      // Clean up progress interval
+      if (progressInterval) {
+        clearInterval(progressInterval)
       }
     }
-    
   } catch (error) {
-    console.error('[AI-to-SVG-Client] Conversion error:', error)
-    
     // Handle timeout errors
     if (error instanceof Error && error.name === 'AbortError') {
       throw new ConversionError(
@@ -146,18 +120,15 @@ export const aiToSvgHandler: ConversionHandler = async (
         'CONVERSION_TIMEOUT'
       )
     }
-    
     if (error instanceof ConversionError) {
       throw error
     }
-    
     throw new ConversionError(
       `Failed to convert AI file: ${error instanceof Error ? error.message : 'Unknown error'}`,
       'AI_TO_SVG_FAILED'
     )
   }
 }
-
 /**
  * Progress simulation for better UX
  * CloudConvert doesn't provide real-time progress, so we simulate it
@@ -167,11 +138,9 @@ function simulateProgress(
   startTime: number
 ): NodeJS.Timeout | null {
   if (!onProgress) return null
-  
   const interval = setInterval(() => {
     const elapsed = Date.now() - startTime
     let progress = 0.1
-    
     // Simulate progress based on typical conversion times
     if (elapsed < 2000) {
       // Upload phase (0-2s): 10-30%
@@ -186,13 +155,10 @@ function simulateProgress(
       // Long conversion: stay at 90%
       progress = 0.9
     }
-    
     onProgress(Math.min(progress, 0.9))
   }, 250)
-  
   return interval
 }
-
 /**
  * AI to SVG converter configuration for client-side use
  */
@@ -204,6 +170,5 @@ export const aiToSvgConverter = {
   isClientSide: true, // Client-side wrapper that calls API
   description: 'Convert Adobe Illustrator files to SVG format using CloudConvert API'
 }
-
 // Export handler directly for convenience
 export default aiToSvgHandler

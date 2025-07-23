@@ -1,7 +1,7 @@
 import { FileValidationResult, ImageFormat, ConversionOptions } from './types'
 import { converterConfig } from '../env-client'
 import { 
-  FileValidationError, 
+  FileValidationError,
   FileSizeError,
   UnsupportedFormatError,
   ConversionError
@@ -156,7 +156,7 @@ export function detectFileTypeFromBuffer(buffer: Buffer): ImageFormat | null {
       }
     }
   }
-  
+
   // Check for text-based formats
   const textStart = buffer.toString('utf8', 0, Math.min(1000, buffer.length))
   
@@ -227,7 +227,6 @@ export function detectFileTypeFromBuffer(buffer: Buffer): ImageFormat | null {
     // and contains "EMF" identifier
     const emfType = buffer.readUInt32LE(0)
     const emfSize = buffer.readUInt32LE(4)
-    
     if (emfType === 0x00000001 && emfSize >= 88 && emfSize <= buffer.length) {
       // Additional validation: check for EMR_HEADER record type
       const recordType = buffer.readUInt32LE(0)
@@ -249,7 +248,6 @@ export function detectFileTypeFromBuffer(buffer: Buffer): ImageFormat | null {
     // Standard WMF: check for valid mtType and mtHeaderSize
     const mtType = buffer.readUInt16LE(0)
     const mtHeaderSize = buffer.readUInt16LE(2)
-    
     if ((mtType === 1 || mtType === 2) && mtHeaderSize === 9) {
       return 'wmf'
     }
@@ -320,22 +318,14 @@ export function validateFile(
     targetFormat?: ImageFormat; // For conversion validation
   }
 ): FileValidationResult {
-  console.log('[validateFile] Starting validation...')
-  console.log('[validateFile] Options:', options)
-  
   const config = {
     allowedFormats: options?.allowedFormats || converterConfig.allowedFormats,
     maxSize: options?.maxSize || converterConfig.maxFileSize,
   }
-  
-  console.log('[validateFile] Config allowedFormats:', config.allowedFormats)
 
   // Get file buffer and size
   const size = file instanceof File ? file.size : file.length
   const buffer = file instanceof Buffer ? file : null
-  
-  console.log('[validateFile] File type:', file instanceof File ? 'File' : 'Buffer')
-  console.log('[validateFile] File size:', size)
 
   // Check for empty file
   if (size === 0) {
@@ -350,45 +340,35 @@ export function validateFile(
   let format: ImageFormat | null = null
   
   if (file instanceof File) {
-    console.log('[validateFile] File name:', file.name)
-    console.log('[validateFile] File MIME type:', file.type)
-    
     // Special handling for AI files that might be detected as PDF
     const ext = file.name.split('.').pop()?.toLowerCase()
-    console.log('[validateFile] File extension:', ext)
-    
     if (ext === 'ai' && (file.type === 'application/pdf' || file.type === 'application/postscript' || file.type === '')) {
       format = 'ai'
-      console.log('[validateFile] Detected as AI file based on extension')
     } else if ((file.type === 'application/pdf' || ext === 'pdf') && options?.allowedFormats?.includes('ai')) {
       // If AI format is allowed and we have a PDF file, check if it's actually an AI file
       // We'll let the buffer content detection decide later
       format = null // Force buffer detection
-      console.log('[validateFile] PDF file with AI format allowed, will check content for AI markers')
     } else {
       // Try to get format from MIME type first
       format = getImageFormatFromMimeType(file.type)
-      console.log('[validateFile] Format from MIME type:', format)
       
       // Fall back to file extension if MIME type not recognized
       if (!format && file.name) {
         if (ext && Object.values(MIME_TYPE_MAP).includes(ext as ImageFormat)) {
           format = ext as ImageFormat
-          console.log('[validateFile] Format from extension:', format)
         }
       }
     }
   } else {
     // Detect from buffer content
     format = detectFileTypeFromBuffer(file)
-    console.log('[validateFile] Format detected from buffer:', format)
     
     // Special case: If we detected PDF but AI is in allowed formats, 
     // check if it's actually an AI file
     if (format === 'pdf' && config.allowedFormats.includes('ai')) {
       const header = file.toString('utf8', 0, Math.min(2048, file.length))
-      const hasAIMarkers = header.includes('%%Creator: Adobe Illustrator') || 
-                          header.includes('%%AI') ||
+      const hasAIMarkers = header.includes('%%Creator: Adobe Illustrator') ||
+                           header.includes('%%AI') ||
                           header.includes('/Creator (Adobe Illustrator)') ||
                           header.toLowerCase().includes('adobe illustrator') ||
                           header.includes('%%For: (Adobe Illustrator)') ||
@@ -396,7 +376,6 @@ export function validateFile(
                           header.includes('%%Title:') && header.includes('.ai')
       
       if (hasAIMarkers) {
-        console.log('[validateFile] PDF file contains AI markers, treating as AI file')
         format = 'ai'
       }
     }
@@ -410,14 +389,10 @@ export function validateFile(
     }
   }
 
-  console.log('[validateFile] Final detected format:', format)
-  console.log('[validateFile] Checking if format is in allowedFormats:', config.allowedFormats.includes(format))
-
   // Check if format is allowed
   if (!config.allowedFormats.includes(format)) {
     // Special case: If we detected PDF but AI is allowed, and this might be an AI file
     if (format === 'pdf' && config.allowedFormats.includes('ai')) {
-      console.log('[validateFile] PDF detected but AI is allowed, checking if it might be an AI file...')
       // Allow it to pass validation, the AI converter will handle it
       return {
         isValid: true,

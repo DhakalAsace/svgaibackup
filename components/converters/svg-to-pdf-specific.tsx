@@ -1,340 +1,1 @@
-"use client"
-
-import React, { useState, useCallback } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
-import { Upload, Download, FileIcon, AlertCircle, CheckCircle2, X, FileText } from "lucide-react"
-import { cn } from "@/lib/utils"
-
-interface ConversionResult {
-  blob: Blob
-  url: string
-  filename: string
-  size: number
-}
-
-type PageFormat = 'a4' | 'letter' | 'legal' | 'a3' | 'a5'
-type Orientation = 'portrait' | 'landscape'
-
-export default function SvgToPdfSpecific() {
-  const [file, setFile] = useState<File | null>(null)
-  const [converting, setConverting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [result, setResult] = useState<ConversionResult | null>(null)
-  const [dragActive, setDragActive] = useState(false)
-  const [progress, setProgress] = useState(0)
-  
-  // Conversion options
-  const [pageFormat, setPageFormat] = useState<PageFormat>('a4')
-  const [orientation, setOrientation] = useState<Orientation>('portrait')
-  const [quality, setQuality] = useState([95])
-  const [margin, setMargin] = useState([10])
-
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true)
-    } else if (e.type === "dragleave") {
-      setDragActive(false)
-    }
-  }, [])
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFile(e.dataTransfer.files[0])
-    }
-  }, [])
-
-  const handleFile = (selectedFile: File) => {
-    setError(null)
-    setResult(null)
-    
-    // Validate file type
-    if (!selectedFile.type.includes('svg') && !selectedFile.name.endsWith('.svg')) {
-      setError('Please upload an SVG file')
-      return
-    }
-    
-    // Validate file size (100MB limit)
-    if (selectedFile.size > 100 * 1024 * 1024) {
-      setError('File size must be less than 100MB')
-      return
-    }
-    
-    setFile(selectedFile)
-  }
-
-  const handleConvert = async () => {
-    if (!file) return
-    
-    setConverting(true)
-    setError(null)
-    setProgress(0)
-    
-    try {
-      // Use client wrapper to safely load the converter
-      const { getClientConverter } = await import("@/lib/converters/client-wrapper")
-      const converter = await getClientConverter('svg', 'pdf')
-      
-      if (!converter) {
-        throw new Error('SVG to PDF converter not available')
-      }
-      
-      // Read file content
-      const text = await file.text()
-      
-      // Perform conversion
-      const result = await converter.handler(text, {
-        pageFormat,
-        orientation,
-        quality: quality[0] / 100,
-        margin: margin[0],
-        onProgress: (p) => setProgress(Math.round(p * 100))
-      })
-      
-      if (!result.success || !result.data) {
-        throw new Error(result.error || 'Conversion failed')
-      }
-      
-      // Create blob from result
-      const blob = new Blob([result.data], { type: 'application/pdf' })
-      const url = URL.createObjectURL(blob)
-      const outputFilename = file.name.replace(/\.svg$/i, '.pdf')
-      
-      setResult({
-        blob,
-        url,
-        filename: outputFilename,
-        size: blob.size
-      })
-    } catch (err) {
-      console.error('Conversion error:', err)
-      setError(err instanceof Error ? err.message : 'Failed to convert SVG to PDF')
-    } finally {
-      setConverting(false)
-      setProgress(0)
-    }
-  }
-
-  const handleDownload = () => {
-    if (!result) return
-    
-    const a = document.createElement('a')
-    a.href = result.url
-    a.download = result.filename
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-  }
-
-  const handleReset = () => {
-    setFile(null)
-    setResult(null)
-    setError(null)
-    setProgress(0)
-  }
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return bytes + ' B'
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
-  }
-
-  return (
-    <div className="w-full max-w-4xl mx-auto">
-      <Card className="shadow-xl">
-        <CardContent className="p-6">
-          {/* File Upload Area */}
-          {!file && (
-            <div
-              className={cn(
-                "border-2 border-dashed rounded-lg p-12 text-center transition-all duration-300",
-                dragActive 
-                  ? "border-primary bg-primary/5 scale-[1.02]" 
-                  : "border-gray-300 dark:border-gray-600 hover:border-primary/50"
-              )}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            >
-              <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <p className="text-lg font-medium mb-2">
-                Drop your SVG file here, or click to browse
-              </p>
-              <p className="text-sm text-gray-500 mb-4">
-                Supports SVG files up to 100MB
-              </p>
-              <input
-                type="file"
-                accept=".svg,image/svg+xml"
-                onChange={(e) => e.target.files && handleFile(e.target.files[0])}
-                className="hidden"
-                id="file-upload"
-              />
-              <label htmlFor="file-upload">
-                <Button asChild variant="outline">
-                  <span>Select SVG File</span>
-                </Button>
-              </label>
-            </div>
-          )}
-
-          {/* File Selected */}
-          {file && !result && (
-            <div className="space-y-6">
-              {/* File Info */}
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <FileIcon className="h-8 w-8 text-blue-500" />
-                  <div>
-                    <p className="font-medium">{file.name}</p>
-                    <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleReset}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {/* Conversion Options */}
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Page Format</Label>
-                    <Select value={pageFormat} onValueChange={(value) => setPageFormat(value as PageFormat)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="a4">A4 (210 × 297 mm)</SelectItem>
-                        <SelectItem value="letter">Letter (8.5 × 11 in)</SelectItem>
-                        <SelectItem value="legal">Legal (8.5 × 14 in)</SelectItem>
-                        <SelectItem value="a3">A3 (297 × 420 mm)</SelectItem>
-                        <SelectItem value="a5">A5 (148 × 210 mm)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Orientation</Label>
-                    <Select value={orientation} onValueChange={(value) => setOrientation(value as Orientation)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="portrait">Portrait</SelectItem>
-                        <SelectItem value="landscape">Landscape</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Quality: {quality[0]}%</Label>
-                  <Slider
-                    value={quality}
-                    onValueChange={setQuality}
-                    min={50}
-                    max={100}
-                    step={5}
-                    className="w-full"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Margin: {margin[0]}mm</Label>
-                  <Slider
-                    value={margin}
-                    onValueChange={setMargin}
-                    min={0}
-                    max={50}
-                    step={5}
-                    className="w-full"
-                  />
-                </div>
-              </div>
-
-              {/* Convert Button */}
-              <Button 
-                onClick={handleConvert} 
-                disabled={converting}
-                className="w-full"
-                size="lg"
-              >
-                {converting ? (
-                  <>
-                    <span className="animate-spin mr-2">⏳</span>
-                    Converting... {progress > 0 && `${progress}%`}
-                  </>
-                ) : (
-                  'Convert to PDF'
-                )}
-              </Button>
-
-              {/* Error Message */}
-              {error && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-            </div>
-          )}
-
-          {/* Conversion Result */}
-          {result && (
-            <div className="space-y-6">
-              <div className="text-center py-8">
-                <CheckCircle2 className="mx-auto h-16 w-16 text-green-500 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Conversion Successful!</h3>
-                <p className="text-gray-600">Your PDF is ready to download</p>
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <FileText className="h-8 w-8 text-red-500" />
-                  <div>
-                    <p className="font-medium">{result.filename}</p>
-                    <p className="text-sm text-gray-500">{formatFileSize(result.size)}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <Button 
-                  onClick={handleDownload}
-                  className="flex-1"
-                  size="lg"
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download PDF
-                </Button>
-                <Button 
-                  onClick={handleReset}
-                  variant="outline"
-                  size="lg"
-                >
-                  Convert Another
-                </Button>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
+"use client"import React, { useState, useCallback } from "react"import { Button } from "@/components/ui/button"import { Card, CardContent } from "@/components/ui/card"import { Alert, AlertDescription } from "@/components/ui/alert"import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"import { Label } from "@/components/ui/label"import { Slider } from "@/components/ui/slider"import { Upload, Download, FileIcon, AlertCircle, CheckCircle2, X, FileText } from "lucide-react"import { cn } from "@/lib/utils"interface ConversionResult {  blob: Blob  url: string  filename: string  size: number}type PageFormat = 'a4' | 'letter' | 'legal' | 'a3' | 'a5'type Orientation = 'portrait' | 'landscape'export default function SvgToPdfSpecific() {  const [file, setFile] = useState<File | null>(null)  const [converting, setConverting] = useState(false)  const [error, setError] = useState<string | null>(null)  const [result, setResult] = useState<ConversionResult | null>(null)  const [dragActive, setDragActive] = useState(false)  const [progress, setProgress] = useState(0)  // Conversion options  const [pageFormat, setPageFormat] = useState<PageFormat>('a4')  const [orientation, setOrientation] = useState<Orientation>('portrait')  const [quality, setQuality] = useState([95])  const [margin, setMargin] = useState([10])  const handleDrag = useCallback((e: React.DragEvent) => {    e.preventDefault()    e.stopPropagation()    if (e.type === "dragenter" || e.type === "dragover") {      setDragActive(true)    } else if (e.type === "dragleave") {      setDragActive(false)    }  }, [])  const handleDrop = useCallback((e: React.DragEvent) => {    e.preventDefault()    e.stopPropagation()    setDragActive(false)    if (e.dataTransfer.files && e.dataTransfer.files[0]) {      handleFile(e.dataTransfer.files[0])    }  }, [])  const handleFile = (selectedFile: File) => {    setError(null)    setResult(null)    // Validate file type    if (!selectedFile.type.includes('svg') && !selectedFile.name.endsWith('.svg')) {      setError('Please upload an SVG file')      return    }    // Validate file size (100MB limit)    if (selectedFile.size > 100 * 1024 * 1024) {      setError('File size must be less than 100MB')      return    }    setFile(selectedFile)  }  const handleConvert = async () => {    if (!file) return    setConverting(true)    setError(null)    setProgress(0)    try {      // Use client wrapper to safely load the converter      const { getClientConverter } = await import("@/lib/converters/client-wrapper")      const converter = await getClientConverter('svg', 'pdf')      if (!converter) {        throw new Error('SVG to PDF converter not available')      }      // Read file content      const text = await file.text()      // Perform conversion      const result = await converter.handler(text, {        pageFormat,        orientation,        quality: quality[0] / 100,        margin: margin[0],        onProgress: (p) => setProgress(Math.round(p * 100))      })      if (!result.success || !result.data) {        throw new Error(result.error || 'Conversion failed')      }      // Create blob from result      const blob = new Blob([result.data], { type: 'application/pdf' })      const url = URL.createObjectURL(blob)      const outputFilename = file.name.replace(/\.svg$/i, '.pdf')      setResult({        blob,        url,        filename: outputFilename,        size: blob.size      })    } catch (err) {      setError(err instanceof Error ? err.message : 'Failed to convert SVG to PDF')    } finally {      setConverting(false)      setProgress(0)    }  }  const handleDownload = () => {    if (!result) return    const a = document.createElement('a')    a.href = result.url    a.download = result.filename    document.body.appendChild(a)    a.click()    document.body.removeChild(a)  }  const handleReset = () => {    setFile(null)    setResult(null)    setError(null)    setProgress(0)  }  const formatFileSize = (bytes: number) => {    if (bytes < 1024) return bytes + ' B'    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'    return (bytes / (1024 * 1024)).toFixed(1) + ' MB'  }  return (    <div className="w-full max-w-4xl mx-auto">      <Card className="shadow-xl">        <CardContent className="p-6">          {/* File Upload Area */}          {!file && (            <div              className={cn(                "border-2 border-dashed rounded-lg p-12 text-center transition-all duration-300",                dragActive                   ? "border-primary bg-primary/5 scale-[1.02]"                   : "border-gray-300 dark:border-gray-600 hover:border-primary/50"              )}              onDragEnter={handleDrag}              onDragLeave={handleDrag}              onDragOver={handleDrag}              onDrop={handleDrop}            >              <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />              <p className="text-lg font-medium mb-2">                Drop your SVG file here, or click to browse              </p>              <p className="text-sm text-gray-500 mb-4">                Supports SVG files up to 100MB              </p>              <input                type="file"                accept=".svg,image/svg+xml"                onChange={(e) => e.target.files && handleFile(e.target.files[0])}                className="hidden"                id="file-upload"              />              <label htmlFor="file-upload">                <Button asChild variant="outline">                  <span>Select SVG File</span>                </Button>              </label>            </div>          )}          {/* File Selected */}          {file && !result && (            <div className="space-y-6">              {/* File Info */}              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">                <div className="flex items-center space-x-3">                  <FileIcon className="h-8 w-8 text-blue-500" />                  <div>                    <p className="font-medium">{file.name}</p>                    <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>                  </div>                </div>                <Button                  variant="ghost"                  size="sm"                  onClick={handleReset}                >                  <X className="h-4 w-4" />                </Button>              </div>              {/* Conversion Options */}              <div className="space-y-4">                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">                  <div className="space-y-2">                    <Label>Page Format</Label>                    <Select value={pageFormat} onValueChange={(value) => setPageFormat(value as PageFormat)}>                      <SelectTrigger>                        <SelectValue />                      </SelectTrigger>                      <SelectContent>                        <SelectItem value="a4">A4 (210 × 297 mm)</SelectItem>                        <SelectItem value="letter">Letter (8.5 × 11 in)</SelectItem>                        <SelectItem value="legal">Legal (8.5 × 14 in)</SelectItem>                        <SelectItem value="a3">A3 (297 × 420 mm)</SelectItem>                        <SelectItem value="a5">A5 (148 × 210 mm)</SelectItem>                      </SelectContent>                    </Select>                  </div>                  <div className="space-y-2">                    <Label>Orientation</Label>                    <Select value={orientation} onValueChange={(value) => setOrientation(value as Orientation)}>                      <SelectTrigger>                        <SelectValue />                      </SelectTrigger>                      <SelectContent>                        <SelectItem value="portrait">Portrait</SelectItem>                        <SelectItem value="landscape">Landscape</SelectItem>                      </SelectContent>                    </Select>                  </div>                </div>                <div className="space-y-2">                  <Label>Quality: {quality[0]}%</Label>                  <Slider                    value={quality}                    onValueChange={setQuality}                    min={50}                    max={100}                    step={5}                    className="w-full"                  />                </div>                <div className="space-y-2">                  <Label>Margin: {margin[0]}mm</Label>                  <Slider                    value={margin}                    onValueChange={setMargin}                    min={0}                    max={50}                    step={5}                    className="w-full"                  />                </div>              </div>              {/* Convert Button */}              <Button                 onClick={handleConvert}                 disabled={converting}                className="w-full"                size="lg"              >                {converting ? (                  <>                    <span className="animate-spin mr-2">⏳</span>                    Converting... {progress > 0 && `${progress}%`}                  </>                ) : (                  'Convert to PDF'                )}              </Button>              {/* Error Message */}              {error && (                <Alert variant="destructive">                  <AlertCircle className="h-4 w-4" />                  <AlertDescription>{error}</AlertDescription>                </Alert>              )}            </div>          )}          {/* Conversion Result */}          {result && (            <div className="space-y-6">              <div className="text-center py-8">                <CheckCircle2 className="mx-auto h-16 w-16 text-green-500 mb-4" />                <h3 className="text-xl font-semibold mb-2">Conversion Successful!</h3>                <p className="text-gray-600">Your PDF is ready to download</p>              </div>              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">                <div className="flex items-center space-x-3">                  <FileText className="h-8 w-8 text-red-500" />                  <div>                    <p className="font-medium">{result.filename}</p>                    <p className="text-sm text-gray-500">{formatFileSize(result.size)}</p>                  </div>                </div>              </div>              <div className="flex gap-3">                <Button                   onClick={handleDownload}                  className="flex-1"                  size="lg"                >                  <Download className="mr-2 h-4 w-4" />                  Download PDF                </Button>                <Button                   onClick={handleReset}                  variant="outline"                  size="lg"                >                  Convert Another                </Button>              </div>            </div>          )}        </CardContent>      </Card>    </div>  )}

@@ -1,332 +1,1 @@
-/**
- * BMP to SVG Converter Implementation
- * 
- * This module provides BMP to SVG conversion using:
- * 1. imagetracerjs for direct client-side conversion (primary method)
- * 2. CloudConvert BMP → PNG → client-side PNG to SVG (fallback)
- */
-
-import { LazyLoadedConverter } from './base-converter'
-import type { 
-  ConversionOptions, 
-  ConversionResult,
-  ImageFormat 
-} from './types'
-import { 
-  ConversionError, 
-  FileValidationError
-} from './errors'
-import { detectFileTypeFromBuffer } from './validation'
-import { traceImageOptimized, type ImageTracerOptions } from './browser-tracing-utils'
-import { convertWithCloudConvert } from './cloudconvert-client'
-
-/**
- * Extended conversion options for BMP to SVG
- */
-interface BmpToSvgOptions extends ConversionOptions, ImageTracerOptions {
-  /** Quality level (1-100, default: 50) */
-  quality?: number
-  /** Maximum image size in pixels (default: 16000000 = 16MP) */
-  maxPixels?: number
-}
-
-/**
- * BMP to SVG Converter using imagetracerjs (works in browser)
- */
-class BmpToSvgConverter extends LazyLoadedConverter {
-  name = 'BMP to SVG'
-  from: ImageFormat = 'bmp'
-  to: ImageFormat = 'svg'
-  description = 'Convert BMP bitmap images to scalable vector graphics using advanced tracing algorithms'
-  isClientSide = true // Works in browser!
-  
-  private ImageTracer: any = null
-
-  /**
-   * Load the appropriate library based on environment
-   */
-  protected async loadLibraries(): Promise<void> {
-    // Use imagetracerjs which works in both browser and Node.js
-    const ImageTracerModule = await import('imagetracerjs')
-    this.ImageTracer = ImageTracerModule.default || ImageTracerModule
-  }
-
-  /**
-   * CloudConvert fallback method
-   */
-  private async convertViaCloudConvert(
-    input: Buffer,
-    options: BmpToSvgOptions
-  ): Promise<ConversionResult> {
-    try {
-      // Step 1: Convert BMP to PNG using CloudConvert
-      this.reportProgress(options, 0.1)
-      
-      const pngResult = await convertWithCloudConvert(
-        input,
-        'bmp',
-        'png',
-        'input.bmp',
-        {
-          width: options.width,
-          height: options.height,
-          preserveAspectRatio: options.preserveAspectRatio,
-          onProgress: (progress) => {
-            this.reportProgress(options, 0.1 + progress * 0.4) // 0.1 to 0.5
-          }
-        }
-      )
-      
-      if (!pngResult.success) {
-        throw new ConversionError(
-          `CloudConvert BMP to PNG failed: ${pngResult.error}`,
-          'CLOUDCONVERT_BMP_TO_PNG_FAILED'
-        )
-      }
-      
-      // Step 2: Convert PNG to SVG using existing client-side converter
-      this.reportProgress(options, 0.5)
-      
-      if (!pngResult.data) {
-        throw new ConversionError(
-          'CloudConvert BMP to PNG returned no data',
-          'CLOUDCONVERT_NO_DATA'
-        )
-      }
-      
-      const { pngToSvgHandler } = await import('./png-to-svg')
-      const svgResult = await pngToSvgHandler(pngResult.data, {
-        ...options,
-        onProgress: (progress) => {
-          this.reportProgress(options, 0.5 + progress * 0.5) // 0.5 to 1.0
-        }
-      })
-      
-      if (!svgResult.success) {
-        throw new ConversionError(
-          `PNG to SVG conversion failed: ${svgResult.error}`,
-          'PNG_TO_SVG_FAILED'
-        )
-      }
-      
-      if (!svgResult.data) {
-        throw new ConversionError(
-          'PNG to SVG conversion returned no data',
-          'PNG_TO_SVG_NO_DATA'
-        )
-      }
-      
-      return this.createSuccessResult(
-        svgResult.data.toString('utf-8'),
-        'image/svg+xml',
-        {
-          ...svgResult.metadata,
-          originalFormat: 'bmp',
-          method: 'cloudconvert-chain',
-          intermediateFormat: 'png'
-        }
-      )
-      
-    } catch (error) {
-      if (error instanceof ConversionError) {
-        throw error
-      }
-      
-      throw new ConversionError(
-        `CloudConvert BMP to SVG chain failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        'CLOUDCONVERT_CHAIN_FAILED'
-      )
-    }
-  }
-
-  /**
-   * Perform the conversion with loaded libraries
-   */
-  protected async performConversionWithLibraries(
-    input: Buffer,
-    options: BmpToSvgOptions
-  ): Promise<ConversionResult> {
-    try {
-      // Validate input is BMP
-      const detectedFormat = detectFileTypeFromBuffer(input)
-      if (detectedFormat !== 'bmp') {
-        throw new FileValidationError(
-          `Expected BMP file but detected ${detectedFormat || 'unknown'} format`
-        )
-      }
-
-      try {
-        // Try direct imagetracerjs conversion first
-        this.reportProgress(options, 0.1)
-
-        // Convert buffer to base64 data URL
-        const base64 = input.toString('base64')
-        const dataUrl = `data:image/bmp;base64,${base64}`
-        
-        // Report progress after data preparation
-        this.reportProgress(options, 0.2)
-
-        // Convert using optimized tracing
-        const svg = await traceImageOptimized(
-          this.ImageTracer,
-          dataUrl,
-          options,
-          (progress) => this.reportProgress(options, 0.2 + progress * 0.7)
-        )
-
-        // Apply any post-processing
-        let finalSvg = svg
-        if (options.width || options.height) {
-          finalSvg = this.resizeSvg(svg, options.width, options.height, options.preserveAspectRatio)
-        }
-
-        // Report progress
-        this.reportProgress(options, 0.95)
-
-        // Extract metadata
-        const metadata = this.extractSvgMetadata(finalSvg)
-
-        return this.createSuccessResult(
-          finalSvg,
-          'image/svg+xml',
-          {
-            ...metadata,
-            method: 'imagetracerjs',
-            quality: options.quality || 50
-          }
-        )
-        
-      } catch (directError) {
-        console.warn('Direct BMP to SVG conversion failed, falling back to CloudConvert:', directError)
-        
-        // Fallback to CloudConvert chain
-        return await this.convertViaCloudConvert(input, options)
-      }
-      
-    } catch (error) {
-      if (error instanceof ConversionError) {
-        throw error
-      }
-      
-      const message = error instanceof Error ? error.message : 'Unknown error'
-      throw new ConversionError(
-        `BMP to SVG conversion failed: ${message}`,
-        'BMP_TO_SVG_FAILED'
-      )
-    }
-  }
-
-
-  /**
-   * Resize SVG to specific dimensions
-   */
-  private resizeSvg(
-    svg: string, 
-    targetWidth?: number, 
-    targetHeight?: number,
-    preserveAspectRatio: boolean = true
-  ): string {
-    // Extract current dimensions from viewBox or width/height
-    let width = 0, height = 0
-    
-    // Try viewBox first
-    const viewBoxMatch = svg.match(/viewBox="0 0 (\d+\.?\d*) (\d+\.?\d*)"/)
-    if (viewBoxMatch) {
-      width = parseFloat(viewBoxMatch[1])
-      height = parseFloat(viewBoxMatch[2])
-    } else {
-      // Fall back to width/height attributes
-      const widthMatch = svg.match(/width="(\d+\.?\d*)"/)
-      const heightMatch = svg.match(/height="(\d+\.?\d*)"/)
-      
-      if (widthMatch) width = parseFloat(widthMatch[1])
-      if (heightMatch) height = parseFloat(heightMatch[1])
-    }
-    
-    if (!width || !height) return svg
-    
-    // Calculate new dimensions
-    let newWidth = targetWidth || width
-    let newHeight = targetHeight || height
-    
-    if (preserveAspectRatio) {
-      const aspectRatio = width / height
-      
-      if (targetWidth && !targetHeight) {
-        newHeight = Math.round(targetWidth / aspectRatio)
-      } else if (!targetWidth && targetHeight) {
-        newWidth = Math.round(targetHeight * aspectRatio)
-      } else if (targetWidth && targetHeight) {
-        // Fit within bounds while preserving aspect ratio
-        const scaleX = targetWidth / width
-        const scaleY = targetHeight / height
-        const scale = Math.min(scaleX, scaleY)
-        
-        newWidth = Math.round(width * scale)
-        newHeight = Math.round(height * scale)
-      }
-    }
-    
-    // Update SVG dimensions
-    const svgWithNewDimensions = svg
-      .replace(/width="[^"]*"/, `width="${newWidth}"`)
-      .replace(/height="[^"]*"/, `height="${newHeight}"`)
-    
-    // If no width/height attributes, add them
-    if (!svg.includes('width=')) {
-      const svgTagEnd = svg.indexOf('>')
-      const beforeEnd = svg.slice(0, svgTagEnd)
-      const afterEnd = svg.slice(svgTagEnd)
-      return `${beforeEnd} width="${newWidth}" height="${newHeight}"${afterEnd}`
-    }
-    
-    return svgWithNewDimensions
-  }
-
-  /**
-   * Extract metadata from SVG string
-   */
-  private extractSvgMetadata(svg: string): { width?: number; height?: number } {
-    const metadata: { width?: number; height?: number } = {}
-    
-    // Try viewBox first
-    const viewBoxMatch = svg.match(/viewBox="0 0 (\d+\.?\d*) (\d+\.?\d*)"/)
-    if (viewBoxMatch) {
-      metadata.width = parseFloat(viewBoxMatch[1])
-      metadata.height = parseFloat(viewBoxMatch[2])
-    } else {
-      // Fall back to width/height attributes
-      const widthMatch = svg.match(/width="(\d+\.?\d*)"/)
-      const heightMatch = svg.match(/height="(\d+\.?\d*)"/)
-      
-      if (widthMatch) metadata.width = parseFloat(widthMatch[1])
-      if (heightMatch) metadata.height = parseFloat(heightMatch[1])
-    }
-    
-    return metadata
-  }
-}
-
-// Create and export the converter instance
-export const bmpToSvgConverter = new BmpToSvgConverter()
-
-// Export the handler for direct use
-export const bmpToSvgHandler = bmpToSvgConverter.handler
-
-// Client-side wrapper
-export async function convertBmpToSvgClient(
-  file: File,
-  options: BmpToSvgOptions = {}
-): Promise<ConversionResult> {
-  const arrayBuffer = await file.arrayBuffer()
-  const buffer = Buffer.from(arrayBuffer)
-  return bmpToSvgHandler(buffer, options)
-}
-
-// Server-side wrapper
-export async function convertBmpToSvgServer(
-  buffer: Buffer,
-  options: BmpToSvgOptions = {}
-): Promise<ConversionResult> {
-  return bmpToSvgHandler(buffer, options)
-}
+/** * BMP to SVG Converter Implementation *  * This module provides BMP to SVG conversion using: * 1. imagetracerjs for direct client-side conversion (primary method) * 2. CloudConvert BMP → PNG → client-side PNG to SVG (fallback) */import { LazyLoadedConverter } from './base-converter'import type {   ConversionOptions,   ConversionResult,  ImageFormat } from './types'import {   ConversionError,   FileValidationError} from './errors'import { detectFileTypeFromBuffer } from './validation'import { traceImageOptimized, type ImageTracerOptions } from './browser-tracing-utils'import { convertWithCloudConvert } from './cloudconvert-client'/** * Extended conversion options for BMP to SVG */interface BmpToSvgOptions extends ConversionOptions, ImageTracerOptions {  /** Quality level (1-100, default: 50) */  quality?: number  /** Maximum image size in pixels (default: 16000000 = 16MP) */  maxPixels?: number}/** * BMP to SVG Converter using imagetracerjs (works in browser) */class BmpToSvgConverter extends LazyLoadedConverter {  name = 'BMP to SVG'  from: ImageFormat = 'bmp'  to: ImageFormat = 'svg'  description = 'Convert BMP bitmap images to scalable vector graphics using advanced tracing algorithms'  isClientSide = true // Works in browser!  private ImageTracer: any = null  /**   * Load the appropriate library based on environment   */  protected async loadLibraries(): Promise<void> {    // Use imagetracerjs which works in both browser and Node.js    const ImageTracerModule = await import('imagetracerjs')    this.ImageTracer = ImageTracerModule.default || ImageTracerModule  }  /**   * CloudConvert fallback method   */  private async convertViaCloudConvert(    input: Buffer,    options: BmpToSvgOptions  ): Promise<ConversionResult> {    try {      // Step 1: Convert BMP to PNG using CloudConvert      this.reportProgress(options, 0.1)      const pngResult = await convertWithCloudConvert(        input,        'bmp',        'png',        'input.bmp',        {          width: options.width,          height: options.height,          preserveAspectRatio: options.preserveAspectRatio,          onProgress: (progress) => {            this.reportProgress(options, 0.1 + progress * 0.4) // 0.1 to 0.5          }        }      )      if (!pngResult.success) {        throw new ConversionError(          `CloudConvert BMP to PNG failed: ${pngResult.error}`,          'CLOUDCONVERT_BMP_TO_PNG_FAILED'        )      }      // Step 2: Convert PNG to SVG using existing client-side converter      this.reportProgress(options, 0.5)      if (!pngResult.data) {        throw new ConversionError(          'CloudConvert BMP to PNG returned no data',          'CLOUDCONVERT_NO_DATA'        )      }      const { pngToSvgHandler } = await import('./png-to-svg')      const svgResult = await pngToSvgHandler(pngResult.data, {        ...options,        onProgress: (progress) => {          this.reportProgress(options, 0.5 + progress * 0.5) // 0.5 to 1.0        }      })      if (!svgResult.success) {        throw new ConversionError(          `PNG to SVG conversion failed: ${svgResult.error}`,          'PNG_TO_SVG_FAILED'        )      }      if (!svgResult.data) {        throw new ConversionError(          'PNG to SVG conversion returned no data',          'PNG_TO_SVG_NO_DATA'        )      }      return this.createSuccessResult(        svgResult.data.toString('utf-8'),        'image/svg+xml',        {          ...svgResult.metadata,          originalFormat: 'bmp',          method: 'cloudconvert-chain',          intermediateFormat: 'png'        }      )    } catch (error) {      if (error instanceof ConversionError) {        throw error      }      throw new ConversionError(        `CloudConvert BMP to SVG chain failed: ${error instanceof Error ? error.message : 'Unknown error'}`,        'CLOUDCONVERT_CHAIN_FAILED'      )    }  }  /**   * Perform the conversion with loaded libraries   */  protected async performConversionWithLibraries(    input: Buffer,    options: BmpToSvgOptions  ): Promise<ConversionResult> {    try {      // Validate input is BMP      const detectedFormat = detectFileTypeFromBuffer(input)      if (detectedFormat !== 'bmp') {        throw new FileValidationError(          `Expected BMP file but detected ${detectedFormat || 'unknown'} format`        )      }      try {        // Try direct imagetracerjs conversion first        this.reportProgress(options, 0.1)        // Convert buffer to base64 data URL        const base64 = input.toString('base64')        const dataUrl = `data:image/bmp;base64,${base64}`        // Report progress after data preparation        this.reportProgress(options, 0.2)        // Convert using optimized tracing        const svg = await traceImageOptimized(          this.ImageTracer,          dataUrl,          options,          (progress) => this.reportProgress(options, 0.2 + progress * 0.7)        )        // Apply any post-processing        let finalSvg = svg        if (options.width || options.height) {          finalSvg = this.resizeSvg(svg, options.width, options.height, options.preserveAspectRatio)        }        // Report progress        this.reportProgress(options, 0.95)        // Extract metadata        const metadata = this.extractSvgMetadata(finalSvg)        return this.createSuccessResult(          finalSvg,          'image/svg+xml',          {            ...metadata,            method: 'imagetracerjs',            quality: options.quality || 50          }        )      } catch (directError) {        // Fallback to CloudConvert chain        return await this.convertViaCloudConvert(input, options)      }    } catch (error) {      if (error instanceof ConversionError) {        throw error      }      const message = error instanceof Error ? error.message : 'Unknown error'      throw new ConversionError(        `BMP to SVG conversion failed: ${message}`,        'BMP_TO_SVG_FAILED'      )    }  }  /**   * Resize SVG to specific dimensions   */  private resizeSvg(    svg: string,     targetWidth?: number,     targetHeight?: number,    preserveAspectRatio: boolean = true  ): string {    // Extract current dimensions from viewBox or width/height    let width = 0, height = 0    // Try viewBox first    const viewBoxMatch = svg.match(/viewBox="0 0 (\d+\.?\d*) (\d+\.?\d*)"/)    if (viewBoxMatch) {      width = parseFloat(viewBoxMatch[1])      height = parseFloat(viewBoxMatch[2])    } else {      // Fall back to width/height attributes      const widthMatch = svg.match(/width="(\d+\.?\d*)"/)      const heightMatch = svg.match(/height="(\d+\.?\d*)"/)      if (widthMatch) width = parseFloat(widthMatch[1])      if (heightMatch) height = parseFloat(heightMatch[1])    }    if (!width || !height) return svg    // Calculate new dimensions    let newWidth = targetWidth || width    let newHeight = targetHeight || height    if (preserveAspectRatio) {      const aspectRatio = width / height      if (targetWidth && !targetHeight) {        newHeight = Math.round(targetWidth / aspectRatio)      } else if (!targetWidth && targetHeight) {        newWidth = Math.round(targetHeight * aspectRatio)      } else if (targetWidth && targetHeight) {        // Fit within bounds while preserving aspect ratio        const scaleX = targetWidth / width        const scaleY = targetHeight / height        const scale = Math.min(scaleX, scaleY)        newWidth = Math.round(width * scale)        newHeight = Math.round(height * scale)      }    }    // Update SVG dimensions    const svgWithNewDimensions = svg      .replace(/width="[^"]*"/, `width="${newWidth}"`)      .replace(/height="[^"]*"/, `height="${newHeight}"`)    // If no width/height attributes, add them    if (!svg.includes('width=')) {      const svgTagEnd = svg.indexOf('>')      const beforeEnd = svg.slice(0, svgTagEnd)      const afterEnd = svg.slice(svgTagEnd)      return `${beforeEnd} width="${newWidth}" height="${newHeight}"${afterEnd}`    }    return svgWithNewDimensions  }  /**   * Extract metadata from SVG string   */  private extractSvgMetadata(svg: string): { width?: number; height?: number } {    const metadata: { width?: number; height?: number } = {}    // Try viewBox first    const viewBoxMatch = svg.match(/viewBox="0 0 (\d+\.?\d*) (\d+\.?\d*)"/)    if (viewBoxMatch) {      metadata.width = parseFloat(viewBoxMatch[1])      metadata.height = parseFloat(viewBoxMatch[2])    } else {      // Fall back to width/height attributes      const widthMatch = svg.match(/width="(\d+\.?\d*)"/)      const heightMatch = svg.match(/height="(\d+\.?\d*)"/)      if (widthMatch) metadata.width = parseFloat(widthMatch[1])      if (heightMatch) metadata.height = parseFloat(heightMatch[1])    }    return metadata  }}// Create and export the converter instanceexport const bmpToSvgConverter = new BmpToSvgConverter()// Export the handler for direct useexport const bmpToSvgHandler = bmpToSvgConverter.handler// Client-side wrapperexport async function convertBmpToSvgClient(  file: File,  options: BmpToSvgOptions = {}): Promise<ConversionResult> {  const arrayBuffer = await file.arrayBuffer()  const buffer = Buffer.from(arrayBuffer)  return bmpToSvgHandler(buffer, options)}// Server-side wrapperexport async function convertBmpToSvgServer(  buffer: Buffer,  options: BmpToSvgOptions = {}): Promise<ConversionResult> {  return bmpToSvgHandler(buffer, options)}

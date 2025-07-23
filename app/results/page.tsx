@@ -8,9 +8,9 @@ import Link from "next/link"
 import Image from "next/image"
 import { SafeSvgDisplay } from "@/components/safe-svg-display"
 import { sanitizeSvg } from "@/lib/svg-sanitizer"
-import { GenerationUpsell, UpgradeModal } from "@/components/generation-upsells"
+import { UpgradeModal } from "@/components/generation-upsells"
 import { GenerationSignupModal } from "@/components/auth/generation-signup-modal"
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClientComponentClient } from '@/lib/supabase'
 import { createLogger } from '@/lib/logger'
 
 const logger = createLogger('results-page')
@@ -82,15 +82,10 @@ function ResultsContent() {
       // SECURITY: Only log the domain, not the full URL to prevent accidental URL token leakage
       const urlObj = new URL(url);
       
-      // Client-side safe logging - in production, we'd use a proper client-side logger
-      if (process.env.NODE_ENV === 'development') {
-        // Only log domain in dev, not the full URL which might contain tokens
-        console.log(`Original SVG URL domain: ${urlObj.hostname}`);
-      }
+      // Domain validation only, no logging in production
       
       // Use our proxy endpoint instead of fetching directly
       const proxyUrl = `/api/proxy-svg?url=${encodeURIComponent(url)}`;
-      console.log(`Attempting to fetch from proxy: ${proxyUrl}`);
       
       // SECURITY: Add additional headers to prevent credential exposure
       const response = await fetch(proxyUrl, {
@@ -123,7 +118,7 @@ function ResultsContent() {
     } catch (err) {
       // SECURITY: Log generic error message, not the full error which might contain sensitive info
       const errorMsg = err instanceof Error ? err.message : 'Unknown error during fetch';
-      console.error('Error in fetchSvgContent:', errorMsg, err);
+      // Error handling without logging sensitive details
       
       // SECURITY: Use a generic error message in production to prevent information disclosure
       const displayError = process.env.NODE_ENV === 'production'
@@ -162,7 +157,7 @@ function ResultsContent() {
     let urlFromStorage: string | null = null;
     if (typeof window !== 'undefined') { // Check if on client
       urlFromStorage = sessionStorage.getItem('resultSvgUrl');
-      console.log('[ResultsPage] Retrieved SVG URL from sessionStorage:', urlFromStorage); // DEBUG LOG
+      // Retrieved SVG URL from sessionStorage
       
       // Remove automatic signup modal for anonymous users
     }
@@ -191,12 +186,37 @@ function ResultsContent() {
           .eq('id', user.id)
           .single();
         
+        // Debug logging
+        if (profile) {
+          console.log('User profile data:', {
+            subscription_status: profile.subscription_status,
+            subscription_tier: profile.subscription_tier,
+            monthly_credits: profile.monthly_credits,
+            monthly_credits_used: profile.monthly_credits_used,
+            lifetime_credits_granted: profile.lifetime_credits_granted,
+            lifetime_credits_used: profile.lifetime_credits_used
+          });
+        }
+        
+        // Fix inconsistent data: Starter plan should have 100 monthly credits
+        if (profile && profile.subscription_status === 'active' && profile.subscription_tier === 'starter' && profile.monthly_credits !== 100) {
+          console.warn('Fixing inconsistent Starter plan credits:', profile.monthly_credits, '-> 100');
+          profile.monthly_credits = 100;
+        }
+        // Fix inconsistent data: Pro plan should have 350 monthly credits  
+        if (profile && profile.subscription_status === 'active' && profile.subscription_tier === 'pro' && profile.monthly_credits !== 350) {
+          console.warn('Fixing inconsistent Pro plan credits:', profile.monthly_credits, '-> 350');
+          profile.monthly_credits = 350;
+        }
+        
         setUserProfile(profile);
         
         // Determine if the free user is out of credits
         const isOutOfCredits =
           profile &&
           profile.subscription_status !== "active" &&
+          profile.lifetime_credits_used !== null &&
+          profile.lifetime_credits_granted !== null &&
           profile.lifetime_credits_used >= profile.lifetime_credits_granted;
 
         // Show the immediate upgrade modal when totally out of credits
@@ -250,7 +270,7 @@ function ResultsContent() {
     } catch (e) {
       // SECURITY: Use generic error message and only log in development
       if (process.env.NODE_ENV === 'development') {
-        console.error('Error downloading SVG:', e instanceof Error ? e.message : 'Unknown error');
+        // Error downloading SVG
       }
       setError('Unable to download SVG. Please try again.');
     }  
@@ -305,26 +325,11 @@ function ResultsContent() {
             <CheckCircle className="w-4 h-4 mr-1 text-green-600" />
             <span>
               This {contentType === 'icon' ? 'icon' : 'SVG'} cost {contentType === 'icon' ? '1 credit' : '2 credits'}. 
-              {userProfile.subscription_status === 'active' ? (() => {
-                const remainingCredits = (userProfile.monthly_credits || 0) - (userProfile.monthly_credits_used || 0);
-                return `You have ${remainingCredits} ${remainingCredits === 1 ? 'credit' : 'credits'} left this month.`;
-              })() : ''}
+              {remainingCount !== null ? `You have ${remainingCount} ${remainingCount === 1 ? 'credit' : 'credits'} left this month.` : ''}
             </span>
           </div>
         )}
 
-        {/* Generation Upsell Component - Only for authenticated users */}
-        {userProfile && (
-          <div className="mb-6">
-            <GenerationUpsell
-              creditsUsed={userProfile.lifetime_credits_used || userProfile.monthly_credits_used || 0}
-              creditLimit={userProfile.lifetime_credits_granted || userProfile.monthly_credits || 0}
-              isSubscribed={userProfile.subscription_status === 'active'}
-              limitType={userProfile.subscription_status === 'active' ? 'monthly' : 'lifetime'}
-              tier={userProfile.subscription_tier}
-            />
-          </div>
-        )}
 
         {/* Error message */}
         {error && (
@@ -437,7 +442,7 @@ function ResultsContent() {
                         🎨 Love your {contentType === 'icon' ? 'icon' : 'SVG'}? Get more!
                       </h4>
                       <p className="text-xs text-gray-600">
-                        {contentType === 'icon' ? 'Get 100–350 icon generations/month' : 'Get 50–175 SVG generations/month'} • Plans from $12/month
+                        {contentType === 'icon' ? 'Get 100–350 icon generations/month' : 'Get 50–175 SVG generations/month'} • Plans from $19/month
                       </p>
                     </div>
                     <Link
@@ -469,8 +474,10 @@ function ResultsContent() {
         onClose={() => setShowSignupModal(false)}
         generationsUsed={1}
         isSoftPrompt={isSoftPrompt}
-        isAuthenticated={false}
-        isSubscribed={false}
+        isAuthenticated={!!userProfile}
+        isSubscribed={userProfile?.subscription_status === 'active'}
+        preservePrompt={true}
+        source="results"
       />
       
       <UpgradeModal

@@ -1,8 +1,6 @@
 import { headers } from 'next/headers';
 import { createLogger } from '@/lib/logger';
-
 const logger = createLogger('soft-404');
-
 // Patterns that indicate a soft 404 (page exists but has no real content)
 const soft404Patterns = [
   /page not found/i,
@@ -14,10 +12,8 @@ const soft404Patterns = [
   /no results found/i,
   /error occurred/i,
 ];
-
 // Minimum content length for a valid page (excluding HTML markup)
 const MIN_CONTENT_LENGTH = 200;
-
 // Keywords that indicate valid content
 const validContentKeywords = [
   'convert',
@@ -30,20 +26,17 @@ const validContentKeywords = [
   'pricing',
   'blog',
 ];
-
 export interface Soft404Detection {
   isSoft404: boolean;
   reason?: string;
   confidence: number;
 }
-
 /**
  * Detect if a page is a soft 404 based on its content
  */
 export function detectSoft404(content: string, pathname: string): Soft404Detection {
   // Remove HTML tags and get text content
   const textContent = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-  
   // Check for 404 patterns in content
   for (const pattern of soft404Patterns) {
     if (pattern.test(textContent)) {
@@ -54,7 +47,6 @@ export function detectSoft404(content: string, pathname: string): Soft404Detecti
       };
     }
   }
-  
   // Check content length
   if (textContent.length < MIN_CONTENT_LENGTH) {
     return {
@@ -63,12 +55,10 @@ export function detectSoft404(content: string, pathname: string): Soft404Detecti
       confidence: 0.8,
     };
   }
-  
   // Check for valid content keywords
   const hasValidContent = validContentKeywords.some(keyword => 
     textContent.toLowerCase().includes(keyword)
   );
-  
   if (!hasValidContent) {
     return {
       isSoft404: true,
@@ -76,7 +66,6 @@ export function detectSoft404(content: string, pathname: string): Soft404Detecti
       confidence: 0.7,
     };
   }
-  
   // Check for specific page patterns
   if (pathname.includes('/test') || pathname.includes('/debug')) {
     return {
@@ -85,14 +74,12 @@ export function detectSoft404(content: string, pathname: string): Soft404Detecti
       confidence: 0.95,
     };
   }
-  
   // Page appears to be valid
   return {
     isSoft404: false,
     confidence: 1.0,
   };
 }
-
 /**
  * Log soft 404 detection for monitoring
  */
@@ -101,7 +88,6 @@ export async function logSoft404Detection(
   detection: Soft404Detection
 ): Promise<void> {
   if (!detection.isSoft404) return;
-  
   try {
     // Log to monitoring service
     logger.warn(`Soft 404 detected: ${pathname}`, {
@@ -109,7 +95,6 @@ export async function logSoft404Detection(
       confidence: detection.confidence,
       timestamp: new Date().toISOString(),
     });
-    
     // You can also send this to an analytics service
     // await sendToAnalytics({
     //   event: 'soft_404_detected',
@@ -117,10 +102,8 @@ export async function logSoft404Detection(
     //   ...detection,
     // });
   } catch (error) {
-    console.error('Failed to log soft 404 detection:', error);
   }
 }
-
 /**
  * Headers to set for soft 404 pages
  */
@@ -130,7 +113,6 @@ export function getSoft404Headers(): Headers {
   responseHeaders.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   return responseHeaders;
 }
-
 /**
  * Check if a URL should be monitored for soft 404s
  */
@@ -145,6 +127,5 @@ export function shouldMonitorUrl(pathname: string): boolean {
     '/sitemap.xml',
     '/favicon.ico',
   ];
-  
   return !skipPaths.some(path => pathname.startsWith(path));
 }

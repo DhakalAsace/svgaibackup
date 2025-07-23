@@ -2,7 +2,6 @@
  * Unified Analytics Service
  * Uses Vercel Analytics for tracking
  */
-
 import { track as vercelTrack } from '@vercel/analytics'
 import {
   TRACKING_EVENTS,
@@ -12,9 +11,7 @@ import {
   SERVER_TRACKING_CONFIG,
 } from './tracking-config'
 import { createLogger } from '@/lib/logger'
-
 const logger = createLogger('analytics')
-
 export interface AnalyticsUser {
   id?: string
   type: 'free' | 'paid' | 'trial'
@@ -22,7 +19,6 @@ export interface AnalyticsUser {
   createdAt?: Date
   properties?: Record<string, any>
 }
-
 export interface AnalyticsContext {
   user?: AnalyticsUser
   session?: {
@@ -38,21 +34,17 @@ export interface AnalyticsContext {
     category: string
   }
 }
-
 class AnalyticsService {
   private context: AnalyticsContext = {}
   private eventQueue: Array<{ event: string; properties: any; timestamp: Date }> = []
   private flushInterval: NodeJS.Timeout | null = null
-
   constructor() {
     this.startFlushInterval()
   }
-
   // Initialize analytics with context
   initialize(context: Partial<AnalyticsContext>) {
     this.context = { ...this.context, ...context }
   }
-
   // Track event across all platforms
   track(eventName: string, properties?: Record<string, any>) {
     // Validate event
@@ -62,7 +54,6 @@ class AnalyticsService {
         logger.warn(`[Analytics] Invalid event parameters for ${eventName}:`, validation.errors)
       }
     }
-
     // Add to queue for batch processing
     this.eventQueue.push({
       event: eventName,
@@ -72,18 +63,14 @@ class AnalyticsService {
       },
       timestamp: new Date(),
     })
-
     // Process immediately if critical event
     if (SERVER_TRACKING_CONFIG.criticalEvents.includes(eventName)) {
       this.flush()
     }
-
     // Debug logging
     if (DEBUG_CONFIG.enabled && DEBUG_CONFIG.consoleOutput) {
-      console.log('[Analytics] Event tracked:', eventName, properties)
-    }
+      }
   }
-
   // Track page view
   trackPageView(path: string, properties?: Record<string, any>) {
     const pageProperties = {
@@ -92,10 +79,8 @@ class AnalyticsService {
       referrer: document.referrer,
       ...properties,
     }
-
     // Vercel Analytics
     vercelTrack('pageview', pageProperties)
-
     // Update context
     this.context.page = {
       path,
@@ -103,7 +88,6 @@ class AnalyticsService {
       category: this.getPageCategory(path),
     }
   }
-
   // Track converter events
   trackConverter(
     action: keyof typeof TRACKING_EVENTS.converter,
@@ -116,7 +100,6 @@ class AnalyticsService {
       ...properties,
     })
   }
-
   // Track gallery events
   trackGallery(
     action: keyof typeof TRACKING_EVENTS.gallery,
@@ -129,7 +112,6 @@ class AnalyticsService {
       ...properties,
     })
   }
-
   // Track tool usage
   trackTool(
     action: keyof typeof TRACKING_EVENTS.tools,
@@ -138,7 +120,6 @@ class AnalyticsService {
     const event = TRACKING_EVENTS.tools[action]
     this.track(event.name, properties)
   }
-
   // Track premium features
   trackPremium(
     action: keyof typeof TRACKING_EVENTS.premium,
@@ -146,7 +127,6 @@ class AnalyticsService {
   ) {
     const event = TRACKING_EVENTS.premium[action]
     this.track(event.name, properties)
-    
     // Track revenue if applicable
     if (action === 'creditsPurchased' && properties?.price) {
       this.trackRevenue(properties.price, {
@@ -155,7 +135,6 @@ class AnalyticsService {
       })
     }
   }
-
   // Track learn page engagement
   trackLearn(
     action: keyof typeof TRACKING_EVENTS.learn,
@@ -168,7 +147,6 @@ class AnalyticsService {
       ...properties,
     })
   }
-
   // Track user engagement
   trackEngagement(
     action: keyof typeof TRACKING_EVENTS.engagement,
@@ -177,7 +155,6 @@ class AnalyticsService {
     const event = TRACKING_EVENTS.engagement[action]
     this.track(event.name, properties)
   }
-
   // Track conversion funnel
   trackFunnel(
     action: keyof typeof TRACKING_EVENTS.funnel,
@@ -190,7 +167,6 @@ class AnalyticsService {
       ...properties,
     })
   }
-
   // Track performance metrics
   trackPerformance(
     metric: keyof typeof TRACKING_EVENTS.performance,
@@ -199,7 +175,6 @@ class AnalyticsService {
     const event = TRACKING_EVENTS.performance[metric]
     this.track(event.name, properties)
   }
-
   // Track errors
   trackError(
     errorType: string,
@@ -212,10 +187,8 @@ class AnalyticsService {
       stack_trace: properties?.stack,
       ...properties,
     }
-
     vercelTrack('error', errorProperties)
   }
-
   // Track A/B test
   trackABTest(
     testName: string,
@@ -230,7 +203,6 @@ class AnalyticsService {
       ...properties,
     })
   }
-
   // Track revenue
   trackRevenue(amount: number, properties?: Record<string, any>) {
     // Track in Vercel
@@ -240,8 +212,6 @@ class AnalyticsService {
       ...properties,
     })
   }
-
-
   // Get default properties for all events
   private getDefaultProperties(): Record<string, any> {
     return {
@@ -256,7 +226,6 @@ class AnalyticsService {
       browser: this.context.session?.browser,
     }
   }
-
   // Determine page category from path
   private getPageCategory(path: string): string {
     if (path.startsWith('/convert/')) return 'converter'
@@ -267,21 +236,17 @@ class AnalyticsService {
     if (path === '/') return 'home'
     return 'other'
   }
-
   // Flush event queue
   private flush() {
     if (this.eventQueue.length === 0) return
-
     const events = [...this.eventQueue]
     this.eventQueue = []
-
     // Process each event
     events.forEach(({ event, properties }) => {
       // Vercel Analytics
       vercelTrack(event, properties)
     })
   }
-
   // Get category for event name
   private getCategoryForEvent(eventName: string): string {
     for (const [category, events] of Object.entries(TRACKING_EVENTS)) {
@@ -291,14 +256,12 @@ class AnalyticsService {
     }
     return 'unknown'
   }
-
   // Start flush interval
   private startFlushInterval() {
     this.flushInterval = setInterval(() => {
       this.flush()
     }, 5000) // Flush every 5 seconds
   }
-
   // Clean up
   destroy() {
     if (this.flushInterval) {
@@ -307,10 +270,8 @@ class AnalyticsService {
     this.flush()
   }
 }
-
 // Export singleton instance
 export const analytics = new AnalyticsService()
-
 // Export convenience functions
 export const {
   initialize,

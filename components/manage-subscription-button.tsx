@@ -1,59 +1,1 @@
-'use client';
-
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { CreditCard, Loader2 } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
-
-export function ManageSubscriptionButton() {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleManageSubscription = async () => {
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('/api/create-portal-session', {
-        method: 'POST',
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to open billing portal');
-      }
-
-      const { url } = await response.json();
-      
-      if (url) {
-        // Redirect to Stripe Customer Portal
-        window.location.href = url;
-      } else {
-        throw new Error('No portal URL returned');
-      }
-    } catch (error) {
-      console.error('Portal error:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to open billing portal. Please try again.",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <Button
-      onClick={handleManageSubscription}
-      disabled={isLoading}
-      variant="outline"
-      size="sm"
-      className="flex items-center gap-2"
-    >
-      {isLoading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      ) : (
-        <CreditCard className="h-4 w-4" />
-      )}
-      Manage Subscription
-    </Button>
-  );
-}
+'use client';import { useState } from 'react';import { Button } from '@/components/ui/button';import { CreditCard, Loader2 } from 'lucide-react';import { toast } from '@/components/ui/use-toast';export function ManageSubscriptionButton() {  const [isLoading, setIsLoading] = useState(false);  const handleManageSubscription = async () => {    setIsLoading(true);    try {      const response = await fetch('/api/create-portal-session', {        method: 'POST',      });      if (!response.ok) {        const data = await response.json();        throw new Error(data.error || 'Failed to open billing portal');      }      const { url } = await response.json();      if (url) {        // Redirect to Stripe Customer Portal        window.location.href = url;      } else {        throw new Error('No portal URL returned');      }    } catch (error) {      toast({        title: "Error",        description: error instanceof Error ? error.message : "Failed to open billing portal. Please try again.",        variant: "destructive",      });      setIsLoading(false);    }  };  return (    <Button      onClick={handleManageSubscription}      disabled={isLoading}      variant="outline"      size="sm"      className="flex items-center gap-2"    >      {isLoading ? (        <Loader2 className="h-4 w-4 animate-spin" />      ) : (        <CreditCard className="h-4 w-4" />      )}      Manage Subscription    </Button>  );}

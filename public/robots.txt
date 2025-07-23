@@ -14,6 +14,10 @@ Disallow: /results/
 Disallow: /generate/
 Disallow: /_next/
 Disallow: /server-sitemap
+Disallow: /gone
+Disallow: /offline
+Disallow: /login
+Disallow: /signup
 
 # Host
 Host: https://svgai.org

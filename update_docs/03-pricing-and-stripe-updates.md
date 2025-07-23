@@ -4,8 +4,8 @@
 Update pricing to new structure with annual billing options and credit-based system. Implement proper upgrade/downgrade timing (end of billing period only).
 
 ## New Pricing Structure
-- **Starter**: $12/month or $119/year (100 credits/month)
-- **Pro**: $29/month or $289/year (350 credits/month)
+- **Starter**: $19/month or $189/year (100 credits/month)
+- **Pro**: $39/month or $389/year (350 credits/month)
 - Annual discount: ~17% (marketed as "Two months free")
 
 ## Stripe Dashboard Configuration Required
@@ -13,10 +13,10 @@ Update pricing to new structure with annual billing options and credit-based sys
 ### 1. Create New Price IDs in Stripe
 1. Log into Stripe Dashboard
 2. Navigate to Products > Create new prices:
-   - **Starter Monthly**: $12.00/month
-   - **Starter Annual**: $119.00/year
-   - **Pro Monthly**: $29.00/month
-   - **Pro Annual**: $289.00/year
+   - **Starter Monthly**: $19.00/month
+   - **Starter Annual**: $189.00/year
+   - **Pro Monthly**: $39.00/month
+   - **Pro Annual**: $389.00/year
 3. Note the new price IDs for code updates
 
 ## Code Changes
@@ -104,9 +104,9 @@ const plans = [
   },
   {
     name: "Starter",
-    price: { monthly: "$12", annual: "$119" },
+    price: { monthly: "$19", annual: "$189" },
     period: { monthly: "per month", annual: "per year" },
-    savings: "Save $25/year",
+    savings: "Save $39/year",
     description: "For individuals and small projects",
     features: [
       "100 credits per month",
@@ -122,9 +122,9 @@ const plans = [
   },
   {
     name: "Pro",
-    price: { monthly: "$29", annual: "$289" },
+    price: { monthly: "$39", annual: "$389" },
     period: { monthly: "per month", annual: "per year" },
-    savings: "Save $59/year",
+    savings: "Save $79/year",
     description: "For professionals and businesses",
     features: [
       "350 credits per month",

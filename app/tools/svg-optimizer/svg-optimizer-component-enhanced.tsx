@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useRef, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -12,15 +11,12 @@ import { Progress } from '@/components/ui/progress'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAnalytics } from '@/hooks/use-analytics'
-import { useFunnelTracking, useCTATesting } from '@/hooks/use-funnel-tracking'
-
 interface OptimizationResult {
   originalSize: number
   optimizedSize: number
   reduction: number
   optimizedSvg: string
 }
-
 interface OptimizationOptions {
   removeMetadata: boolean
   removeComments: boolean
@@ -31,7 +27,6 @@ interface OptimizationOptions {
   precision: number
   preserveAnimations: boolean
 }
-
 const DEFAULT_OPTIONS: OptimizationOptions = {
   removeMetadata: true,
   removeComments: true,
@@ -42,7 +37,6 @@ const DEFAULT_OPTIONS: OptimizationOptions = {
   precision: 2,
   preserveAnimations: false,
 }
-
 // Testimonials about AI-generated SVG quality
 const TESTIMONIALS = [
   "AI-generated SVGs are already optimized - saves me tons of time!",
@@ -50,7 +44,6 @@ const TESTIMONIALS = [
   "No need to optimize when AI creates perfect SVGs from the start",
   "AI understands efficient path generation better than manual tools"
 ]
-
 export default function SVGOptimizerComponentEnhanced() {
   const [originalSvg, setOriginalSvg] = useState<string>('')
   const [optimizedSvg, setOptimizedSvg] = useState<string>('')
@@ -61,22 +54,8 @@ export default function SVGOptimizerComponentEnhanced() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [largeFileDetected, setLargeFileDetected] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  
-  // Analytics and funnel tracking
+  // Analytics tracking
   const analytics = useAnalytics('svg-optimizer')
-  const funnel = useFunnelTracking({ tool: 'svg-optimizer' })
-  
-  // A/B test for success CTA
-  const successCTA = useCTATesting({
-    testName: 'optimizer-success-cta',
-    variants: [
-      { id: 'ai-quality', text: 'Want even smaller files? Try AI generation', style: 'primary', size: 'lg', icon: true },
-      { id: 'ai-speed', text: 'Skip optimization - Generate perfect SVGs with AI', style: 'primary', size: 'lg', icon: true },
-      { id: 'ai-simple', text: 'Generate optimized SVGs instantly with AI', style: 'primary', size: 'lg', icon: true }
-    ],
-    location: 'success-modal'
-  })
-
   // Rotate testimonials
   useEffect(() => {
     const interval = setInterval(() => {
@@ -84,23 +63,19 @@ export default function SVGOptimizerComponentEnhanced() {
     }, 4000)
     return () => clearInterval(interval)
   }, [])
-
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
     if (file.type !== 'image/svg+xml') {
       toast.error('Please upload an SVG file')
       return
     }
-
     // Check for large files (> 50KB)
     if (file.size > 50 * 1024) {
       setLargeFileDetected(true)
       analytics.trackEvent('large_file_detected', { size: file.size })
-      funnel.trackFeature('large_file_upload', { size: file.size })
+      analytics.trackEvent('large_file_upload', { size: file.size })
     }
-
     const reader = new FileReader()
     reader.onload = (e) => {
       const content = e.target?.result as string
@@ -110,55 +85,44 @@ export default function SVGOptimizerComponentEnhanced() {
       setShowSuccessCTA(false)
       toast.success('SVG file loaded')
       analytics.trackEvent('file_uploaded', { size: file.size })
-      funnel.trackFeature('file_upload', { fileSize: file.size, fileType: file.type })
+      analytics.trackEvent('file_upload', { fileSize: file.size, fileType: file.type })
     }
     reader.readAsText(file)
   }
-
   const optimizeSvg = async () => {
     if (!originalSvg) {
       toast.error('Please upload an SVG file first')
       return
     }
-
     setIsOptimizing(true)
     const optimizationStartTime = Date.now()
-    
     try {
       // Simulate optimization process (in production, this would use SVGO)
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
       // For demo purposes, we'll do some basic optimizations
       let optimized = originalSvg
-      
       // Remove comments
       if (options.removeComments) {
         optimized = optimized.replace(/<!--[\s\S]*?-->/g, '')
       }
-      
       // Remove metadata
       if (options.removeMetadata) {
         optimized = optimized.replace(/<metadata[\s\S]*?<\/metadata>/gi, '')
       }
-      
       // Remove empty attributes
       optimized = optimized.replace(/\s+(?:id|class)=""/g, '')
-      
       // Round numbers
       if (options.roundNumbers) {
         optimized = optimized.replace(/(\d+\.\d{3,})/g, (match) => {
           return parseFloat(match).toFixed(options.precision)
         })
       }
-      
       // Minify whitespace
       optimized = optimized.replace(/>\s+</g, '><')
       optimized = optimized.replace(/\s+/g, ' ')
-      
       const originalSize = new Blob([originalSvg]).size
       const optimizedSize = new Blob([optimized]).size
       const reduction = Math.round(((originalSize - optimizedSize) / originalSize) * 100)
-      
       setOptimizedSvg(optimized)
       setResult({
         originalSize,
@@ -166,38 +130,32 @@ export default function SVGOptimizerComponentEnhanced() {
         reduction: reduction > 0 ? reduction : 10, // Show at least 10% for demo
         optimizedSvg: optimized,
       })
-      
       toast.success(`Optimized! Reduced by ${reduction > 0 ? reduction : 10}%`)
       setShowSuccessCTA(true)
-      
       // Track optimization success
       const processingTime = Date.now() - optimizationStartTime
       analytics.trackEvent('optimization_completed', { reduction, originalSize, optimizedSize })
       analytics.trackPerformance('processing_time', processingTime)
-      funnel.trackFeature('optimize', { 
+      analytics.trackEvent('optimize_funnel', { 
         reduction, 
         originalSize, 
         optimizedSize,
         processingTime 
       })
-      
       // Track potential upgrade intent if reduction is small
       if (reduction < 20) {
-        funnel.trackUpgrade('ai-generation', 'small-reduction')
+        analytics.trackEvent('upgrade_intent', { type: 'ai-generation', reason: 'small-reduction' })
       }
     } catch (error) {
       toast.error('Optimization failed')
-      console.error(error)
       analytics.trackError('optimization_error', error?.toString() || 'Unknown error')
-      funnel.trackError('optimization_failed', { error: error?.toString() })
+      analytics.trackError('optimization_failed', error?.toString() || 'Unknown error')
     } finally {
       setIsOptimizing(false)
     }
   }
-
   const handleDownload = () => {
     if (!optimizedSvg) return
-    
     const blob = new Blob([optimizedSvg], { type: 'image/svg+xml' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -210,9 +168,8 @@ export default function SVGOptimizerComponentEnhanced() {
     toast.success('Optimized SVG downloaded')
     analytics.trackEvent('optimized_svg_downloaded')
     analytics.trackFeature('download', { size: optimizedSvg.length })
-    funnel.trackFeature('download_optimized')
+    analytics.trackEvent('download_optimized')
   }
-
   const formatBytes = (bytes: number) => {
     if (bytes === 0) return '0 B'
     const k = 1024
@@ -220,8 +177,6 @@ export default function SVGOptimizerComponentEnhanced() {
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
   }
-
-
   return (
     <div className="space-y-6">
       {/* Upload Section */}
@@ -245,7 +200,6 @@ export default function SVGOptimizerComponentEnhanced() {
               className="hidden"
             />
           </div>
-          
           {originalSvg && (
             <div className="mt-4 p-4 bg-muted/30 rounded-lg">
               <p className="text-sm font-medium">
@@ -255,7 +209,6 @@ export default function SVGOptimizerComponentEnhanced() {
           )}
         </CardContent>
       </Card>
-
       {/* Large File Warning CTA */}
       <AnimatePresence>
         {largeFileDetected && (
@@ -297,7 +250,6 @@ export default function SVGOptimizerComponentEnhanced() {
           </motion.div>
         )}
       </AnimatePresence>
-
       {/* Options Section */}
       <Card>
         <CardHeader>
@@ -315,7 +267,6 @@ export default function SVGOptimizerComponentEnhanced() {
                 }
               />
             </div>
-            
             <div className="flex items-center justify-between">
               <Label htmlFor="remove-comments">Remove comments</Label>
               <Switch
@@ -326,7 +277,6 @@ export default function SVGOptimizerComponentEnhanced() {
                 }
               />
             </div>
-            
             <div className="flex items-center justify-between">
               <Label htmlFor="merge-paths">Merge similar paths</Label>
               <Switch
@@ -337,7 +287,6 @@ export default function SVGOptimizerComponentEnhanced() {
                 }
               />
             </div>
-            
             <div className="flex items-center justify-between">
               <Label htmlFor="preserve-animations">Preserve animations</Label>
               <Switch
@@ -348,7 +297,6 @@ export default function SVGOptimizerComponentEnhanced() {
                 }
               />
             </div>
-            
             <div className="space-y-2">
               <Label htmlFor="precision">Number precision: {options.precision}</Label>
               <Slider
@@ -363,7 +311,6 @@ export default function SVGOptimizerComponentEnhanced() {
               />
             </div>
           </div>
-          
           <Button 
             onClick={optimizeSvg} 
             disabled={!originalSvg || isOptimizing}
@@ -384,7 +331,6 @@ export default function SVGOptimizerComponentEnhanced() {
           </Button>
         </CardContent>
       </Card>
-
       {/* Results Section */}
       {result && (
         <>
@@ -409,21 +355,17 @@ export default function SVGOptimizerComponentEnhanced() {
                   <p className="text-xl font-bold text-green-500">-{result.reduction}%</p>
                 </div>
               </div>
-              
               <Progress value={100 - result.reduction} className="h-2" />
-              
               <div className="flex items-center justify-center gap-2 text-green-500">
                 <Check className="w-5 h-5" />
                 <span className="font-medium">Optimization complete!</span>
               </div>
-              
               <Button onClick={handleDownload} size="lg" className="w-full">
                 <Download className="mr-2 h-4 w-4" />
                 Download Optimized SVG
               </Button>
             </CardContent>
           </Card>
-
           {/* Success CTA */}
           <AnimatePresence>
             {showSuccessCTA && (
@@ -472,7 +414,6 @@ export default function SVGOptimizerComponentEnhanced() {
                         </ul>
                       </div>
                     </div>
-                    
                     <div className="bg-muted/50 rounded-lg p-3">
                       <p className="text-sm font-medium mb-1">What users are saying:</p>
                       <AnimatePresence mode="wait">
@@ -487,19 +428,17 @@ export default function SVGOptimizerComponentEnhanced() {
                         </motion.p>
                       </AnimatePresence>
                     </div>
-                    
                     <Link href="/ai-icon-generator">
                       <Button 
-                        size={successCTA.variant.size === 'md' ? 'default' : successCTA.variant.size} 
+                        size="lg"
                         className="w-full gap-2"
                         onClick={() => {
-                          successCTA.trackClick()
+                          analytics.trackEvent('cta_clicked', { location: 'success-modal' })
                           analytics.trackUpgrade('ai-icon-generator', 'success-optimization')
-                          funnel.trackUpgrade('ai-icon-generator', 'optimization-success')
                         }}
                       >
-                        {successCTA.variant.icon && <Sparkles className="w-4 h-4" />}
-                        {successCTA.variant.text}
+                        <Sparkles className="w-4 h-4" />
+                        Generate optimized SVGs instantly with AI
                       </Button>
                     </Link>
                   </CardContent>

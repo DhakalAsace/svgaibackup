@@ -122,8 +122,8 @@ export const converterMetadata: Record<string, ConverterMetadata> = {
   'svg-to-gif': {
     isClientSide: false,
     useCloudConvert: true,
-    apiEndpoint: '/api/convert/[converter]',
-    description: 'Convert SVG animations to GIF using CloudConvert',
+    apiEndpoint: '/api/convert/svg-to-gif',
+    description: 'Convert SVG images to GIF format using CloudConvert',
     method: 'cloudconvert',
     dependencies: ['cloudconvert-api']
   },

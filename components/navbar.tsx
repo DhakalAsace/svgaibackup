@@ -9,7 +9,7 @@ import { BrandLogo } from "@/components/brand-logo";
 import { usePathname } from "next/navigation";
 import { Crown, Menu, Code, FileDown, Film, Sparkles, ChevronDown, LayoutDashboard } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClientComponentClient } from "@/lib/supabase";
 import { ManageSubscriptionButton } from "@/components/manage-subscription-button";
 import {
   Sheet,
@@ -201,8 +201,8 @@ export default function Navbar() {
         </TooltipProvider>
 
         <div className="flex items-center gap-3">
-          {/* Primary CTA - Generate SVG (hidden on dashboard, homepage, login, and signup) */}
-          {pathname !== '/dashboard' && pathname !== '/' && pathname !== '/login' && pathname !== '/signup' && (
+          {/* Primary CTA - Generate SVG (hidden on dashboard, homepage, login, signup, and results) */}
+          {pathname !== '/dashboard' && pathname !== '/' && pathname !== '/login' && pathname !== '/signup' && pathname !== '/results' && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -330,8 +330,8 @@ export default function Navbar() {
                 
                 {/* Mobile Navigation Links */}
                 <nav className="flex flex-col space-y-1">
-                  {/* Primary CTA for mobile (hidden on dashboard, homepage, login, and signup) */}
-                  {pathname !== '/dashboard' && pathname !== '/' && pathname !== '/login' && pathname !== '/signup' && (
+                  {/* Primary CTA for mobile (hidden on dashboard, homepage, login, signup, and results) */}
+                  {pathname !== '/dashboard' && pathname !== '/' && pathname !== '/login' && pathname !== '/signup' && pathname !== '/results' && (
                     <Link 
                       href="/"
                       onClick={() => setMobileMenuOpen(false)}

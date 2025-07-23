@@ -22,14 +22,7 @@ export function reportWebVitals(metric: any) {
       userAgent: navigator.userAgent,
     }
 
-    // Send to monitoring endpoint
-    if (process.env.NODE_ENV === 'production') {
-      fetch('/api/monitoring/web-vitals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      }).catch(console.error)
-    }
+    // Monitoring endpoint removed - data sent to analytics only
   }
 }
 
@@ -43,18 +36,7 @@ export function track404Error(pathname: string) {
     })
   }
 
-  // Log to monitoring
-  if (process.env.NODE_ENV === 'production') {
-    fetch('/api/monitoring/404', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        pathname,
-        referrer: document.referrer,
-        timestamp: new Date().toISOString()
-      }),
-    }).catch(console.error)
-  }
+  // Monitoring endpoint removed - data sent to analytics only
 }
 
 // Conversion tracking

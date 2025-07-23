@@ -1,9 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { getConverterBySlug } from '@/app/convert/converter-config';
 import { generateConverterOGImage } from '@/components/seo/og-image-templates';
-
 export const runtime = 'edge';
-
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ converter: string }> }
@@ -11,7 +9,6 @@ export async function GET(
   try {
     const { converter: converterSlug } = await params;
     const converterConfig = getConverterBySlug(converterSlug);
-
     if (!converterConfig) {
       // Return a generic SVG AI OG image for unknown converters
       return new ImageResponse(
@@ -42,7 +39,6 @@ export async function GET(
         }
       );
     }
-
     // Generate the SVG OG image component
     const ogImageComponent = generateConverterOGImage(
       converterConfig.urlSlug,
@@ -51,7 +47,6 @@ export async function GET(
       converterConfig.title,
       converterConfig.priority
     );
-
     // Convert the React SVG component to a format compatible with ImageResponse
     return new ImageResponse(
       (
@@ -79,7 +74,6 @@ export async function GET(
               backgroundColor: '#FF7043',
             }}
           />
-          
           {/* Brand logo */}
           <div
             style={{
@@ -103,7 +97,6 @@ export async function GET(
               SVG<span style={{ color: '#FF7043' }}>AI</span>
             </div>
           </div>
-
           {/* Main conversion area */}
           <div
             style={{
@@ -130,7 +123,6 @@ export async function GET(
                 {converterConfig.fromFormat}
               </div>
             </div>
-
             {/* Arrow */}
             <div
               style={{
@@ -141,7 +133,6 @@ export async function GET(
             >
               →
             </div>
-
             {/* To format */}
             <div
               style={{
@@ -160,7 +151,6 @@ export async function GET(
               </div>
             </div>
           </div>
-
           {/* Title */}
           <div
             style={{
@@ -174,7 +164,6 @@ export async function GET(
           >
             {converterConfig.title}
           </div>
-
           {/* Description */}
           <div
             style={{
@@ -188,7 +177,6 @@ export async function GET(
           >
             {converterConfig.metaDescription.split('.')[0]}
           </div>
-
           {/* Free badge */}
           <div
             style={{
@@ -206,7 +194,6 @@ export async function GET(
           >
             FREE TOOL
           </div>
-
           {/* Website URL */}
           <div
             style={{
@@ -231,8 +218,6 @@ export async function GET(
       }
     );
   } catch (e: any) {
-    console.log(`Failed to generate OG image: ${e.message}`);
-    
     // Fallback error image
     return new ImageResponse(
       (

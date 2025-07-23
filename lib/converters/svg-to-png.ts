@@ -1,333 +1,1 @@
-/**
- * SVG to PNG Converter Implementation
- * 
- * This module provides SVG to PNG conversion using either Canvas API (browser)
- * or sharp library (server). Supports various customization options including
- * dimensions, background color, and DPI.
- */
-
-import type { 
-  ConversionHandler, 
-  ConversionOptions, 
-  ConversionResult,
-  ImageFormat 
-} from './types'
-import { 
-  ConversionError, 
-  FileValidationError,
-  UnsupportedFormatError 
-} from './errors'
-import { detectFileTypeFromBuffer } from './validation'
-
-// Check if we're in a browser environment
-const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined'
-
-/**
- * Extended conversion options for SVG to PNG
- */
-interface SvgToPngOptions extends ConversionOptions {
-  /** DPI for rasterization (default: 96) */
-  dpi?: number
-  /** PNG compression level (0-9, default: 6) */
-  compressionLevel?: number
-  /** Progress callback for tracking conversion progress */
-  onProgress?: (progress: number) => void
-}
-
-/**
- * Validates that the input is an SVG
- */
-function validateSvgInput(input: Buffer | string): string {
-  // If string, check if it's valid SVG
-  if (typeof input === 'string') {
-    const trimmed = input.trim()
-    if (!trimmed.includes('<svg') && !trimmed.includes('<?xml')) {
-      throw new FileValidationError('Invalid SVG: Missing SVG tag')
-    }
-    return trimmed
-  }
-  
-  // If buffer, detect format
-  const format = detectFileTypeFromBuffer(input)
-  
-  if (format !== 'svg') {
-    throw new UnsupportedFormatError(
-      format || 'unknown',
-      ['svg'],
-      `Expected SVG format but received ${format || 'unknown format'}`
-    )
-  }
-  
-  return input.toString('utf8')
-}
-
-/**
- * Processes SVG string to ensure proper dimensions and viewBox
- */
-function processSvgString(svg: string, options: SvgToPngOptions): { svg: string; metadata: { width?: number; height?: number } } {
-  const metadata: { width?: number; height?: number } = {}
-  
-  // Extract dimensions from SVG
-  const widthMatch = svg.match(/width="([^"]+)"/)
-  const heightMatch = svg.match(/height="([^"]+)"/)
-  const viewBoxMatch = svg.match(/viewBox="([^"]+)"/)
-  
-  let processedSvg = svg
-  
-  // Parse dimensions
-  if (widthMatch) {
-    const width = parseFloat(widthMatch[1])
-    if (!isNaN(width)) metadata.width = width
-  }
-  
-  if (heightMatch) {
-    const height = parseFloat(heightMatch[1])
-    if (!isNaN(height)) metadata.height = height
-  }
-  
-  // If no dimensions but viewBox exists, extract from viewBox
-  if (!metadata.width && !metadata.height && viewBoxMatch) {
-    const [, , vbWidth, vbHeight] = viewBoxMatch[1].split(' ').map(parseFloat)
-    if (!isNaN(vbWidth) && !isNaN(vbHeight)) {
-      metadata.width = vbWidth
-      metadata.height = vbHeight
-    }
-  }
-  
-  // Apply user-specified dimensions if provided
-  if (options.width || options.height) {
-    const targetWidth = options.width || metadata.width
-    const targetHeight = options.height || metadata.height
-    
-    if (targetWidth && targetHeight) {
-      // Update or add dimensions
-      if (widthMatch) {
-        processedSvg = processedSvg.replace(/width="[^"]+"/, `width="${targetWidth}"`)
-      } else {
-        processedSvg = processedSvg.replace('<svg', `<svg width="${targetWidth}"`)
-      }
-      
-      if (heightMatch) {
-        processedSvg = processedSvg.replace(/height="[^"]+"/, `height="${targetHeight}"`)
-      } else {
-        processedSvg = processedSvg.replace('<svg', `<svg height="${targetHeight}"`)
-      }
-      
-      metadata.width = targetWidth
-      metadata.height = targetHeight
-    }
-  }
-  
-  // Ensure SVG has dimensions for sharp
-  if (!metadata.width || !metadata.height) {
-    // Default dimensions if none found
-    const defaultSize = 512
-    metadata.width = metadata.width || defaultSize
-    metadata.height = metadata.height || defaultSize
-    
-    if (!widthMatch) {
-      processedSvg = processedSvg.replace('<svg', `<svg width="${metadata.width}"`)
-    }
-    if (!heightMatch) {
-      processedSvg = processedSvg.replace('<svg', `<svg height="${metadata.height}"`)
-    }
-  }
-  
-  return { svg: processedSvg, metadata }
-}
-
-/**
- * Converts SVG to PNG using either Canvas API (browser) or sharp (server)
- * Implements the ConversionHandler interface
- */
-export const svgToPngHandler: ConversionHandler = async (
-  input: Buffer | string,
-  options: SvgToPngOptions = {}
-): Promise<ConversionResult> => {
-  // Use browser implementation if in browser environment
-  if (isBrowser) {
-    try {
-      const { svgToPngHandler: browserHandler } = await import('./svg-to-png-browser')
-      return browserHandler(input, options)
-    } catch (error) {
-      console.error('Failed to load browser handler:', error)
-      throw new ConversionError(
-        'Failed to load browser-based SVG to PNG converter',
-        'BROWSER_HANDLER_LOAD_FAILED'
-      )
-    }
-  }
-  
-  try {
-    // Server-side implementation using sharp
-    const sharp = await import('sharp').then(m => m.default).catch((error) => {
-      console.warn('Sharp not available in browser environment:', error.message)
-      throw new ConversionError(
-        'This conversion requires server-side processing. Please use the API endpoint.',
-        'SERVER_ONLY_CONVERSION'
-      )
-    })
-    
-    // Validate and get SVG string
-    const svgString = validateSvgInput(input)
-    
-    // Report initial progress
-    if (options.onProgress) {
-      options.onProgress(0.1)
-    }
-    
-    // Process SVG string for proper dimensions
-    const { svg: processedSvg, metadata } = processSvgString(svgString, options)
-    
-    // Convert SVG string to Buffer
-    const svgBuffer = Buffer.from(processedSvg, 'utf8')
-    
-    // Report progress before conversion
-    if (options.onProgress) {
-      options.onProgress(0.3)
-    }
-    
-    // Calculate density from DPI (sharp uses pixels per inch)
-    const density = options.dpi || 96
-    
-    // Prepare sharp instance
-    let sharpInstance = sharp(svgBuffer, {
-      density: density
-    })
-    
-    // Apply background if specified
-    if (options.background) {
-      // Parse background color - support hex, rgb, rgba, and named colors
-      const bgColor = options.background.toLowerCase()
-      
-      if (bgColor !== 'transparent') {
-        sharpInstance = sharpInstance.flatten({
-          background: options.background
-        })
-      }
-    }
-    
-    // Apply resize if dimensions specified and preserve aspect ratio is set
-    if ((options.width || options.height) && options.preserveAspectRatio !== false) {
-      sharpInstance = sharpInstance.resize(
-        options.width || null,
-        options.height || null,
-        {
-          fit: 'inside',
-          withoutEnlargement: false
-        }
-      )
-    }
-    
-    // Report progress during conversion
-    if (options.onProgress) {
-      options.onProgress(0.7)
-    }
-    
-    // Configure PNG output
-    const compressionLevel = options.compressionLevel ?? 6
-    const quality = options.quality ?? 90
-    
-    // Convert to PNG
-    const pngBuffer = await sharpInstance
-      .png({
-        compressionLevel: Math.min(9, Math.max(0, compressionLevel)),
-        quality: quality,
-        adaptiveFiltering: true,
-        palette: quality < 100 // Use palette for lower quality to reduce size
-      })
-      .toBuffer()
-    
-    // Get metadata from the output
-    const outputMetadata = await sharp(pngBuffer).metadata()
-    
-    // Report completion
-    if (options.onProgress) {
-      options.onProgress(1)
-    }
-    
-    return {
-      success: true,
-      data: pngBuffer,
-      mimeType: 'image/png',
-      metadata: {
-        width: outputMetadata.width,
-        height: outputMetadata.height,
-        format: 'png',
-        size: pngBuffer.length
-      }
-    }
-    
-  } catch (error) {
-    // Handle known errors
-    if (error instanceof FileValidationError || 
-        error instanceof UnsupportedFormatError) {
-      throw error
-    }
-    
-    // Wrap sharp errors
-    if (error instanceof Error) {
-      // Check for common sharp errors
-      if (error.message.includes('Input buffer contains unsupported image format')) {
-        throw new FileValidationError('Invalid SVG format or corrupted file')
-      }
-      
-      if (error.message.includes('Input file is missing')) {
-        throw new FileValidationError('SVG input is empty or invalid')
-      }
-      
-      throw new ConversionError(
-        `SVG to PNG conversion failed: ${error.message}`,
-        'SVG_TO_PNG_FAILED'
-      )
-    }
-    
-    // Handle non-Error objects
-    throw new ConversionError(
-      'An unexpected error occurred during SVG to PNG conversion',
-      'SVG_TO_PNG_UNKNOWN_ERROR'
-    )
-  }
-}
-
-/**
- * Client-side SVG to PNG conversion wrapper
- * This function can be used in browser environments
- */
-export async function convertSvgToPngClient(
-  input: File | string,
-  options: SvgToPngOptions = {}
-): Promise<ConversionResult> {
-  if (input instanceof File) {
-    // Read file as text for SVG
-    const text = await input.text()
-    return svgToPngHandler(text, options)
-  }
-  
-  // Direct string input
-  return svgToPngHandler(input, options)
-}
-
-/**
- * Server-side SVG to PNG conversion wrapper
- * This function is optimized for server environments
- */
-export async function convertSvgToPngServer(
-  input: Buffer | string,
-  options: SvgToPngOptions = {}
-): Promise<ConversionResult> {
-  // Direct conversion using the handler
-  return svgToPngHandler(input, options)
-}
-
-/**
- * SVG to PNG converter configuration
- */
-export const svgToPngConverter = {
-  name: 'SVG to PNG',
-  from: 'svg' as ImageFormat,
-  to: 'png' as ImageFormat,
-  handler: svgToPngHandler,
-  isClientSide: true,
-  description: 'Convert scalable vector graphics to high-quality PNG images with customizable dimensions and DPI'
-}
+/** * SVG to PNG Converter Implementation *  * This module provides SVG to PNG conversion using either Canvas API (browser) * or sharp library (server). Supports various customization options including * dimensions, background color, and DPI. */import type {   ConversionHandler,   ConversionOptions,   ConversionResult,  ImageFormat } from './types'import {   ConversionError,   FileValidationError,  UnsupportedFormatError } from './errors'import { detectFileTypeFromBuffer } from './validation'// Check if we're in a browser environmentconst isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined'/** * Extended conversion options for SVG to PNG */interface SvgToPngOptions extends ConversionOptions {  /** DPI for rasterization (default: 96) */  dpi?: number  /** PNG compression level (0-9, default: 6) */  compressionLevel?: number  /** Progress callback for tracking conversion progress */  onProgress?: (progress: number) => void}/** * Validates that the input is an SVG */function validateSvgInput(input: Buffer | string): string {  // If string, check if it's valid SVG  if (typeof input === 'string') {    const trimmed = input.trim()    if (!trimmed.includes('<svg') && !trimmed.includes('<?xml')) {      throw new FileValidationError('Invalid SVG: Missing SVG tag')    }    return trimmed  }  // If buffer, detect format  const format = detectFileTypeFromBuffer(input)  if (format !== 'svg') {    throw new UnsupportedFormatError(      format || 'unknown',      ['svg'],      `Expected SVG format but received ${format || 'unknown format'}`    )  }  return input.toString('utf8')}/** * Processes SVG string to ensure proper dimensions and viewBox */function processSvgString(svg: string, options: SvgToPngOptions): { svg: string; metadata: { width?: number; height?: number } } {  const metadata: { width?: number; height?: number } = {}  // Extract dimensions from SVG  const widthMatch = svg.match(/width="([^"]+)"/)  const heightMatch = svg.match(/height="([^"]+)"/)  const viewBoxMatch = svg.match(/viewBox="([^"]+)"/)  let processedSvg = svg  // Parse dimensions  if (widthMatch) {    const width = parseFloat(widthMatch[1])    if (!isNaN(width)) metadata.width = width  }  if (heightMatch) {    const height = parseFloat(heightMatch[1])    if (!isNaN(height)) metadata.height = height  }  // If no dimensions but viewBox exists, extract from viewBox  if (!metadata.width && !metadata.height && viewBoxMatch) {    const [, , vbWidth, vbHeight] = viewBoxMatch[1].split(' ').map(parseFloat)    if (!isNaN(vbWidth) && !isNaN(vbHeight)) {      metadata.width = vbWidth      metadata.height = vbHeight    }  }  // Apply user-specified dimensions if provided  if (options.width || options.height) {    const targetWidth = options.width || metadata.width    const targetHeight = options.height || metadata.height    if (targetWidth && targetHeight) {      // Update or add dimensions      if (widthMatch) {        processedSvg = processedSvg.replace(/width="[^"]+"/, `width="${targetWidth}"`)      } else {        processedSvg = processedSvg.replace('<svg', `<svg width="${targetWidth}"`)      }      if (heightMatch) {        processedSvg = processedSvg.replace(/height="[^"]+"/, `height="${targetHeight}"`)      } else {        processedSvg = processedSvg.replace('<svg', `<svg height="${targetHeight}"`)      }      metadata.width = targetWidth      metadata.height = targetHeight    }  }  // Ensure SVG has dimensions for sharp  if (!metadata.width || !metadata.height) {    // Default dimensions if none found    const defaultSize = 512    metadata.width = metadata.width || defaultSize    metadata.height = metadata.height || defaultSize    if (!widthMatch) {      processedSvg = processedSvg.replace('<svg', `<svg width="${metadata.width}"`)    }    if (!heightMatch) {      processedSvg = processedSvg.replace('<svg', `<svg height="${metadata.height}"`)    }  }  return { svg: processedSvg, metadata }}/** * Converts SVG to PNG using either Canvas API (browser) or sharp (server) * Implements the ConversionHandler interface */export const svgToPngHandler: ConversionHandler = async (  input: Buffer | string,  options: SvgToPngOptions = {}): Promise<ConversionResult> => {  // Use browser implementation if in browser environment  if (isBrowser) {    try {      const { svgToPngHandler: browserHandler } = await import('./svg-to-png-browser')      return browserHandler(input, options)    } catch (error) {      throw new ConversionError(        'Failed to load browser-based SVG to PNG converter',        'BROWSER_HANDLER_LOAD_FAILED'      )    }  }  try {    // Server-side implementation using sharp    const sharp = await import('sharp').then(m => m.default).catch((error) => {      throw new ConversionError(        'This conversion requires server-side processing. Please use the API endpoint.',        'SERVER_ONLY_CONVERSION'      )    })    // Validate and get SVG string    const svgString = validateSvgInput(input)    // Report initial progress    if (options.onProgress) {      options.onProgress(0.1)    }    // Process SVG string for proper dimensions    const { svg: processedSvg, metadata } = processSvgString(svgString, options)    // Convert SVG string to Buffer    const svgBuffer = Buffer.from(processedSvg, 'utf8')    // Report progress before conversion    if (options.onProgress) {      options.onProgress(0.3)    }    // Calculate density from DPI (sharp uses pixels per inch)    const density = options.dpi || 96    // Prepare sharp instance    let sharpInstance = sharp(svgBuffer, {      density: density    })    // Apply background if specified    if (options.background) {      // Parse background color - support hex, rgb, rgba, and named colors      const bgColor = options.background.toLowerCase()      if (bgColor !== 'transparent') {        sharpInstance = sharpInstance.flatten({          background: options.background        })      }    }    // Apply resize if dimensions specified and preserve aspect ratio is set    if ((options.width || options.height) && options.preserveAspectRatio !== false) {      sharpInstance = sharpInstance.resize(        options.width || null,        options.height || null,        {          fit: 'inside',          withoutEnlargement: false        }      )    }    // Report progress during conversion    if (options.onProgress) {      options.onProgress(0.7)    }    // Configure PNG output    const compressionLevel = options.compressionLevel ?? 6    const quality = options.quality ?? 90    // Convert to PNG    const pngBuffer = await sharpInstance      .png({        compressionLevel: Math.min(9, Math.max(0, compressionLevel)),        quality: quality,        adaptiveFiltering: true,        palette: quality < 100 // Use palette for lower quality to reduce size      })      .toBuffer()    // Get metadata from the output    const outputMetadata = await sharp(pngBuffer).metadata()    // Report completion    if (options.onProgress) {      options.onProgress(1)    }    return {      success: true,      data: pngBuffer,      mimeType: 'image/png',      metadata: {        width: outputMetadata.width,        height: outputMetadata.height,        format: 'png',        size: pngBuffer.length      }    }  } catch (error) {    // Handle known errors    if (error instanceof FileValidationError ||         error instanceof UnsupportedFormatError) {      throw error    }    // Wrap sharp errors    if (error instanceof Error) {      // Check for common sharp errors      if (error.message.includes('Input buffer contains unsupported image format')) {        throw new FileValidationError('Invalid SVG format or corrupted file')      }      if (error.message.includes('Input file is missing')) {        throw new FileValidationError('SVG input is empty or invalid')      }      throw new ConversionError(        `SVG to PNG conversion failed: ${error.message}`,        'SVG_TO_PNG_FAILED'      )    }    // Handle non-Error objects    throw new ConversionError(      'An unexpected error occurred during SVG to PNG conversion',      'SVG_TO_PNG_UNKNOWN_ERROR'    )  }}/** * Client-side SVG to PNG conversion wrapper * This function can be used in browser environments */export async function convertSvgToPngClient(  input: File | string,  options: SvgToPngOptions = {}): Promise<ConversionResult> {  if (input instanceof File) {    // Read file as text for SVG    const text = await input.text()    return svgToPngHandler(text, options)  }  // Direct string input  return svgToPngHandler(input, options)}/** * Server-side SVG to PNG conversion wrapper * This function is optimized for server environments */export async function convertSvgToPngServer(  input: Buffer | string,  options: SvgToPngOptions = {}): Promise<ConversionResult> {  // Direct conversion using the handler  return svgToPngHandler(input, options)}/** * SVG to PNG converter configuration */export const svgToPngConverter = {  name: 'SVG to PNG',  from: 'svg' as ImageFormat,  to: 'png' as ImageFormat,  handler: svgToPngHandler,  isClientSide: true,  description: 'Convert scalable vector graphics to high-quality PNG images with customizable dimensions and DPI'}

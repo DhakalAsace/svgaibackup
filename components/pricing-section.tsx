@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { Check, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,9 +6,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/components/ui/use-toast';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '@/lib/supabase';
 import Link from 'next/link';
-
 interface PricingTier {
   name: string;
   price: string;
@@ -21,13 +19,11 @@ interface PricingTier {
   tier?: 'starter' | 'pro';
   generations: string;
 }
-
 export default function PricingSection() {
   const [loading, setLoading] = useState<string | null>(null);
   const [isAnnual, setIsAnnual] = useState(false);
   const router = useRouter();
   const supabase = createClientComponentClient();
-
   const getPlans = (annual: boolean): PricingTier[] => [
     {
       name: "Free",
@@ -45,7 +41,7 @@ export default function PricingSection() {
     },
     {
       name: "Starter",
-      price: annual ? "$119" : "$12",
+      price: annual ? "$189" : "$19",
       period: annual ? "per year" : "per month",
       description: "For individuals and small projects",
       generations: "100 credits per month",
@@ -56,14 +52,14 @@ export default function PricingSection() {
         "7-day generation history",
         "Email support",
         "All 11 icon styles & 5 SVG styles",
-        ...(annual ? [<span key="starter-save" className="text-green-600 font-medium">Save $25/year</span>] : []),
+        ...(annual ? [<span key="starter-save" className="text-green-600 font-medium">Save $39/year</span>] : []),
       ],
       cta: "Subscribe Now",
       highlighted: false,
     },
     {
       name: "Pro",
-      price: annual ? "$289" : "$29",
+      price: annual ? "$389" : "$39",
       period: annual ? "per year" : "per month",
       description: "For professionals and businesses",
       generations: "350 credits per month",
@@ -74,32 +70,27 @@ export default function PricingSection() {
         "30-day extended history",
         "Priority email support",
         "All 11 icon styles & 5 SVG styles",
-        ...(annual ? [<span key="pro-save" className="text-green-600 font-medium">Save $59/year</span>] : []),
+        ...(annual ? [<span key="pro-save" className="text-green-600 font-medium">Save $79/year</span>] : []),
       ],
       cta: "Subscribe Now",
       highlighted: true,
     },
   ];
-
   const handleSubscribe = async (tier?: 'starter' | 'pro') => {
     const interval = isAnnual ? 'annual' : 'monthly';
     // Check if user is logged in
     const { data: { user } } = await supabase.auth.getUser();
-    
     if (!user) {
       // Redirect to login with return URL
       router.push(`/login?returnUrl=/pricing&plan=${tier || 'free'}`);
       return;
     }
-
     if (!tier) {
       // Free plan - just redirect to dashboard
       router.push('/dashboard');
       return;
     }
-
     setLoading(tier);
-
     try {
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
@@ -108,7 +99,6 @@ export default function PricingSection() {
         },
         body: JSON.stringify({ tier, interval }),
       });
-
       if (!response.ok) {
         const data = await response.json();
         // If the server indicates the user already has a subscription, send them to the portal/ dashboard
@@ -123,9 +113,7 @@ export default function PricingSection() {
         }
         throw new Error(data.error || 'Failed to create checkout session');
       }
-
       const { url } = await response.json();
-      
       if (url) {
         // Redirect to Stripe Checkout
         window.location.href = url;
@@ -133,7 +121,6 @@ export default function PricingSection() {
         throw new Error('No checkout URL returned');
       }
     } catch (error) {
-      console.error('Subscription error:', error);
       toast({
         title: "Error",
         description: "Failed to start subscription process. Please try again.",
@@ -142,7 +129,6 @@ export default function PricingSection() {
       setLoading(null);
     }
   };
-
   return (
     <div className="space-y-8">
       {/* Billing Toggle */}
@@ -173,7 +159,6 @@ export default function PricingSection() {
           </button>
         </div>
       </div>
-
       <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {getPlans(isAnnual).map((plan) => (
           <Card 
@@ -185,7 +170,6 @@ export default function PricingSection() {
                 Most Popular
               </Badge>
             )}
-            
             <CardHeader>
               <CardTitle className="text-2xl">{plan.name}</CardTitle>
               <CardDescription>{plan.description}</CardDescription>
@@ -202,7 +186,6 @@ export default function PricingSection() {
                 </p>
               )}
             </CardHeader>
-            
             <CardContent>
               <ul className="space-y-3">
                 {plan.features.map((feature, idx) => (
@@ -213,7 +196,6 @@ export default function PricingSection() {
                 ))}
               </ul>
             </CardContent>
-            
             <CardFooter>
               <Button 
                 className={`w-full ${plan.highlighted ? 'bg-[#FF7043] hover:bg-[#FF5722]' : ''}`}
