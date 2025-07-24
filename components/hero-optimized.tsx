@@ -20,6 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { formatErrorMessage } from '@/lib/client-error-handler'
 // Dynamically import modals to reduce initial bundle size
 const GenerationSignupModal = dynamic(
   () => import('@/components/auth/generation-signup-modal').then(mod => ({ default: mod.GenerationSignupModal })),
@@ -281,6 +282,10 @@ export default function HeroOptimized() {
           setShowUpgradeModal(true);
         } else if (errorMessage.includes("monthly credits")) {
           setError("You've used all your monthly credits. They'll refresh at the start of your next billing period.");
+        } else {
+          // Handle any other 429 errors (like API limits)
+          const formattedError = formatErrorMessage(errorMessage);
+          setError(formattedError);
         }
         setIsGenerating(false)
         return
@@ -324,21 +329,8 @@ export default function HeroOptimized() {
       }
     } catch (err) {
       if (!limitReachedError) {
-        let errMsg = "Failed to generate SVG";
-        if (err instanceof Error) {
-          errMsg = err.message;
-        } else if (typeof err === 'string') {
-          errMsg = err;
-        } else if (err && typeof err === 'object' && 'message' in err) {
-          errMsg = String(err.message);
-        }
-        if (errMsg.includes("SVG URL")) {
-          setError("The SVG was generated but couldn't be retrieved. Please try again.");
-        } else if (errMsg.includes("fetch")) {
-          setError("Network error while communicating with the server. Please check your connection and try again.");
-        } else {
-          setError(errMsg);
-        }
+        const formattedError = formatErrorMessage(err);
+        setError(formattedError);
         setIsGenerating(false)
       }
     } finally {

@@ -151,6 +151,17 @@ function SignUpFormContent() {
             {isLoading ? "Creating account..." : "Sign Up"}
           </Button>
           </form>
+          
+          <p className="text-xs text-center text-gray-400 mt-4">
+            By signing up, you agree to our{" "}
+            <a href="/terms" className="text-gray-500 hover:text-gray-600 underline" target="_blank" rel="noopener noreferrer">
+              Terms
+            </a>{" "}
+            &{" "}
+            <a href="/privacy" className="text-gray-500 hover:text-gray-600 underline" target="_blank" rel="noopener noreferrer">
+              Privacy
+            </a>
+          </p>
         </div>
         )}
       </CardContent>

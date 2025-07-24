@@ -119,6 +119,7 @@ function sendAlert(alert: AlertData, channels: string[]) {
   channels.forEach(channel => {
     switch (channel) {
       case 'console':
+        // eslint-disable-next-line no-console
         console[alert.severity === 'critical' ? 'error' : 'warn'](
           `[ALERT] ${alert.severity.toUpperCase()}: ${alert.message}`,
           alert

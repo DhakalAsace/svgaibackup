@@ -109,7 +109,7 @@ export const svgToBase64Handler: ConversionHandler = async (
     }
     
     let encoded: string
-    let mimeType = 'image/svg+xml'
+    const mimeType = 'image/svg+xml'
     
     if (options.urlEncode) {
       // URL encoding (often smaller for SVGs)

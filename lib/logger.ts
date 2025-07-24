@@ -62,7 +62,7 @@ export class Logger {
    */
   debug(message: string, data?: any, options?: LogOptions) {
     if (this.isDevelopment) {
-      console.debug(JSON.stringify(this.createLogEntry('debug', message, data, options)));
+      console.info(JSON.stringify(this.createLogEntry('debug', message, data, options)));
     }
   }
   

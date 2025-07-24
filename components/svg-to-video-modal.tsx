@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { useCredits } from '@/contexts/CreditContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
+import { formatErrorMessage } from '@/lib/client-error-handler'
 
 const CREDIT_COST = 6
 
@@ -102,7 +103,8 @@ export function SVGToVideoModal({ open, onOpenChange }: SVGToVideoModalProps) {
       setIsGenerating(false)
       
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Video generation failed')
+      const formattedError = formatErrorMessage(error);
+      toast.error(formattedError)
       setIsGenerating(false)
       setStep(2) // Go back to previous step on error
     }

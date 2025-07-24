@@ -228,7 +228,7 @@ export default function GalleryIndexPage() {
                   Try AI SVG Generator Free
                 </Button>
               </Link>
-              <Link href="/tools/icon-generator">
+              <Link href="/ai-icon-generator">
                 <Button size="lg" variant="outline" className="gap-2 px-8 py-6 text-lg">
                   <Palette className="h-5 w-5" />
                   AI Icon Generator

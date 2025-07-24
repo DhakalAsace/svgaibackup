@@ -34,12 +34,17 @@ const eslintConfig = [
       // React rules
       'react/no-unescaped-entities': 'off',
       'react-hooks/exhaustive-deps': 'warn',
-      'react-hooks/rules-of-hooks': 'warn',
+      'react-hooks/rules-of-hooks': 'error',
       'react/display-name': 'off',
       
       // Next.js rules  
       '@next/next/no-html-link-for-pages': 'off',
-      '@next/next/no-img-element': 'off'
+      '@next/next/no-img-element': 'off',
+      
+      // General rules
+      'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+      'no-debugger': 'error',
+      'prefer-const': 'warn'
     }
   }
 ];

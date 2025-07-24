@@ -114,7 +114,7 @@ export function PremiumToolsCTA({
                 SVG Editor
               </Link>
               <Link 
-                href="/tools/icon-generator" 
+                href="/ai-icon-generator" 
                 className="block text-sm text-blue-600 hover:text-blue-800 hover:underline"
               >
                 Icon Generator
@@ -200,20 +200,20 @@ export function PremiumToolsCTA({
                 SVG to Video
               </h3>
               <p className="text-gray-600 mb-4">
-                Export SVG animations as MP4 videos for social media and presentations
+                Convert static SVGs to dynamic MP4 videos with AI-powered motion
               </p>
               <div className="space-y-2 mb-4">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <CheckCircle2 className="h-3 w-3 text-green-500" />
-                  <span>HD & 4K output</span>
+                  <span>1080p HD output</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <CheckCircle2 className="h-3 w-3 text-green-500" />
-                  <span>Custom duration</span>
+                  <span>5-second videos</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <CheckCircle2 className="h-3 w-3 text-green-500" />
-                  <span>Social media formats</span>
+                  <span>AI motion effects</span>
                 </div>
               </div>
               <Button variant="outline" className="w-full" asChild>
@@ -224,35 +224,35 @@ export function PremiumToolsCTA({
             </CardContent>
           </Card>
           
-          {/* Icon Libraries */}
+          {/* AI Icon Generator */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6 text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <Users className="h-8 w-8 text-blue-600" />
+                <Zap className="h-8 w-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2 text-[#4E342E]">
-                Icon Libraries
+                AI Icon Generator
               </h3>
               <p className="text-gray-600 mb-4">
-                Browse thousands of free SVG icons and graphics for your projects
+                Create custom SVG icons instantly with AI-powered generation
               </p>
               <div className="space-y-2 mb-4">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Clock className="h-3 w-3 text-blue-500" />
-                  <span>50,000+ icons</span>
+                  <CheckCircle2 className="h-3 w-3 text-green-500" />
+                  <span>Unique designs</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Shield className="h-3 w-3 text-blue-500" />
-                  <span>Free to use</span>
+                  <CheckCircle2 className="h-3 w-3 text-green-500" />
+                  <span>11 icon styles</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Zap className="h-3 w-3 text-blue-500" />
-                  <span>Commercial license</span>
+                  <CheckCircle2 className="h-3 w-3 text-green-500" />
+                  <span>Instant generation</span>
                 </div>
               </div>
               <Button variant="outline" className="w-full" asChild>
-                <Link href="/tools/icon-generator">
-                  Browse Icons
+                <Link href="/ai-icon-generator">
+                  Create Icons
                 </Link>
               </Button>
             </CardContent>
@@ -280,7 +280,7 @@ export function PremiumToolsCTA({
               className="py-3 px-8 font-bold text-lg"
               asChild
             >
-              <Link href="/tools/icon-generator">
+              <Link href="/ai-icon-generator">
                 <Zap className="mr-2 h-5 w-5" />
                 Design Icons
               </Link>
@@ -600,7 +600,7 @@ export function ProfessionalCTA({ converterType }: { converterType: { from: stri
           className="border-white text-white hover:bg-white hover:text-blue-600 font-semibold"
           asChild
         >
-          <Link href="/tools/icon-generator">
+          <Link href="/ai-icon-generator">
             <Zap className="mr-2 h-5 w-5" />
             Design Icons
           </Link>

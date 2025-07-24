@@ -167,7 +167,11 @@
       "Bash(./build-workaround.sh:*)",
       "Bash(cmd /c:*)",
       "Bash(HOST=0.0.0.0 PORT=3000 npm run dev)",
-      "WebFetch(domain:www.recraft.ai)"
+      "WebFetch(domain:www.recraft.ai)",
+      "Bash(NODE_ENV=production npx next build --debug)",
+      "Bash(dos2unix:*)",
+      "Bash(grep -n \"forfeit\\|Cancel anytime\" /mnt/a/svgaibackup/app/pricing/page.tsx)",
+      "Bash(grep -i -n \"forfeit\" /mnt/a/svgaibackup/app/pricing/page.tsx)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -9,7 +9,7 @@ type AuthContextType = {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, marketingConsent?: boolean) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: (redirectPath?: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -43,16 +43,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [supabase.auth]); // Include supabase.auth in the dependency array
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, marketingConsent?: boolean) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            marketing_consent: marketingConsent || false,
+            marketing_consent_date: marketingConsent ? new Date().toISOString() : null,
+          },
         },
       });
+      
       if (error) throw error;
+      
+      // If signup is successful and user is returned (auto-confirm is enabled),
+      // create the profile immediately
+      if (data?.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: data.user.id,
+            marketing_consent: marketingConsent || false,
+            marketing_consent_date: marketingConsent ? new Date().toISOString() : null,
+          }, { onConflict: 'id' });
+          
+        // Don't throw profile errors, as the user is already created
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+        }
+      }
     } catch (error) {
       throw error;
     }

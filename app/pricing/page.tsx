@@ -64,14 +64,10 @@ export default function PricingPage() {
           <h2 className="text-2xl font-bold text-center mb-8">Pricing FAQs - Everything You Need to Know</h2>
           
           <div className="space-y-6">
+            {/* Most Important FAQs First */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-2">How much does SVG AI cost?</h3>
               <p className="text-gray-600">SVG AI offers transparent pricing with a free forever plan (6 credits), Starter plan at $19/month (100 credits), and Pro plan at $39/month (350 credits). Annual billing saves up to 17%.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="font-semibold mb-2">Is there a free SVG AI plan?</h3>
-              <p className="text-gray-600">Yes! Our free plan includes 6 one-time credits to create up to 3 SVGs or 6 icons. Perfect for testing our AI SVG generator before upgrading.</p>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -80,8 +76,13 @@ export default function PricingPage() {
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="font-semibold mb-2">Can I change plans anytime?</h3>
-              <p className="text-gray-600">Yes! You can cancel your plan at any time. Cancellation takes effect at the end of your current billing period. Any unused credits will be forfeited.</p>
+              <h3 className="font-semibold mb-2">Is there a free SVG AI plan?</h3>
+              <p className="text-gray-600">Yes! Our free plan includes 6 one-time credits to create up to 3 SVGs or 6 icons. Perfect for testing our AI SVG generator before upgrading.</p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h3 className="font-semibold mb-2">Can I cancel anytime?</h3>
+              <p className="text-gray-600">Yes! You can cancel your plan at any time with no cancellation fees. Cancellation takes effect at the end of your current billing period. You'll retain access until then.</p>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -89,6 +90,7 @@ export default function PricingPage() {
               <p className="text-gray-600">No, unused credits don't roll over to the next month. Your credit limit resets at the start of each billing cycle to ensure fair usage.</p>
             </div>
             
+            {/* Less Important FAQs */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-2">What payment methods do you accept?</h3>
               <p className="text-gray-600">We accept all major credit cards (Visa, Mastercard, American Express) through our secure payment processor, Stripe. No PayPal currently.</p>
@@ -97,11 +99,6 @@ export default function PricingPage() {
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-2">Is SVG AI pricing worth it compared to competitors?</h3>
               <p className="text-gray-600">SVG AI offers the best value with transparent pricing, no hidden fees, 11 icon styles, 5 SVG styles, and both monthly/annual options. Most competitors charge more for fewer features.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="font-semibold mb-2">Can I cancel my SVG AI subscription anytime?</h3>
-              <p className="text-gray-600">Yes, you can cancel anytime with no cancellation fees. You'll retain access to your plan features until the end of your current billing period.</p>
             </div>
           </div>
         </div>
@@ -237,14 +234,6 @@ export default function PricingPage() {
                 },
                 {
                   "@type": "Question",
-                  "name": "Is there a free SVG AI plan?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Yes! Our free plan includes 6 one-time credits to create up to 3 SVGs or 6 icons. Perfect for testing our AI SVG generator before upgrading."
-                  }
-                },
-                {
-                  "@type": "Question",
                   "name": "What's the difference between Starter and Pro pricing?",
                   "acceptedAnswer": {
                     "@type": "Answer",
@@ -253,10 +242,18 @@ export default function PricingPage() {
                 },
                 {
                   "@type": "Question",
-                  "name": "Can I change plans anytime?",
+                  "name": "Is there a free SVG AI plan?",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Yes! You can cancel your plan at any time. Cancellation takes effect at the end of your current billing period. Any unused credits will be forfeited."
+                    "text": "Yes! Our free plan includes 6 one-time credits to create up to 3 SVGs or 6 icons. Perfect for testing our AI SVG generator before upgrading."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Can I cancel anytime?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes! You can cancel your plan at any time with no cancellation fees. Cancellation takes effect at the end of your current billing period. You'll retain access until then."
                   }
                 },
                 {
@@ -281,14 +278,6 @@ export default function PricingPage() {
                   "acceptedAnswer": {
                     "@type": "Answer",
                     "text": "SVG AI offers the best value with transparent pricing, no hidden fees, 11 icon styles, 5 SVG styles, and both monthly/annual options. Most competitors charge more for fewer features."
-                  }
-                },
-                {
-                  "@type": "Question",
-                  "name": "Can I cancel my SVG AI subscription anytime?",
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Yes, you can cancel anytime with no cancellation fees. You'll retain access to your plan features until the end of your current billing period."
                   }
                 }
               ]

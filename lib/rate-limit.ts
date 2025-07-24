@@ -65,7 +65,7 @@ class SimpleRateLimiter {
 
 // Always use simple in-memory rate limiter for now
 // Upstash can be added later if needed for production scaling
-console.log('Using in-memory rate limiter');
+console.info('Using in-memory rate limiter');
 const rateLimiters = {
   checkout: new SimpleRateLimiter(10, 60 * 1000), // 10 requests per minute
   portal: new SimpleRateLimiter(5, 60 * 1000), // 5 requests per minute

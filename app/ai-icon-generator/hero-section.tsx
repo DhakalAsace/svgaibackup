@@ -20,6 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { formatErrorMessage } from '@/lib/client-error-handler';
 
 export default function HeroSection() {
   // Sample prompts for inspiration - include keywords for SEO
@@ -144,8 +145,9 @@ export default function HeroSection() {
           // Free user hit limit - show upgrade modal
           setShowUpgradeModal(true);
         } else {
-          // Generic limit message for subscribed users
-          setError(errorMessage);
+          // Generic limit message for subscribed users or API limits
+          const formattedError = formatErrorMessage(errorMessage);
+          setError(formattedError);
         }
         setIsGenerating(false);
         return;
@@ -188,12 +190,8 @@ export default function HeroSection() {
         throw new Error(responseData.error || "Failed to get SVG URL from the server.");
       }
     } catch (err) {
-      const errMsg = err instanceof Error ? err.message : "Failed to generate icon";
-      if (errMsg.includes("504") || errMsg.includes("timeout") || errMsg.includes("timed out")) {
-        setError("Icon generation timed out. The AI model typically takes 15-30 seconds to generate SVGs. Please try again when the AI service is less busy.");
-      } else {
-        setError(errMsg);
-      }
+      const formattedError = formatErrorMessage(err);
+      setError(formattedError);
     } finally {
       setIsGenerating(false);
     }

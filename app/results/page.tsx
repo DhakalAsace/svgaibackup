@@ -188,7 +188,7 @@ function ResultsContent() {
         
         // Debug logging
         if (profile) {
-          console.log('User profile data:', {
+          console.info('User profile data:', {
             subscription_status: profile.subscription_status,
             subscription_tier: profile.subscription_tier,
             monthly_credits: profile.monthly_credits,

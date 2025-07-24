@@ -379,7 +379,7 @@ function parseText(lines: string[], startIndex: number): DxfEntity {
 function processMTextFormatting(text: string): string {
   if (!text) return ''
   // Remove or convert common MTEXT formatting codes
-  let processed = text
+  const processed = text
     // Remove control codes
     .replace(/\\P/g, '\n') // Paragraph break
     .replace(/\\p/g, '\n') // Line break
@@ -587,7 +587,7 @@ function entitiesToSvg(entities: DxfEntity[], options: DxfToSvgOptions): string 
           else if (entity.alignmentV === 2) dominantBaseline = 'middle'
           else if (entity.alignmentV === 3) dominantBaseline = 'text-top'
           // Build transform string
-          let transforms = []
+          const transforms = []
           if (rotation !== 0) {
             transforms.push(`rotate(${rotation} ${x} ${y})`)
           }

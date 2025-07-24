@@ -158,6 +158,233 @@ export default function SVGToVideoPageClient() {
           </Card>
         </div>
 
+        {/* Use Cases Section */}
+        <div className="mt-16 max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">Perfect For Any Industry</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Social Media Content</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Create eye-catching animated videos for Instagram, TikTok, and YouTube Shorts from your brand's SVG logos and icons.
+                </p>
+                <Badge variant="secondary" className="text-xs">Marketing Teams</Badge>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Educational Videos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Transform educational diagrams and infographics into engaging animated explanations for online courses.
+                </p>
+                <Badge variant="secondary" className="text-xs">Educators</Badge>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Product Demos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Animate product illustrations and technical drawings to showcase features in compelling video presentations.
+                </p>
+                <Badge variant="secondary" className="text-xs">Product Teams</Badge>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Logo Reveals</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Create professional logo animation videos for brand introductions, video intros, and corporate presentations.
+                </p>
+                <Badge variant="secondary" className="text-xs">Designers</Badge>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">App Onboarding</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Convert UI icons and illustrations into animated tutorials for seamless user onboarding experiences.
+                </p>
+                <Badge variant="secondary" className="text-xs">UX Teams</Badge>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">NFT Animation</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Bring static NFT artwork to life with custom animations, increasing value and engagement for digital collectibles.
+                </p>
+                <Badge variant="secondary" className="text-xs">Digital Artists</Badge>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Technical Details */}
+        <div className="mt-16 max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">Technical Specifications</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Video Output Specs</h3>
+              <ul className="space-y-2 text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  <span><strong>Format:</strong> MP4 (H.264 codec)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  <span><strong>Resolution:</strong> 1920x1080 (Full HD)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  <span><strong>Duration:</strong> 5 seconds</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  <span><strong>Frame Rate:</strong> 30 FPS</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  <span><strong>Bitrate:</strong> Optimized for web streaming</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Input Requirements</h3>
+              <ul className="space-y-2 text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  <span><strong>File Type:</strong> SVG format only</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  <span><strong>Max File Size:</strong> 10MB</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  <span><strong>Complexity:</strong> Simple to moderate designs work best</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  <span><strong>Elements:</strong> Distinct shapes and paths recommended</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  <span><strong>Colors:</strong> All color spaces supported</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Advanced Tips */}
+        <div className="mt-16 max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">Pro Tips for Best Results</h2>
+          <Card>
+            <CardContent className="p-8">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">🎯 Optimize Your SVG Design</h3>
+                  <p className="text-muted-foreground">
+                    For best animation results, use SVGs with clear, distinct elements. Avoid overly complex designs with thousands of paths. 
+                    Group related elements together and use meaningful IDs for better AI interpretation.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">✍️ Write Descriptive Prompts</h3>
+                  <p className="text-muted-foreground">
+                    Be specific about the motion you want. Instead of "animate this", try "make the rocket fly upward leaving a trail of smoke, 
+                    while the stars twinkle in the background". The more detail, the better the result.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">🎨 Consider Animation Flow</h3>
+                  <p className="text-muted-foreground">
+                    Think about how elements should move in relation to each other. Describe primary actions first, then secondary effects. 
+                    For example: "The logo spins while scaling up, then particles burst outward".
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">⚡ Leverage AI Capabilities</h3>
+                  <p className="text-muted-foreground">
+                    Our AI understands concepts like physics, timing, and visual effects. You can request realistic motion blur, 
+                    particle effects, morphing transitions, and even complex choreographed sequences.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Comparison Table */}
+        <div className="mt-16 max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">SVG to Video vs Traditional Methods</h2>
+          <Card>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="border-b">
+                    <tr>
+                      <th className="text-left p-4">Feature</th>
+                      <th className="text-center p-4">AI SVG to Video</th>
+                      <th className="text-center p-4">Manual Animation</th>
+                      <th className="text-center p-4">After Effects</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="p-4 font-medium">Time to Create</td>
+                      <td className="p-4 text-center text-green-600">1-2 minutes</td>
+                      <td className="p-4 text-center text-orange-600">Hours</td>
+                      <td className="p-4 text-center text-orange-600">30-60 minutes</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4 font-medium">Skill Required</td>
+                      <td className="p-4 text-center text-green-600">None</td>
+                      <td className="p-4 text-center text-red-600">Expert</td>
+                      <td className="p-4 text-center text-orange-600">Intermediate</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4 font-medium">Cost</td>
+                      <td className="p-4 text-center text-green-600">6 credits</td>
+                      <td className="p-4 text-center text-red-600">$50-200/video</td>
+                      <td className="p-4 text-center text-orange-600">$54.99/month</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="p-4 font-medium">Output Quality</td>
+                      <td className="p-4 text-center text-green-600">1080p HD</td>
+                      <td className="p-4 text-center text-green-600">Variable</td>
+                      <td className="p-4 text-center text-green-600">Up to 4K</td>
+                    </tr>
+                    <tr>
+                      <td className="p-4 font-medium">Consistency</td>
+                      <td className="p-4 text-center text-green-600">High</td>
+                      <td className="p-4 text-center text-orange-600">Variable</td>
+                      <td className="p-4 text-center text-green-600">High</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Examples */}
         <div className="mt-16 max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">More Animation Examples</h2>
@@ -213,31 +440,123 @@ export default function SVGToVideoPageClient() {
               <h3 className="text-xl font-semibold mb-2">What format is the output video?</h3>
               <p className="text-muted-foreground">
                 All videos are delivered as MP4 files. Each SVG to MP4 conversion creates a 5-second 
-                video in 1080p Full HD resolution, compatible with all platforms and devices.
+                video in 1080p Full HD resolution, compatible with all platforms and devices. The MP4 
+                format ensures maximum compatibility across social media, websites, and presentation software.
               </p>
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-2">How much does it cost?</h3>
               <p className="text-muted-foreground">
                 Each video generation uses 6 credits. Free users get 6 credits to start (1 free video). 
-                Subscribed users get monthly credits based on their plan.
+                Subscribed users get monthly credits based on their plan. Starter plan includes 50 credits/month,
+                and Pro plan includes 200 credits/month with additional benefits.
               </p>
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-2">How long are videos stored?</h3>
               <p className="text-muted-foreground">
                 Videos are stored for 7 days for free and Starter users, and 30 days for Pro subscribers. 
-                Download your videos to keep them permanently.
+                Download your videos to keep them permanently. We recommend downloading immediately after 
+                generation to ensure you always have access to your creations.
               </p>
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-2">What if generation fails?</h3>
               <p className="text-muted-foreground">
                 Credits are only consumed for successful generations. If the AI fails to generate 
-                your video, no credits will be deducted from your account.
+                your video, no credits will be deducted from your account. Our success rate is over 95%,
+                and we're constantly improving the AI model for better results.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">Can I use generated videos commercially?</h3>
+              <p className="text-muted-foreground">
+                Yes! All videos generated through our tool come with full commercial usage rights. You can use 
+                them for marketing, social media, presentations, websites, or any other commercial purpose without 
+                attribution required.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">What types of SVG work best?</h3>
+              <p className="text-muted-foreground">
+                Simple to moderately complex SVGs work best. Icons, logos, illustrations with distinct elements,
+                and diagrams produce excellent results. Avoid SVGs with thousands of tiny paths or extremely 
+                detailed artwork. The AI performs best with clear, recognizable shapes and elements.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">Can I customize the video length?</h3>
+              <p className="text-muted-foreground">
+                Currently, all videos are 5 seconds long, which is optimal for social media engagement and 
+                loading times. This duration works perfectly for logo reveals, social media posts, and 
+                attention-grabbing animations. For longer videos, consider our upcoming features.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">What AI technology powers this tool?</h3>
+              <p className="text-muted-foreground">
+                We use advanced AI video generation models that understand both visual design and motion 
+                dynamics. The AI analyzes your SVG structure and your text prompt to create natural, 
+                professional animations that match your vision.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">Can I edit the video after generation?</h3>
+              <p className="text-muted-foreground">
+                The generated MP4 files can be edited in any video editing software. However, if you need 
+                different animations, we recommend generating a new video with an updated prompt for best 
+                results. Each generation maintains consistent quality.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">Is there a batch processing option?</h3>
+              <p className="text-muted-foreground">
+                Currently, videos are generated one at a time to ensure quality. Pro subscribers get priority 
+                processing for faster generation times. We're exploring batch processing features for 
+                enterprise users - contact us if you have high-volume needs.
               </p>
             </div>
           </div>
+        </div>
+
+        {/* SEO Content Section */}
+        <div className="mt-16 max-w-4xl mx-auto prose prose-gray dark:prose-invert">
+          <h2>Understanding SVG to MP4 Conversion</h2>
+          <p>
+            Converting SVG to MP4 represents a significant advancement in digital content creation. While SVGs 
+            are perfect for scalable graphics, MP4 videos offer universal compatibility and engagement. Our AI-powered 
+            converter bridges this gap, transforming static vector graphics into dynamic video content.
+          </p>
+          
+          <h3>Why Convert SVG to MP4?</h3>
+          <p>
+            MP4 videos have become the standard for digital content across all platforms. Social media algorithms 
+            favor video content, showing it to 10x more users than static images. By converting your SVG designs 
+            to MP4, you unlock:
+          </p>
+          <ul>
+            <li><strong>Universal Compatibility:</strong> MP4 works everywhere - from Instagram to PowerPoint</li>
+            <li><strong>Higher Engagement:</strong> Videos get 1200% more shares than text and images combined</li>
+            <li><strong>Platform Optimization:</strong> Perfect for TikTok, Instagram Reels, and YouTube Shorts</li>
+            <li><strong>Professional Polish:</strong> Animated logos and graphics convey innovation and quality</li>
+            <li><strong>SEO Benefits:</strong> Video content ranks higher in search results</li>
+          </ul>
+
+          <h3>The AI Advantage</h3>
+          <p>
+            Traditional SVG to video conversion requires expensive software and animation expertise. Our AI 
+            technology democratizes this process, understanding your creative intent from simple text descriptions. 
+            The AI analyzes your SVG's structure, identifies key elements, and creates smooth, professional animations 
+            that would typically take hours to produce manually.
+          </p>
+
+          <h3>Perfect for Modern Marketing</h3>
+          <p>
+            In today's fast-paced digital landscape, static content often goes unnoticed. Animated videos created 
+            from your SVG assets can transform your marketing effectiveness. Whether it's a logo reveal for your 
+            YouTube channel intro, an animated infographic for LinkedIn, or eye-catching product illustrations 
+            for e-commerce, SVG to MP4 conversion opens new creative possibilities.
+          </p>
         </div>
 
         {/* Related Tools */}

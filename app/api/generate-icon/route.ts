@@ -13,6 +13,8 @@ import { createErrorResponse, createSuccessResponse, successResponse, badRequest
 import { sanitizeAndTrimText } from '@/lib/text-sanitizer'
 import { sanitizeData } from '@/lib/sanitize-utils' // Import shared sanitizer
 import { addWatermarkNode } from '@/lib/svg-watermark'
+import { executeWithCredits } from '@/lib/credit-operations'
+import { handleAPIError, extractErrorDetails } from '@/lib/api-error-handler'
 
 // Add export config to enable Edge Runtime with 30s timeout instead of 10s
 export const runtime = 'edge';
@@ -67,10 +69,216 @@ function createApiError(status: number, message: string) {
   });
 }
 
+// Helper function that contains all the icon generation logic
+async function performIconGeneration(
+  validatedData: { prompt: string; size?: string; number_of_images?: number },
+  isSubscribed: boolean,
+  user: any,
+  identifier: string,
+  identifier_type: 'user_id' | 'ip_address'
+) {
+  const { prompt, size = "1024x1024", number_of_images = 1 } = validatedData;
+
+  // Initialize Replicate client with validated API token
+  if (!replicateApiToken) {
+    logger.error('Missing Replicate API token during request', { operation: 'icon-generation' });
+    throw new Error('Configuration error: Missing API credentials');
+  }
+  
+  const replicate = new Replicate({
+    auth: replicateApiToken,
+  });
+
+  // Add validation for Replicate input
+  const allowedSizes = ["1024x1024", "512x512", "256x256"];
+  const validatedSize = allowedSizes.includes(size) ? size : "1024x1024";
+  const validatedNumberOfImages = Math.min(Math.max(1, number_of_images), 4);
+
+  logger.debug('Initiating Replicate icon generation request', {
+    operation: 'icon-generation',
+    size: validatedSize,
+    numberOfImages: validatedNumberOfImages,
+    promptLength: prompt ? prompt.length : 0
+  });
+
+  try {
+    logger.info('Attempting to run Replicate model for icon generation', { 
+      promptLength: prompt.length
+    });
+
+    const replicateInput = {
+      prompt,
+      size: validatedSize,
+      number_of_images: validatedNumberOfImages,
+      style: "icon" // Icon style for Recraft
+    };
+    
+    logger.debug('Sending input to Replicate:', { input: replicateInput });
+
+    // Use predictions.create for better error handling
+    let predictionResult;
+    try {
+      predictionResult = await replicate.predictions.create({
+        model: "recraft-ai/recraft-20b-svg",
+        input: replicateInput,
+      });
+    } catch (replicateError) {
+      // Handle Replicate API errors
+      const errorDetails = extractErrorDetails(replicateError);
+      const apiError = handleAPIError(replicateError);
+      
+      logger.error('Replicate API error', { 
+        error: errorDetails,
+        statusCode: apiError.statusCode
+      });
+      
+      throw new Error(apiError.userMessage);
+    }
+    
+    logger.debug('Icon prediction created successfully', { 
+      predictionId: predictionResult?.id,
+      status: predictionResult?.status 
+    });
+    
+    // Wait for the prediction to complete with timeout
+    const maxWaitTime = 25; // seconds
+    let waitTime = 0;
+    
+    while (
+      predictionResult.status !== "succeeded" && 
+      predictionResult.status !== "failed" &&
+      waitTime < maxWaitTime
+    ) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      waitTime++;
+      
+      try {
+        predictionResult = await replicate.predictions.get(predictionResult.id);
+        logger.debug('Icon prediction status updated', { 
+          status: predictionResult?.status,
+          waitTime: `${waitTime}/${maxWaitTime} seconds`
+        });
+      } catch (statusCheckError) {
+        const apiError = handleAPIError(statusCheckError);
+        logger.error('Error checking prediction status', { 
+          error: extractErrorDetails(statusCheckError),
+          predictionId: predictionResult?.id,
+          statusCode: apiError.statusCode
+        });
+        // Don't throw here, let it retry or timeout
+      }
+    }
+    
+    // Check for timeout
+    if (waitTime >= maxWaitTime && predictionResult.status !== "succeeded") {
+      logger.error('Icon prediction timed out', {
+        predictionId: predictionResult?.id,
+        status: predictionResult?.status
+      });
+      throw new Error(`Prediction timed out after ${maxWaitTime} seconds`);
+    }
+    
+    // Check if prediction failed
+    if (predictionResult.status === "failed") {
+      logger.error('Icon prediction failed', {
+        predictionId: predictionResult?.id,
+        error: predictionResult.error
+      });
+      throw new Error(`Prediction failed: ${predictionResult.error || "Unknown error"}`);
+    }
+    
+    // Extract the output
+    if (!predictionResult.output) {
+      throw new Error("Prediction succeeded but returned no output");
+    }
+    
+    const output = predictionResult.output;
+
+    // Extract SVG URL - Recraft returns a single URL string
+    let svgUrl: string | null = null;
+    
+    if (typeof output === 'string' && output.startsWith('http')) {
+      svgUrl = output;
+    } else if (Array.isArray(output) && output.length > 0 && typeof output[0] === 'string') {
+      svgUrl = output[0];
+    }
+
+    if (!svgUrl) {
+      throw new Error('No SVG URL returned from icon generation service');
+    }
+
+    logger.info('Generated icon SVG successfully', { url: svgUrl.substring(0, 50) + '...' });
+
+    // For authenticated users, save to database
+    if (identifier_type === 'user_id' && svgUrl) {
+      try {
+        // Validate URL
+        if (!isUrlSafe(svgUrl, ALLOWED_DOMAINS)) {
+          logger.error('Blocked potentially unsafe URL', { url: svgUrl });
+          throw new Error('Icon URL failed security validation');
+        }
+
+        // Fetch SVG content
+        const svgResponse = await fetch(svgUrl, { 
+          signal: AbortSignal.timeout(10000),
+          headers: { 'Accept': 'image/svg+xml, */*' }
+        });
+
+        if (!svgResponse.ok) {
+          logger.error(`Failed to fetch icon SVG: ${svgResponse.status}`);
+          throw new Error(`Failed to fetch icon content: ${svgResponse.status}`);
+        }
+
+        const rawSvgText = await svgResponse.text();
+
+        // Basic validation
+        if (!rawSvgText || !rawSvgText.trim().toLowerCase().startsWith('<svg')) {
+          logger.error('Fetched content does not appear to be a valid SVG');
+          throw new Error('Fetched content does not appear to be a valid SVG icon.');
+        }
+
+        // Sanitize & watermark the SVG
+        let sanitizedSvgText = sanitizeSvg(rawSvgText);
+        sanitizedSvgText = addWatermarkNode(sanitizedSvgText, isSubscribed);
+
+        const iconTitle = sanitizeAndTrimText(prompt, 50) || 'Untitled Icon';
+
+        const { error: insertError } = await supabaseAdmin
+          .from('svg_designs')
+          .insert({
+            user_id: identifier,
+            prompt: prompt,
+            svg_content: sanitizedSvgText,
+            title: iconTitle,
+            tags: ['icon'] // Tag as icon since it's from icon generator
+          });
+
+        if (insertError) {
+          logger.error("Error saving icon to database", { error: insertError });
+        } else {
+          logger.info('Successfully saved icon SVG to database');
+        }
+      } catch (fetchError) {
+        logger.error("Error processing icon SVG", { error: fetchError });
+      }
+    }
+
+    return {
+      iconUrl: svgUrl,
+      isSubscribed
+    };
+  } catch (error) {
+    logger.error('Error running Replicate for icon generation', { 
+      error: error instanceof Error ? error.message : String(error)
+    });
+    throw error; // Re-throw to be caught by executeWithCredits
+  }
+}
+
 export async function POST(req: NextRequest) {
   // Declare deductResult outside try/catch so it's accessible in error handling
-  let deductResult: any = null;
-  let isSubscribed = false;
+  const deductResult: any = null;
+  const isSubscribed = false;
   let user: any = null;
   let identifier: string = '';
   let identifier_type: 'user_id' | 'ip_address' = 'ip_address';
@@ -157,20 +365,52 @@ export async function POST(req: NextRequest) {
       }
     } else {
       // For anonymous users, check daily limit
-      const { data: anonCheck } = await supabaseAdmin
+      // Anonymous users get 2 free credits total per day:
+      // - Can generate 2 icons (1 credit each), OR
+      // - Can generate 1 SVG (2 credits), OR
+      // - Can generate 1 icon then have 1 credit left (not enough for SVG)
+      // We need to check all generation types to calculate total credits used
+      // IMPORTANT: IP addresses are hashed in the database for privacy
+      let hashedIdentifier = identifier;
+      if (identifier_type === 'ip_address') {
+        const { data: hashData, error: hashError } = await supabaseAdmin.rpc('hash_identifier', {
+          p_identifier: identifier
+        });
+        if (!hashError && hashData) {
+          hashedIdentifier = hashData;
+        }
+      }
+      
+      const { data: iconCheck } = await supabaseAdmin
         .from('daily_generation_limits')
         .select('count')
-        .eq('identifier', identifier)
+        .eq('identifier', hashedIdentifier)
         .eq('identifier_type', identifier_type)
         .eq('generation_date', new Date().toISOString().split('T')[0])
+        .eq('generation_type', 'icon')
         .single();
       
-      if (anonCheck && anonCheck.count >= 1) {
+      const { data: svgCheck } = await supabaseAdmin
+        .from('daily_generation_limits')
+        .select('count')
+        .eq('identifier', hashedIdentifier)
+        .eq('identifier_type', identifier_type)
+        .eq('generation_date', new Date().toISOString().split('T')[0])
+        .eq('generation_type', 'svg')
+        .single();
+      
+      // Calculate total credits used (icon=1, svg=2)
+      const iconCreditsUsed = (iconCheck?.count || 0) * 1;
+      const svgCreditsUsed = (svgCheck?.count || 0) * 2;
+      const totalCreditsUsed = iconCreditsUsed + svgCreditsUsed;
+      const creditsRemaining = 2 - totalCreditsUsed;
+      
+      if (creditsRemaining < 1) {
         return tooManyRequests("Sign up to continue generating for free and get 6 bonus credits!");
       }
       
       canGenerate = true;
-      remainingCredits = 1;
+      remainingCredits = creditsRemaining;
     }
 
     logger.info('Credit check passed', { identifierType: identifier_type, remainingCredits })
@@ -183,406 +423,57 @@ export async function POST(req: NextRequest) {
       return badRequest(validationError);
     }
     
-    // 4. DEDUCT CREDITS BEFORE GENERATION to prevent race conditions
-    const { data: deductData, error: deductError } = await supabaseAdmin.rpc(
-      'check_credits_v3',
-      {
-        p_user_id: user?.id || null,
-        p_identifier: identifier,
-        p_identifier_type: identifier_type,
-        p_generation_type: 'icon'
-      }
+    // 4. Execute generation with automatic credit handling
+    const result = await executeWithCredits({
+      operation: async () => {
+        // All the generation logic will go here
+        return await performIconGeneration(validatedData!, isSubscribed, user, identifier, identifier_type);
+      },
+      userId: user?.id || null,
+      identifier,
+      identifierType: identifier_type,
+      generationType: 'icon',
+      supabaseAdmin: supabaseAdmin as any
+    });
+    
+    if (!result.success) {
+      logger.error('Icon generation failed', { error: result.error });
+      return tooManyRequests(result.error || "Generation failed");
+    }
+    
+    // Extract data from successful result
+    const { iconUrl } = result.data!;
+    remainingCredits = result.remainingCredits || 0;
+    
+    // Create and return success response
+    const successData = createSuccessResponse({
+      svgUrl: iconUrl, // Return the icon SVG URL
+      remainingGenerations: remainingCredits,
+      creditsUsed: 1, // Icon costs 1 credit
+      modelInfo: 'recraft-ai/recraft-20b-svg',
+      isSubscribed: result.data?.isSubscribed || false
+    });
+    
+    return successResponse(successData);
+
+  } catch (error) {
+    // Error handling is now simplified since refunds are handled by executeWithCredits
+    // SECURITY: Sanitize error objects before logging to prevent token leakage
+    const sanitizedError = sanitizeData(error);
+    
+    logger.error("Error generating icon", { error: sanitizedError });
+    
+    // Use genericized error message for production to prevent information leakage
+    const errorMessage = process.env.NODE_ENV === 'production' 
+      ? "Failed to generate icon" 
+      : (error instanceof Error ? error.message : "Unknown error");
+    
+    const { response, status } = createErrorResponse(
+      null, // Never pass the raw error object to prevent token leakage
+      errorMessage,
+      500
     );
     
-    deductResult = deductData; // Store in outer scope variable
-    
-    if (deductError || !deductResult?.[0]?.success) {
-      logger.error('Error deducting credits', { error: deductError, result: deductResult });
-      return tooManyRequests("Insufficient credits or rate limit exceeded");
-    }
-    
-    // Update remaining credits from the deduction
-    remainingCredits = deductResult[0].remaining_credits;
-    
-    // 5. Proceed with Icon SVG generation
-    const { prompt, style = "icon", size = "1024x1024", aspect_ratio = "1:1" } = validatedData!;
-
-    // Initialize Replicate client with validated API token
-    // SECURITY: Never directly embed environment variables in objects
-    // that might be serialized or logged
-    if (!replicateApiToken) {
-      logger.error('Missing Replicate API token during request', { operation: 'icon-generation' });
-      throw new Error('Configuration error: Missing API credentials');
-    }
-    
-    const replicate = new Replicate({
-      auth: replicateApiToken,
-    })
-
-    // Add validation for Replicate input - use icon styles only
-    const allowedStyles = [
-      "icon", "icon/broken_line", "icon/colored_outline", 
-      "icon/colored_shapes", "icon/colored_shapes_gradient", "icon/doodle_fill", 
-      "icon/doodle_offset_fill", "icon/offset_fill", "icon/outline", 
-      "icon/outline_gradient", "icon/uneven_fill"
-    ];
-    
-    const allowedSizes = [
-      "1024x1024", "1365x1024", "1024x1365", "1536x1024", "1024x1536",
-      "1820x1024", "1024x1820", "1024x2048", "2048x1024", "1434x1024",
-      "1024x1434", "1024x1280", "1280x1024", "1024x1707", "1707x1024"
-    ];
-    
-    const allowedAspectRatios = [
-      "Not set", "1:1", "4:3", "3:4", "3:2", "2:3", "16:9", "9:16",
-      "1:2", "2:1", "7:5", "5:7", "4:5", "5:4", "3:5", "5:3"
-    ];
-
-    // Sanitize inputs
-    const validatedStyle = allowedStyles.includes(style) ? style : "icon";
-    const validatedSize = allowedSizes.includes(size) ? size : "1024x1024";
-    const validatedAspectRatio = allowedAspectRatios.includes(aspect_ratio) ? aspect_ratio : "1:1";
-    
-    // SECURITY: Generate the SVG using a securely sanitized prompt
-    // This prevents injection attacks in the model API
-    const sanitizedPrompt = sanitizeAndTrimText(prompt, 1000);
-    
-    if (sanitizedPrompt !== prompt) {
-      logger.info('Prompt was sanitized or truncated', {
-        // SECURITY: Don't log full prompts, just the relevant info about the changes
-        originalLength: prompt.length,
-        newLength: sanitizedPrompt.length
-      });
-    }
-    
-    // SECURITY: All inputs validated and sanitized before passing to external API
-    let output: any;
-    try {
-      // This extra validation at request-time ensures the token hasn't been unset
-      // since the route handler was initialized
-      if (!replicateApiToken) {
-        logger.error('Missing Replicate API token during request', { operation: 'icon-generation' });
-        throw new Error('Configuration error: Missing API credentials');
-      }
-      
-      // --- Add logging for input parameters --- 
-      const replicateInput: any = {
-        prompt: sanitizedPrompt,
-        style: validatedStyle,
-        size: validatedSize,
-      };
-      
-      // Only include aspect_ratio if it's not "Not set"
-      if (validatedAspectRatio && validatedAspectRatio !== "Not set") {
-        replicateInput.aspect_ratio = validatedAspectRatio;
-      }
-      
-      logger.debug('Sending input to Replicate (icon):', { input: replicateInput });
-      // ----------------------------------------
-      
-      let predictionResult: any = null;
-      
-      try {
-        // Use the predictions.create method
-        predictionResult = await replicate.predictions.create({
-          model: "recraft-ai/recraft-20b-svg",
-          input: replicateInput,
-        });
-        
-        logger.debug('Icon prediction created successfully', { 
-          predictionId: predictionResult?.id,
-          status: predictionResult?.status 
-        });
-        
-        // Wait for the prediction to complete with timeout
-        const maxWaitTime = 25; // seconds
-        let waitTime = 0;
-        
-        while (
-          predictionResult.status !== "succeeded" && 
-          predictionResult.status !== "failed" &&
-          waitTime < maxWaitTime
-        ) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          waitTime++;
-          
-          try {
-            predictionResult = await replicate.predictions.get(predictionResult.id);
-            logger.debug('Icon prediction status updated', { 
-              status: predictionResult?.status,
-              waitTime: `${waitTime}/${maxWaitTime} seconds`
-            });
-          } catch (statusCheckError) {
-            logger.error('Error checking icon prediction status', { 
-              error: statusCheckError instanceof Error ? statusCheckError.message : String(statusCheckError),
-              predictionId: predictionResult?.id
-            });
-            // Allow loop to continue, maybe a transient error
-          }
-        }
-        
-        // Check for timeout
-        if (waitTime >= maxWaitTime && predictionResult.status !== "succeeded") {
-          logger.error('Icon prediction timed out', { predictionId: predictionResult?.id, status: predictionResult?.status });
-          throw new Error(`Icon prediction timed out after ${maxWaitTime} seconds`);
-        }
-        
-        // Check if prediction failed
-        if (predictionResult.status === "failed") {
-          logger.error('Icon prediction failed', { predictionId: predictionResult?.id, error: predictionResult.error });
-          throw new Error(`Icon prediction failed: ${predictionResult.error || "Unknown error"}`);
-        }
-        
-        // Check if prediction succeeded but has no output
-        if (predictionResult.status === "succeeded" && !predictionResult.output) {
-          logger.error('Icon prediction succeeded but has no output', { predictionId: predictionResult?.id });
-          throw new Error("Icon prediction succeeded but returned no output");
-        }
-        
-        output = predictionResult.output;
-        
-      } catch (error) {
-        logger.error('Error running Replicate prediction for icon', { 
-          error: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined
-        });
-        // Re-throw the error to be caught by the main handler
-        throw error; 
-      }
-      
-      // Extract the SVG URL - should be a string or an array containing a string
-      let svgUrl: string | null = null;
-      if (typeof output === 'string' && output.startsWith('http')) {
-        svgUrl = output;
-      } else if (Array.isArray(output) && output.length > 0 && typeof output[0] === 'string' && output[0].startsWith('http')) {
-        svgUrl = output[0];
-      } else {
-        logger.warn('Could not extract SVG URL from Replicate response', { 
-          identifier_type: identifier_type,
-          hasIdentifier: !!identifier,
-          outputType: typeof output
-        });
-        // Use createApiError for a structured 422 response
-        return createApiError(422, "Could not extract SVG URL from the generation service.");
-      }
-      
-      logger.info('Extracted Icon URL', { url: svgUrl ? svgUrl.substring(0, 50) + '...' : 'None' });
-
-      // Save icon details for logged-in users (best-effort)
-      if (identifier_type === 'user_id' && svgUrl) {
-        try {
-          // Validate URL before fetching to prevent SSRF
-          if (!isUrlSafe(svgUrl, ALLOWED_DOMAINS)) {
-            logger.error('Blocked potentially unsafe URL', { url: svgUrl });
-            throw new Error('Icon URL failed security validation');
-          }
-
-          // Fetch the SVG content (with timeout) so we can sanitize & store it
-          const svgResponse = await fetch(svgUrl, {
-            signal: AbortSignal.timeout(10000),
-            headers: { Accept: 'image/svg+xml, */*' },
-          });
-
-          if (!svgResponse.ok) {
-            throw new Error(`Failed to fetch icon content: ${svgResponse.status}`);
-          }
-
-          const rawSvgText = await svgResponse.text();
-
-          if (!rawSvgText.trim().toLowerCase().startsWith('<svg')) {
-            throw new Error('Fetched content does not appear to be a valid SVG icon.');
-          }
-
-          // Sanitize & (optionally) watermark the SVG for free users
-          let sanitizedSvgText = sanitizeSvg(rawSvgText);
-          sanitizedSvgText = addWatermarkNode(sanitizedSvgText, isSubscribed);
-
-          const svgTitle = sanitizeAndTrimText(prompt, 50) || 'Untitled Icon';
-
-          // Store the design (ignore errors – non-critical)
-          await supabaseAdmin.from('svg_designs').insert({
-            user_id: identifier,
-            prompt: prompt,
-            svg_content: sanitizedSvgText,
-            title: svgTitle,
-            tags: ['icon'],
-          });
-        } catch (saveErr) {
-          logger.error('Error saving icon design', {
-            error: saveErr instanceof Error ? saveErr.message : String(saveErr),
-          });
-        }
-      }
-
-      // Credits already deducted before generation, no need to deduct again
-
-      // Return the URL and remaining credits
-      return successResponse(
-        createSuccessResponse({
-          svgUrl,
-          remainingGenerations: remainingCredits, // Use the credits from after deduction
-          creditsUsed: 1,
-          modelInfo: 'recraft-ai/recraft-20b-svg',
-          isSubscribed,
-        }),
-      );
-
-    } catch (error) {
-      const sanitizedError = sanitizeData(error);
-      logger.error('Error generating SVG icon', { error: sanitizedError });
-      
-      // REFUND CREDITS if generation failed (only if we deducted them)
-      if (deductResult?.[0]?.success) {
-        try {
-          // Refund the credits by reversing the deduction
-          if (user?.id) {
-            if (isSubscribed) {
-              // Get current credits and subtract
-              const { data: profile } = await supabaseAdmin
-                .from('profiles')
-                .select('monthly_credits_used')
-                .eq('id', user.id)
-                .single();
-              
-              if (profile) {
-                await supabaseAdmin
-                  .from('profiles')
-                  .update({ 
-                    monthly_credits_used: Math.max(0, profile.monthly_credits_used - 1)
-                  })
-                  .eq('id', user.id);
-              }
-            } else {
-              // Get current credits and subtract
-              const { data: profile } = await supabaseAdmin
-                .from('profiles')
-                .select('lifetime_credits_used')
-                .eq('id', user.id)
-                .single();
-              
-              if (profile) {
-                await supabaseAdmin
-                  .from('profiles')
-                  .update({ 
-                    lifetime_credits_used: Math.max(0, profile.lifetime_credits_used - 1)
-                  })
-                  .eq('id', user.id);
-              }
-            }
-            logger.info('Credits refunded due to generation failure');
-          } else {
-            // For anonymous users, decrement the daily counter
-            // Get current count and decrement
-            const { data: limitData } = await supabaseAdmin
-              .from('daily_generation_limits')
-              .select('count')
-              .eq('identifier', identifier)
-              .eq('identifier_type', identifier_type)
-              .eq('generation_date', new Date().toISOString().split('T')[0])
-              .single();
-            
-            if (limitData) {
-              await supabaseAdmin
-                .from('daily_generation_limits')
-                .update({ count: Math.max(0, limitData.count - 1) })
-                .eq('identifier', identifier)
-                .eq('identifier_type', identifier_type)
-                .eq('generation_date', new Date().toISOString().split('T')[0]);
-            }
-            logger.info('Anonymous counter decremented due to generation failure');
-          }
-        } catch (refundError) {
-          logger.error('Failed to refund credits', { error: refundError });
-        }
-      }
-      
-      const errorMessage =
-        process.env.NODE_ENV === 'production'
-          ? 'Failed to generate SVG icon'
-          : error instanceof Error
-          ? error.message
-          : 'Unknown error';
-
-      const { response, status } = createErrorResponse(null, errorMessage, 500);
-      return Response.json(response, { status });
-    }
-  } catch (error) {
-    const sanitizedError = sanitizeData(error);
-    logger.error('Error generating SVG icon - outer catch', { error: sanitizedError });
-    
-    // REFUND CREDITS if generation failed (only if we deducted them)
-    if (deductResult?.[0]?.success) {
-      try {
-        // Refund the credits by reversing the deduction
-        if (user?.id) {
-          if (isSubscribed) {
-            // Get current credits and subtract
-            const { data: profile } = await supabaseAdmin
-              .from('profiles')
-              .select('monthly_credits_used')
-              .eq('id', user.id)
-              .single();
-            
-            if (profile) {
-              await supabaseAdmin
-                .from('profiles')
-                .update({ 
-                  monthly_credits_used: Math.max(0, profile.monthly_credits_used - 1)
-                })
-                .eq('id', user.id);
-            }
-          } else {
-            // Get current credits and subtract
-            const { data: profile } = await supabaseAdmin
-              .from('profiles')
-              .select('lifetime_credits_used')
-              .eq('id', user.id)
-              .single();
-            
-            if (profile) {
-              await supabaseAdmin
-                .from('profiles')
-                .update({ 
-                  lifetime_credits_used: Math.max(0, profile.lifetime_credits_used - 1)
-                })
-                .eq('id', user.id);
-            }
-          }
-          logger.info('Credits refunded due to generation failure');
-        } else {
-          // For anonymous users, decrement the daily counter
-          // Get current count and decrement
-          const { data: limitData } = await supabaseAdmin
-            .from('daily_generation_limits')
-            .select('count')
-            .eq('identifier', identifier)
-            .eq('identifier_type', identifier_type)
-            .eq('generation_date', new Date().toISOString().split('T')[0])
-            .single();
-          
-          if (limitData) {
-            await supabaseAdmin
-              .from('daily_generation_limits')
-              .update({ count: Math.max(0, limitData.count - 1) })
-              .eq('identifier', identifier)
-              .eq('identifier_type', identifier_type)
-              .eq('generation_date', new Date().toISOString().split('T')[0]);
-          }
-          logger.info('Anonymous counter decremented due to generation failure');
-        }
-      } catch (refundError) {
-        logger.error('Failed to refund credits', { error: refundError });
-      }
-    }
-    
-    const errorMessage =
-      process.env.NODE_ENV === 'production'
-        ? 'Failed to generate SVG icon'
-        : error instanceof Error
-        ? error.message
-        : 'Unknown error';
-
-    const { response, status } = createErrorResponse(null, errorMessage, 500);
     return Response.json(response, { status });
   }
 }

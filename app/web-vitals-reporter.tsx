@@ -24,7 +24,7 @@ export function WebVitalsReporter() {
       const threshold = thresholds[metric.name as keyof typeof thresholds];
       const status = threshold ? isGood(metric.value, threshold) : '';
 
-      console.log(
+      console.info(
         `%c${status} ${metric.name}: ${metric.value.toFixed(2)}${
           metric.name === 'CLS' ? '' : 'ms'
         }`,
@@ -32,7 +32,7 @@ export function WebVitalsReporter() {
       );
 
       // Detailed logging for debugging
-      console.table({
+      console.info({
         Metric: metric.name,
         Value: metric.value,
         Rating: metric.rating || 'N/A',

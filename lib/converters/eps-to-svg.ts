@@ -320,7 +320,7 @@ class EPSToSVGConverter extends LazyLoadedConverter {
     const args = operatorList.argsArray
     
     let currentPath = ''
-    let currentColor = '#000000'
+    const currentColor = '#000000'
     
     for (let i = 0; i < ops.length; i++) {
       const op = ops[i]

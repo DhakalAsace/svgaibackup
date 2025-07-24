@@ -100,7 +100,7 @@ export function TertiaryGalleryCTA({ theme }: TertiaryCTAProps) {
               Perfect for app icons, logos, and UI elements. Generate exactly what you need.
             </p>
           </div>
-          <Link href="/tools/icon-generator" className="shrink-0">
+          <Link href="/ai-icon-generator" className="shrink-0">
             <Button size="lg" variant="outline" className="gap-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-400 dark:hover:text-black">
               Generate Custom Icons
               <Wand2 className="h-4 w-4" />

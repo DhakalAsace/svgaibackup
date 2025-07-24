@@ -10,8 +10,8 @@ const nextConfig = {
   experimental: {
     optimizeCss: false, // Disable experimental CSS optimization
     scrollRestoration: false, // Disable experimental scroll restoration
-    serverComponentsExternalPackages: ['sharp'], // Ensure sharp is handled correctly
   },
+  serverExternalPackages: ['sharp'], // Ensure sharp is handled correctly
   
   // Allow development access from local network
   allowedDevOrigins: [

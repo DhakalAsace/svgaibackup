@@ -17,13 +17,16 @@ interface ProgressStage {
 
 const PROGRESS_STAGES: Record<string, ProgressStage> = {
   initializing: { progress: 5, status: 'Initializing...' },
-  loadingLibraries: { progress: 20, status: 'Loading libraries...' },
-  validating: { progress: 30, status: 'Validating input...' },
-  processing: { progress: 50, status: 'Processing image...' },
-  converting: { progress: 70, status: 'Converting format...' },
-  optimizing: { progress: 85, status: 'Optimizing output...' },
-  finalizing: { progress: 95, status: 'Finalizing...' },
-  complete: { progress: 100, status: 'Complete!' },
+  loadingLibraries: { progress: 15, status: 'Loading processing libraries...' },
+  validating: { progress: 25, status: 'Validating image format...' },
+  downscaling: { progress: 35, status: 'Optimizing image size...' },
+  workerInit: { progress: 40, status: 'Starting background processor...' },
+  processing: { progress: 50, status: 'Converting to vector format...' },
+  workerProcessing: { progress: 70, status: 'Processing in background thread...' },
+  converting: { progress: 80, status: 'Finalizing vector paths...' },
+  optimizing: { progress: 90, status: 'Optimizing output...' },
+  finalizing: { progress: 95, status: 'Preparing download...' },
+  complete: { progress: 100, status: 'Conversion complete!' },
 };
 
 export function useConverterProgress() {
@@ -83,17 +86,21 @@ export function useConverterProgress() {
 
   // Report progress (for converter callbacks)
   const reportProgress = useCallback((progress: number) => {
-    // Map progress values to stages
+    // Map progress values to Web Worker-aware stages
     if (progress <= 0.1) {
       updateProgressStage('validating');
-    } else if (progress <= 0.3) {
+    } else if (progress <= 0.2) {
       updateProgressStage('loadingLibraries');
+    } else if (progress <= 0.25) {
+      updateProgressStage('downscaling');
+    } else if (progress <= 0.3) {
+      updateProgressStage('workerInit');
     } else if (progress <= 0.5) {
       updateProgressStage('processing');
-    } else if (progress <= 0.7) {
-      updateProgressStage('converting');
+    } else if (progress <= 0.8) {
+      updateProgressStage('workerProcessing');
     } else if (progress <= 0.9) {
-      updateProgressStage('optimizing');
+      updateProgressStage('converting');
     } else if (progress < 1) {
       updateProgressStage('finalizing');
     } else {
@@ -155,15 +162,17 @@ export function useConverterProgress() {
 
 // Helper functions
 function estimateTime(fileSize?: number): number {
-  if (!fileSize) return 5; // Default 5 seconds
+  if (!fileSize) return 4; // Default 4 seconds with Web Worker optimization
   
-  // Estimate based on file size (rough approximation)
+  // Estimate based on file size (optimized for Web Worker processing)
   const sizeMB = fileSize / (1024 * 1024);
-  if (sizeMB < 1) return 3;
-  if (sizeMB < 5) return 5;
-  if (sizeMB < 10) return 8;
-  if (sizeMB < 20) return 12;
-  return 15;
+  if (sizeMB < 0.5) return 2;  // Very small files
+  if (sizeMB < 1) return 3;    // Small files
+  if (sizeMB < 3) return 4;    // Medium files  
+  if (sizeMB < 5) return 6;    // Large files
+  if (sizeMB < 10) return 8;   // Very large files (will be downscaled)
+  if (sizeMB < 20) return 10;  // Extremely large files (will be heavily downscaled)
+  return 12; // Maximum estimate
 }
 
 function calculateRemainingTime(currentProgress: number, elapsedSeconds: number): number {

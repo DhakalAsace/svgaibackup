@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Default redirect URL - changed to homepage instead of dashboard
-      let finalRedirectUrl = "/";
+      const finalRedirectUrl = "/";
 
       // For OAuth flows, we store the redirect path in localStorage
       // This is retrieved client-side after redirect
