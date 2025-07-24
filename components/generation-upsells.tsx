@@ -192,31 +192,31 @@ export function UpgradeModal({ isOpen, onClose, triggerDelay = 5000, generationT
 
   return (
     <Dialog open={showModal} onOpenChange={onClose}>
-      <DialogContent className="w-[90vw] max-w-xs sm:max-w-[400px] p-0 overflow-hidden">
-        <DialogHeader className="bg-white border-b border-gray-100 p-6 relative">
+      <DialogContent className="w-[90vw] max-w-xs sm:max-w-[400px] p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="bg-white border-b border-gray-100 p-4 sm:p-6 relative">
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 rounded-sm opacity-60 hover:opacity-100 transition-opacity"
+            className="absolute right-3 top-3 sm:right-4 sm:top-4 rounded-sm opacity-60 hover:opacity-100 transition-opacity"
           >
             <X className="h-4 w-4 text-gray-500" />
             <span className="sr-only">Close</span>
           </button>
           
-          <DialogTitle className="text-xl font-semibold pr-6 text-gray-900">
+          <DialogTitle className="text-lg sm:text-xl font-semibold pr-6 text-gray-900">
             Upgrade to Continue Creating
           </DialogTitle>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-xs sm:text-sm text-gray-600 mt-1">
             Get monthly credits that refresh automatically
           </p>
         </DialogHeader>
 
-        <div className="p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-4">
           {/* Warning only shown when the user is truly out of credits */}
           {isOutOfCredits && (
-            <div className="text-center p-4 bg-orange-50 rounded-lg border border-orange-200">
+            <div className="text-center p-3 sm:p-4 bg-orange-50 rounded-lg border border-orange-200">
               <div className="flex items-center justify-center mb-2">
-                <Zap className="w-5 h-5 text-[#FF7043] mr-2" />
-                <p className="text-sm font-medium text-gray-900">
+                <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-[#FF7043] mr-2" />
+                <p className="text-xs sm:text-sm font-medium text-gray-900">
                   No credits remaining
                 </p>
               </div>
@@ -228,42 +228,42 @@ export function UpgradeModal({ isOpen, onClose, triggerDelay = 5000, generationT
           
           <div className="space-y-4">
             <div className="text-center">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Choose Your Plan</h3>
-              <p className="text-sm text-gray-600">Get monthly credits that refresh automatically</p>
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">Choose Your Plan</h3>
+              <p className="text-xs sm:text-sm text-gray-600">Get monthly credits that refresh automatically</p>
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
-              <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="text-2xl font-bold text-gray-900">$19</div>
-                <div className="text-sm font-medium text-gray-800 mt-1">Starter</div>
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <div className="text-center p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">$19</div>
+                <div className="text-xs sm:text-sm font-medium text-gray-800 mt-1">Starter</div>
                 <div className="text-xs text-gray-600 mt-1">100 credits/month</div>
               </div>
-              <div className="text-center p-4 bg-gradient-to-br from-[#FFF8F6] to-white rounded-lg border-2 border-[#FF7043] relative">
-                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-[#FF7043] text-white text-xs px-2 py-0.5 rounded-full font-medium">
+              <div className="text-center p-3 sm:p-4 bg-gradient-to-br from-[#FFF8F6] to-white rounded-lg border-2 border-[#FF7043] relative">
+                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-[#FF7043] text-white text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-medium">
                   POPULAR
                 </div>
-                <div className="text-2xl font-bold text-gray-900">$39</div>
-                <div className="text-sm font-medium text-gray-800 mt-1">Pro</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">$39</div>
+                <div className="text-xs sm:text-sm font-medium text-gray-800 mt-1">Pro</div>
                 <div className="text-xs text-gray-600 mt-1">350 credits/month</div>
               </div>
             </div>
             
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="space-y-2 text-sm">
+            <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+              <div className="space-y-2 text-xs sm:text-sm">
                 <div className="flex items-center">
-                  <div className="w-2 h-2 bg-[#FF7043] rounded-full mr-3"></div>
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#FF7043] rounded-full mr-2 sm:mr-3 flex-shrink-0"></div>
                   <span className="text-gray-700">All 11 icon styles & 5 SVG styles</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-2 h-2 bg-[#FF7043] rounded-full mr-3"></div>
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#FF7043] rounded-full mr-2 sm:mr-3 flex-shrink-0"></div>
                   <span className="text-gray-700">Credits refresh monthly</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-2 h-2 bg-[#FF7043] rounded-full mr-3"></div>
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#FF7043] rounded-full mr-2 sm:mr-3 flex-shrink-0"></div>
                   <span className="text-gray-700">Extended generation history</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-2 h-2 bg-[#FF7043] rounded-full mr-3"></div>
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#FF7043] rounded-full mr-2 sm:mr-3 flex-shrink-0"></div>
                   <span className="text-gray-700">Priority email support</span>
                 </div>
               </div>

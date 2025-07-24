@@ -66,13 +66,10 @@ export function SettingsForm({ userId }: SettingsFormProps) {
             
           if (profile) {
             setMarketingConsent(profile.marketing_consent || false);
-          } else {
-            // Check user metadata for marketing consent (from signup)
-            setMarketingConsent(user.user_metadata?.marketing_consent || false);
           }
         } catch (error) {
-          // Profile might not exist yet, check user metadata
-          setMarketingConsent(user.user_metadata?.marketing_consent || false);
+          // Profile might not exist yet, default to false
+          setMarketingConsent(false);
         } finally {
           setLoadingProfile(false);
         }

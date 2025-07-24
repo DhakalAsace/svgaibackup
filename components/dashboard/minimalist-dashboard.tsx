@@ -51,6 +51,9 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { WelcomeModal } from "./welcome-modal";
+import { WelcomeToast } from "./welcome-toast";
+import { CreditsScarcityModal } from "./credits-scarcity-modal";
 // Type definitions
 type SvgDesign = {
   id: string;
@@ -233,10 +236,16 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [userProfile, setUserProfile] = useState(initialUserProfile);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const { creditInfo } = useCredits();
   const supabase = createClientComponentClient<Database>();
   const PAGE_SIZE = 12;
+
+  // Ensure client-side rendering for components with dynamic IDs
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   // Fetch videos
   const fetchVideos = useCallback(async () => {
     try {
@@ -429,6 +438,16 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
   const hasMore = contentItems.length > displayedItems.length + (currentPage - 1) * PAGE_SIZE;
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Welcome Components for New Users */}
+      <WelcomeToast />
+      <WelcomeModal />
+      
+      {/* Credit-based Modals - Disabled */}
+      {/* {creditInfo && (
+        <CreditsScarcityModal 
+          creditsRemaining={creditInfo.creditsRemaining} 
+        />
+      )} */}
       {/* Mobile Header - Only shown on small screens */}
       <header className="bg-white border-b border-gray-200 lg:hidden">
         <div className="px-4 sm:px-6">
@@ -491,7 +510,10 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                   Quick Tools
                 </h3>
                 <div className="space-y-1">
-                  <Link href="/ai-icon-generator" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
+                  <Link 
+                    href={creditInfo && creditInfo.creditsRemaining === 0 ? "/pricing" : "/ai-icon-generator"} 
+                    className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
+                  >
                     <Plus className="w-4 h-4 mr-3 text-gray-400" />
                     AI Icon Generator
                     <span className="ml-auto text-xs text-gray-500">1 credit</span>
@@ -512,7 +534,10 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                     <ArrowRight className="w-4 h-4 mr-3 text-gray-400" />
                     PNG to SVG
                   </Link>
-                  <Link href="/tools/svg-to-video" className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
+                  <Link 
+                    href={creditInfo && creditInfo.creditsRemaining < 6 ? "/pricing" : "/tools/svg-to-video"} 
+                    className="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100"
+                  >
                     <Film className="w-4 h-4 mr-3 text-gray-400" />
                     SVG to Video
                     <span className="ml-auto text-xs text-gray-500">6 credits</span>
@@ -558,12 +583,21 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
           <div className="p-4 sm:p-6 lg:p-8">
             {/* Quick Actions */}
             <div className="mb-6">
-              <Link href="/">
-                <Button className="w-full sm:w-auto">
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Generate New SVG
-                </Button>
-              </Link>
+              {creditInfo && creditInfo.creditsRemaining === 0 ? (
+                <Link href="/pricing">
+                  <Button className="w-full sm:w-auto">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Get More Credits
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/">
+                  <Button className="w-full sm:w-auto">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Generate New SVG
+                  </Button>
+                </Link>
+              )}
             </div>
             {/* Creations Section */}
             <Card>
@@ -587,37 +621,46 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                       />
                     </div>
                     <div className="flex gap-2">
-                      <div className="relative">
-                        <Select value={filterType} onValueChange={setFilterType}>
-                          <SelectTrigger className="w-[100px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All</SelectItem>
-                            <SelectItem value="svg">SVG</SelectItem>
-                            <SelectItem value="icon">Icons</SelectItem>
-                            <SelectItem value="video">Videos</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        {filterType !== 'all' && (
-                          <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full"></div>
-                        )}
-                      </div>
-                      <div className="relative">
-                        <Select value={sortBy} onValueChange={setSortBy}>
-                          <SelectTrigger className="w-[120px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="recent">Recent</SelectItem>
-                            <SelectItem value="oldest">Oldest</SelectItem>
-                            <SelectItem value="name">Name</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        {sortBy !== 'recent' && (
-                          <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full"></div>
-                        )}
-                      </div>
+                      {isClient ? (
+                        <>
+                          <div className="relative">
+                            <Select value={filterType} onValueChange={setFilterType}>
+                              <SelectTrigger className="w-[100px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All</SelectItem>
+                                <SelectItem value="svg">SVG</SelectItem>
+                                <SelectItem value="icon">Icons</SelectItem>
+                                <SelectItem value="video">Videos</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            {filterType !== 'all' && (
+                              <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full"></div>
+                            )}
+                          </div>
+                          <div className="relative">
+                            <Select value={sortBy} onValueChange={setSortBy}>
+                              <SelectTrigger className="w-[120px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="recent">Recent</SelectItem>
+                                <SelectItem value="oldest">Oldest</SelectItem>
+                                <SelectItem value="name">Name</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            {sortBy !== 'recent' && (
+                              <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full"></div>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-[100px] h-10 bg-gray-200 animate-pulse rounded-md"></div>
+                          <div className="w-[120px] h-10 bg-gray-200 animate-pulse rounded-md"></div>
+                        </>
+                      )}
                       <div className="flex border border-gray-200 rounded-md">
                         <Button
                           variant="ghost"

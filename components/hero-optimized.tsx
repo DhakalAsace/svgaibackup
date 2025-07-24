@@ -250,6 +250,10 @@ export default function HeroOptimized() {
     setError("")
     setLimitReachedError("")
     try {
+      // Add timeout to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 second timeout
+      
       const response = await fetch("/api/generate-svg", {
         method: "POST",
         headers: {
@@ -261,7 +265,10 @@ export default function HeroOptimized() {
           size,
           aspect_ratio: aspectRatio
         }),
+        signal: controller.signal
       })
+      
+      clearTimeout(timeoutId);
       let responseData;
       try {
         responseData = await response.json();
@@ -327,9 +334,14 @@ export default function HeroOptimized() {
           : (responseData.error?.message || "Failed to generate SVG");
         throw new Error(errorMsg);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!limitReachedError) {
-        const formattedError = formatErrorMessage(err);
+        let formattedError;
+        if (err.name === 'AbortError') {
+          formattedError = "The request took too long and timed out. Your credits may have been used - please check your dashboard. If your SVG was generated, it will appear in your dashboard.";
+        } else {
+          formattedError = formatErrorMessage(err);
+        }
         setError(formattedError);
         setIsGenerating(false)
       }

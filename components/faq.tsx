@@ -1,5 +1,6 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function Faq() {
   const faqs = [
@@ -71,12 +72,16 @@ export default function Faq() {
             Our support team is ready to help you with any questions you might have about our text to SVG AI generator.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-800 transition-colors">
-              Read Documentation
-            </Button>
-            <Button className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white hover:opacity-90 transition-opacity">
-              Contact Support
-            </Button>
+            <Link href="/blog">
+              <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-800 transition-colors">
+                Read Documentation
+              </Button>
+            </Link>
+            <Link href="mailto:hello@svgai.org">
+              <Button className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white hover:opacity-90 transition-opacity">
+                Contact Support
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

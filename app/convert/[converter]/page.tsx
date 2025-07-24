@@ -30,6 +30,10 @@ export async function generateMetadata({ params }: ConverterPageProps): Promise<
     }
   }
 
+  // Define which converters should be indexed
+  const INDEXED_CONVERTERS = ['ai-to-svg', 'svg-to-png'];
+  const shouldIndex = INDEXED_CONVERTERS.includes(converterSlug);
+
   // Generate format-specific value proposition
   const formatFeatures = getFormatFeatures(converter.fromFormat, converter.toFormat)
   const enhancedDescription = `${converter.metaDescription} ${formatFeatures.benefits}`
@@ -70,10 +74,10 @@ export async function generateMetadata({ params }: ConverterPageProps): Promise<
       images: ['/og-converter.png'],
     },
     robots: {
-      index: true,
+      index: shouldIndex,
       follow: true,
       googleBot: {
-        index: true,
+        index: shouldIndex,
         follow: true,
         'max-video-preview': -1,
         'max-image-preview': 'large',
