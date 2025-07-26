@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from '@/components/ui/use-toast'
 import { createClientComponentClient } from '@/lib/supabase'
 export default function Pricing() {
-  const [billingInterval, setBillingInterval] = useState<'monthly' | 'annual'>('monthly');
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'annual'>('annual');
   const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClientComponentClient();
@@ -28,9 +28,9 @@ export default function Pricing() {
     },
     {
       name: "Starter",
-      price: { monthly: "$19", annual: "$189" },
-      period: { monthly: "per month", annual: "per year" },
-      savings: "Save $39/year",
+      price: { monthly: "$19", annual: "$13.99" },
+      period: { monthly: "/month", annual: "/mo*" },
+      savings: "Billed $168 today • 3 months FREE vs monthly",
       description: "For individuals and small projects",
       features: [
         "100 credits per month",
@@ -46,9 +46,9 @@ export default function Pricing() {
     },
     {
       name: "Pro",
-      price: { monthly: "$39", annual: "$389" },
-      period: { monthly: "per month", annual: "per year" },
-      savings: "Save $79/year",
+      price: { monthly: "$39", annual: "$29.99" },
+      period: { monthly: "/month", annual: "/mo*" },
+      savings: "Billed $360 today • 3 months FREE vs monthly",
       description: "For professionals and businesses",
       features: [
         "350 credits per month",
@@ -152,7 +152,7 @@ export default function Pricing() {
               }`}
             >
               Annual
-              <span className="ml-1 text-xs text-[#00B894]">Save 17%</span>
+              <span className="ml-1 text-xs text-[#00B894]">3 months FREE</span>
             </button>
           </div>
         </div>
@@ -183,7 +183,10 @@ export default function Pricing() {
                     </span>
                   </div>
                   {plan.showBillingToggle && billingInterval === 'annual' && plan.savings && (
-                    <p className="text-sm text-[#00B894] mt-1">{plan.savings}</p>
+                    <div className="space-y-1 mt-2">
+                      <p className="text-sm text-gray-500">{plan.savings.split(' • ')[0]}</p>
+                      <p className="text-sm text-[#00B894] font-medium">{plan.savings.split(' • ')[1]}</p>
+                    </div>
                   )}
                 </div>
                 <p className="text-gray-600 mb-6 text-sm flex-grow">{plan.description}</p>

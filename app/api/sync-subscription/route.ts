@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createRouteClient } from '@/lib/supabase-server';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
+import { PRICE_TO_TIER } from '@/lib/stripe-config';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-06-30.basil',
@@ -17,14 +18,6 @@ const supabaseAdmin = createClient(
     },
   }
 );
-
-// Map price IDs to tiers and credits
-const PRICE_TO_TIER: Record<string, { tier: string; credits: number }> = {
-  'price_1RW8DSIe6gMo8ijpNM67JVAX': { tier: 'starter', credits: 100 }, // Starter monthly
-  'price_1RcNYUIe6gMo8ijpRtzAFayx': { tier: 'starter', credits: 100 }, // Starter annual billed yearly
-  'price_1RcNYcIe6gMo8ijpfeKA0bb4': { tier: 'pro', credits: 350 },     // Pro monthly
-  'price_1RcNeTIe6gMo8ijpB0qJ85Cy': { tier: 'pro', credits: 350 },    // Pro annual billed yearly
-};
 
 export async function POST(req: NextRequest) {
   try {
@@ -73,13 +66,18 @@ export async function POST(req: NextRequest) {
     let credits = 100;
     
     if (priceId && PRICE_TO_TIER[priceId]) {
-      ({ tier, credits } = PRICE_TO_TIER[priceId]);
+      const tierInfo = PRICE_TO_TIER[priceId];
+      tier = tierInfo.tier;
+      credits = tierInfo.credits;
     } else {
       // Fallback to price amount
       const amount = subscription.items.data[0]?.price.unit_amount;
-      if (amount === 2900 || amount === 28900) {
+      if (amount === 3900 || amount === 36000) {
         tier = 'pro';
         credits = 350;
+      } else if (amount === 1900 || amount === 16800) {
+        tier = 'starter';
+        credits = 100;
       }
     }
 

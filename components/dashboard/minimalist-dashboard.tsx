@@ -440,7 +440,7 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
     <div className="min-h-screen bg-gray-50">
       {/* Welcome Components for New Users */}
       <WelcomeToast />
-      <WelcomeModal />
+      {/* <WelcomeModal /> */}
       
       {/* Credit-based Modals - Disabled */}
       {/* {creditInfo && (

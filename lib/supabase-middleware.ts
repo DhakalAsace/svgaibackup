@@ -14,10 +14,22 @@ export function createMiddlewareClient(request: NextRequest, response: NextRespo
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set({ name, value, ...options });
-            response.cookies.set({ name, value, ...options });
+            const cookieOptions = {
+              name,
+              value,
+              ...options,
+              sameSite: 'lax' as const,
+              secure: process.env.NODE_ENV === 'production',
+              httpOnly: false, // Allow client-side access for PKCE
+            };
+            request.cookies.set(cookieOptions);
+            response.cookies.set(cookieOptions);
           });
         },
+      },
+      auth: {
+        flowType: 'pkce',
+        detectSessionInUrl: false,
       },
     }
   );

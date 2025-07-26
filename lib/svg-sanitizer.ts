@@ -27,8 +27,8 @@ export function sanitizeSvg(svgContent: string): string {
   const sanitized = svgContent
     // Remove script tags and their contents
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    // Remove onclick and similar event handlers
-    .replace(/\s(on\w+)="[^"]*"/gi, '')
+    // Remove onclick and similar event handlers (both double and single quotes)
+    .replace(/\s(on\w+)=["'][^"']*["']/gi, '')
     // Remove javascript: URLs
     .replace(/\b(href|xlink:href|src)="javascript:[^"]*"/gi, '')
     // Remove data: URLs except for safe image types

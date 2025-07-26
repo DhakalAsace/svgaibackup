@@ -1,9 +1,5 @@
-# *
 User-agent: *
 Allow: /
-
-# *
-User-agent: *
 Disallow: /api/
 Disallow: /dashboard/
 Disallow: /settings/
@@ -18,6 +14,7 @@ Disallow: /gone
 Disallow: /offline
 Disallow: /login
 Disallow: /signup
+Disallow: /gallery/
 
 # Host
 Host: https://svgai.org

@@ -44,8 +44,8 @@ function getTierInfo(subscription: Stripe.Subscription): { tier: string; credits
   const amount = subscription.items.data[0]?.price.unit_amount;
   const recurring = subscription.items.data[0]?.price.recurring;
   const interval = recurring?.interval === 'year' ? 'annual' : 'monthly';
-  if (amount === 1900 || amount === 18900) return { tier: 'starter', credits: 100, interval };
-  if (amount === 3900 || amount === 38900) return { tier: 'pro', credits: 350, interval };
+  if (amount === 1900 || amount === 16800) return { tier: 'starter', credits: 100, interval };
+  if (amount === 3900 || amount === 36000) return { tier: 'pro', credits: 350, interval };
   // Default to starter if unclear
   logger.warn(`Unknown price configuration for subscription ${subscription.id}`);
   return { tier: 'starter', credits: 100, interval: 'monthly' };

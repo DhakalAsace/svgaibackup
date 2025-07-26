@@ -75,16 +75,21 @@ export function WelcomeModal({ onClose }: WelcomeModalProps) {
             </Card>
             <Card className="p-2 sm:p-4 text-center border-[#FF7043] relative">
               <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#FF7043] text-white text-xs">
-                Popular
+                Best Value
               </Badge>
               <div className="text-xs sm:text-sm font-medium text-gray-600">Starter</div>
-              <div className="text-lg sm:text-2xl font-bold mt-1">$19/mo</div>
-              <div className="text-xs text-gray-500 mt-1">100 credits</div>
+              <div className="text-lg sm:text-2xl font-bold mt-1">$13.99/mo*</div>
+              <div className="text-xs text-gray-500 mt-1">100 credits/mo</div>
+              <div className="text-[10px] text-green-600 mt-1">~3 mo FREE vs monthly</div>
             </Card>
-            <Card className="p-2 sm:p-4 text-center">
+            <Card className="p-2 sm:p-4 text-center relative">
+              <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-green-100 text-green-800 text-xs">
+                Pro Power
+              </Badge>
               <div className="text-xs sm:text-sm font-medium text-gray-600">Pro</div>
-              <div className="text-lg sm:text-2xl font-bold mt-1">$39/mo</div>
-              <div className="text-xs text-gray-500 mt-1">350 credits</div>
+              <div className="text-lg sm:text-2xl font-bold mt-1">$29.99/mo*</div>
+              <div className="text-xs text-gray-500 mt-1">350 credits/mo</div>
+              <div className="text-[10px] text-green-600 mt-1">~3 mo FREE vs monthly</div>
             </Card>
           </div>
 

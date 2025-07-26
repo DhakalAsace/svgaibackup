@@ -27,13 +27,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClientComponentClient<Database>();
 
   useEffect(() => {
-    // Listen for auth changes. The listener is called immediately
-    // with the initial session state upon subscription.
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+    });
+
+    // Listen for auth changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
+      async (event, newSession) => {
         setSession(newSession);
         setUser(newSession?.user ?? null);
-        setIsLoading(false); // Set loading to false once we have the state
+        
+        // Handle PKCE flow completion and profile updates
+        if (event === 'SIGNED_IN' && newSession?.user) {
+          // Session established successfully
+          console.log('[Auth] User signed in successfully');
+          
+          // Check if we need to update marketing consent (for new signups)
+          const pendingConsent = localStorage.getItem('pendingMarketingConsent');
+          if (pendingConsent) {
+            try {
+              const consentData = JSON.parse(pendingConsent);
+              
+              // Only update profile if this is the same user
+              if (consentData.userId === newSession.user.id) {
+                // Profile already exists from trigger
+                // Marketing consent is stored separately in user metadata
+                // Update user metadata with marketing consent
+                const { error: updateError } = await supabase.auth.updateUser({
+                  data: {
+                    marketing_consent: consentData.marketingConsent,
+                    marketing_consent_date: consentData.marketingConsentDate,
+                  }
+                });
+                
+                if (updateError) {
+                  console.error('Error updating marketing consent:', updateError);
+                }
+                
+                // Clear the pending consent
+                localStorage.removeItem('pendingMarketingConsent');
+              }
+            } catch (e) {
+              console.error('Error parsing pending consent:', e);
+              localStorage.removeItem('pendingMarketingConsent');
+            }
+          }
+        }
       }
     );
 
@@ -59,22 +101,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (error) throw error;
       
-      // If signup is successful and user is returned (auto-confirm is enabled),
-      // create the profile immediately
-      if (data?.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert({
-            id: data.user.id,
-            marketing_consent: marketingConsent || false,
-            marketing_consent_date: marketingConsent ? new Date().toISOString() : null,
-          }, { onConflict: 'id' });
-          
-        // Don't throw profile errors, as the user is already created
-        if (profileError) {
-          console.error('Error creating profile:', profileError);
-        }
+      // Store marketing consent in localStorage to be updated after email confirmation
+      if (marketingConsent !== undefined && data.user?.id) {
+        localStorage.setItem('pendingMarketingConsent', JSON.stringify({
+          userId: data.user.id,
+          marketingConsent,
+          marketingConsentDate: marketingConsent ? new Date().toISOString() : null,
+        }));
       }
+      
+      // Profile will be created automatically by database trigger
+      // Marketing consent will be updated after email confirmation
     } catch (error) {
       throw error;
     }
@@ -103,6 +140,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+          skipBrowserRedirect: false,
         },
       });
       if (error) throw error;

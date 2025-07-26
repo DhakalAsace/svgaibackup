@@ -23,7 +23,7 @@ interface CreditsPaywallModalProps {
 
 export function CreditsPaywallModal({ isOpen, onClose }: CreditsPaywallModalProps) {
   const [loading, setLoading] = useState<string | null>(null);
-  const [isAnnual, setIsAnnual] = useState(false);
+  const [isAnnual, setIsAnnual] = useState(true);
   const router = useRouter();
   const supabase = createClientComponentClient();
 
@@ -66,8 +66,9 @@ export function CreditsPaywallModal({ isOpen, onClose }: CreditsPaywallModalProp
   const plans = [
     {
       name: "Starter",
-      price: isAnnual ? "$189" : "$19",
-      period: isAnnual ? "per year" : "per month",
+      price: isAnnual ? "$13.99" : "$19",
+      period: isAnnual ? "/mo*" : "/month",
+      yearlyBilling: isAnnual ? "Billed $168 today" : null,
       credits: "100 credits/month",
       features: [
         "Create 50 SVGs or 100 icons",
@@ -77,12 +78,13 @@ export function CreditsPaywallModal({ isOpen, onClose }: CreditsPaywallModalProp
         "Email support"
       ],
       tier: 'starter' as const,
-      savings: isAnnual ? "Save $39/year" : null
+      savings: isAnnual ? "3 months FREE vs monthly" : null
     },
     {
       name: "Pro",
-      price: isAnnual ? "$389" : "$39",
-      period: isAnnual ? "per year" : "per month",
+      price: isAnnual ? "$29.99" : "$39",
+      period: isAnnual ? "/mo*" : "/month",
+      yearlyBilling: isAnnual ? "Billed $360 today" : null,
       credits: "350 credits/month",
       features: [
         "Create 175 SVGs or 350 icons",
@@ -93,7 +95,7 @@ export function CreditsPaywallModal({ isOpen, onClose }: CreditsPaywallModalProp
       ],
       tier: 'pro' as const,
       highlighted: true,
-      savings: isAnnual ? "Save $79/year" : null
+      savings: isAnnual ? "3 months FREE vs monthly" : null
     }
   ];
 
@@ -138,7 +140,7 @@ export function CreditsPaywallModal({ isOpen, onClose }: CreditsPaywallModalProp
               >
                 Annual
                 <span className="ml-1.5 inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-green-100 text-green-800">
-                  Save <span className="hidden sm:inline">up to </span>17%
+                  3 months FREE
                 </span>
               </button>
             </div>
@@ -163,14 +165,21 @@ export function CreditsPaywallModal({ isOpen, onClose }: CreditsPaywallModalProp
                     <span className="text-2xl sm:text-3xl font-bold">{plan.price}</span>
                     <span className="text-sm sm:text-base text-gray-600 ml-1">{plan.period}</span>
                   </div>
-                  <p className="text-xs sm:text-sm font-medium text-[#FF7043] mt-1">
-                    {plan.credits}
-                  </p>
-                  {plan.savings && (
-                    <p className="text-xs sm:text-sm text-green-600 font-medium mt-1">
-                      {plan.savings}
+                  {plan.yearlyBilling && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {plan.yearlyBilling}
                     </p>
                   )}
+                  <div className="flex items-center gap-2 mt-2">
+                    <p className="text-xs sm:text-sm font-medium text-[#FF7043]">
+                      {plan.credits}
+                    </p>
+                    {plan.savings && (
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
+                        {plan.savings}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
 
                 <ul className="space-y-2 mb-4 sm:mb-6">

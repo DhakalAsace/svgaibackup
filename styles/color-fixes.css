@@ -1,0 +1,40 @@
+/* Color fixes for accessibility contrast */
+/* Replace light colors with darker, more accessible versions */
+
+/* Fix orange color #FF7043 -> #E65100 (darker orange) */
+.text-\[#FF7043\] {
+  color: #E65100 !important;
+}
+
+.bg-\[#FF7043\] {
+  background-color: #E65100 !important;
+}
+
+.border-\[#FF7043\] {
+  border-color: #E65100 !important;
+}
+
+/* Fix green color #00B894 -> #00897B (darker teal) */
+.text-\[#00B894\] {
+  color: #00897B !important;
+}
+
+.bg-\[#00B894\] {
+  background-color: #00897B !important;
+}
+
+/* Ensure white text on colored backgrounds has enough contrast */
+.bg-\[#FF7043\].text-white,
+.bg-\[#E65100\].text-white {
+  background-color: #E65100 !important;
+}
+
+/* Fix gray text on white background */
+.text-gray-600 {
+  color: #4B5563 !important;
+}
+
+/* Fix buttons with shadow for better contrast */
+.shadow-sm {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}

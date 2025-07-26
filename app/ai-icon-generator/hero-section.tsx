@@ -348,7 +348,7 @@ export default function HeroSection() {
                 </div>
               )}
               {/* Generate button */}
-              {userGenerations && (userGenerations.limit - userGenerations.used) < 1 ? (
+              {userGenerations && (userGenerations.limit - userGenerations.used) < 1 && !isGenerating ? (
                 <Link
                   href="/pricing"
                   className="w-full mt-5 inline-block text-center py-3.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium text-base rounded-lg hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 transition-all"
@@ -367,7 +367,7 @@ export default function HeroSection() {
                   {isGenerating ? (
                     <span className="flex items-center justify-center">
                       <Loader className="animate-spin mr-2 h-5 w-5" />
-                      Creating your icon (15-30 seconds)...
+                      Creating your icon (10-20 seconds)...
                     </span>
                   ) : (
                     <span className="flex items-center justify-center">

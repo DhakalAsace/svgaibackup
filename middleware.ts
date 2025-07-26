@@ -20,6 +20,44 @@ export async function middleware(request: NextRequest) {
   // Handle cache control for static assets
   const url = request.nextUrl.clone();
   const { pathname } = url;
+  
+  // Create base response with security headers
+  const baseResponse = NextResponse.next();
+  
+  // Add security headers to all responses
+  baseResponse.headers.set('X-Frame-Options', 'DENY');
+  baseResponse.headers.set('X-Content-Type-Options', 'nosniff');
+  baseResponse.headers.set('X-XSS-Protection', '1; mode=block');
+  baseResponse.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  baseResponse.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  
+  // Content Security Policy
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://vitals.vercel-insights.com https://js.sentry-cdn.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: blob: https:",
+    "connect-src 'self' https://svgai.supabase.co https://vitals.vercel-insights.com https://va.vercel-scripts.com https://o4507823515795456.ingest.sentry.io wss://svgai.supabase.co",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "upgrade-insecure-requests"
+  ].join('; ');
+  
+  baseResponse.headers.set('Content-Security-Policy', csp);
+  
+  // HSTS (Strict Transport Security)
+  baseResponse.headers.set(
+    'Strict-Transport-Security',
+    'max-age=31536000; includeSubDomains; preload'
+  );
+  
+  // COOP (Cross-Origin-Opener-Policy)
+  baseResponse.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+  
+  // CORP (Cross-Origin-Resource-Policy) 
+  baseResponse.headers.set('Cross-Origin-Resource-Policy', 'same-origin');
 
   // Handle redirects first
   // Check for trailing slash normalization
@@ -27,7 +65,12 @@ export async function middleware(request: NextRequest) {
   if (normalizedPath) {
     const redirectUrl = new URL(normalizedPath, request.url);
     redirectUrl.search = url.search; // Preserve query params
-    return NextResponse.redirect(redirectUrl, 301);
+    const redirectResponse = NextResponse.redirect(redirectUrl, 301);
+    // Copy security headers to redirect response
+    baseResponse.headers.forEach((value, key) => {
+      redirectResponse.headers.set(key, value);
+    });
+    return redirectResponse;
   }
 
   // Check for configured redirects
@@ -78,12 +121,8 @@ export async function middleware(request: NextRequest) {
   // Apply efficient cache policy to static assets
   if (STATIC_EXTENSIONS.some(ext => pathname.endsWith(ext))) {
     // Skip auth check for static assets and just add cache headers
-    const response = NextResponse.next();
+    const response = baseResponse;
     const fileType = pathname.split('.').pop() || '';
-    
-    // Debug info for SVG files to help identify issues
-    if (fileType === 'svg') {
-    }
     
     // Set longer cache for fonts and images, shorter for JS/CSS that might change more often
     const maxAge = ['woff', 'woff2', 'png', 'jpg', 'jpeg', 'gif', 'svg'].includes(fileType) 
@@ -108,11 +147,18 @@ export async function middleware(request: NextRequest) {
 
   // Skip middleware for auth callback endpoint - this is critical
   if (publicPaths.some(path => pathname.startsWith(path))) {
+    // For auth callback, we still need to ensure cookies are properly set
+    if (pathname.startsWith('/auth/callback')) {
+      const res = NextResponse.next();
+      // Allow cookies to be set properly for PKCE flow
+      res.headers.set('Cache-Control', 'no-store, must-revalidate');
+      return res;
+    }
     return NextResponse.next();
   }
 
-  // Create a response object that we'll modify and return
-  const res = NextResponse.next();
+  // Use the base response with security headers
+  const res = baseResponse;
 
   // Create a Supabase client specifically for use in middleware
   const supabase = createMiddlewareClient(request, res);

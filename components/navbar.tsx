@@ -227,9 +227,12 @@ export default function Navbar() {
           
           {/* Dashboard for logged in users (hidden on dashboard page) */}
           {session && pathname !== '/dashboard' && (
-            <Button variant="ghost" size="sm" asChild className="hidden md:flex hover:bg-gray-100/50 text-gray-600">
-              <Link href="/dashboard">Dashboard</Link>
-            </Button>
+            <Link 
+              href="/dashboard"
+              className="hidden md:flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Dashboard
+            </Link>
           )}
 
           {/* Login and Signup buttons */}
@@ -282,7 +285,7 @@ export default function Navbar() {
                       </div>
                       
                       {/* Get More button when low on credits (hidden on pricing page) */}
-                      {!isSubscribed && creditInfo.creditsRemaining < 10 && (
+                      {!isSubscribed && creditInfo.creditsRemaining < 10 && pathname !== '/results' && (
                         <Button 
                           size="sm" 
                           asChild 
@@ -420,14 +423,13 @@ export default function Navbar() {
                 {/* Mobile Actions */}
                 <div className="pt-4 border-t space-y-3">
                   {session && pathname !== '/dashboard' && (
-                    <Button 
-                      variant="outline" 
-                      asChild 
-                      className="w-full justify-start"
+                    <Link 
+                      href="/dashboard"
+                      className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <Link href="/dashboard">Dashboard</Link>
-                    </Button>
+                      Dashboard
+                    </Link>
                   )}
                   
                   {!session && (

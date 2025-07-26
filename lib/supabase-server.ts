@@ -17,7 +17,12 @@ export async function createServerClient() {
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
+              cookieStore.set(name, value, {
+                ...options,
+                sameSite: 'lax',
+                secure: process.env.NODE_ENV === 'production',
+                httpOnly: false, // Allow client-side access for PKCE
+              });
             });
           } catch (error) {
             // The `set` method was called from a Server Component.
@@ -25,6 +30,10 @@ export async function createServerClient() {
             // user sessions.
           }
         },
+      },
+      auth: {
+        flowType: 'pkce',
+        detectSessionInUrl: false, // Server-side doesn't need this
       },
     }
   );

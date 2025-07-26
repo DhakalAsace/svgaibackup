@@ -3,7 +3,7 @@ import PricingSection from '@/components/pricing-section';
 
 export const metadata: Metadata = {
   title: 'SVG AI Pricing - Affordable AI SVG Generator Plans Starting Free',
-  description: 'Compare SVG AI pricing plans: Free forever tier, Starter $19/month, Pro $39/month. Transparent pricing for AI SVG generation with no hidden fees. Start free today!',
+  description: 'Compare SVG AI pricing plans: Free forever tier, Starter $13.99/month (3 months FREE with annual), Pro $29.99/month (3 months FREE with annual). Transparent pricing for AI SVG generation with no hidden fees. Start free today!',
   keywords: [
     'svg ai pricing', 
     'ai svg generator cost', 
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'SVG AI Pricing - Start Free, Upgrade When You Need More',
-    description: 'Transparent pricing for AI-powered SVG generation. Free tier with 6 credits, Starter $19/month, Pro $39/month. Compare plans and start free.',
+    description: 'Transparent pricing for AI-powered SVG generation. Free tier with 6 credits, Starter $13.99/month (3 months FREE), Pro $29.99/month (3 months FREE). Compare plans and start free.',
     url: '/pricing',
     images: [
       {
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'SVG AI Pricing - Start Free, Upgrade When You Need More',
-    description: 'Transparent pricing for AI-powered SVG generation. Free tier with 6 credits, Starter $19/month, Pro $39/month.',
+    description: 'Transparent pricing for AI-powered SVG generation. Free tier with 6 credits, Starter $13.99/month (3 months FREE), Pro $29.99/month (3 months FREE).',
     images: ['/pricing-social.jpg']
   }
 };
@@ -67,12 +67,17 @@ export default function PricingPage() {
             {/* Most Important FAQs First */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-2">How much does SVG AI cost?</h3>
-              <p className="text-gray-600">SVG AI offers transparent pricing with a free forever plan (6 credits), Starter plan at $19/month (100 credits), and Pro plan at $39/month (350 credits). Annual billing saves up to 17%.</p>
+              <p className="text-gray-600">SVG AI offers transparent pricing with a free forever plan (6 credits), Starter plan at $13.99/month billed annually (3 months FREE) or $19/month (100 credits), and Pro plan at $29.99/month billed annually (3 months FREE) or $39/month (350 credits).</p>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-2">What's the difference between Starter and Pro pricing?</h3>
-              <p className="text-gray-600">Starter ($19/month) includes 100 credits and 7-day history. Pro ($39/month) includes 350 credits, 30-day history, and priority support. Both include all 11 icon styles and 5 SVG styles.</p>
+              <p className="text-gray-600">Starter ($13.99/month annually or $19/month) includes 100 credits and 7-day history. Pro ($29.99/month annually or $39/month) includes 350 credits, 30-day history, and priority support. Both include all 11 icon styles and 5 SVG styles.</p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h3 className="font-semibold mb-2">What does "Save 3 months" mean on annual plans?</h3>
+              <p className="text-gray-600">Annual plans give you 12 months of service for less than the price of 10 months. Starter Annual costs $168/year instead of $228 (saving $60). Pro Annual costs $360/year instead of $468 (saving $108). You save the equivalent of 3 months of payments!</p>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -177,12 +182,12 @@ export default function PricingPage() {
                 {
                   "@type": "Offer",
                   "name": "Starter Annual Plan",
-                  "description": "For individuals and small projects - Annual billing",
-                  "price": "189",
+                  "description": "For individuals and small projects - Annual billing (3 months FREE)",
+                  "price": "168",
                   "priceCurrency": "USD",
                   "priceSpecification": {
                     "@type": "UnitPriceSpecification",
-                    "price": "189",
+                    "price": "168",
                     "priceCurrency": "USD",
                     "billingIncrement": "P1Y"
                   },
@@ -196,12 +201,12 @@ export default function PricingPage() {
                 {
                   "@type": "Offer",
                   "name": "Pro Annual Plan",
-                  "description": "For professionals and businesses - Annual billing",
-                  "price": "389",
+                  "description": "For professionals and businesses - Annual billing (3 months FREE)",
+                  "price": "360",
                   "priceCurrency": "USD",
                   "priceSpecification": {
                     "@type": "UnitPriceSpecification",
-                    "price": "389",
+                    "price": "360",
                     "priceCurrency": "USD",
                     "billingIncrement": "P1Y"
                   },
@@ -229,7 +234,7 @@ export default function PricingPage() {
                   "name": "How much does SVG AI cost?",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "SVG AI offers transparent pricing with a free forever plan (6 credits), Starter plan at $19/month (100 credits), and Pro plan at $39/month (350 credits). Annual billing saves up to 17%."
+                    "text": "SVG AI offers transparent pricing with a free forever plan (6 credits), Starter plan at $13.99/month billed annually (3 months FREE) or $19/month (100 credits), and Pro plan at $29.99/month billed annually (3 months FREE) or $39/month (350 credits)."
                   }
                 },
                 {
@@ -237,7 +242,15 @@ export default function PricingPage() {
                   "name": "What's the difference between Starter and Pro pricing?",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Starter ($19/month) includes 100 credits and 7-day history. Pro ($39/month) includes 350 credits, 30-day history, and priority support. Both include all 11 icon styles and 5 SVG styles."
+                    "text": "Starter ($13.99/month annually or $19/month) includes 100 credits and 7-day history. Pro ($29.99/month annually or $39/month) includes 350 credits, 30-day history, and priority support. Both include all 11 icon styles and 5 SVG styles."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "What does \"3 months FREE\" mean on annual plans?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Annual plans give you 12 months of service for less than the price of 10 months. Starter Annual costs $168/year instead of $228 (saving $60). Pro Annual costs $360/year instead of $468 (saving $108). That's like getting 3 months free!"
                   }
                 },
                 {

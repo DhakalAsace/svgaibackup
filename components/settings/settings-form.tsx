@@ -60,12 +60,12 @@ export function SettingsForm({ userId }: SettingsFormProps) {
         try {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('marketing_consent')
+            .select('*')
             .eq('id', userId)
             .single();
             
-          if (profile) {
-            setMarketingConsent(profile.marketing_consent || false);
+          if (profile && 'marketing_consent' in profile) {
+            setMarketingConsent((profile as any).marketing_consent || false);
           }
         } catch (error) {
           // Profile might not exist yet, default to false

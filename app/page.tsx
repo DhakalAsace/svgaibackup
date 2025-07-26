@@ -1,13 +1,35 @@
-import Features from "@/components/features"
-import UseCases from "@/components/use-cases"
-import HowItWorks from "@/components/how-it-works"
-import Faq from "@/components/faq"
-import Hero from "@/components/hero-optimized"
+import { HeroCritical } from "@/components/hero-critical"
 import dynamic from 'next/dynamic'
 import type { Metadata } from 'next'
+import { LazyLoadWrapper } from '@/components/lazy-load-wrapper'
+import { Suspense } from 'react'
 
-// Import Pricing directly - hydration fix is in the component itself
-import Pricing from "@/components/pricing"
+// Lazy load the full hero
+const Hero = dynamic(() => import("@/components/hero-optimized"), {
+  loading: () => <HeroCritical />,
+  ssr: true
+})
+
+// Lazy load all non-critical components
+const Features = dynamic(() => import("@/components/features"), {
+  loading: () => <div className="h-96 animate-pulse bg-gray-50 rounded-lg m-4"></div>
+})
+
+const UseCases = dynamic(() => import("@/components/use-cases"), {
+  loading: () => <div className="h-64 animate-pulse bg-gray-50 rounded-lg m-4"></div>
+})
+
+const HowItWorks = dynamic(() => import("@/components/how-it-works"), {
+  loading: () => <div className="h-64 animate-pulse bg-gray-50 rounded-lg m-4"></div>
+})
+
+const Faq = dynamic(() => import("@/components/faq"), {
+  loading: () => <div className="h-64 animate-pulse bg-gray-50 rounded-lg m-4"></div>
+})
+
+const Pricing = dynamic(() => import("@/components/pricing"), {
+  loading: () => <div className="h-96 animate-pulse bg-gray-50 rounded-lg m-4"></div>
+})
 
 const SVGExamplesWrapper = dynamic(() => import("@/components/svg-examples-wrapper"), {
   loading: () => <div className="py-12 bg-gray-50"></div>
@@ -91,13 +113,34 @@ export default function Home() {
       />
       
       {/* Prioritize the Hero section for faster LCP */}
-      <Hero />
-      <SVGExamplesWrapper />
-      <UseCases />
-      <Features />
-      <HowItWorks />
-      <Pricing />
-      <Faq />
+      <Suspense fallback={<HeroCritical />}>
+        <Hero />
+      </Suspense>
+      
+      {/* Lazy load non-critical sections */}
+      <LazyLoadWrapper delay={100}>
+        <SVGExamplesWrapper />
+      </LazyLoadWrapper>
+      
+      <LazyLoadWrapper delay={200}>
+        <UseCases />
+      </LazyLoadWrapper>
+      
+      <LazyLoadWrapper delay={300}>
+        <Features />
+      </LazyLoadWrapper>
+      
+      <LazyLoadWrapper delay={400}>
+        <HowItWorks />
+      </LazyLoadWrapper>
+      
+      <LazyLoadWrapper delay={500}>
+        <Pricing />
+      </LazyLoadWrapper>
+      
+      <LazyLoadWrapper delay={600}>
+        <Faq />
+      </LazyLoadWrapper>
     </main>
   );
 }

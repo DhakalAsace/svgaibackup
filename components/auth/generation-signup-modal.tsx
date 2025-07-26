@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Gift, History, Zap } from "lucide-react";
+import { Sparkles, Gift, History, Zap, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SignUpForm } from "@/components/auth/signup-form";
@@ -243,7 +243,7 @@ function InlineSignupForm({ onClose, source, preservePrompt }: {
     try {
       await signUp(email, password);
       setIsSuccess(true);
-      onClose();
+      // Don't close modal - show success message instead
     } catch (error: any) {
       setError(error.message || "An error occurred during sign up");
     } finally {
@@ -264,6 +264,53 @@ function InlineSignupForm({ onClose, source, preservePrompt }: {
       setError(error.message || "An error occurred with Google sign in");
     }
   };
+
+  // Show success message if signup was successful
+  if (isSuccess) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center space-y-4">
+          {/* Success icon */}
+          <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+            <CheckCircle className="h-6 w-6 text-green-600" />
+          </div>
+          
+          {/* Title */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Check your email</h3>
+            <p className="text-sm text-gray-600 mt-1">We sent a verification link to</p>
+          </div>
+          
+          {/* Email address */}
+          <div className="bg-gray-50 rounded-lg px-4 py-3">
+            <p className="text-sm font-medium text-gray-900 break-all">
+              {email}
+            </p>
+          </div>
+          
+          {/* Instructions */}
+          <div className="space-y-2">
+            <p className="text-sm text-gray-600">
+              Click the link to verify your email and receive
+            </p>
+            <div className="inline-flex items-center gap-2 bg-[#FFF8F6] rounded-full px-4 py-2">
+              <Gift className="h-4 w-4 text-[#FF7043]" />
+              <span className="text-sm font-medium text-gray-900">6 free credits</span>
+            </div>
+          </div>
+        </div>
+        
+        {/* Action button */}
+        <Button
+          onClick={onClose}
+          className="w-full"
+          variant="outline"
+        >
+          Done
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

@@ -14,7 +14,8 @@ module.exports = {
     '/profile*',
     '/auth/*',
     '/admin/*',
-    '/results/*',
+    '/results',      // Exclude the specific results page
+    '/results/*',    // Exclude any sub-paths
     '/generate/*',
     '/server-sitemap*', // Prevent any server sitemap references
     '/404',
@@ -33,6 +34,9 @@ module.exports = {
     '/convert/*',     // Exclude all converters by default
     '!/convert/ai-to-svg',    // Except AI to SVG
     '!/convert/svg-to-png',   // Except SVG to PNG
+    '/gallery',       // Exclude gallery index
+    '/gallery/*',     // Exclude all gallery pages
+    '/sitemap',       // Exclude HTML sitemap page (user-facing)
   ],
   
   // Robots.txt configuration
@@ -59,6 +63,7 @@ module.exports = {
           '/offline',
           '/login',
           '/signup',
+          '/gallery/',
         ],
       },
     ],
@@ -114,14 +119,9 @@ module.exports = {
       }
     }
     
-    // Gallery pages - medium-high priority
-    if (path.startsWith('/gallery/')) {
-      return {
-        loc: path,
-        priority: 0.8,
-        changefreq: 'weekly',
-        lastmod: new Date().toISOString(),
-      }
+    // Gallery pages - excluded from sitemap
+    if (path.startsWith('/gallery/') || path === '/gallery') {
+      return null // This will exclude the page from sitemap
     }
     
     // Blog pages - standard priority

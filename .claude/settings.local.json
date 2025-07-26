@@ -172,7 +172,9 @@
       "Bash(dos2unix:*)",
       "Bash(grep -n \"forfeit\\|Cancel anytime\" /mnt/a/svgaibackup/app/pricing/page.tsx)",
       "Bash(grep -i -n \"forfeit\" /mnt/a/svgaibackup/app/pricing/page.tsx)",
-      "Bash(git check-ignore:*)"
+      "Bash(git check-ignore:*)",
+      "Bash(NODE_ENV=production npm start)",
+      "Bash(fuser:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

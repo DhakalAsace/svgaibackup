@@ -74,13 +74,14 @@ export function CreditsScarcityModal({ creditsRemaining, onClose }: CreditsScarc
                 <div className="text-xs sm:text-sm text-gray-600">100 credits per month</div>
               </div>
               <div className="text-left sm:text-right">
-                <div className="text-xl sm:text-2xl font-bold">$19</div>
-                <div className="text-xs text-gray-500">/month</div>
+                <div className="text-xl sm:text-2xl font-bold">$13.99</div>
+                <div className="text-xs text-gray-500">/mo*</div>
+                <div className="text-xs text-gray-500 mt-0.5">Billed $168 today</div>
               </div>
             </div>
             <Badge className="bg-green-100 text-green-700 text-xs">
               <Zap className="w-3 h-3 mr-1" />
-              Save 17% with annual
+              ~3 months FREE vs paying monthly
             </Badge>
           </div>
 

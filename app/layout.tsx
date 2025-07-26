@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 import './globals.css'
+import '../styles/color-fixes.css'
 import { Providers } from "./providers"
 import Footer from "@/components/footer"
 import { NavbarWrapper } from '@/components/client-wrappers';
@@ -8,12 +9,14 @@ import { WebVitalsReporter } from '@/components/web-vitals-reporter';
 import { ServiceWorkerProvider } from '@/components/service-worker-provider';
 import { ErrorInterceptor } from '@/components/error-interceptor';
 
-// Initialize Montserrat font
+// Initialize Montserrat font with preload and optimization
 const montserrat = Montserrat({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
   variable: '--font-montserrat',
   display: 'swap',
+  preload: true, // Preload font files
+  adjustFontFallback: true, // Adjust fallback font to reduce CLS
 })
 
 // Define base URL for metadata
@@ -90,18 +93,75 @@ export default function RootLayout({
           /* Critical CSS for above-the-fold content */
           *, ::before, ::after { box-sizing: border-box; border-width: 0; }
           html { line-height: 1.5; -webkit-text-size-adjust: 100%; font-family: var(--font-montserrat), ui-sans-serif, system-ui; visibility: visible; }
-          body { margin: 0; line-height: inherit; font-family: inherit; background-color: rgba(14, 116, 144, 0.3); }
+          body { margin: 0; line-height: inherit; font-family: inherit; background-color: #fff; }
+          
+          /* Layout */
           .container { width: 100%; margin-right: auto; margin-left: auto; padding-right: 1rem; padding-left: 1rem; }
-          @media (min-width: 1280px) { .container { max-width: 1280px; } }
+          .min-h-screen { min-height: 100vh; }
+          .flex { display: flex; }
+          .flex-col { flex-direction: column; }
+          .items-center { align-items: center; }
+          .justify-center { justify-content: center; }
+          .justify-between { justify-content: space-between; }
+          .gap-4 { gap: 1rem; }
+          .gap-8 { gap: 2rem; }
+          .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+          .px-4 { padding-left: 1rem; padding-right: 1rem; }
+          .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+          .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+          .mb-4 { margin-bottom: 1rem; }
+          .mb-8 { margin-bottom: 2rem; }
+          .mt-8 { margin-top: 2rem; }
+          
+          /* Typography */
           .text-center { text-align: center; }
           .font-bold { font-weight: 700; }
-          .bg-gradient-to-b { background-image: linear-gradient(to bottom, var(--tw-gradient-stops)); }
+          .font-medium { font-weight: 500; }
+          .text-gray-900 { color: #111827; }
+          .text-white { color: #fff; }
+          .text-gray-600 { color: #4B5563; }
+          .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
           .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-          @media (min-width: 768px) { .md\\:text-5xl { font-size: 3rem; line-height: 1; } }
-          @media (min-width: 1024px) { .lg\\:text-6xl { font-size: 3.75rem; line-height: 1; } }
+          .leading-tight { line-height: 1.25; }
+          
+          /* Buttons */
+          .rounded-lg { border-radius: 0.5rem; }
+          .bg-gray-900 { background-color: #111827; }
+          .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+          .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+          
+          /* Gradients */
+          .bg-gradient-to-b { background-image: linear-gradient(to bottom, var(--tw-gradient-stops)); }
+          .from-white { --tw-gradient-from: #fff; --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+          .to-gray-50 { --tw-gradient-to: #f9fafb; }
+          
+          /* Images */
           img { max-width: 100%; height: auto; display: block; }
           .w-\\[156px\\] { width: 156px; }
           .h-\\[80px\\] { height: 80px; }
+          
+          /* Media queries */
+          @media (min-width: 640px) {
+            .container { max-width: 640px; }
+          }
+          @media (min-width: 768px) {
+            .container { max-width: 768px; }
+            .md\\:text-5xl { font-size: 3rem; line-height: 1; }
+            .md\\:flex-row { flex-direction: row; }
+            .md\\:gap-12 { gap: 3rem; }
+          }
+          @media (min-width: 1024px) {
+            .container { max-width: 1024px; }
+            .lg\\:text-6xl { font-size: 3.75rem; line-height: 1; }
+            .lg\\:gap-16 { gap: 4rem; }
+          }
+          @media (min-width: 1280px) {
+            .container { max-width: 1280px; }
+          }
+          
+          /* Hide elements until JS loads */
+          .js-only { display: none; }
+          .no-js .js-only { display: block; }
         ` }} />
         
         {/* Preconnect to external domains */}

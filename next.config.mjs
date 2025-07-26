@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: '.next-build',
+  // Using default .next directory for compatibility
+  // distDir: '.next-build',
   eslint: {
     ignoreDuringBuilds: false, // Enable ESLint during builds
   },
@@ -8,9 +9,12 @@ const nextConfig = {
     ignoreBuildErrors: false, // Enable TypeScript checking
   },
   experimental: {
-    optimizeCss: false, // Disable experimental CSS optimization
     scrollRestoration: false, // Disable experimental scroll restoration
+    optimizePackageImports: ['lucide-react', '@radix-ui/*', 'framer-motion'], // Optimize imports
   },
+  // Fix trailing slash to prevent redirects
+  trailingSlash: false,
+  skipTrailingSlashRedirect: true,
   serverExternalPackages: ['sharp'], // Ensure sharp is handled correctly
   
   // Allow development access from local network
@@ -20,17 +24,70 @@ const nextConfig = {
   ],
   
   // Production optimizations
-  productionBrowserSourceMaps: false, // Disable source maps in production
+  productionBrowserSourceMaps: true, // Enable source maps to fix error
+  compress: true, // Enable gzip compression
   
   // Remove complex user config import
   // Remove MDX for now
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
   
+  // Configure modern JavaScript output
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
+  
   // Add webpack configuration to handle native modules
   webpack: (config, { isServer, webpack, dev }) => {
-    // Disable source maps in production
+    // Enable source maps in production to fix console errors
     if (!dev && !isServer) {
-      config.devtool = false;
+      config.devtool = 'source-map';
+    }
+    
+    // Optimize bundle splitting
+    if (!isServer && !dev) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            default: false,
+            vendors: false,
+            // Split vendor code
+            framework: {
+              name: 'framework',
+              test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-sync-external-store)[\\/]/,
+              priority: 40,
+              enforce: true,
+              reuseExistingChunk: true,
+            },
+            radix: {
+              name: 'radix',
+              test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
+              priority: 30,
+              enforce: true,
+              reuseExistingChunk: true,
+            },
+            lib: {
+              test: /[\\/]node_modules[\\/]/,
+              name(module) {
+                const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+                return `npm.${packageName.replace('@', '')}`;
+              },
+              priority: 10,
+              minChunks: 2,
+              reuseExistingChunk: true,
+            },
+            commons: {
+              name: 'commons',
+              minChunks: 2,
+              priority: 20,
+              reuseExistingChunk: true,
+            },
+          },
+        },
+      };
     }
     
     // Handle native modules that cause build hangs
