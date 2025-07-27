@@ -17,6 +17,7 @@ const montserrat = Montserrat({
   display: 'swap',
   preload: true, // Preload font files
   adjustFontFallback: true, // Adjust fallback font to reduce CLS
+  fallback: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
 })
 
 // Define base URL for metadata
@@ -164,9 +165,21 @@ export default function RootLayout({
           .no-js .js-only { display: block; }
         ` }} />
         
-        {/* Preconnect to external domains */}
+        {/* Preconnect to external domains with priority */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        
+        {/* Preload critical fonts */}
+        <link 
+          rel="preload" 
+          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" 
+          as="style" 
+        />
+        <link 
+          rel="stylesheet" 
+          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        />
+        
         <link rel="preconnect" href="https://svgai.supabase.co" />
         <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
         <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
@@ -195,13 +208,7 @@ export default function RootLayout({
         <link rel="prefetch" href="/api/generate-svg" as="fetch" crossOrigin="anonymous" />
         <link rel="prefetch" href="/api/convert" as="fetch" crossOrigin="anonymous" />
         
-        {/* Resource hints for critical CSS */}
-        <link rel="preload" href="/_next/static/css/app/layout.css" as="style" />
-        
-        {/* Module preload for critical JS */}
-        <link rel="modulepreload" href="/_next/static/chunks/webpack.js" />
-        <link rel="modulepreload" href="/_next/static/chunks/framework.js" />
-        <link rel="modulepreload" href="/_next/static/chunks/main.js" />
+        {/* Next.js handles critical CSS and JS loading automatically */}
         
         {/* WebSite and Organization structured data */}
         <script type="application/ld+json">{`

@@ -367,7 +367,7 @@ export default function HeroSection() {
                   {isGenerating ? (
                     <span className="flex items-center justify-center">
                       <Loader className="animate-spin mr-2 h-5 w-5" />
-                      Creating your icon (10-20 seconds)...
+                      Creating your icon (10-15 seconds)...
                     </span>
                   ) : (
                     <span className="flex items-center justify-center">
@@ -377,7 +377,7 @@ export default function HeroSection() {
                   )}
                 </button>
               )}
-              {/* 20-second progress bar */}
+              {/* 15-second progress bar */}
               {isGenerating && (
                 <div className="w-full h-1 bg-gray-200 rounded mt-3 overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-[#FF7043] to-[#FFA726] progress-animation" />
@@ -386,7 +386,7 @@ export default function HeroSection() {
               {isGenerating && (
                 <style>{`
                   @keyframes progressBarFill { 0% { width:0%; } 100% { width:100%; } }
-                  .progress-animation { animation: progressBarFill 20s linear forwards; }
+                  .progress-animation { animation: progressBarFill 15s linear forwards; }
                 `}</style>
               )}
               {/* Error message */}

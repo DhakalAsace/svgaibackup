@@ -10,7 +10,16 @@ const nextConfig = {
   },
   experimental: {
     scrollRestoration: false, // Disable experimental scroll restoration
-    optimizePackageImports: ['lucide-react', '@radix-ui/*', 'framer-motion'], // Optimize imports
+    optimizePackageImports: [
+      'lucide-react', 
+      '@radix-ui/*', 
+      'framer-motion',
+      'react-hook-form',
+      'zod',
+      '@supabase/supabase-js',
+      'codemirror',
+      '@uiw/react-codemirror'
+    ], // Optimize imports
   },
   // Fix trailing slash to prevent redirects
   trailingSlash: false,
@@ -36,6 +45,16 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production' ? {
       exclude: ['error', 'warn'],
     } : false,
+  },
+  
+  // Modularize imports to reduce bundle size
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{member}}',
+    },
+    '@radix-ui/react-icons': {
+      transform: '@radix-ui/react-icons/dist/{{member}}',
+    },
   },
   
   // Add webpack configuration to handle native modules
