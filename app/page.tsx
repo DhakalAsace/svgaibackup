@@ -2,8 +2,8 @@ import dynamic from 'next/dynamic'
 import type { Metadata } from 'next'
 import { LazyLoadWrapper } from '@/components/lazy-load-wrapper'
 
-// Import optimized Hero for better LCP
-import Hero from "@/components/hero-minimal"
+// Import Hero directly for better LCP
+import Hero from "@/components/hero-optimized"
 
 // Lazy load all non-critical components
 const Features = dynamic(() => import("@/components/features"), {
