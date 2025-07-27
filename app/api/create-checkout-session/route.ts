@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
       limit: 10,
     });
 
-    console.log(`Checking subscriptions for ${user.email} (${customerId}): found ${existingSubs.data.length} active subscriptions`);
+    console.info(`Checking subscriptions for ${user.email} (${customerId}): found ${existingSubs.data.length} active subscriptions`);
 
     // Check if there's a truly active subscription (not cancelled)
     const hasActiveNonCancelledSub = existingSubs.data.some(
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
     );
 
     if (hasActiveNonCancelledSub) {
-      console.log(`Active non-cancelled subscription found for ${user.email}`);
+      console.info(`Active non-cancelled subscription found for ${user.email}`);
       return NextResponse.json(
         { error: 'You already have an active subscription', portal: true },
         { status: 409 }
@@ -95,10 +95,10 @@ export async function POST(req: NextRequest) {
       limit: 10,
     });
 
-    console.log(`Found ${incompleteSubs.data.length} incomplete subscriptions for ${user.email}`);
+    console.info(`Found ${incompleteSubs.data.length} incomplete subscriptions for ${user.email}`);
 
     if (incompleteSubs.data.length > 0) {
-      console.log(`Incomplete subscription found for ${user.email}, allowing new checkout session`);
+      console.info(`Incomplete subscription found for ${user.email}, allowing new checkout session`);
       // Don't block for incomplete subscriptions - they can be replaced
     }
 

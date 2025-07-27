@@ -44,6 +44,13 @@ export function GenerationSignupModal({
 }: GenerationSignupModalProps) {
   const router = useRouter();
 
+  // For authenticated free users who hit their limit, redirect to pricing instead of showing modal
+  useEffect(() => {
+    if (isOpen && isAuthenticated && !isSubscribed && !isSoftPrompt) {
+      router.push('/pricing');
+      onClose();
+    }
+  }, [isOpen, isAuthenticated, isSubscribed, isSoftPrompt, router, onClose]);
 
   // Determine the return URL based on the source
   const getReturnUrl = () => {
@@ -144,14 +151,6 @@ export function GenerationSignupModal({
       </Dialog>
     );
   }
-
-  // For authenticated free users who hit their limit, redirect to pricing instead of showing modal
-  useEffect(() => {
-    if (isOpen && isAuthenticated && !isSubscribed && !isSoftPrompt) {
-      router.push('/pricing');
-      onClose();
-    }
-  }, [isOpen, isAuthenticated, isSubscribed, isSoftPrompt, router, onClose]);
 
   // Don't render modal for authenticated free users
   if (isAuthenticated && !isSubscribed && !isSoftPrompt) {

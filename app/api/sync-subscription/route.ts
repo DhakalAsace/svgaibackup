@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     const cachedResult = syncCache.get(cacheKey);
     
     if (cachedResult && Date.now() - cachedResult.timestamp < CACHE_DURATION) {
-      console.log(`Returning cached sync result for user ${user.id}`);
+      console.info(`Returning cached sync result for user ${user.id}`);
       return NextResponse.json(cachedResult.result);
     }
 
