@@ -1,0 +1,105 @@
+/* Critical CSS for above-the-fold content */
+/* This CSS is inlined in the HTML for faster FCP */
+
+/* Reset and base styles */
+*, ::before, ::after {
+  box-sizing: border-box;
+  border-width: 0;
+}
+
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  font-family: var(--font-montserrat), system-ui, -apple-system, sans-serif;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  line-height: inherit;
+  font-family: inherit;
+  background-color: #ffffff;
+  color: #111827;
+}
+
+/* Layout utilities */
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  max-width: 1280px;
+}
+
+.min-h-screen { min-height: 100vh; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.text-center { text-align: center; }
+
+/* Typography */
+.text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+.text-5xl { font-size: 3rem; line-height: 1; }
+.text-6xl { font-size: 3.75rem; line-height: 1; }
+.font-bold { font-weight: 700; }
+.leading-tight { line-height: 1.25; }
+
+/* Colors */
+.text-gray-900 { color: #111827; }
+.text-gray-600 { color: #4B5563; }
+.bg-white { background-color: #ffffff; }
+.bg-gray-900 { background-color: #111827; }
+
+/* Spacing */
+.py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+.py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+.py-16 { padding-top: 4rem; padding-bottom: 4rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+
+/* Button styles */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  background-color: #111827;
+  color: #ffffff;
+  transition: all 150ms;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+
+/* Hero gradient */
+.hero-gradient {
+  background: linear-gradient(to bottom, #ffffff, #f9fafb);
+}
+
+/* Hide elements until JS loads */
+.js-only { display: none; }
+
+/* Prevent FOUC */
+.no-js-hide { opacity: 0; }
+.js-loaded .no-js-hide { opacity: 1; transition: opacity 300ms; }
+
+/* Media queries */
+@media (min-width: 768px) {
+  .md\:text-5xl { font-size: 3rem; line-height: 1; }
+  .md\:text-6xl { font-size: 3.75rem; line-height: 1; }
+  .md\:py-20 { padding-top: 5rem; padding-bottom: 5rem; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:text-6xl { font-size: 3.75rem; line-height: 1; }
+  .lg\:text-7xl { font-size: 4.5rem; line-height: 1; }
+}

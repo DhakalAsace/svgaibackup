@@ -18,8 +18,12 @@ const nextConfig = {
       'zod',
       '@supabase/supabase-js',
       'codemirror',
-      '@uiw/react-codemirror'
+      '@uiw/react-codemirror',
+      'date-fns',
+      'clsx',
+      'tailwind-merge'
     ], // Optimize imports
+    optimizeCss: true, // Enable CSS optimization
   },
   // Fix trailing slash to prevent redirects
   trailingSlash: false,
@@ -102,6 +106,21 @@ const nextConfig = {
               name: 'commons',
               minChunks: 2,
               priority: 20,
+              reuseExistingChunk: true,
+            },
+            // Separate large dependencies
+            supabase: {
+              name: 'supabase',
+              test: /[\\/]node_modules[\\/]@supabase[\\/]/,
+              priority: 35,
+              enforce: true,
+              reuseExistingChunk: true,
+            },
+            codemirror: {
+              name: 'codemirror',
+              test: /[\\/]node_modules[\\/](codemirror|@codemirror|@uiw\/react-codemirror)[\\/]/,
+              priority: 35,
+              enforce: true,
               reuseExistingChunk: true,
             },
           },
