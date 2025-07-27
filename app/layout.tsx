@@ -137,9 +137,8 @@ export default function RootLayout({
         <link rel="prefetch" href="/api/generate-svg" as="fetch" crossOrigin="anonymous" />
         <link rel="prefetch" href="/api/convert" as="fetch" crossOrigin="anonymous" />
         
-        {/* Lazy load non-critical CSS */}
-        <link rel="preload" href="/styles/color-fixes.css" as="style" onLoad="this.onload=null;this.rel='stylesheet'" />
-        <noscript><link rel="stylesheet" href="/styles/color-fixes.css" /></noscript>
+        {/* Load non-critical CSS */}
+        <link rel="stylesheet" href="/styles/color-fixes.css" />
         
         {/* Next.js handles critical CSS and JS loading automatically */}
         

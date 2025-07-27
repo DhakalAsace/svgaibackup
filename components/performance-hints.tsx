@@ -5,13 +5,16 @@ import { useEffect } from 'react'
 export function PerformanceHints() {
   useEffect(() => {
     // Add performance hints
-    if ('PerformanceObserver' in window) {
+    if ('PerformanceObserver' in window && process.env.NODE_ENV === 'development') {
       // Observe LCP
       try {
         const lcpObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries()
           const lastEntry = entries[entries.length - 1]
-          console.log('LCP:', lastEntry.startTime)
+          // Only log in development
+          if (process.env.NODE_ENV === 'development') {
+            console.info('LCP:', lastEntry.startTime)
+          }
         })
         lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] })
       } catch (e) {
@@ -23,7 +26,9 @@ export function PerformanceHints() {
         const fidObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries()
           entries.forEach((entry) => {
-            console.log('FID:', entry.processingStart - entry.startTime)
+            if (process.env.NODE_ENV === 'development') {
+              console.info('FID:', entry.processingStart - entry.startTime)
+            }
           })
         })
         fidObserver.observe({ entryTypes: ['first-input'] })
@@ -34,7 +39,7 @@ export function PerformanceHints() {
       // Observe CLS
       try {
         let clsValue = 0
-        let clsEntries = []
+        const clsEntries = []
         
         const clsObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries()
@@ -42,7 +47,9 @@ export function PerformanceHints() {
             if (!entry.hadRecentInput) {
               clsEntries.push(entry)
               clsValue += entry.value
-              console.log('CLS:', clsValue)
+              if (process.env.NODE_ENV === 'development') {
+                console.info('CLS:', clsValue)
+              }
             }
           })
         })
