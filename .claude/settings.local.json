@@ -174,7 +174,10 @@
       "Bash(grep -i -n \"forfeit\" /mnt/a/svgaibackup/app/pricing/page.tsx)",
       "Bash(git check-ignore:*)",
       "Bash(NODE_ENV=production npm start)",
-      "Bash(fuser:*)"
+      "Bash(fuser:*)",
+      "Bash(git push:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(GIT_SSH_COMMAND=\"ssh -o StrictHostKeyChecking=no\" git push origin main)"
     ]
   },
   "enableAllProjectMcpServers": true,
