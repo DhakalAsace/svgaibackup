@@ -23,7 +23,7 @@ const nextConfig = {
       'clsx',
       'tailwind-merge'
     ], // Optimize imports
-    optimizeCss: true, // Enable CSS optimization
+    // optimizeCss: true, // Disabled - causing build issues with missing critters module
   },
   // Fix trailing slash to prevent redirects
   trailingSlash: false,
