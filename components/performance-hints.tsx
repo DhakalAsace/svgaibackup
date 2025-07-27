@@ -2,6 +2,16 @@
 
 import { useEffect } from 'react'
 
+// Type definitions for Web Vitals
+interface LayoutShiftEntry extends PerformanceEntry {
+  hadRecentInput: boolean
+  value: number
+}
+
+interface FirstInputEntry extends PerformanceEntry {
+  processingStart: number
+}
+
 export function PerformanceHints() {
   useEffect(() => {
     // Add performance hints
@@ -24,9 +34,9 @@ export function PerformanceHints() {
       // Observe FID
       try {
         const fidObserver = new PerformanceObserver((list) => {
-          const entries = list.getEntries()
+          const entries = list.getEntries() as FirstInputEntry[]
           entries.forEach((entry) => {
-            if (process.env.NODE_ENV === 'development') {
+            if (process.env.NODE_ENV === 'development' && 'processingStart' in entry) {
               console.info('FID:', entry.processingStart - entry.startTime)
             }
           })
@@ -39,12 +49,12 @@ export function PerformanceHints() {
       // Observe CLS
       try {
         let clsValue = 0
-        const clsEntries = []
+        const clsEntries: LayoutShiftEntry[] = []
         
         const clsObserver = new PerformanceObserver((list) => {
-          const entries = list.getEntries()
+          const entries = list.getEntries() as LayoutShiftEntry[]
           entries.forEach((entry) => {
-            if (!entry.hadRecentInput) {
+            if ('hadRecentInput' in entry && !entry.hadRecentInput && 'value' in entry) {
               clsEntries.push(entry)
               clsValue += entry.value
               if (process.env.NODE_ENV === 'development') {
