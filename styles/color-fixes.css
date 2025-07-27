@@ -83,13 +83,29 @@ a.text-gray-600:hover {
   color: #4B5563 !important;
 }
 
-/* Ensure all links meet contrast requirements */
-a:not(.no-contrast-fix) {
-  color: #C63310 !important;
+/* Fix only specific low-contrast links */
+a.text-gray-400,
+a.text-gray-500,
+a.text-orange-400,
+a.text-green-400 {
+  color: #6B7280 !important;
 }
 
-a:not(.no-contrast-fix):hover {
-  color: #991F00 !important;
+a.text-gray-400:hover,
+a.text-gray-500:hover {
+  color: #374151 !important;
+}
+
+/* Navigation links should maintain their original styling */
+nav a {
+  color: inherit !important;
+}
+
+/* Primary CTA links should keep their styling */
+a.bg-gradient-to-r,
+a[class*="bg-primary"],
+a[class*="bg-orange"] {
+  color: inherit !important;
 }
 
 /* Fix button contrast - more specific to avoid breaking styled buttons */
@@ -98,10 +114,36 @@ button.text-gray-400:not([class*="bg-"]) {
   color: #4B5563 !important;
 }
 
-/* Ensure minimum touch target sizes */
-button, a, [role="button"], .clickable {
+/* Ensure minimum touch target sizes - exclude carousel dots */
+button:not([aria-label*="slide"]):not(.carousel-dot), 
+a:not(.carousel-nav), 
+[role="button"]:not(.carousel-control), 
+.clickable {
   min-height: 44px;
   min-width: 44px;
+}
+
+/* Style carousel dots appropriately */
+.carousel-dot,
+button[aria-label*="Go to slide"] {
+  min-height: 12px !important;
+  min-width: 12px !important;
+  height: 12px !important;
+  width: 12px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+}
+
+/* Carousel navigation arrows should be normal size */
+button[aria-label="Previous"],
+button[aria-label="Next"],
+.carousel-arrow,
+.swiper-button-prev,
+.swiper-button-next {
+  min-height: 40px !important;
+  min-width: 40px !important;
+  height: 40px !important;
+  width: 40px !important;
 }
 
 /* Small icon buttons need larger touch areas */
@@ -114,7 +156,12 @@ button.p-2, a.p-2 {
 }
 
 /* Ensure interactive elements in navigation have proper spacing */
-nav a, nav button {
-  padding: 0.75rem 1rem !important;
-  margin: 0.125rem;
+nav a:not(.logo), 
+nav button:not(.mobile-menu-button) {
+  padding: 0.5rem 0.75rem !important;
+}
+
+/* Mobile menu button should keep its original size */
+button.mobile-menu-button {
+  padding: 0.5rem !important;
 }
