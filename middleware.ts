@@ -35,22 +35,15 @@ export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const supabaseHost = supabaseUrl ? new URL(supabaseUrl).host : '';
   
-  // Strict CSP with specific hashes and nonces
+  // Permissive CSP for Next.js compatibility
   const csp = [
-    "default-src 'self'",
-    // Allow specific scripts with strict-dynamic for better security
-    "script-src 'self' 'strict-dynamic' 'sha256-dDH7vbug+vCVqXZnkzBYeY2mZzTjqw1K8KQYnI3Y2jQ=' 'sha256-Tui7QoFlnLXkJCSl1/JvEZdIXTmBttnWNxzJpXomQjg=' 'sha256-K3FrMxGLLyMX5Qvq9KdBG5F4j9JC84CRbCVV1L5fwGU=' https: 'unsafe-inline'",
-    // Style with hashes for critical styles
-    "style-src 'self' 'sha256-47DEi0hqX3TlcD1n8LBB2HjJmcxr1BcDNrJJDqWOd2E=' 'sha256-vFyXH5IF1J6BwiYGYVRdm7uHGlT2BQIC7z0E8hm6OZo=' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com data:",
-    "img-src 'self' data: blob: https:",
-    `connect-src 'self' ${supabaseUrl} https://vitals.vercel-insights.com https://va.vercel-scripts.com https://o4507823515795456.ingest.sentry.io ${supabaseUrl ? `wss://${supabaseHost}` : ''}`,
+    "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:",
+    "script-src * 'unsafe-inline' 'unsafe-eval'",
+    "style-src * 'unsafe-inline'",
+    "img-src * data: blob:",
+    "font-src *",
+    "connect-src *",
     "frame-ancestors 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "media-src 'self' blob:",
-    "worker-src 'self' blob:",
-    "object-src 'none'",
     "upgrade-insecure-requests"
   ].join('; ');
   

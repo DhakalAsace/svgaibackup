@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fix for h1 font size deprecation warning */
+@layer base {
+  article h1,
+  aside h1,
+  nav h1,
+  section h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+  
+  @media (max-width: 768px) {
+    article h1,
+    aside h1,
+    nav h1,
+    section h1 {
+      font-size: 2rem;
+    }
+  }
+}
+
 /* Prevent horizontal overflow and handle Radix UI scroll lock */
 @layer base {
   /* Prevent layout shift when Radix UI locks scroll */

@@ -1,14 +1,10 @@
-import { HeroCritical } from "@/components/hero-critical"
 import dynamic from 'next/dynamic'
 import type { Metadata } from 'next'
 import { LazyLoadWrapper } from '@/components/lazy-load-wrapper'
 import { Suspense } from 'react'
 
-// Lazy load the full hero
-const Hero = dynamic(() => import("@/components/hero-optimized"), {
-  loading: () => <HeroCritical />,
-  ssr: true
-})
+// Import Hero directly for better LCP
+import Hero from "@/components/hero-optimized"
 
 // Lazy load all non-critical components
 const Features = dynamic(() => import("@/components/features"), {

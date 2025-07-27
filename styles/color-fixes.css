@@ -73,6 +73,31 @@ a.text-gray-600:hover {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
 }
 
+/* Fix all low contrast text */
+.text-muted-foreground {
+  color: #374151 !important;
+}
+
+/* Fix any remaining light text on white */
+[class*="text-gray-"]:not(.text-gray-900):not(.text-gray-800):not(.text-gray-700) {
+  color: #4B5563 !important;
+}
+
+/* Ensure all links meet contrast requirements */
+a:not(.no-contrast-fix) {
+  color: #C63310 !important;
+}
+
+a:not(.no-contrast-fix):hover {
+  color: #991F00 !important;
+}
+
+/* Fix button contrast - more specific to avoid breaking styled buttons */
+button.text-gray-500:not([class*="bg-"]),
+button.text-gray-400:not([class*="bg-"]) {
+  color: #4B5563 !important;
+}
+
 /* Ensure minimum touch target sizes */
 button, a, [role="button"], .clickable {
   min-height: 44px;
