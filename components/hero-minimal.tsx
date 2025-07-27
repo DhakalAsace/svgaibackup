@@ -169,7 +169,8 @@ export default function HeroMinimal() {
         <GenerationSignupModal
           isOpen={showSignupModal}
           onClose={() => setShowSignupModal(false)}
-          prompt={prompt}
+          generationsUsed={0}
+          preservePrompt={true}
         />
       )}
       

@@ -8,8 +8,9 @@ import { ServiceWorkerProvider } from '@/components/service-worker-provider';
 import { ErrorInterceptor } from '@/components/error-interceptor';
 import { PerformanceHints } from '@/components/performance-hints';
 
-// Import critical CSS
+// Import CSS files
 import './globals.css'
+import '../styles/color-fixes.css'
 
 // Initialize Montserrat font with preload and optimization
 const montserrat = Montserrat({
@@ -137,8 +138,6 @@ export default function RootLayout({
         <link rel="prefetch" href="/api/generate-svg" as="fetch" crossOrigin="anonymous" />
         <link rel="prefetch" href="/api/convert" as="fetch" crossOrigin="anonymous" />
         
-        {/* Load non-critical CSS */}
-        <link rel="stylesheet" href="/styles/color-fixes.css" />
         
         {/* Next.js handles critical CSS and JS loading automatically */}
         
