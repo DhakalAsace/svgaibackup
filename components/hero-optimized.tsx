@@ -573,14 +573,16 @@ export default function HeroOptimized() {
                   <ChevronRight className="w-4 h-4 text-gray-600" />
                 </button>
               </div>
-              {/* Indicator dots - minimal */}
-              <div className="flex justify-center gap-1.5 mb-3">
+              {/* Indicator dots - centered and properly spaced */}
+              <div className="flex items-center justify-center gap-2 py-2">
                 {featuredExamples.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSlideChange(idx)}
-                    className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                      activeSlide === idx ? 'bg-[#FF7043]' : 'bg-gray-200 hover:bg-gray-300'
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                      activeSlide === idx 
+                        ? 'bg-[#FF7043] w-6' 
+                        : 'bg-gray-300 hover:bg-gray-400'
                     }`}
                     aria-label={`View example ${idx + 1}`}
                   />
