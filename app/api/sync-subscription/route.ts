@@ -19,6 +19,10 @@ const supabaseAdmin = createClient(
   }
 );
 
+// Simple in-memory cache to prevent duplicate sync calls
+const syncCache = new Map<string, { timestamp: number; result: any }>();
+const CACHE_DURATION = 5000; // 5 seconds
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createRouteClient();
@@ -26,6 +30,15 @@ export async function POST(req: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check cache to prevent duplicate calls
+    const cacheKey = `sync-${user.id}`;
+    const cachedResult = syncCache.get(cacheKey);
+    
+    if (cachedResult && Date.now() - cachedResult.timestamp < CACHE_DURATION) {
+      console.log(`Returning cached sync result for user ${user.id}`);
+      return NextResponse.json(cachedResult.result);
     }
 
     // Get user profile
@@ -122,7 +135,7 @@ export async function POST(req: NextRequest) {
 
     if (subError) throw subError;
 
-    return NextResponse.json({ 
+    const result = { 
       success: true,
       subscription: {
         id: subscription.id,
@@ -133,7 +146,25 @@ export async function POST(req: NextRequest) {
           ? new Date(currentPeriodEndUnix * 1000).toISOString()
           : null,
       }
+    };
+
+    // Cache the successful result
+    syncCache.set(cacheKey, {
+      timestamp: Date.now(),
+      result
     });
+
+    // Clean up old cache entries periodically
+    if (syncCache.size > 100) {
+      const now = Date.now();
+      for (const [key, value] of syncCache.entries()) {
+        if (now - value.timestamp > CACHE_DURATION * 2) {
+          syncCache.delete(key);
+        }
+      }
+    }
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Sync subscription error:', error);
     return NextResponse.json(

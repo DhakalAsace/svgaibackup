@@ -147,7 +147,8 @@ export default function PricingSection() {
       });
       if (!response.ok) {
         const data = await response.json();
-        // If the server indicates the user already has a subscription, send them to the portal/ dashboard
+        
+        // If the server indicates the user already has a subscription, send them to the portal/dashboard
         if (data.portal) {
           toast({
             title: 'You already have an active subscription',
@@ -155,9 +156,21 @@ export default function PricingSection() {
           });
           // Small delay so the toast is visible
           setTimeout(() => router.push('/dashboard'), 1500);
+          setLoading(null);
           return;
         }
-        throw new Error(data.error || 'Failed to create checkout session');
+        
+        // Only log error if it's not a subscription conflict
+        console.error('Checkout session failed:', { status: response.status, data });
+        
+        // Show the actual error to help debug
+        toast({
+          title: "Checkout Error",
+          description: data.error || `Failed to create checkout session (Status: ${response.status})`,
+          variant: "destructive",
+        });
+        setLoading(null);
+        return;
       }
       const { url } = await response.json();
       if (url) {

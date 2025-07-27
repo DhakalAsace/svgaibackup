@@ -32,13 +32,16 @@ export async function middleware(request: NextRequest) {
   baseResponse.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   
   // Content Security Policy
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseHost = supabaseUrl ? new URL(supabaseUrl).host : '';
+  
   const csp = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://vitals.vercel-insights.com https://js.sentry-cdn.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: blob: https:",
-    "connect-src 'self' https://svgai.supabase.co https://vitals.vercel-insights.com https://va.vercel-scripts.com https://o4507823515795456.ingest.sentry.io wss://svgai.supabase.co",
+    `connect-src 'self' ${supabaseUrl} https://vitals.vercel-insights.com https://va.vercel-scripts.com https://o4507823515795456.ingest.sentry.io ${supabaseUrl ? `wss://${supabaseHost}` : ''}`,
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

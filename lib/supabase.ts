@@ -16,16 +16,43 @@ export const createServerClient = () => {
 
 // For client components - uses @supabase/ssr
 export const createBrowserClient = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase client environment variables')
+  }
+
+
   return createSupabaseBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       auth: {
         flowType: 'pkce',
         detectSessionInUrl: true,
         persistSession: true,
-        autoRefreshToken: true
-      }
+        autoRefreshToken: true,
+        debug: process.env.NODE_ENV === 'development',
+        storage: {
+          getItem: (key: string) => {
+            if (typeof window !== 'undefined') {
+              return window.localStorage.getItem(key);
+            }
+            return null;
+          },
+          setItem: (key: string, value: string) => {
+            if (typeof window !== 'undefined') {
+              window.localStorage.setItem(key, value);
+            }
+          },
+          removeItem: (key: string) => {
+            if (typeof window !== 'undefined') {
+              window.localStorage.removeItem(key);
+            }
+          }
+        }
+      },
     }
   )
 }

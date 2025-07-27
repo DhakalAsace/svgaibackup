@@ -338,7 +338,7 @@ function ResultsContent() {
 
   return (
     <div className="min-h-screen bg-white py-8 px-4 sm:px-6 lg:px-8 pb-24 md:pb-8">
-      <div className="max-w-3xl mx-auto md:max-w-7xl md:grid md:grid-cols-[1fr,380px] md:gap-8 lg:gap-12">
+      <div className={`max-w-3xl mx-auto ${userProfile && userProfile.subscription_status !== 'active' ? 'md:max-w-7xl md:grid md:grid-cols-[1fr,380px] md:gap-8 lg:gap-12' : 'md:max-w-4xl'}`}>
         {/* Main content column */}
         <div>
           {/* Header with back button */}

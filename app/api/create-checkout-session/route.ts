@@ -66,19 +66,40 @@ export async function POST(req: NextRequest) {
         .eq('id', user.id);
     }
 
-    // Prevent duplicate subscriptions: if the customer already has an active subscription,
-    // instruct the client to open the billing portal instead of creating a new checkout session.
+    // Prevent duplicate subscriptions: check for any active subscriptions
     const existingSubs = await stripe.subscriptions.list({
       customer: customerId,
       status: 'active',
-      limit: 1,
+      limit: 10,
     });
 
-    if (existingSubs.data.length > 0) {
+    console.log(`Checking subscriptions for ${user.email} (${customerId}): found ${existingSubs.data.length} active subscriptions`);
+
+    // Check if there's a truly active subscription (not cancelled)
+    const hasActiveNonCancelledSub = existingSubs.data.some(
+      sub => sub.status === 'active' && !sub.cancel_at_period_end
+    );
+
+    if (hasActiveNonCancelledSub) {
+      console.log(`Active non-cancelled subscription found for ${user.email}`);
       return NextResponse.json(
         { error: 'You already have an active subscription', portal: true },
         { status: 409 }
       );
+    }
+
+    // Also check for incomplete subscriptions
+    const incompleteSubs = await stripe.subscriptions.list({
+      customer: customerId,
+      status: 'incomplete',
+      limit: 10,
+    });
+
+    console.log(`Found ${incompleteSubs.data.length} incomplete subscriptions for ${user.email}`);
+
+    if (incompleteSubs.data.length > 0) {
+      console.log(`Incomplete subscription found for ${user.email}, allowing new checkout session`);
+      // Don't block for incomplete subscriptions - they can be replaced
     }
 
     // Get the correct price ID

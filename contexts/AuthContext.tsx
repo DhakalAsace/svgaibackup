@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Session, User, AuthError } from "@supabase/supabase-js";
 import { createClientComponentClient } from "@/lib/supabase";
 import { Database } from "@/types/database.types";
+import { AuthErrorHandler } from "@/lib/auth-error-handler";
 
 type AuthContextType = {
   user: User | null;
@@ -21,18 +22,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // Create the Supabase client directly inside the component
-  // This ensures it has access to cookies in the browser context
-  const supabase = createClientComponentClient<Database>();
+  const [supabase] = useState(() => createClientComponentClient<Database>());
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
+    // Get initial session with error handling
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error && !error.message.includes('Failed to fetch')) {
+          // Only log non-network errors
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('[Auth] Session check error:', error.message);
+          }
+        }
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+      } catch (error: any) {
+        // Network errors are expected in some environments
+        // Just set no session and continue
+        setSession(null);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    initializeAuth();
 
     // Listen for auth changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -43,7 +60,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Handle PKCE flow completion and profile updates
         if (event === 'SIGNED_IN' && newSession?.user) {
           // Session established successfully
-          console.log('[Auth] User signed in successfully');
           
           // Check if we need to update marketing consent (for new signups)
           const pendingConsent = localStorage.getItem('pendingMarketingConsent');
@@ -63,15 +79,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   }
                 });
                 
-                if (updateError) {
-                  console.error('Error updating marketing consent:', updateError);
-                }
+                // Error updating marketing consent is not critical
                 
                 // Clear the pending consent
                 localStorage.removeItem('pendingMarketingConsent');
               }
             } catch (e) {
-              console.error('Error parsing pending consent:', e);
+              // Error parsing consent data
               localStorage.removeItem('pendingMarketingConsent');
             }
           }
@@ -99,7 +113,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       });
       
-      if (error) throw error;
+      if (error) {
+        const errorMessage = AuthErrorHandler.getErrorMessage(error);
+        throw new Error(errorMessage);
+      }
       
       // Store marketing consent in localStorage to be updated after email confirmation
       if (marketingConsent !== undefined && data.user?.id) {
@@ -112,8 +129,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Profile will be created automatically by database trigger
       // Marketing consent will be updated after email confirmation
-    } catch (error) {
-      throw error;
+    } catch (error: any) {
+      // Use AuthErrorHandler for consistent error messages
+      const errorMessage = AuthErrorHandler.getErrorMessage(error);
+      throw new Error(errorMessage);
     }
   };
 
@@ -123,9 +142,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email,
         password,
       });
-      if (error) throw error;
-    } catch (error) {
-      throw error;
+      if (error) {
+        const errorMessage = AuthErrorHandler.getErrorMessage(error);
+        throw new Error(errorMessage);
+      }
+    } catch (error: any) {
+      const errorMessage = AuthErrorHandler.getErrorMessage(error);
+      throw new Error(errorMessage);
     }
   };
 
@@ -147,9 +170,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           skipBrowserRedirect: false,
         },
       });
-      if (error) throw error;
-    } catch (error) {
-      throw error;
+      if (error) {
+        const errorMessage = AuthErrorHandler.getErrorMessage(error);
+        throw new Error(errorMessage);
+      }
+    } catch (error: any) {
+      const errorMessage = AuthErrorHandler.getErrorMessage(error);
+      throw new Error(errorMessage);
     }
   };
 

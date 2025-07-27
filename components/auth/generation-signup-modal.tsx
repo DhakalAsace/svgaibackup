@@ -12,7 +12,7 @@ import { Sparkles, Gift, History, Zap, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SignUpForm } from "@/components/auth/signup-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +43,7 @@ export function GenerationSignupModal({
   source = 'homepage',
 }: GenerationSignupModalProps) {
   const router = useRouter();
+
 
   // Determine the return URL based on the source
   const getReturnUrl = () => {
@@ -144,65 +145,35 @@ export function GenerationSignupModal({
     );
   }
 
-  // Hard prompt for users who hit their limit
-  const isAuthenticatedFreeUser = isAuthenticated && !isSubscribed;
-  
-  // Determine modal content based on authentication status
-  const title = isAuthenticatedFreeUser
-    ? "Monthly limit reached!"
-    : "Continue generating for free!";
-  const description = isAuthenticatedFreeUser
-    ? "You've used all 6 of your free credits. Subscribe for monthly credits!"
-    : "Sign up to continue generating for free and get 6 bonus credits!";
+  // For authenticated free users who hit their limit, redirect to pricing instead of showing modal
+  useEffect(() => {
+    if (isOpen && isAuthenticated && !isSubscribed && !isSoftPrompt) {
+      router.push('/pricing');
+      onClose();
+    }
+  }, [isOpen, isAuthenticated, isSubscribed, isSoftPrompt, router, onClose]);
 
+  // Don't render modal for authenticated free users
+  if (isAuthenticated && !isSubscribed && !isSoftPrompt) {
+    return null;
+  }
+
+  // Only show modal for unauthenticated users or soft prompts
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="w-full max-w-md mx-4 sm:mx-auto max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl sm:text-2xl text-[#FF7043]">
-            {title}
+            Continue generating for free!
           </DialogTitle>
           <DialogDescription className="text-sm sm:text-base mt-2">
-            {description}
+            Sign up to continue generating for free and get 6 bonus credits!
           </DialogDescription>
         </DialogHeader>
         
-        {/* For unauthenticated users we skip free trial & upgrade copy */}
-        {isAuthenticatedFreeUser && (
-          <div className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] p-3 sm:p-4 rounded-lg text-white">
-            <p className="font-medium mb-2 text-sm sm:text-base">Want more? Pro plans include:</p>
-            <ul className="space-y-1 text-xs sm:text-sm">
-              <li>• 100-350 credits per month</li>
-              <li>• Credits refresh monthly</li>
-              <li>• All styles & formats</li>
-              <li>• Extended 30-day history (Pro)</li>
-            </ul>
-          </div>
-        )}
-        
         <div className="flex flex-col gap-3 mt-6">
-          {isAuthenticated ? (
-            // For authenticated users, only show upgrade options
-            <>
-              <Button 
-                onClick={handleViewPricing}
-                className="w-full bg-[#FF7043] hover:bg-[#FF5722]"
-              >
-                Upgrade to Pro
-              </Button>
-              
-              <Button 
-                onClick={onClose}
-                variant="outline"
-                className="w-full"
-              >
-                Maybe Later
-              </Button>
-            </>
-          ) : (
-            // Inline sign-up form for new users
-            <InlineSignupForm onClose={onClose} source={source} preservePrompt={preservePrompt} />
-          )}
+          {/* Inline sign-up form for new users */}
+          <InlineSignupForm onClose={onClose} source={source} preservePrompt={preservePrompt} />
         </div>
       </DialogContent>
     </Dialog>
