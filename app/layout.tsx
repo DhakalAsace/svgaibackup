@@ -1,31 +1,15 @@
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
-import dynamic from 'next/dynamic'
 import { Providers } from "./providers"
 import Footer from "@/components/footer"
 import { NavbarWrapper } from '@/components/client-wrappers';
+import { WebVitalsReporter } from '@/components/web-vitals-reporter';
+import { ServiceWorkerProvider } from '@/components/service-worker-provider';
+import { ErrorInterceptor } from '@/components/error-interceptor';
+import { PerformanceHints } from '@/components/performance-hints';
 
 // Import critical CSS
 import './globals.css'
-
-// Lazy load monitoring components
-const WebVitalsReporter = dynamic(() => 
-  import('@/components/web-vitals-reporter').then(mod => ({ default: mod.WebVitalsReporter })),
-  { ssr: false }
-)
-const ServiceWorkerProvider = dynamic(() => 
-  import('@/components/service-worker-provider').then(mod => ({ default: mod.ServiceWorkerProvider })),
-  { ssr: false }
-)
-const ErrorInterceptor = dynamic(() => 
-  import('@/components/error-interceptor').then(mod => ({ default: mod.ErrorInterceptor })),
-  { ssr: false }
-)
-
-const PerformanceHints = dynamic(() => 
-  import('@/components/performance-hints').then(mod => ({ default: mod.PerformanceHints })),
-  { ssr: false }
-)
 
 // Initialize Montserrat font with preload and optimization
 const montserrat = Montserrat({
