@@ -1,7 +1,6 @@
 import dynamic from 'next/dynamic'
 import type { Metadata } from 'next'
 import { LazyLoadWrapper } from '@/components/lazy-load-wrapper'
-import { Suspense } from 'react'
 
 // Import Hero directly for better LCP
 import Hero from "@/components/hero-optimized"
@@ -109,9 +108,7 @@ export default function Home() {
       />
       
       {/* Prioritize the Hero section for faster LCP */}
-      <Suspense fallback={<HeroCritical />}>
-        <Hero />
-      </Suspense>
+      <Hero />
       
       {/* Lazy load non-critical sections */}
       <LazyLoadWrapper delay={100}>

@@ -169,16 +169,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         
-        {/* Preload critical fonts */}
-        <link 
-          rel="preload" 
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" 
-          as="style" 
-        />
-        <link 
-          rel="stylesheet" 
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
-        />
+        {/* Fonts are loaded through Next.js font optimization */}
         
         <link rel="preconnect" href="https://svgai.supabase.co" />
         <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
