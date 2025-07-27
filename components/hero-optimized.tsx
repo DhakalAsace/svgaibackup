@@ -584,7 +584,7 @@ export default function HeroOptimized() {
                         ? 'bg-[#FF7043]' 
                         : 'bg-gray-200 hover:bg-gray-300'
                     }`}
-                    aria-label={`View example ${idx + 1}`}
+                    aria-label={`Go to slide ${idx + 1}`}
                   />
                 ))}
               </div>
