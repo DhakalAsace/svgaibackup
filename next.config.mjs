@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Using custom build directory
-  distDir: '.next-build',
+  // Use default build directory for Vercel compatibility
+  distDir: '.next',
   eslint: {
     ignoreDuringBuilds: false, // Enable ESLint during builds
   },
