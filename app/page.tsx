@@ -2,33 +2,31 @@ import dynamic from 'next/dynamic'
 import type { Metadata } from 'next'
 import { LazyLoadWrapper } from '@/components/lazy-load-wrapper'
 
-// Import Hero directly for better LCP
+// Import optimized Hero with full design - keep static for SEO
 import Hero from "@/components/hero-optimized"
 
-// Lazy load all non-critical components
+// Lazy load all non-critical components without loading indicators to prevent layout shift
 const Features = dynamic(() => import("@/components/features"), {
-  loading: () => <div className="h-96 animate-pulse bg-gray-50 rounded-lg m-4"></div>
+  loading: () => null
 })
 
 const UseCases = dynamic(() => import("@/components/use-cases"), {
-  loading: () => <div className="h-64 animate-pulse bg-gray-50 rounded-lg m-4"></div>
+  loading: () => null
 })
 
 const HowItWorks = dynamic(() => import("@/components/how-it-works"), {
-  loading: () => <div className="h-64 animate-pulse bg-gray-50 rounded-lg m-4"></div>
+  loading: () => null
 })
 
 const Faq = dynamic(() => import("@/components/faq"), {
-  loading: () => <div className="h-64 animate-pulse bg-gray-50 rounded-lg m-4"></div>
+  loading: () => null
 })
 
 const Pricing = dynamic(() => import("@/components/pricing"), {
-  loading: () => <div className="h-96 animate-pulse bg-gray-50 rounded-lg m-4"></div>
+  loading: () => null
 })
 
-const SVGExamplesWrapper = dynamic(() => import("@/components/svg-examples-wrapper"), {
-  loading: () => <div className="py-12 bg-gray-50"></div>
-})
+// Removed SVG examples to improve performance
 
 // Define keywords for better organization and reuse
 const homeKeywords = [
@@ -110,10 +108,7 @@ export default function Home() {
       {/* Prioritize the Hero section for faster LCP */}
       <Hero />
       
-      {/* Lazy load non-critical sections */}
-      <LazyLoadWrapper delay={100}>
-        <SVGExamplesWrapper />
-      </LazyLoadWrapper>
+      {/* Removed SVG examples section to improve performance */}
       
       <LazyLoadWrapper delay={200}>
         <UseCases />

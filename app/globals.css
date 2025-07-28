@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Accessibility improvements for contrast without changing colors */
+@layer utilities {
+  /* Add subtle shadow to improve contrast for orange text */
+  .text-\[\#FF7043\] {
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Add subtle shadow to improve contrast for green text */
+  .text-\[\#00B894\] {
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
+  }
+  
+  /* Ensure links have proper focus indicators */
+  a:focus-visible {
+    outline: 2px solid #FF7043;
+    outline-offset: 2px;
+  }
+}
+
 /* Fix for h1 font size deprecation warning */
 @layer base {
   article h1,

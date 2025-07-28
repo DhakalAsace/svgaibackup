@@ -1,26 +1,24 @@
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
-import { Providers } from "./providers"
+import { Providers } from "./providers-minimal"
 import Footer from "@/components/footer"
 import { NavbarWrapper } from '@/components/client-wrappers';
-import { WebVitalsReporter } from '@/components/web-vitals-reporter';
-import { ServiceWorkerProvider } from '@/components/service-worker-provider';
-import { ErrorInterceptor } from '@/components/error-interceptor';
-import { PerformanceHints } from '@/components/performance-hints';
+
+// Removed monitoring imports to improve performance
 
 // Import CSS files
 import './globals.css'
 import '../styles/color-fixes.css'
 
-// Initialize Montserrat font with preload and optimization
+// Initialize Montserrat font with performance optimizations
 const montserrat = Montserrat({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['400', '600', '700'],
   variable: '--font-montserrat',
   display: 'swap',
-  preload: true, // Preload font files
-  adjustFontFallback: true, // Adjust fallback font to reduce CLS
-  fallback: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
+  preload: false, // Don't preload to reduce initial load
+  adjustFontFallback: true,
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
 })
 
 // Define base URL for metadata
@@ -92,15 +90,49 @@ export default function RootLayout({
         {/* Viewport meta tag for mobile responsiveness - CRITICAL FOR SEO */}
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         
-        {/* Inline critical CSS from external file for better performance */}
-        <link rel="preload" href="/styles/critical.css" as="style" />
+        {/* Preconnect to font origins */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        
+        {/* Inline critical CSS for zero render-blocking */}
         <style dangerouslySetInnerHTML={{ __html: `
-          /* Minimal critical CSS - most moved to critical.css */
-          :root { --font-montserrat: Montserrat, system-ui, -apple-system, sans-serif; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          :root { 
+            --font-montserrat: Montserrat, system-ui, -apple-system, sans-serif;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
           html { font-family: var(--font-montserrat); }
-          body { margin: 0; background: #fff; color: #111827; }
+          body { background: #fff; color: #111827; line-height: 1.5; }
+          .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+          .text-center { text-align: center; }
+          .font-bold { font-weight: 700; }
+          /* Prevent FOUC */
+          .opacity-0 { opacity: 0; }
+          .opacity-100 { opacity: 1; }
+          .mb-4 { margin-bottom: 1rem; }
+          .mb-6 { margin-bottom: 1.5rem; }
+          .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+          .px-4 { padding-left: 1rem; padding-right: 1rem; }
+          .bg-white { background: white; }
+          .rounded-lg { border-radius: 0.5rem; }
+          .shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+          .border { border: 1px solid #e5e7eb; }
+          .border-gray-100 { border-color: #f3f4f6; }
+          .text-gray-900 { color: #111827; }
+          .text-gray-600 { color: #4b5563; }
+          .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+          .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
           .min-h-screen { min-height: 100vh; }
-          .hero-gradient { background: linear-gradient(to bottom, #ffffff, #f9fafb); }
+          .flex { display: flex; }
+          .flex-col { flex-direction: column; }
+          .flex-1 { flex: 1 1 0%; }
+          @media (min-width: 768px) {
+            .md\\:text-5xl { font-size: 3rem; line-height: 1; }
+            .md\\:py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+          }
         ` }} />
         
         {/* Preconnect to external domains with priority */}
@@ -113,10 +145,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
         <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
         
-        {/* Preload critical resources for hero section */}
-        <link rel="preload" href="/laurel.svg" as="image" type="image/svg+xml" fetchPriority="high" />
-        <link rel="preload" href="/star.svg" as="image" type="image/svg+xml" fetchPriority="high" />
-        <link rel="preload" href="/logo.svg" as="image" type="image/svg+xml" fetchPriority="high" />
+        {/* Removed image preloads to reduce initial load */}
 
         {/* Font loading moved to metadata */}
         
@@ -134,56 +163,12 @@ export default function RootLayout({
         {/* Core Web Vitals optimization - disable FCP blocking content */}
         <meta name="theme-color" content="#FFFFFF" />
         
-        {/* Prefetch critical resources */}
-        <link rel="prefetch" href="/api/generate-svg" as="fetch" crossOrigin="anonymous" />
-        <link rel="prefetch" href="/api/convert" as="fetch" crossOrigin="anonymous" />
+        {/* Removed prefetch to reduce initial requests */}
         
         
         {/* Next.js handles critical CSS and JS loading automatically */}
         
-        {/* WebSite and Organization structured data */}
-        <script type="application/ld+json">{`
-          {
-            "@context": "https://schema.org",
-            "@graph": [
-              {
-                "@type": "WebSite",
-                "@id": "https://svgai.org/#website",
-                "name": "SVG AI",
-                "alternateName": "SVGAI",
-                "url": "https://svgai.org/",
-                "description": "Transform your ideas into stunning SVG graphics instantly with our AI-powered generator. Create logos, icons, and illustrations from simple text descriptions.",
-                "potentialAction": {
-                  "@type": "SearchAction",
-                  "target": "https://svgai.org/search?q={search_term_string}",
-                  "query-input": "required name=search_term_string"
-                }
-              },
-              {
-                "@type": "Organization",
-                "@id": "https://svgai.org/#organization",
-                "name": "SVG AI",
-                "url": "https://svgai.org/",
-                "logo": {
-                  "@type": "ImageObject",
-                  "url": "https://svgai.org/logo.svg",
-                  "width": 156,
-                  "height": 80
-                },
-                "sameAs": [
-                  "https://twitter.com/svgai_app",
-                  "https://github.com/svgai"
-                ],
-                "contactPoint": {
-                  "@type": "ContactPoint",
-                  "contactType": "customer support",
-                  "email": "support@svgai.org",
-                  "availableLanguage": ["English"]
-                }
-              }
-            ]
-          }
-        `}</script>
+        {/* Removed structured data to improve initial load */}
       </head>
       <body className={`font-sans overflow-x-hidden`} suppressHydrationWarning>
         <Providers>
@@ -194,10 +179,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
-          <WebVitalsReporter />
-          <ServiceWorkerProvider />
-          <ErrorInterceptor />
-          <PerformanceHints />
+          {/* Removed monitoring components to improve performance */}
         </Providers>
       </body>
     </html>

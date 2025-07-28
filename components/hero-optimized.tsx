@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, useRef, useMemo, useCallback, memo } from "react"
+import { useState, useEffect, useRef, useMemo, useCallback, memo, useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { Check, Loader, Settings, ArrowRight, ChevronDown, ChevronUp, Sparkles, Download, ChevronLeft, ChevronRight, HelpCircle } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
@@ -24,12 +24,28 @@ import { formatErrorMessage } from '@/lib/client-error-handler'
 // Dynamically import modals to reduce initial bundle size
 const GenerationSignupModal = dynamic(
   () => import('@/components/auth/generation-signup-modal').then(mod => ({ default: mod.GenerationSignupModal })),
-  { ssr: false }
+  { 
+    ssr: false,
+    loading: () => null // No loading indicator to prevent layout shift
+  }
 )
 const UpgradeModal = dynamic(
   () => import('@/components/generation-upsells').then(mod => ({ default: mod.UpgradeModal })),
-  { ssr: false }
+  { 
+    ssr: false,
+    loading: () => null // No loading indicator to prevent layout shift
+  }
 )
+
+// Lazy load advanced options to reduce initial bundle
+// Commented out - using local definition for now
+// const AdvancedOptions = dynamic(
+//   () => import('./hero-advanced-options').then(mod => ({ default: mod.AdvancedOptions })),
+//   { 
+//     ssr: false,
+//     loading: () => null
+//   }
+// )
 // Memoized sample prompts component
 const SamplePrompts = memo(({ onSelectPrompt }: { onSelectPrompt: (prompt: string) => void }) => {
   const samplePrompts = [
@@ -436,6 +452,8 @@ export default function HeroOptimized() {
                   onChange={e => setPrompt(e.target.value)}
                   aria-label="Enter text prompt for SVG generation"
                   autoFocus
+                  autoComplete="off"
+                  spellCheck="false"
                 />
                 {prompt && (
                   <button
@@ -553,9 +571,13 @@ export default function HeroOptimized() {
                   width={400}
                   height={400}
                   className="object-contain max-w-[85%] max-h-[85%]"
-                  loading="eager"
+                  loading="lazy"
                   placeholder="blur"
                   blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2Y1ZjVmNSIvPjwvc3ZnPg=="
+                  onError={(e) => {
+                    const img = e.target as HTMLImageElement;
+                    img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f5f5f5"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="14"%3ELoading example...%3C/text%3E%3C/svg%3E';
+                  }}
                 />
                 {/* Navigation buttons - more subtle */}
                 <button

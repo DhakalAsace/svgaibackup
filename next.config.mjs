@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Using default .next directory for compatibility
-  // distDir: '.next-build',
+  // Using custom build directory
+  distDir: '.next-build',
   eslint: {
     ignoreDuringBuilds: false, // Enable ESLint during builds
   },
@@ -12,18 +12,21 @@ const nextConfig = {
     scrollRestoration: false, // Disable experimental scroll restoration
     optimizePackageImports: [
       'lucide-react', 
-      '@radix-ui/*', 
+      '@radix-ui/react-*',
       'framer-motion',
       'react-hook-form',
       'zod',
       '@supabase/supabase-js',
       'codemirror',
+      '@codemirror/*',
       '@uiw/react-codemirror',
       'date-fns',
       'clsx',
-      'tailwind-merge'
+      'tailwind-merge',
+      'class-variance-authority',
+      '@tanstack/react-query'
     ], // Optimize imports
-    // optimizeCss: true, // Disabled - causing build issues with missing critters module
+    // webpackBuildWorker: true, // Disabled - may cause build issues
   },
   // Fix trailing slash to prevent redirects
   trailingSlash: false,
@@ -37,7 +40,7 @@ const nextConfig = {
   ],
   
   // Production optimizations
-  productionBrowserSourceMaps: true, // Enable source maps to fix error
+  productionBrowserSourceMaps: false, // Disable source maps in production to reduce bundle size
   compress: true, // Enable gzip compression
   
   // Remove complex user config import
@@ -63,65 +66,26 @@ const nextConfig = {
   
   // Add webpack configuration to handle native modules
   webpack: (config, { isServer, webpack, dev }) => {
-    // Enable source maps in production to fix console errors
-    if (!dev && !isServer) {
-      config.devtool = 'source-map';
+    // Disable source maps to reduce bundle size
+    if (!isServer) {
+      config.devtool = false;
     }
     
-    // Optimize bundle splitting
+    // Basic bundle splitting
     if (!isServer && !dev) {
       config.optimization = {
         ...config.optimization,
         splitChunks: {
           chunks: 'all',
           cacheGroups: {
-            default: false,
-            vendors: false,
-            // Split vendor code
-            framework: {
-              name: 'framework',
-              test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-sync-external-store)[\\/]/,
-              priority: 40,
-              enforce: true,
+            default: {
+              minChunks: 2,
+              priority: -20,
               reuseExistingChunk: true,
             },
-            radix: {
-              name: 'radix',
-              test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
-              priority: 30,
-              enforce: true,
-              reuseExistingChunk: true,
-            },
-            lib: {
+            vendors: {
               test: /[\\/]node_modules[\\/]/,
-              name(module) {
-                const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
-                return `npm.${packageName.replace('@', '')}`;
-              },
-              priority: 10,
-              minChunks: 2,
-              reuseExistingChunk: true,
-            },
-            commons: {
-              name: 'commons',
-              minChunks: 2,
-              priority: 20,
-              reuseExistingChunk: true,
-            },
-            // Separate large dependencies
-            supabase: {
-              name: 'supabase',
-              test: /[\\/]node_modules[\\/]@supabase[\\/]/,
-              priority: 35,
-              enforce: true,
-              reuseExistingChunk: true,
-            },
-            codemirror: {
-              name: 'codemirror',
-              test: /[\\/]node_modules[\\/](codemirror|@codemirror|@uiw\/react-codemirror)[\\/]/,
-              priority: 35,
-              enforce: true,
-              reuseExistingChunk: true,
+              priority: -10,
             },
           },
         },
@@ -181,6 +145,48 @@ const nextConfig = {
     }
     
     return config;
+  },
+
+  // Add caching headers for static assets
+  async headers() {
+    return [
+      {
+        source: '/:all*(svg|jpg|jpeg|png|gif|ico|webp|woff|woff2)',
+        locale: false,
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+        ],
+      },
+    ];
   },
 
   async redirects() {
