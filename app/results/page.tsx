@@ -506,7 +506,11 @@ function ResultsContent() {
               <div className="flex flex-col gap-2">
                 <button
                   onClick={downloadSvg}
-                  className={`flex items-center justify-center px-5 py-2.5 rounded-full text-sm ${downloadSuccess ? 'bg-success' : 'bg-primary'} text-white font-medium transition-all w-full`}
+                  className={`flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium transition-all w-full ${
+                    downloadSuccess 
+                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-800 border border-gray-300'
+                  }`}
                 >
                   {downloadSuccess ? (
                     <>
@@ -559,7 +563,11 @@ function ResultsContent() {
               <div className="flex flex-wrap justify-center gap-3 mb-4">
                 <button
                   onClick={downloadSvg}
-                  className={`flex items-center justify-center px-5 py-2 rounded-full text-sm ${downloadSuccess ? 'bg-success' : 'bg-primary'} text-white font-medium transition-all`}
+                  className={`flex items-center justify-center px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                    downloadSuccess 
+                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-800 border border-gray-300'
+                  }`}
                 >
                   {downloadSuccess ? (
                     <>
