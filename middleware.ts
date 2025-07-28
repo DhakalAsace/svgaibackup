@@ -120,11 +120,24 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Handle Next.js static files with proper Content-Type
+  if (pathname.startsWith('/_next/static/css/')) {
+    const response = NextResponse.next();
+    response.headers.set('Content-Type', 'text/css; charset=utf-8');
+    response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    return response;
+  }
+  
   // Apply efficient cache policy to static assets
   if (STATIC_EXTENSIONS.some(ext => pathname.endsWith(ext))) {
     // Skip auth check for static assets and just add cache headers
     const response = baseResponse;
     const fileType = pathname.split('.').pop() || '';
+    
+    // Set correct Content-Type for CSS files to prevent MIME type errors
+    if (fileType === 'css') {
+      response.headers.set('Content-Type', 'text/css; charset=utf-8');
+    }
     
     // Set longer cache for fonts and images, shorter for JS/CSS that might change more often
     const maxAge = ['woff', 'woff2', 'png', 'jpg', 'jpeg', 'gif', 'svg'].includes(fileType) 
