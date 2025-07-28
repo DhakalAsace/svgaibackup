@@ -43,24 +43,22 @@ const nextConfig = {
   productionBrowserSourceMaps: false, // Disable source maps in production to reduce bundle size
   compress: true, // Enable gzip compression
   
-  // Optimize CSS
-  optimizeCss: {
-    minify: true,
-  },
-  
   // Remove complex user config import
   // Remove MDX for now
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
   
   // Configure modern JavaScript output
+  swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? {
       exclude: ['error', 'warn'],
     } : false,
   },
   
-  // Target modern browsers only to avoid legacy polyfills
-  target: 'es2020',
+  // Environment configuration to avoid polyfills
+  env: {
+    NEXT_MODERN_BUILD: 'true',
+  },
   
   // Transpile packages that need it
   transpilePackages: [
@@ -92,6 +90,11 @@ const nextConfig = {
     // Disable source maps to reduce bundle size
     if (!isServer) {
       config.devtool = false;
+    }
+    
+    // Ensure modern build targets
+    if (!isServer && !dev) {
+      config.target = ['web', 'es2020'];
     }
     
     // Optimized bundle splitting to reduce initial JavaScript chunks
