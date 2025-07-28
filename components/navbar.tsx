@@ -249,7 +249,7 @@ export default function Navbar() {
                 </Button>
               )}
               {(pathname === '/' || pathname === '/login' || pathname === '/pricing') && (
-                <Button size="sm" asChild className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:opacity-90 !text-white border-0 shadow-sm">
+                <Button size="sm" asChild className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:opacity-90 text-white hover:text-white border-0 shadow-sm [&>*]:text-white">
                   <Link href="/signup">Sign Up</Link>
                 </Button>
               )}
@@ -457,7 +457,7 @@ export default function Navbar() {
                       {(pathname === '/' || pathname === '/login') && (
                         <Button 
                           asChild 
-                          className="w-full bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:opacity-90 text-white border-0"
+                          className="w-full bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:opacity-90 text-white hover:text-white border-0 [&>*]:text-white"
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           <Link href="/signup">Sign Up</Link>
