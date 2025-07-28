@@ -531,6 +531,16 @@ function ResultsContent() {
                   </Link>
                 )}
                 
+                {!userProfile && (
+                  <Link 
+                    href="/signup"
+                    className="flex items-center justify-center px-5 py-2.5 rounded-full text-sm bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium transition-all hover:shadow-md w-full"
+                  >
+                    <Sparkles className="h-4 w-4 mr-1.5" />
+                    Sign Up for More Credits
+                  </Link>
+                )}
+                
                 <Link 
                   href={contentType === 'icon' ? "/ai-icon-generator?preservePrompt=true" : "/?preservePrompt=true"}
                   className="flex items-center justify-center px-5 py-2 rounded-full text-sm text-gray-600 font-medium transition-all hover:text-gray-800"
@@ -571,6 +581,16 @@ function ResultsContent() {
                   >
                     <Sparkles className="h-4 w-4 mr-1.5" />
                     {contentType === 'icon' ? 'Get More Icon Credits' : 'Get More SVG Credits'}
+                  </Link>
+                )}
+                
+                {!userProfile && (
+                  <Link 
+                    href="/signup"
+                    className="flex items-center justify-center px-5 py-2 rounded-full text-sm bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium transition-all hover:shadow-md"
+                  >
+                    <Sparkles className="h-4 w-4 mr-1.5" />
+                    Sign Up for More Credits
                   </Link>
                 )}
               </div>
