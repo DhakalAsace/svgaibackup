@@ -19,6 +19,24 @@
     outline: 2px solid #FF7043;
     outline-offset: 2px;
   }
+  
+  /* Fix for Lighthouse NO_LCP error - avoid opacity: 0 on potential LCP elements */
+  h1, h2, h3, h4, h5, h6, img, p, div {
+    opacity: 1 !important;
+    animation-delay: 0s !important;
+  }
+  
+  /* Specifically target hero section elements to ensure they're visible */
+  section h1, section p, section span {
+    opacity: 1 !important;
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  /* Override Tailwind opacity utilities to use 0.01 instead of 0 */
+  .opacity-0 {
+    opacity: 0.01 !important;
+  }
 }
 
 /* Fix for h1 font size deprecation warning */
@@ -51,13 +69,15 @@
   }
 }
 
-/* Progress bar shimmer animation */
+/* Progress bar shimmer animation - Keep off-screen animations from affecting LCP */
 @keyframes shimmer {
   0% {
     transform: translateX(-100%);
+    opacity: 1; /* Ensure opacity is never 0 */
   }
   100% {
     transform: translateX(100%);
+    opacity: 1;
   }
 }
 

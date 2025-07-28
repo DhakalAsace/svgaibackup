@@ -109,8 +109,8 @@ export default function RootLayout({
           .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
           .text-center { text-align: center; }
           .font-bold { font-weight: 700; }
-          /* Prevent FOUC */
-          .opacity-0 { opacity: 0; }
+          /* Prevent FOUC - Use 0.01 to avoid Lighthouse NO_LCP bug */
+          .opacity-0 { opacity: 0.01; }
           .opacity-100 { opacity: 1; }
           .mb-4 { margin-bottom: 1rem; }
           .mb-6 { margin-bottom: 1.5rem; }
