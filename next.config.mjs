@@ -48,7 +48,6 @@ const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
   
   // Configure modern JavaScript output
-  swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? {
       exclude: ['error', 'warn'],
@@ -101,57 +100,15 @@ const nextConfig = {
         moduleIds: 'deterministic',
         splitChunks: {
           chunks: 'all',
-          maxInitialRequests: 25, // Allow more initial chunks for better caching
-          maxAsyncRequests: 30,
-          minSize: 20000, // Smaller chunks for better tree-shaking
           cacheGroups: {
+            defaultVendors: {
+              test: /[\\/]node_modules[\\/]/,
+              priority: -10,
+              reuseExistingChunk: true,
+            },
             default: {
               minChunks: 2,
               priority: -20,
-              reuseExistingChunk: true,
-            },
-            // Split vendors into smaller chunks by package
-            radixUI: {
-              test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
-              name: 'radix-ui',
-              priority: 30,
-              reuseExistingChunk: true,
-            },
-            supabase: {
-              test: /[\\/]node_modules[\\/]@supabase[\\/]/,
-              name: 'supabase',
-              priority: 25,
-              reuseExistingChunk: true,
-            },
-            codemirror: {
-              test: /[\\/]node_modules[\\/](@codemirror|codemirror)[\\/]/,
-              name: 'codemirror',
-              priority: 25,
-              reuseExistingChunk: true,
-            },
-            tanstack: {
-              test: /[\\/]node_modules[\\/]@tanstack[\\/]/,
-              name: 'tanstack',
-              priority: 25,
-              reuseExistingChunk: true,
-            },
-            framework: {
-              test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-sync-external-store)[\\/]/,
-              priority: 40,
-              name: 'framework',
-              enforce: true,
-            },
-            vendors: {
-              test: /[\\/]node_modules[\\/]/,
-              priority: -10,
-              name(module, chunks, cacheGroupKey) {
-                const moduleFileName = module
-                  .identifier()
-                  .split('/')
-                  .reduceRight((item) => item);
-                const allChunksNames = chunks.map((item) => item.name).join('~');
-                return `${cacheGroupKey}-${allChunksNames}-${moduleFileName}`;
-              },
               reuseExistingChunk: true,
             },
           },
