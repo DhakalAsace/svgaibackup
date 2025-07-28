@@ -15,7 +15,7 @@ const montserrat = Montserrat({
   subsets: ['latin'],
   weight: ['400', '600', '700'],
   variable: '--font-montserrat',
-  display: 'swap',
+  display: 'optional', // Use optional to eliminate font loading as render-blocking
   preload: false, // Don't preload to reduce initial load
   adjustFontFallback: true,
   fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
@@ -117,6 +117,22 @@ export default function RootLayout({
           .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
           .px-4 { padding-left: 1rem; padding-right: 1rem; }
           .bg-white { background: white; }
+          /* Critical styles for hero section */
+          .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+          .text-5xl { font-size: 3rem; line-height: 1; }
+          .text-6xl { font-size: 3.75rem; line-height: 1; }
+          .text-black { color: #000; }
+          .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+          .from-\[\#FF7043\] { --tw-gradient-from: #FF7043; }
+          .to-\[\#FFA726\] { --tw-gradient-to: #FFA726; }
+          .text-transparent { color: transparent; }
+          .bg-clip-text { -webkit-background-clip: text; background-clip: text; }
+          .rounded-lg { border-radius: 0.5rem; }
+          .shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+          .border { border-width: 1px; }
+          .border-gray-100 { border-color: #f3f4f6; }
+          /* Ensure hero section is immediately visible */
+          section { opacity: 1 !important; animation: none !important; }
           .rounded-lg { border-radius: 0.5rem; }
           .shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
           .border { border: 1px solid #e5e7eb; }

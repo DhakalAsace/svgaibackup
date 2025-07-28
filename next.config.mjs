@@ -71,12 +71,17 @@ const nextConfig = {
       config.devtool = false;
     }
     
-    // Basic bundle splitting
+    // Optimized bundle splitting to reduce initial JavaScript chunks
     if (!isServer && !dev) {
       config.optimization = {
         ...config.optimization,
+        runtimeChunk: 'single',
+        moduleIds: 'deterministic',
         splitChunks: {
           chunks: 'all',
+          maxInitialRequests: 5, // Limit initial chunks to reduce blocking
+          maxAsyncRequests: 7,
+          minSize: 50000, // Larger chunks to reduce count
           cacheGroups: {
             default: {
               minChunks: 2,
@@ -86,6 +91,14 @@ const nextConfig = {
             vendors: {
               test: /[\\/]node_modules[\\/]/,
               priority: -10,
+              name: 'vendors', // Single vendor bundle
+              enforce: true,
+            },
+            framework: {
+              test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-sync-external-store)[\\/]/,
+              priority: 40,
+              name: 'framework',
+              enforce: true,
             },
           },
         },
