@@ -43,6 +43,11 @@ const nextConfig = {
   productionBrowserSourceMaps: false, // Disable source maps in production to reduce bundle size
   compress: true, // Enable gzip compression
   
+  // Optimize CSS
+  optimizeCss: {
+    minify: true,
+  },
+  
   // Remove complex user config import
   // Remove MDX for now
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx'],
@@ -53,6 +58,24 @@ const nextConfig = {
       exclude: ['error', 'warn'],
     } : false,
   },
+  
+  // Target modern browsers only to avoid legacy polyfills
+  target: 'es2020',
+  
+  // Transpile packages that need it
+  transpilePackages: [
+    '@radix-ui/react-accordion',
+    '@radix-ui/react-dialog',
+    '@radix-ui/react-dropdown-menu',
+    '@radix-ui/react-label',
+    '@radix-ui/react-popover',
+    '@radix-ui/react-select',
+    '@radix-ui/react-separator',
+    '@radix-ui/react-slot',
+    '@radix-ui/react-switch',
+    '@radix-ui/react-tabs',
+    '@radix-ui/react-toast',
+  ],
   
   // Modularize imports to reduce bundle size
   modularizeImports: {
@@ -79,26 +102,58 @@ const nextConfig = {
         moduleIds: 'deterministic',
         splitChunks: {
           chunks: 'all',
-          maxInitialRequests: 5, // Limit initial chunks to reduce blocking
-          maxAsyncRequests: 7,
-          minSize: 50000, // Larger chunks to reduce count
+          maxInitialRequests: 25, // Allow more initial chunks for better caching
+          maxAsyncRequests: 30,
+          minSize: 20000, // Smaller chunks for better tree-shaking
           cacheGroups: {
             default: {
               minChunks: 2,
               priority: -20,
               reuseExistingChunk: true,
             },
-            vendors: {
-              test: /[\\/]node_modules[\\/]/,
-              priority: -10,
-              name: 'vendors', // Single vendor bundle
-              enforce: true,
+            // Split vendors into smaller chunks by package
+            radixUI: {
+              test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
+              name: 'radix-ui',
+              priority: 30,
+              reuseExistingChunk: true,
+            },
+            supabase: {
+              test: /[\\/]node_modules[\\/]@supabase[\\/]/,
+              name: 'supabase',
+              priority: 25,
+              reuseExistingChunk: true,
+            },
+            codemirror: {
+              test: /[\\/]node_modules[\\/](@codemirror|codemirror)[\\/]/,
+              name: 'codemirror',
+              priority: 25,
+              reuseExistingChunk: true,
+            },
+            tanstack: {
+              test: /[\\/]node_modules[\\/]@tanstack[\\/]/,
+              name: 'tanstack',
+              priority: 25,
+              reuseExistingChunk: true,
             },
             framework: {
               test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-sync-external-store)[\\/]/,
               priority: 40,
               name: 'framework',
               enforce: true,
+            },
+            vendors: {
+              test: /[\\/]node_modules[\\/]/,
+              priority: -10,
+              name(module, chunks, cacheGroupKey) {
+                const moduleFileName = module
+                  .identifier()
+                  .split('/')
+                  .reduceRight((item) => item);
+                const allChunksNames = chunks.map((item) => item.name).join('~');
+                return `${cacheGroupKey}-${allChunksNames}-${moduleFileName}`;
+              },
+              reuseExistingChunk: true,
             },
           },
         },
