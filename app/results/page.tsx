@@ -381,10 +381,10 @@ function ResultsContent() {
               </span>
               <Link 
                 href="/pricing" 
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white text-sm font-medium rounded-full hover:from-[#FF5722] hover:to-[#FF9716] transition-all transform hover:scale-105"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] !text-white hover:!text-white text-sm font-medium rounded-full hover:from-[#FF5722] hover:to-[#FF9716] transition-all transform hover:scale-105 [&>*]:!text-white"
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                {contentType === 'icon' ? 'Get More Icon Credits' : 'Get More SVG Credits'}
+                <Sparkles className="w-3.5 h-3.5 !text-white" />
+                <span className="!text-white">{contentType === 'icon' ? 'Get More Icon Credits' : 'Get More SVG Credits'}</span>
               </Link>
             </div>
             
@@ -524,10 +524,10 @@ function ResultsContent() {
                 {userProfile && userProfile.subscription_status !== 'active' && (
                   <Link 
                     href="/pricing"
-                    className="flex items-center justify-center px-5 py-2.5 rounded-full text-sm bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium transition-all hover:shadow-md w-full"
+                    className="flex items-center justify-center px-5 py-2.5 rounded-full text-sm bg-gradient-to-r from-[#FF7043] to-[#FFA726] !text-white hover:!text-white font-medium transition-all hover:shadow-md w-full [&>*]:!text-white"
                   >
-                    <Sparkles className="h-4 w-4 mr-1.5" />
-                    {contentType === 'icon' ? 'Get More Icon Credits' : 'Get More SVG Credits'}
+                    <Sparkles className="h-4 w-4 mr-1.5 !text-white" />
+                    <span className="!text-white">{contentType === 'icon' ? 'Get More Icon Credits' : 'Get More SVG Credits'}</span>
                   </Link>
                 )}
                 
@@ -577,10 +577,10 @@ function ResultsContent() {
                 {userProfile && userProfile.subscription_status !== 'active' && (
                   <Link 
                     href="/pricing"
-                    className="flex items-center justify-center px-5 py-2 rounded-full text-sm bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium transition-all hover:shadow-md"
+                    className="flex items-center justify-center px-5 py-2 rounded-full text-sm bg-gradient-to-r from-[#FF7043] to-[#FFA726] !text-white hover:!text-white font-medium transition-all hover:shadow-md [&>*]:!text-white"
                   >
-                    <Sparkles className="h-4 w-4 mr-1.5" />
-                    {contentType === 'icon' ? 'Get More Icon Credits' : 'Get More SVG Credits'}
+                    <Sparkles className="h-4 w-4 mr-1.5 !text-white" />
+                    <span className="!text-white">{contentType === 'icon' ? 'Get More Icon Credits' : 'Get More SVG Credits'}</span>
                   </Link>
                 )}
                 
