@@ -730,7 +730,7 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
               <CardHeader className="bg-gradient-to-r from-gray-50 to-white pb-4 pt-5 px-6 sm:px-8">
                 <div className="flex flex-col space-y-3">
                   {/* Title and retention info */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                         Your Creations
@@ -739,18 +739,20 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                         {contentItems.length}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Clock className="w-3.5 h-3.5 text-gray-400" />
+                    <div className="flex items-center gap-2 text-sm whitespace-nowrap">
+                      <Clock className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
                       {userTier === 'pro' ? (
                         <span className="font-medium text-purple-600">30-day retention</span>
                       ) : (
-                        <>
-                          <span>7-day retention</span>
-                          <span className="text-gray-400">•</span>
-                          <Link href="/pricing" className="text-[#FF7043] hover:underline font-medium">
-                            Upgrade for 30 days
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-600">7-day retention</span>
+                          <span className="text-gray-400 hidden sm:inline">•</span>
+                          <Link href="/pricing" className="text-[#FF7043] hover:underline font-medium inline-flex items-center gap-1">
+                            <span className="hidden sm:inline">Upgrade for</span>
+                            <span className="sm:hidden">→</span>
+                            <span>30 days</span>
                           </Link>
-                        </>
+                        </div>
                       )}
                     </div>
                   </div>

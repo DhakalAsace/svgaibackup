@@ -528,7 +528,7 @@ export default function HeroOptimized() {
                   ) : (
                     <span className="flex items-center justify-center">
                       <Sparkles className="mr-2 h-5 w-5" />
-                      Generate My SVG Now
+                      Generate SVG
                     </span>
                   )}
                 </button>
