@@ -8,7 +8,7 @@ import { NavbarWrapper } from '@/components/client-wrappers';
 
 // Import CSS files
 import './globals.css'
-import '../styles/color-fixes.css'
+import './color-fixes.css'
 
 // Initialize Montserrat font with performance optimizations
 const montserrat = Montserrat({

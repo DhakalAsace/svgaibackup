@@ -1,0 +1,167 @@
+/* Color fixes for accessibility contrast */
+/* Replace light colors with darker, more accessible versions */
+
+/* Fix orange color #FF7043 -> #C63310 (much darker orange for WCAG AA compliance) */
+.text-\[#FF7043\] {
+  color: #C63310 !important;
+}
+
+.bg-\[#FF7043\] {
+  background-color: #C63310 !important;
+}
+
+.border-\[#FF7043\] {
+  border-color: #C63310 !important;
+}
+
+/* Also handle hover states */
+.hover\:text-\[#FF7043\]:hover {
+  color: #C63310 !important;
+}
+
+/* Fix green color #00B894 -> #00695C (much darker green for WCAG AA compliance) */
+.text-\[#00B894\] {
+  color: #00695C !important;
+}
+
+.bg-\[#00B894\] {
+  background-color: #00695C !important;
+}
+
+/* Fix text-xs with these colors on white background */
+.text-xs.text-\[#00B894\] {
+  color: #00695C !important;
+  font-weight: 500; /* Make small text slightly bolder for better readability */
+}
+
+/* Ensure white text on colored backgrounds has enough contrast */
+.bg-\[#FF7043\].text-white,
+.bg-\[#E65100\].text-white {
+  background-color: #E65100 !important;
+}
+
+/* Fix gray text on white background */
+.text-gray-600 {
+  color: #4B5563 !important;
+}
+
+/* Fix light gray text that fails contrast */
+.text-gray-500 {
+  color: #6B7280 !important;
+}
+
+.text-gray-400 {
+  color: #6B7280 !important;
+}
+
+/* Fix light colored text */
+.text-orange-400 {
+  color: #C63310 !important;
+}
+
+.text-green-400 {
+  color: #00695C !important;
+}
+
+/* Ensure links have proper contrast */
+a.text-gray-600:hover {
+  color: #374151 !important;
+}
+
+/* Fix buttons with shadow for better contrast */
+.shadow-sm {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Fix all low contrast text */
+.text-muted-foreground {
+  color: #374151 !important;
+}
+
+/* Fix any remaining light text on white */
+[class*="text-gray-"]:not(.text-gray-900):not(.text-gray-800):not(.text-gray-700) {
+  color: #4B5563 !important;
+}
+
+/* Fix only specific low-contrast links */
+a.text-gray-400,
+a.text-gray-500,
+a.text-orange-400,
+a.text-green-400 {
+  color: #6B7280 !important;
+}
+
+a.text-gray-400:hover,
+a.text-gray-500:hover {
+  color: #374151 !important;
+}
+
+/* Navigation links should maintain their original styling */
+nav a {
+  color: inherit !important;
+}
+
+/* Primary CTA links should keep their styling */
+a.bg-gradient-to-r,
+a[class*="bg-primary"],
+a[class*="bg-orange"] {
+  color: inherit !important;
+}
+
+/* Fix button contrast - more specific to avoid breaking styled buttons */
+button.text-gray-500:not([class*="bg-"]),
+button.text-gray-400:not([class*="bg-"]) {
+  color: #4B5563 !important;
+}
+
+/* Ensure minimum touch target sizes - exclude carousel dots */
+button:not([aria-label*="slide"]):not(.carousel-dot), 
+a:not(.carousel-nav), 
+[role="button"]:not(.carousel-control), 
+.clickable {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Style carousel dots appropriately */
+.carousel-dot,
+button[aria-label*="Go to slide"] {
+  min-height: 12px !important;
+  min-width: 12px !important;
+  height: 12px !important;
+  width: 12px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+}
+
+/* Carousel navigation arrows should be normal size */
+button[aria-label="Previous"],
+button[aria-label="Next"],
+.carousel-arrow,
+.swiper-button-prev,
+.swiper-button-next {
+  min-height: 40px !important;
+  min-width: 40px !important;
+  height: 40px !important;
+  width: 40px !important;
+}
+
+/* Small icon buttons need larger touch areas */
+button.p-1, a.p-1 {
+  padding: 0.75rem !important;
+}
+
+button.p-2, a.p-2 {
+  padding: 0.75rem !important;
+}
+
+/* Ensure interactive elements in navigation have proper spacing */
+nav a:not(.logo), 
+nav button:not(.mobile-menu-button) {
+  padding: 0.5rem 0.75rem !important;
+}
+
+/* Mobile menu button should keep its original size */
+button.mobile-menu-button {
+  padding: 0.5rem !important;
+}
