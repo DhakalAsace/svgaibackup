@@ -523,7 +523,7 @@ export default function HeroOptimized() {
                   {isGenerating ? (
                     <span className="flex items-center justify-center">
                       <Loader className="animate-spin mr-2 h-5 w-5" />
-                      Creating your SVG (10-20 seconds)...
+                      Creating your SVG (10-15 seconds)...
                     </span>
                   ) : (
                     <span className="flex items-center justify-center">
