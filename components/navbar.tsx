@@ -266,7 +266,7 @@ export default function Navbar() {
             <>
               {/* Credits display */}
               {!creditsLoading && creditInfo && (
-                <div className="hidden md:flex items-center gap-3">
+                <div className="flex items-center gap-3">
                   {/* Special display for pricing page */}
                   {pathname === '/pricing' ? (
                     <div className="flex items-center gap-2">
@@ -284,10 +284,15 @@ export default function Navbar() {
                     </div>
                   ) : (
                     <>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <span className="font-medium">{creditInfo.creditsRemaining}</span>
-                        <span className="ml-1">credits left</span>
-                      </div>
+                      <Badge 
+                        variant="outline" 
+                        className="border-gray-300 bg-gray-50 text-gray-700 px-2 sm:px-3 py-1"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 mr-1 sm:mr-1.5 text-[#FF7043]" />
+                        <span className="font-semibold">{creditInfo.creditsRemaining}</span>
+                        <span className="ml-1 font-normal hidden sm:inline">credits</span>
+                        <span className="ml-1 font-normal sm:hidden">cr</span>
+                      </Badge>
                       
                       {/* Get More button when low on credits (hidden on pricing page) */}
                       {!isSubscribed && creditInfo.creditsRemaining < 10 && pathname !== '/results' && (
@@ -331,8 +336,14 @@ export default function Navbar() {
                 {/* Mobile user info */}
                 {session && !creditsLoading && creditInfo && (
                   <div className="pb-4 border-b">
-                    <p className="text-sm text-muted-foreground">Credits remaining</p>
-                    <p className="text-lg font-semibold">{creditInfo.creditsRemaining}</p>
+                    <Badge 
+                      variant="outline" 
+                      className="border-gray-300 bg-gray-50 text-gray-700 px-3 py-1.5 w-full justify-center"
+                    >
+                      <Sparkles className="w-4 h-4 mr-2 text-[#FF7043]" />
+                      <span className="font-semibold text-base">{creditInfo.creditsRemaining}</span>
+                      <span className="ml-1 font-normal">credits remaining</span>
+                    </Badge>
                   </div>
                 )}
                 
