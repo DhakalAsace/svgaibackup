@@ -92,10 +92,6 @@ const nextConfig = {
       config.devtool = false;
     }
     
-    // Ensure modern build targets
-    if (!isServer && !dev) {
-      config.target = ['web', 'es2020'];
-    }
     
     // Optimized bundle splitting to reduce initial JavaScript chunks
     if (!isServer && !dev) {
