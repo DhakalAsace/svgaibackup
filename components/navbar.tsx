@@ -249,7 +249,7 @@ export default function Navbar() {
                 </Button>
               )}
               {(pathname === '/' || pathname === '/login' || pathname === '/pricing') && (
-                <Button size="sm" asChild className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:opacity-90 text-white border-0 shadow-sm">
+                <Button size="sm" asChild className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:opacity-90 !text-white border-0 shadow-sm">
                   <Link href="/signup">Sign Up</Link>
                 </Button>
               )}
