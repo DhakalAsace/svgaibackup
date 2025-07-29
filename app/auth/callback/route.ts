@@ -64,8 +64,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL("/login?error=auth_error", request.url));
       }
 
-      // Default redirect URL - changed to homepage instead of dashboard
-      const finalRedirectUrl = "/";
+      // Default redirect URL - redirect to dashboard for authenticated users
+      const finalRedirectUrl = "/dashboard";
 
       // For OAuth flows, we store the redirect path in localStorage
       // This is retrieved client-side after redirect

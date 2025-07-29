@@ -74,12 +74,12 @@ export function GenerationSignupModal({
   const getReturnUrl = () => {
     switch (source) {
       case 'icon-generator':
-        return '/ai-icon-generator';
+        return '/dashboard';
       case 'results':
-        return '/'; // Results page redirects to homepage
+        return '/dashboard';
       case 'homepage':
       default:
-        return '/';
+        return '/dashboard';
     }
   };
 
@@ -240,12 +240,12 @@ function InlineSignupForm({ onClose, source, preservePrompt, onSuccessChange, se
   const getReturnUrl = () => {
     switch (source) {
       case 'icon-generator':
-        return '/ai-icon-generator';
+        return '/dashboard';
       case 'results':
-        return '/';
+        return '/dashboard';
       case 'homepage':
       default:
-        return '/';
+        return '/dashboard';
     }
   };
 

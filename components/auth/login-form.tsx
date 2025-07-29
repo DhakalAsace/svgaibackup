@@ -25,7 +25,7 @@ function LoginFormWithRedirect() {
   const preservePrompt = searchParams.get('preservePrompt');
   
   // Construct redirect path with preservePrompt if needed
-  let redirectPath = returnUrl || '/';
+  let redirectPath = returnUrl || '/dashboard';
   if (preservePrompt === 'true' && !redirectPath.includes('preservePrompt')) {
     redirectPath += (redirectPath.includes('?') ? '&' : '?') + 'preservePrompt=true';
   }
