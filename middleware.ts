@@ -35,15 +35,35 @@ export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const supabaseHost = supabaseUrl ? new URL(supabaseUrl).host : '';
   
-  // Permissive CSP for Next.js compatibility
+  // Secure CSP policy
   const csp = [
-    "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:",
-    "script-src * 'unsafe-inline' 'unsafe-eval'",
-    "style-src * 'unsafe-inline'",
-    "img-src * data: blob:",
-    "font-src *",
-    "connect-src *",
+    // Default policy - only allow same origin
+    "default-src 'self'",
+    // Scripts - allow self, Next.js, Vercel Analytics, and necessary inline scripts
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.vercel-scripts.com https://vercel.live https://va.vercel-scripts.com https://challenges.cloudflare.com",
+    // Styles - allow self and inline styles (required for styled-components and Tailwind)
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    // Images - allow various sources for user uploads and external images
+    "img-src 'self' data: blob: https: http:",
+    // Fonts - allow Google Fonts and self
+    "font-src 'self' https://fonts.gstatic.com data:",
+    // Connect - allow API calls to necessary services
+    `connect-src 'self' ${supabaseHost ? `https://${supabaseHost} wss://${supabaseHost}` : ''} https://api.replicate.com https://fal.run https://*.fal.run https://api.stripe.com https://vercel.live https://vitals.vercel-insights.com https://challenges.cloudflare.com https://*.supabase.co wss://*.supabase.co`,
+    // Media - allow self and blob for video generation
+    "media-src 'self' blob:",
+    // Workers - allow blob for web workers
+    "worker-src 'self' blob:",
+    // Frame ancestors - prevent clickjacking
     "frame-ancestors 'none'",
+    // Frame sources - allow Stripe for payment processing
+    "frame-src https://checkout.stripe.com https://js.stripe.com https://challenges.cloudflare.com",
+    // Form action - restrict form submissions
+    "form-action 'self'",
+    // Base URI - restrict base tag
+    "base-uri 'self'",
+    // Object source - no plugins
+    "object-src 'none'",
+    // Upgrade insecure requests
     "upgrade-insecure-requests"
   ].join('; ');
   

@@ -19,6 +19,7 @@ Disallow: /offline
 Disallow: /login
 Disallow: /signup
 Disallow: /gallery/
+Disallow: /test-performance
 
 # Host
 Host: https://svgai.org

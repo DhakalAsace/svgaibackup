@@ -6,6 +6,7 @@ import { logPaymentEvent } from '@/lib/payment-audit';
 import { rateLimiters } from '@/lib/rate-limit';
 import { createCheckoutSessionSchema, validateRequestBody } from '@/lib/validation-schemas';
 import { seoConfig } from '@/lib/env';
+import { validateStripePrice, type PriceKey } from '@/lib/stripe-price-validation';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-06-30.basil',
@@ -109,6 +110,30 @@ export async function POST(req: NextRequest) {
 
     if (!priceId) {
       return NextResponse.json({ error: 'Invalid pricing selection' }, { status: 400 });
+    }
+
+    // CRITICAL SECURITY: Validate the price server-side to prevent manipulation
+    const validation = await validateStripePrice(stripe, priceId, priceKey as PriceKey);
+    
+    if (!validation.valid) {
+      console.error(`Price validation failed for ${priceKey}:`, validation.error);
+      
+      // Log the security event
+      await logPaymentEvent(
+        supabase,
+        user.id,
+        'price_validation_failed',
+        { 
+          priceKey,
+          priceId,
+          error: validation.error,
+          userAgent: req.headers.get('user-agent'),
+        },
+        undefined,
+        req
+      );
+      
+      return NextResponse.json({ error: 'Invalid price configuration' }, { status: 400 });
     }
 
     // Create checkout session with idempotency key to prevent duplicate charges

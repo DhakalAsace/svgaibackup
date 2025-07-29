@@ -7,6 +7,7 @@ import { PRICE_TO_TIER } from '@/lib/stripe-config';
 import { logPaymentEvent } from '@/lib/payment-audit';
 import { rateLimiters } from '@/lib/rate-limit';
 import { createLogger } from '@/lib/logger';
+import { VALID_PRICES } from '@/lib/stripe-price-validation';
 const logger = createLogger('stripe-webhook');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-06-30.basil',
@@ -33,22 +34,36 @@ const TIER_CREDITS: Record<string, number> = {
   pro: 350,
   free: 0,
 };
-// Helper function to get tier info from subscription
+// Helper function to get tier info from subscription with price validation
 function getTierInfo(subscription: Stripe.Subscription): { tier: string; credits: number; interval: string } {
   const priceId = subscription.items.data[0]?.price.id;
+  
   // First try to get from price mapping
   if (priceId && PRICE_TO_TIER[priceId]) {
+    // Validate the price amount matches our expectations
+    const price = subscription.items.data[0]?.price;
+    const amount = price.unit_amount;
+    
+    // Find matching valid price
+    let isValidPrice = false;
+    for (const [key, validPrice] of Object.entries(VALID_PRICES)) {
+      if (validPrice.amount === amount) {
+        isValidPrice = true;
+        break;
+      }
+    }
+    
+    if (!isValidPrice) {
+      logger.error(`Invalid price amount detected in webhook: ${amount} for subscription ${subscription.id}`);
+      throw new Error(`Invalid price amount: ${amount}`);
+    }
+    
     return PRICE_TO_TIER[priceId];
   }
-  // Fallback to price amount and recurring interval
-  const amount = subscription.items.data[0]?.price.unit_amount;
-  const recurring = subscription.items.data[0]?.price.recurring;
-  const interval = recurring?.interval === 'year' ? 'annual' : 'monthly';
-  if (amount === 1900 || amount === 16800) return { tier: 'starter', credits: 100, interval };
-  if (amount === 3900 || amount === 36000) return { tier: 'pro', credits: 350, interval };
-  // Default to starter if unclear
-  logger.warn(`Unknown price configuration for subscription ${subscription.id}`);
-  return { tier: 'starter', credits: 100, interval: 'monthly' };
+  
+  // This should not happen with properly configured prices
+  logger.error(`Unknown price ID in webhook: ${priceId} for subscription ${subscription.id}`);
+  throw new Error(`Unknown price configuration for subscription ${subscription.id}`);
 }
 // Helper function to find or create user from customer
 async function findOrCreateUserFromCustomer(customerId: string): Promise<string | null> {
