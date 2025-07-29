@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createRouteClient } from '@/lib/supabase-server';
 import Stripe from 'stripe';
 import { rateLimiters } from '@/lib/rate-limit';
+import { seoConfig } from '@/lib/env';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-06-30.basil',
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
     // Create portal session
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
-      return_url: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/dashboard`,
+      return_url: `${seoConfig.siteUrl}/dashboard`,
     });
 
     return NextResponse.json({ url: session.url });

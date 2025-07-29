@@ -5,6 +5,7 @@ import { STRIPE_CONFIG } from '@/lib/stripe-config';
 import { logPaymentEvent } from '@/lib/payment-audit';
 import { rateLimiters } from '@/lib/rate-limit';
 import { createCheckoutSessionSchema, validateRequestBody } from '@/lib/validation-schemas';
+import { seoConfig } from '@/lib/env';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-06-30.basil',
@@ -123,8 +124,8 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/dashboard?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/pricing?canceled=true`,
+      success_url: `${seoConfig.siteUrl}/dashboard?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${seoConfig.siteUrl}/pricing?canceled=true`,
       metadata: {
         user_id: user.id,
         tier,
