@@ -271,7 +271,10 @@ export function UserMenu() {
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => window.location.href = 'mailto:hello@svgai.org?subject=Support Request'}>
               <Mail className="mr-2 h-4 w-4" />
-              Contact Support
+              <span className="flex flex-col">
+                <span>Contact Support</span>
+                <span className="text-xs text-muted-foreground">hello@svgai.org</span>
+              </span>
             </DropdownMenuItem>
           </>
         ) : (
