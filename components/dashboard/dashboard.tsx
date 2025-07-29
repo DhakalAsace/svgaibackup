@@ -378,6 +378,158 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
   const userTier = getUserTier();
   return (
     <div className="max-w-7xl mx-auto">
+      {/* Mobile: Show sidebar cards first */}
+      <div className="lg:hidden mb-6 space-y-4">
+        {/* Credit Balance Card - Mobile */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-medium">Credit Balance</CardTitle>
+              {userTier === 'free' && (
+                <Badge className="text-xs bg-gray-100 text-gray-700 border-gray-200">Free Plan</Badge>
+              )}
+              {userTier === 'starter' && (
+                <Badge className="text-xs bg-[#FF7043]/10 text-[#FF7043] border-[#FF7043]/20">Starter</Badge>
+              )}
+              {userTier === 'pro' && (
+                <Badge className="text-xs bg-[#FF6B35]/10 text-[#FF6B35] border-[#FF6B35]/20">Pro</Badge>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div>
+                <div className="flex items-baseline justify-between mb-2">
+                  <span className="text-2xl font-bold text-gray-900">{displayCreditInfo.remaining}</span>
+                  <span className="text-sm text-gray-500">/ {displayCreditInfo.limit}</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-[#FF7043] to-[#FFA726] h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${Math.min((displayCreditInfo.used / displayCreditInfo.limit) * 100, 100)}%` }}
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  {displayCreditInfo.type === 'monthly' ? 'Monthly credits' : 'Free lifetime credits'}
+                </p>
+                {displayCreditInfo.type === 'monthly' && userProfile?.credits_reset_at && (
+                  <p className="text-xs text-gray-400">
+                    Resets {new Date(userProfile.credits_reset_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </p>
+                )}
+              </div>
+              {userTier === 'free' && (
+                <div className="pt-2">
+                  <Link href="/pricing" className="block">
+                    <Button size="sm" className="w-full bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white hover:opacity-90">
+                      Get More Credits
+                    </Button>
+                  </Link>
+                  <p className="text-xs text-gray-500 text-center mt-1.5">Monthly plans available</p>
+                </div>
+              )}
+              {userTier === 'starter' && (
+                <div className="pt-2 space-y-2">
+                  <ManageSubscriptionButton />
+                  <Link href="/pricing" className="block">
+                    <Button size="sm" variant="outline" className="w-full">Upgrade to Pro</Button>
+                  </Link>
+                </div>
+              )}
+              {userTier === 'pro' && (
+                <div className="pt-2">
+                  <ManageSubscriptionButton />
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Quick Tools and Popular Converters - Mobile Grid */}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Quick Tools - Mobile */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-medium">Quick Tools</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <Link href="/ai-icon-generator" className="block">
+                <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
+                  <Sparkles className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
+                  <span className="text-sm">Icon Gen</span>
+                </Button>
+              </Link>
+              <Link href="/tools/svg-editor" className="block">
+                <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
+                  <Code className="w-3.5 h-3.5 mr-2 text-[#FF6B35]" />
+                  <span className="text-sm">Editor</span>
+                </Button>
+              </Link>
+              <Link href="/tools/svg-optimizer" className="block">
+                <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
+                  <FileDown className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
+                  <span className="text-sm">Optimizer</span>
+                </Button>
+              </Link>
+              <Link href="/tools/svg-to-video" className="block">
+                <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
+                  <Film className="w-3.5 h-3.5 mr-2 text-[#FF6B35]" />
+                  <span className="text-sm">To Video</span>
+                </Button>
+              </Link>
+              <Link href="/animate" className="block">
+                <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
+                  <Zap className="w-3.5 h-3.5 mr-2 text-[#4E342E]" />
+                  <span className="text-sm">Animator</span>
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+          
+          {/* Popular Converters - Mobile */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-medium">Converters</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <Link href="/convert/png-to-svg" className="block">
+                <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
+                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
+                  <span className="text-sm text-gray-700">PNG→SVG</span>
+                </Button>
+              </Link>
+              <Link href="/convert/svg-to-png" className="block">
+                <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
+                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
+                  <span className="text-sm text-gray-700">SVG→PNG</span>
+                </Button>
+              </Link>
+              <Link href="/convert/jpg-to-svg" className="block">
+                <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
+                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
+                  <span className="text-sm text-gray-700">JPG→SVG</span>
+                </Button>
+              </Link>
+              <Link href="/convert/svg-to-pdf" className="block">
+                <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
+                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
+                  <span className="text-sm text-gray-700">SVG→PDF</span>
+                </Button>
+              </Link>
+              <Link href="/convert/svg-to-mp4" className="block">
+                <Button variant="ghost" className="w-full justify-start h-8 px-2" size="sm">
+                  <ArrowRight className="w-3.5 h-3.5 mr-2 text-[#FF7043]" />
+                  <span className="text-sm text-gray-700">SVG→MP4</span>
+                </Button>
+              </Link>
+              <div className="mt-2 pt-2 border-t">
+                <Link href="/convert" className="text-xs text-[#FF7043] hover:underline">View all →</Link>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Content - 3 columns */}
@@ -436,24 +588,26 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
                         <div className="absolute top-2 right-2">
                           <Badge className="text-xs bg-[#FF7043] text-white border-[#FF7043]">Video</Badge>
                         </div>
-                        <div className="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="absolute bottom-2 right-2 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                           {!isExpired && (
                             <Button
                               size="sm"
-                              variant="ghost"
+                              variant="outline"
                               onClick={() => downloadVideo(video.video_url, `ai-video-${video.id}.mp4`)}
-                              className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-sm"
+                              className="h-8 w-8 p-0 bg-white hover:bg-gray-50 shadow-sm border border-gray-200"
+                              style={{ color: '#374151' }}
                             >
-                              <Download className="h-4 w-4" />
+                              <Download className="h-4 w-4" style={{ stroke: '#374151 !important', fill: 'none !important', opacity: '1 !important' }} />
                             </Button>
                           )}
                           <Button
                             size="sm"
-                            variant="ghost"
+                            variant="outline"
                             onClick={() => deleteVideo(video.id)}
-                            className="h-8 w-8 p-0 bg-white/90 hover:bg-white hover:text-red-600 shadow-sm"
+                            className="h-8 w-8 p-0 bg-white hover:bg-red-50 shadow-sm border border-gray-200 hover:border-red-200"
+                            style={{ color: '#374151' }}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" style={{ stroke: '#374151' }} />
                           </Button>
                         </div>
                       </div>
@@ -497,25 +651,27 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
                             {item.type === 'icon' ? 'Icon' : 'SVG'}
                           </Badge>
                         </div>
-                        <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="absolute bottom-2 right-2 flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                           <Button
                             size="sm"
-                            variant="ghost"
+                            variant="outline"
                             onClick={() => downloadSvg(svg)}
                             title="Download SVG"
-                            className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-sm"
+                            className="h-8 w-8 p-0 bg-white hover:bg-gray-50 shadow-sm border border-gray-200"
+                            style={{ color: '#374151' }}
                           >
-                            <Download className="h-4 w-4" />
+                            <Download className="h-4 w-4" style={{ stroke: '#374151' }} />
                           </Button>
                           <Button
                             size="sm"
-                            variant="ghost"
+                            variant="outline"
                             onClick={() => deleteSvg(svg.id)}
                             disabled={isLoading}
                             title="Delete SVG"
-                            className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-sm hover:text-red-600"
+                            className="h-8 w-8 p-0 bg-white hover:bg-red-50 shadow-sm border border-gray-200 hover:border-red-200"
+                            style={{ color: '#374151' }}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" style={{ stroke: '#374151' }} />
                           </Button>
                         </div>
                       </div>
@@ -563,8 +719,8 @@ export default function Dashboard({ initialSvgs, userId, userProfile: initialUse
               </>
           )}
         </div>
-        {/* Right Sidebar - 1 column */}
-        <div className="lg:col-span-1">
+        {/* Right Sidebar - 1 column - Hidden on mobile since we show at top */}
+        <div className="hidden lg:block lg:col-span-1">
           {/* Credit Balance Card */}
           <Card className="mb-4">
             <CardHeader className="pb-3">

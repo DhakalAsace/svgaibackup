@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Mail } from "lucide-react";
+import { useSubscription } from "@/contexts/CreditContext";
 
 type ProfileProps = {
   userId: string;
@@ -27,6 +28,7 @@ export default function Profile({ userId }: ProfileProps) {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const { user } = useAuth();
+  const { isSubscribed } = useSubscription();
 
   // Create the client inside the component
   const supabase = createClientComponentClient<Database>();
@@ -172,6 +174,21 @@ export default function Profile({ userId }: ProfileProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {isSubscribed && (
+                <div>
+                  <Button
+                    variant="outline"
+                    onClick={() => window.location.href = 'mailto:hello@svgai.org?subject=Support Request'}
+                    className="w-full sm:w-auto"
+                  >
+                    <Mail className="mr-2 h-4 w-4" />
+                    Contact Support
+                  </Button>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Get priority support as a subscribed member
+                  </p>
+                </div>
+              )}
               <div>
                 <Button
                   variant="destructive"

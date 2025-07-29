@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Gift } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useSearchParams } from "next/navigation";
 
@@ -70,11 +70,59 @@ function SignUpFormContent() {
         )}
 
         {isSuccess ? (
-          <Alert className="mb-4">
-            <AlertDescription>
-              Success! Please check your email for a confirmation link to complete your registration.
-            </AlertDescription>
-          </Alert>
+          <div className="py-8">
+            <div className="text-center space-y-6">
+              {/* Success icon with brand styling */}
+              <div className="mx-auto w-20 h-20 bg-gradient-to-br from-[#FF7043]/20 to-[#FF5722]/20 rounded-full flex items-center justify-center shadow-xl animate-pulse">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#FF7043] to-[#FF5722] rounded-full flex items-center justify-center">
+                  <CheckCircle className="h-10 w-10 text-white" />
+                </div>
+              </div>
+              
+              {/* Title and description with brand colors */}
+              <div className="space-y-3">
+                <h3 className="text-3xl font-bold bg-gradient-to-r from-[#FF7043] to-[#FF5722] bg-clip-text text-transparent">
+                  Check your inbox!
+                </h3>
+                <p className="text-lg text-gray-600">We've sent a verification link to</p>
+              </div>
+              
+              {/* Email address with brand styling */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#FF7043]/10 to-[#FF5722]/10 blur-xl"></div>
+                <div className="relative bg-white border-2 border-[#FF7043]/20 rounded-2xl px-8 py-5 max-w-sm mx-auto shadow-lg">
+                  <p className="text-lg font-semibold text-gray-900 break-all">
+                    {email}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Credits badge with enhanced animation */}
+              <div className="space-y-4">
+                <p className="text-lg text-gray-700 font-medium">
+                  Click the link in your email to activate your account and unlock
+                </p>
+                <div className="relative inline-block">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#FF7043] to-[#FF5722] blur-lg opacity-40 animate-pulse"></div>
+                  <div className="relative inline-flex items-center gap-3 bg-gradient-to-r from-[#FF7043] to-[#FF5722] text-white rounded-full px-8 py-4 shadow-xl transform hover:scale-105 transition-transform">
+                    <Gift className="h-6 w-6" />
+                    <span className="text-xl font-bold">6 free AI credits</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Helper text with icon */}
+              <div className="pt-6 flex items-center justify-center gap-2 text-gray-500">
+                <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p className="text-sm">
+                  Email should arrive within a few minutes
+                </p>
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="space-y-4">
             {/* Google first */}
@@ -165,14 +213,16 @@ function SignUpFormContent() {
         </div>
         )}
       </CardContent>
-      <CardFooter className="flex justify-center">
-        <p className="text-sm text-gray-600">
-          Already have an account?{" "}
-          <a href="/login" className="text-[#0084FF] hover:underline">
-            Login
-          </a>
-        </p>
-      </CardFooter>
+      {!isSuccess && (
+        <CardFooter className="flex justify-center">
+          <p className="text-sm text-gray-600">
+            Already have an account?{" "}
+            <a href="/login" className="text-[#0084FF] hover:underline">
+              Login
+            </a>
+          </p>
+        </CardFooter>
+      )}
     </Card>
   );
 }

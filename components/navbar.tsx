@@ -286,7 +286,7 @@ export default function Navbar() {
                     <>
                       <Badge 
                         variant="outline" 
-                        className="border-gray-300 bg-gray-50 text-gray-700 px-2 sm:px-3 py-1"
+                        className="border-gray-300 bg-gray-50 text-gray-700 px-2 sm:px-3 py-1 hidden sm:flex"
                       >
                         <Sparkles className="w-3.5 h-3.5 mr-1 sm:mr-1.5 text-[#FF7043]" />
                         <span className="font-semibold">{creditInfo.creditsRemaining}</span>
@@ -299,11 +299,12 @@ export default function Navbar() {
                         <Button 
                           size="sm" 
                           asChild 
-                          className="h-8 text-sm bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0 shadow-sm hover:from-orange-600 hover:to-orange-700 transition-all duration-200"
+                          className="h-8 text-sm bg-gradient-to-r from-orange-500 to-orange-600 !text-white hover:!text-white border-0 shadow-sm hover:from-orange-600 hover:to-orange-700 transition-all duration-200 [&>*]:!text-white"
                         >
-                          <Link href="/pricing">
-                            <Sparkles className="w-3 h-3 mr-1" />
-                            Get More Credits
+                          <Link href="/pricing" className="!text-white">
+                            <Sparkles className="w-3 h-3 mr-1 !text-white sm:inline hidden" />
+                            <span className="!text-white hidden sm:inline">Get More Credits</span>
+                            <span className="!text-white sm:hidden">Get Credits</span>
                           </Link>
                         </Button>
                       )}

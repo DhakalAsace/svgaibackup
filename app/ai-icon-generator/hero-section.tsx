@@ -137,7 +137,9 @@ export default function HeroSection() {
       if (response.status === 429) {
         const errorMessage = responseData.error || "";
         // Determine which modal to show based on the error message
-        if (errorMessage.includes("Sign up to continue")) {
+        if (errorMessage.includes("Sign up to continue") || 
+            errorMessage.includes("sign up for a free account") ||
+            errorMessage.includes("Sign up for a free account")) {
           // Anonymous user - show signup modal
           setIsSoftPrompt(false);
           setShowSignupModal(true);
@@ -153,7 +155,18 @@ export default function HeroSection() {
         return;
       }
       if (!response.ok) {
-        throw new Error(responseData.error || `Failed to generate icon (Status: ${response.status})`);
+        const errorMessage = responseData.error || `Failed to generate icon (Status: ${response.status})`;
+        
+        // Check for signup prompts (including device verification errors)
+        if (errorMessage.includes("Unable to verify your device") || 
+            errorMessage.includes("sign up for a free account") ||
+            errorMessage.includes("Sign up for a free account")) {
+          setShowSignupModal(true);
+          setIsGenerating(false);
+          return;
+        }
+        
+        throw new Error(errorMessage);
       }
       if (responseData.success) {
         // Extract data from the response
@@ -191,6 +204,16 @@ export default function HeroSection() {
       }
     } catch (err) {
       const formattedError = formatErrorMessage(err);
+      
+      // Check for signup prompts (including device verification errors)
+      if (formattedError.includes("Unable to verify your device") || 
+          formattedError.includes("sign up for a free account") ||
+          formattedError.includes("Sign up for a free account")) {
+        setShowSignupModal(true);
+        setIsGenerating(false);
+        return;
+      }
+      
       setError(formattedError);
     } finally {
       setIsGenerating(false);
@@ -351,11 +374,11 @@ export default function HeroSection() {
               {userGenerations && (userGenerations.limit - userGenerations.used) < 1 && !isGenerating ? (
                 <Link
                   href="/pricing"
-                  className="w-full mt-5 inline-block text-center py-3.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium text-base rounded-lg hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 transition-all"
+                  className="w-full mt-5 inline-block text-center py-3.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] !text-white hover:!text-white font-medium text-base rounded-lg hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 transition-all [&>*]:!text-white"
                 >
-                  <span className="flex items-center justify-center">
-                    <Sparkles className="mr-2 h-5 w-5" />
-                    Get More Credits
+                  <span className="flex items-center justify-center !text-white">
+                    <Sparkles className="mr-2 h-5 w-5 !text-white" />
+                    <span className="!text-white">Get More Credits</span>
                   </span>
                 </Link>
               ) : (

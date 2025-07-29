@@ -196,7 +196,7 @@ export function CreditsPaywallModal({ isOpen, onClose }: CreditsPaywallModalProp
                   disabled={loading !== null}
                   className={`w-full ${
                     plan.highlighted 
-                      ? 'bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:from-[#FF6034] hover:to-[#FF9716]'
+                      ? 'bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:from-[#FF6034] hover:to-[#FF9716] text-white'
                       : ''
                   }`}
                   variant={plan.highlighted ? 'default' : 'outline'}

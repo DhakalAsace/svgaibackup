@@ -38,8 +38,23 @@ export async function executeWithCredits<T>({
     // Step 1: Deduct credits before operation
     logger.info(`Attempting to deduct credits for ${generationType}`, { 
       userId, 
-      identifierType 
+      identifier,
+      identifierType,
+      identifierLength: identifier?.length || 0
     });
+    
+    // Validate identifier before passing to database
+    if (!userId && (!identifier || identifier.trim() === '')) {
+      logger.error('Invalid identifier for anonymous user', { 
+        identifier,
+        identifierType 
+      });
+      return {
+        success: false,
+        error: "Please sign up for a free account to continue generating. You'll get 6 bonus credits!",
+        deductResult: null
+      };
+    }
     
     const { data: deductData, error: deductError } = await supabaseAdmin.rpc(
       'check_credits_v3',
@@ -63,6 +78,17 @@ export async function executeWithCredits<T>({
         return {
           success: false,
           error: "Sign up to continue generating for free and get 6 bonus credits!",
+          deductResult
+        };
+      }
+      
+      // Handle specific error cases
+      if (deductError?.message?.includes('null value in column "identifier"')) {
+        // This happens when we can't get the user's IP address
+        // Instead of showing a device error, encourage signup
+        return {
+          success: false,
+          error: "Please sign up for a free account to continue generating. You'll get 6 bonus credits!",
           deductResult
         };
       }

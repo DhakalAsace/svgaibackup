@@ -94,19 +94,34 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Check if user already has billing_day set
+    const { data: currentProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('billing_day')
+      .eq('id', user.id)
+      .single();
+
     // Update profile
+    const updateData: any = {
+      subscription_status: subscription.status,
+      subscription_tier: tier,
+      subscription_id: subscription.id,
+      current_period_end: currentPeriodEndUnix
+        ? new Date(currentPeriodEndUnix * 1000).toISOString()
+        : null,
+      monthly_credits: credits,
+      // Don't reset monthly_credits_used here, only on billing cycle
+    };
+    
+    // Set billing_day if not already set
+    if (!currentProfile?.billing_day && currentPeriodStartUnix) {
+      const startDate = new Date(currentPeriodStartUnix * 1000);
+      updateData.billing_day = startDate.getDate();
+    }
+    
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
-      .update({
-        subscription_status: subscription.status,
-        subscription_tier: tier,
-        subscription_id: subscription.id,
-        current_period_end: currentPeriodEndUnix
-          ? new Date(currentPeriodEndUnix * 1000).toISOString()
-          : null,
-        monthly_credits: credits,
-        // Don't reset monthly_credits_used here, only on billing cycle
-      })
+      .update(updateData)
       .eq('id', user.id);
 
     if (profileError) throw profileError;

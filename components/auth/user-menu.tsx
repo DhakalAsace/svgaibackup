@@ -13,7 +13,7 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Settings, LogOut, Crown, Sparkles, LayoutDashboard, CreditCard } from "lucide-react";
+import { Settings, LogOut, Crown, Sparkles, LayoutDashboard, CreditCard, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect, useCallback } from "react";
 import { createClientComponentClient } from "@/lib/supabase";
@@ -268,6 +268,10 @@ export function UserMenu() {
             <DropdownMenuItem onClick={handleManageSubscription} disabled={isPortalLoading}>
               <CreditCard className="mr-2 h-4 w-4" />
               {isPortalLoading ? 'Loading...' : 'Manage Subscription'}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => window.location.href = 'mailto:hello@svgai.org?subject=Support Request'}>
+              <Mail className="mr-2 h-4 w-4" />
+              Contact Support
             </DropdownMenuItem>
           </>
         ) : (

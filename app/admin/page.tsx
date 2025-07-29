@@ -1,5 +1,7 @@
 import { checkAdminAuth } from '@/lib/admin-auth';
 import { CleanupStatusDashboard } from '@/components/admin/cleanup-status';
+import { CreditResetMonitor } from '@/components/admin/credit-reset-monitor';
+import { CronMonitor } from '@/components/admin/cron-monitor';
 import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
 
@@ -30,6 +32,10 @@ export default async function AdminPage() {
       </div>
       
       <div className="space-y-6">
+        <CronMonitor />
+        
+        <CreditResetMonitor />
+        
         <CleanupStatusDashboard />
         
         {/* Additional admin sections can be added here */}

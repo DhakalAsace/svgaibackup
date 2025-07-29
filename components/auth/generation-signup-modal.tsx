@@ -43,6 +43,17 @@ export function GenerationSignupModal({
   source = 'homepage',
 }: GenerationSignupModalProps) {
   const router = useRouter();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(isOpen);
+
+  // Sync internal open state with prop, but preserve if showing success
+  useEffect(() => {
+    if (isOpen || showSuccess) {
+      setInternalOpen(true);
+    } else {
+      setInternalOpen(false);
+    }
+  }, [isOpen, showSuccess]);
 
   // For authenticated free users who hit their limit, redirect to pricing instead of showing modal
   useEffect(() => {
@@ -51,6 +62,13 @@ export function GenerationSignupModal({
       onClose();
     }
   }, [isOpen, isAuthenticated, isSubscribed, isSoftPrompt, router, onClose]);
+
+  // Reset success state when modal is closed
+  useEffect(() => {
+    if (!internalOpen) {
+      setShowSuccess(false);
+    }
+  }, [internalOpen]);
 
   // Determine the return URL based on the source
   const getReturnUrl = () => {
@@ -92,14 +110,26 @@ export function GenerationSignupModal({
 
   if (isSoftPrompt) {
     return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="w-full max-w-md mx-4 sm:mx-auto max-h-[90vh] overflow-y-auto">
+      <Dialog open={internalOpen} onOpenChange={(open) => {
+        if (!open) {
+          // Allow closing from X button even in success state
+          setShowSuccess(false);
+          setInternalOpen(false);
+          onClose();
+        } else {
+          setInternalOpen(open);
+        }
+      }}>
+        <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => {
+          // Prevent closing by clicking outside when showing form or success
+          e.preventDefault();
+        }}>
           <DialogHeader>
-            <DialogTitle className="text-xl sm:text-2xl flex items-center">
-              <Sparkles className="mr-2 h-5 w-5 sm:h-6 sm:w-6 text-[#FF7043]" />
+            <DialogTitle className="text-lg sm:text-xl flex items-center pr-8">
+              <Sparkles className="mr-2 h-5 w-5 text-[#FF7043] flex-shrink-0" />
               Love your creation?
             </DialogTitle>
-            <DialogDescription className="text-sm sm:text-base mt-2">
+            <DialogDescription className="text-sm mt-2">
               Sign up for free and unlock more features!
             </DialogDescription>
           </DialogHeader>
@@ -159,20 +189,32 @@ export function GenerationSignupModal({
 
   // Only show modal for unauthenticated users or soft prompts
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-md mx-4 sm:mx-auto max-h-[90vh] overflow-y-auto">
+    <Dialog open={internalOpen} onOpenChange={(open) => {
+      if (!open) {
+        // Allow closing from X button even in success state
+        setShowSuccess(false);
+        setInternalOpen(false);
+        onClose();
+      } else {
+        setInternalOpen(open);
+      }
+    }}>
+      <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => {
+        // Always prevent closing by clicking outside
+        e.preventDefault();
+      }}>
         <DialogHeader>
-          <DialogTitle className="text-xl sm:text-2xl text-[#FF7043]">
+          <DialogTitle className="text-lg sm:text-xl text-[#FF7043] pr-8">
             Continue generating for free!
           </DialogTitle>
-          <DialogDescription className="text-sm sm:text-base mt-2">
+          <DialogDescription className="text-sm mt-2">
             Sign up to continue generating for free and get 6 bonus credits!
           </DialogDescription>
         </DialogHeader>
         
         <div className="flex flex-col gap-3 mt-6">
           {/* Inline sign-up form for new users */}
-          <InlineSignupForm onClose={onClose} source={source} preservePrompt={preservePrompt} />
+          <InlineSignupForm onClose={onClose} source={source} preservePrompt={preservePrompt} onSuccessChange={setShowSuccess} setInternalOpen={setInternalOpen} />
         </div>
       </DialogContent>
     </Dialog>
@@ -180,10 +222,12 @@ export function GenerationSignupModal({
 }
 
 // Inline signup form component for modal use
-function InlineSignupForm({ onClose, source, preservePrompt }: { 
+function InlineSignupForm({ onClose, source, preservePrompt, onSuccessChange, setInternalOpen }: { 
   onClose: () => void; 
   source: string;
   preservePrompt: boolean;
+  onSuccessChange?: (success: boolean) => void;
+  setInternalOpen?: (open: boolean) => void;
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -207,12 +251,20 @@ function InlineSignupForm({ onClose, source, preservePrompt }: {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Stop event from bubbling up
     setError(null);
     setIsLoading(true);
 
     try {
       await signUp(email, password);
+      // Set success state immediately
       setIsSuccess(true);
+      // Notify parent component about success
+      onSuccessChange?.(true);
+      // Ensure modal stays open by setting internal state
+      if (setInternalOpen) {
+        setInternalOpen(true);
+      }
       // Don't close modal - show success message instead
     } catch (error: any) {
       setError(error.message || "An error occurred during sign up");
@@ -238,43 +290,61 @@ function InlineSignupForm({ onClose, source, preservePrompt }: {
   // Show success message if signup was successful
   if (isSuccess) {
     return (
-      <div className="space-y-6">
-        <div className="text-center space-y-4">
-          {/* Success icon */}
-          <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-            <CheckCircle className="h-6 w-6 text-green-600" />
+      <div className="space-y-6" data-signup-form="true" data-success="true">
+        <div className="text-center space-y-5">
+          {/* Success icon with brand styling */}
+          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-[#FF7043]/20 to-[#FF5722]/20 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#FF7043] to-[#FF5722] rounded-full flex items-center justify-center">
+              <CheckCircle className="h-7 w-7 text-white" />
+            </div>
           </div>
           
-          {/* Title */}
+          {/* Title with brand gradient */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Check your email</h3>
-            <p className="text-sm text-gray-600 mt-1">We sent a verification link to</p>
+            <h3 className="text-xl font-bold bg-gradient-to-r from-[#FF7043] to-[#FF5722] bg-clip-text text-transparent">
+              Check your email
+            </h3>
+            <p className="text-sm text-gray-600 mt-2">We sent a verification link to</p>
           </div>
           
-          {/* Email address */}
-          <div className="bg-gray-50 rounded-lg px-4 py-3">
-            <p className="text-sm font-medium text-gray-900 break-all">
-              {email}
-            </p>
+          {/* Email address with brand styling */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#FF7043]/5 to-[#FF5722]/5 blur-md"></div>
+            <div className="relative bg-white border border-[#FF7043]/20 rounded-xl px-5 py-3">
+              <p className="text-sm font-semibold text-gray-900 break-all">
+                {email}
+              </p>
+            </div>
           </div>
           
-          {/* Instructions */}
-          <div className="space-y-2">
+          {/* Instructions with enhanced credits badge */}
+          <div className="space-y-3">
             <p className="text-sm text-gray-600">
               Click the link to verify your email and receive
             </p>
-            <div className="inline-flex items-center gap-2 bg-[#FFF8F6] rounded-full px-4 py-2">
-              <Gift className="h-4 w-4 text-[#FF7043]" />
-              <span className="text-sm font-medium text-gray-900">6 free credits</span>
+            <div className="relative inline-block">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#FF7043] to-[#FF5722] blur opacity-30"></div>
+              <div className="relative inline-flex items-center gap-2.5 bg-gradient-to-r from-[#FF7043] to-[#FF5722] text-white rounded-full px-5 py-2.5 shadow-lg">
+                <Gift className="h-5 w-5" />
+                <span className="text-sm font-bold">6 free credits</span>
+              </div>
             </div>
           </div>
         </div>
         
         {/* Action button */}
         <Button
-          onClick={onClose}
+          onClick={() => {
+            setIsSuccess(false);
+            onSuccessChange?.(false);
+            if (setInternalOpen) {
+              setInternalOpen(false);
+            }
+            onClose();
+          }}
           className="w-full"
           variant="outline"
+          type="button"
         >
           Done
         </Button>
@@ -283,7 +353,7 @@ function InlineSignupForm({ onClose, source, preservePrompt }: {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-signup-form="true" data-loading={isLoading ? "true" : "false"}>
       {error && (
         <Alert variant="destructive" className="text-sm">
           <AlertCircle className="h-4 w-4" />

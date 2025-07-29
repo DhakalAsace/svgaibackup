@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
-import { Providers } from "./providers-minimal"
+import { Providers } from "./providers"
 import Footer from "@/components/footer"
 import { NavbarWrapper } from '@/components/client-wrappers';
 

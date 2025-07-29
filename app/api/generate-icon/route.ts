@@ -297,24 +297,75 @@ export async function POST(req: NextRequest) {
       logger.info('Authenticated user request', { userId: identifier })
     } else {
       // Use IP address for anonymous users
+      // Try multiple headers in order of preference
       const forwardedFor = req.headers.get('x-forwarded-for')
-      const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : null
       const realIp = req.headers.get('x-real-ip')
+      const cfConnectingIp = req.headers.get('cf-connecting-ip') // Cloudflare
+      const vercelIp = req.headers.get('x-vercel-forwarded-for') // Vercel specific
+      const forwarded = req.headers.get('forwarded') // Standard forwarded header
       
-      identifier = ip || realIp || 'unknown_ip'
+      // Log all available headers for debugging
+      logger.debug('Available headers for IP detection', {
+        'x-forwarded-for': forwardedFor,
+        'x-real-ip': realIp,
+        'cf-connecting-ip': cfConnectingIp,
+        'x-vercel-forwarded-for': vercelIp,
+        'forwarded': forwarded,
+        // Try to access NextRequest ip property if available
+        'req.ip': (req as any).ip || null
+      })
+      
+      // Extract IP from various sources
+      let ip = null
+      
+      // First try NextRequest.ip property (available in Edge Runtime)
+      if ((req as any).ip) {
+        ip = (req as any).ip
+        logger.info('Got IP from NextRequest.ip property', { ip })
+      } else if (forwardedFor) {
+        // x-forwarded-for can contain multiple IPs, take the first one
+        ip = forwardedFor.split(',')[0].trim()
+      } else if (realIp) {
+        ip = realIp
+      } else if (cfConnectingIp) {
+        ip = cfConnectingIp
+      } else if (vercelIp) {
+        ip = vercelIp.split(',')[0].trim()
+      } else if (forwarded) {
+        // Parse the standard Forwarded header
+        const match = forwarded.match(/for=([^;,]+)/)
+        if (match) {
+          ip = match[1].replace(/["[\]]/g, '').replace(/^\[|\]$/g, '') // Remove quotes and brackets
+        }
+      }
+      
+      // Validate IP format (basic check)
+      if (ip && !ip.match(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$|^(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$/)) {
+        logger.warn('Invalid IP format detected', { ip })
+        ip = null
+      }
+      
+      identifier = ip || 'unknown_ip'
       identifier_type = 'ip_address'
-      logger.info('Anonymous user request', { ipSource: forwardedFor ? 'x-forwarded-for' : (realIp ? 'x-real-ip' : 'unknown') })
+      logger.info('Anonymous user request', { 
+        ipSource: (req as any).ip ? 'NextRequest.ip' :
+                 (forwardedFor ? 'x-forwarded-for' : 
+                 (realIp ? 'x-real-ip' : 
+                 (cfConnectingIp ? 'cf-connecting-ip' :
+                 (vercelIp ? 'x-vercel-forwarded-for' :
+                 (forwarded ? 'forwarded' : 'unknown'))))),
+        detectedIp: identifier
+      })
       
       // Check if we're in development environment
       const isDevelopment = process.env.NODE_ENV === 'development'
       
-      // Block requests with unknown IP to prevent rate limit bypass, but allow in development
+      // If we can't determine IP, use a fallback identifier but still allow generation
       if (identifier === 'unknown_ip' && !isDevelopment) {
-        logger.warn("Could not determine IP address - blocking request")
-        return Response.json({
-          success: false,
-          error: "Unable to verify request origin"
-        }, { status: 403 })
+        // Instead of blocking, use a consistent fallback identifier
+        // This could be based on other request properties or a fixed value
+        identifier = 'anonymous_fallback_' + new Date().toISOString().split('T')[0] // Daily fallback
+        logger.warn("Could not determine IP address - using fallback identifier", { identifier })
       }
       
       // Use a placeholder for development environment
@@ -413,7 +464,12 @@ export async function POST(req: NextRequest) {
       remainingCredits = creditsRemaining;
     }
 
-    logger.info('Credit check passed', { identifierType: identifier_type, remainingCredits })
+    logger.info('Credit check passed', { 
+      identifierType: identifier_type, 
+      remainingCredits,
+      identifier: identifier ? `${identifier.substring(0, 10)}...` : 'null',
+      identifierLength: identifier?.length || 0
+    })
 
     // 3. Validate request body
     const { data: validatedData, error: validationError } = await validateRequestBody(req, generateIconSchema);
@@ -421,6 +477,23 @@ export async function POST(req: NextRequest) {
     if (validationError) {
       logger.warn('Invalid request body', { error: validationError });
       return badRequest(validationError);
+    }
+    
+    // Debug log before calling executeWithCredits
+    logger.debug('About to call executeWithCredits', {
+      userId: user?.id || 'null',
+      identifier: identifier || 'null',
+      identifierType: identifier_type,
+      identifierLength: identifier?.length || 0
+    });
+    
+    // Guard against null identifier
+    if (!identifier && !user?.id) {
+      logger.error('Identifier is null for anonymous user', {
+        identifier,
+        identifierType: identifier_type
+      });
+      return tooManyRequests("Please sign up for a free account to continue generating. You'll get 6 bonus credits!");
     }
     
     // 4. Execute generation with automatic credit handling

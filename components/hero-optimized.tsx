@@ -298,7 +298,9 @@ export default function HeroOptimized() {
       }
       if (response.status === 429) {
         const errorMessage = responseData.error || "";
-        if (errorMessage.includes("Sign up to continue")) {
+        if (errorMessage.includes("Sign up to continue") || 
+            errorMessage.includes("sign up for a free account") ||
+            errorMessage.includes("Sign up for a free account")) {
           setIsSoftPrompt(false);
           setShowSignupModal(true);
         } else if (errorMessage.includes("no credits remaining") || errorMessage.includes("lifetime credits")) {
@@ -317,6 +319,16 @@ export default function HeroOptimized() {
         const errorMessage = typeof responseData.error === 'string' 
           ? responseData.error 
           : (responseData.error?.message || `Failed to generate SVG (Status: ${response.status})`);
+        
+        // Check for signup prompts (including device verification errors)
+        if (errorMessage.includes("Unable to verify your device") || 
+            errorMessage.includes("sign up for a free account") ||
+            errorMessage.includes("Sign up for a free account")) {
+          setShowSignupModal(true);
+          setIsGenerating(false);
+          return;
+        }
+        
         throw new Error(errorMessage);
       }
       if (responseData.success) {
@@ -357,6 +369,14 @@ export default function HeroOptimized() {
           formattedError = "The request took too long and timed out. Your credits may have been used - please check your dashboard. If your SVG was generated, it will appear in your dashboard.";
         } else {
           formattedError = formatErrorMessage(err);
+          // Check for signup prompts (including device verification errors)
+          if (formattedError.includes("Unable to verify your device") || 
+              formattedError.includes("sign up for a free account") ||
+              formattedError.includes("Sign up for a free account")) {
+            setShowSignupModal(true);
+            setIsGenerating(false);
+            return;
+          }
         }
         setError(formattedError);
         setIsGenerating(false)
@@ -416,11 +436,11 @@ export default function HeroOptimized() {
           </div>
         </div>
         {/* Main heading - clean and impactful */}
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-4 leading-tight">
+        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-center mb-4 leading-tight px-4 sm:px-0">
           <span className="text-black">AI </span>
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF7043] to-[#FFA726]">SVG Generator:</span>
           <br />
-          <span className="text-black">Effortless Text to SVG Conversion</span>
+          <span className="text-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">Effortless Text to SVG Conversion</span>
         </h1>
         <p className="text-center text-[#495057] text-lg md:text-xl max-w-2xl mx-auto mb-6">
           Effortlessly convert text to SVG with AI. Generate unique vector <Link href="/ai-icon-generator" className="text-[#FF7043] hover:underline" target="_blank" rel="noopener noreferrer">icons</Link>, logos, and illustrations instantly.
@@ -507,11 +527,11 @@ export default function HeroOptimized() {
               {userGenerations && (userGenerations.limit - userGenerations.used) < 2 && !isGenerating ? (
                 <Link
                   href="/pricing"
-                  className="w-full mt-5 inline-block text-center py-3.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white font-medium text-base rounded-lg hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 transition-all"
+                  className="w-full mt-5 inline-block text-center py-3.5 bg-gradient-to-r from-[#FF7043] to-[#FFA726] !text-white hover:!text-white font-medium text-base rounded-lg hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF7043]/40 transition-all [&>*]:!text-white"
                 >
-                  <span className="flex items-center justify-center">
-                    <Sparkles className="mr-2 h-5 w-5" />
-                    Get More Credits
+                  <span className="flex items-center justify-center !text-white">
+                    <Sparkles className="mr-2 h-5 w-5 !text-white" />
+                    <span className="!text-white">Get More Credits</span>
                   </span>
                 </Link>
               ) : (

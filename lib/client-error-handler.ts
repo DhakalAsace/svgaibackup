@@ -11,8 +11,12 @@ export function formatErrorMessage(error: any): string {
       return 'Our AI service has temporarily reached its usage limit. This usually resets within a few hours. Please try again later.';
     }
     // Check if it's a user limit message (not an API rate limit)
-    if (error.includes('Sign up to continue') || error.includes('used all your') || error.includes('credits')) {
+    if (error.includes('Sign up to continue') || error.includes('used all your') || error.includes('credits') || error.includes('sign up for a free account')) {
       return error; // Return the original message about signing up
+    }
+    // Handle device verification error
+    if (error.includes('Unable to verify') && error.includes('device')) {
+      return 'Please sign up for a free account to continue generating. You\'ll get 6 bonus credits!';
     }
     if (error.includes('429') || error.includes('rate limit')) {
       return 'The AI service is experiencing high demand. Please wait a moment and try again.';

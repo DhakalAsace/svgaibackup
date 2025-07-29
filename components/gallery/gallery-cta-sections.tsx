@@ -41,7 +41,7 @@ export function PrimaryGalleryCTA({ theme, position = "after-hero" }: PrimaryCTA
             <p className="text-muted-foreground">{content.subtitle}</p>
           </div>
           <Link href="/" className="shrink-0">
-            <Button size="lg" className="gap-2 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600">
+            <Button size="lg" className="gap-2 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white">
               {content.cta}
               <ArrowRight className="h-4 w-4" />
             </Button>

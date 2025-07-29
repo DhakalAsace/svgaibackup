@@ -170,53 +170,53 @@ const CreationCard = ({ item, onDownload, onDelete, userTier }: {
   const isExpired = daysRemaining <= 0;
   return (
     <div className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all duration-200 h-full flex flex-col">
-      <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 p-3 sm:p-4 md:p-5 flex items-center justify-center relative flex-shrink-0">
+      <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 md:p-8 flex items-center justify-center relative flex-shrink-0">
         {svg.svg_content ? (
           <SafeSvgDisplay 
             svgContent={svg.svg_content}
             alt={svg.title}
-            className="w-full h-full max-w-[140px] max-h-[140px] sm:max-w-[170px] sm:max-h-[170px] md:max-w-[200px] md:max-h-[200px] [&>svg]:w-full [&>svg]:h-full [&>svg]:object-contain drop-shadow-sm"
+            className="w-full h-full max-w-[160px] max-h-[160px] sm:max-w-[180px] sm:max-h-[180px] md:max-w-[200px] md:max-h-[200px] [&>svg]:w-full [&>svg]:h-full [&>svg]:object-contain drop-shadow-sm"
           />
         ) : (
-          <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 animate-spin text-gray-400" />
+          <Loader2 className="h-8 w-8 sm:h-10 sm:w-10 animate-spin text-gray-400" />
         )}
         <Badge className={cn(
-          "absolute top-2 right-2 sm:top-3 sm:right-3 text-xs sm:text-sm font-medium px-2 py-1",
+          "absolute top-3 right-3 text-xs font-medium px-2 py-1",
           item.type === 'icon' ? "bg-blue-500 text-white" : "bg-emerald-500 text-white"
         )}>
           {item.type === 'icon' ? 'Icon' : 'SVG'}
         </Badge>
       </div>
-      <div className="p-4 sm:p-5 flex-grow flex flex-col">
-        <h3 className="font-semibold text-sm sm:text-base text-gray-900 truncate mb-2">{svg.title}</h3>
+      <div className="p-4 flex-grow flex flex-col">
+        <h3 className="font-semibold text-base text-gray-900 truncate mb-3">{svg.title}</h3>
         <div className="flex items-center justify-between mt-auto">
           <div className="flex items-center gap-1.5">
             <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
             <span className={cn(
-              "text-xs sm:text-sm font-medium",
+              "text-sm font-medium",
               isExpired ? "text-red-600" : daysRemaining <= 3 ? "text-amber-600" : "text-gray-600"
             )}>
               {isExpired ? 'Expired' : `${daysRemaining} ${daysRemaining === 1 ? 'day' : 'days'} left`}
             </span>
           </div>
-          <div className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex gap-1">
+          <div className="flex gap-1 flex-shrink-0">
             <Button
               size="icon"
-              variant="ghost"
-              className="h-8 w-8 hover:bg-gray-100"
+              variant="outline"
+              className="h-8 w-8 bg-white hover:bg-gray-50 border-gray-200 text-gray-700"
               onClick={() => onDownload(item)}
               title="Download"
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-4 w-4" style={{ stroke: 'currentColor' }} />
             </Button>
             <Button
               size="icon"
-              variant="ghost"
-              className="h-8 w-8 hover:bg-red-50 hover:text-red-600"
+              variant="outline"
+              className="h-8 w-8 bg-white hover:bg-red-50 hover:text-red-600 border-gray-200 text-gray-700"
               onClick={() => onDelete(svg.id)}
               title="Delete"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-4 w-4" style={{ stroke: 'currentColor' }} />
             </Button>
           </div>
         </div>
@@ -743,6 +743,8 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                       <Clock className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
                       {userTier === 'pro' ? (
                         <span className="font-medium text-purple-600">30-day retention</span>
+                      ) : userTier === 'starter' ? (
+                        <span className="text-gray-600">7-day retention</span>
                       ) : (
                         <div className="flex items-center gap-2">
                           <span className="text-gray-600">7-day retention</span>
@@ -844,7 +846,7 @@ export default function MinimalistDashboard({ initialSvgs, userId, userProfile: 
                 ) : (
                   <>
                     {viewMode === 'grid' ? (
-                      <div className="grid gap-4 sm:gap-6 grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                      <div className="grid gap-4 sm:gap-5 grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                         {displayedItems.map((item) => (
                           <CreationCard
                             key={item.id}

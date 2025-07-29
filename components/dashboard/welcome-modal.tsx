@@ -98,7 +98,7 @@ export function WelcomeModal({ onClose }: WelcomeModalProps) {
             <Button 
               size="lg" 
               onClick={handleStartCreating}
-              className="w-full bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:from-[#FF6034] hover:to-[#FF9716]"
+              className="w-full bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:from-[#FF6034] hover:to-[#FF9716] text-white"
             >
               Start Creating for Free
               <ArrowRight className="w-4 h-4 ml-2" />

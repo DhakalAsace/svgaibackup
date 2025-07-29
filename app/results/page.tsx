@@ -556,6 +556,169 @@ function ResultsContent() {
             </div>
           )}
 
+          {/* Mobile Upgrade Cards - Show for non-subscribed users */}
+          {!isLoading && !error && svgContent && userProfile && userProfile.subscription_status !== 'active' && (
+            <div className="md:hidden px-6 pb-6">
+              <div className="space-y-4">
+                {/* Billing toggle */}
+                <div className="flex justify-center">
+                  <div className="bg-gray-100 p-1 rounded-lg inline-flex">
+                    <button
+                      onClick={() => setIsAnnual(false)}
+                      className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                        !isAnnual 
+                          ? 'bg-[#FF7043] text-white shadow-sm' 
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                    >
+                      Monthly
+                    </button>
+                    <button
+                      onClick={() => setIsAnnual(true)}
+                      className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${
+                        isAnnual 
+                          ? 'bg-[#FF7043] text-white shadow-sm' 
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                    >
+                      Annual
+                      <span className={`text-xs ${isAnnual ? 'text-white/90' : 'text-green-600'}`}>Save 3mo</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Pricing cards */}
+                <div className="space-y-3">
+                  {/* Starter Plan */}
+                  <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold text-gray-900">Starter</h4>
+                      {isAnnual && (
+                        <span className="text-xs font-medium text-gray-500">$168/year</span>
+                      )}
+                    </div>
+                    <div className="mb-3">
+                      <span className="text-2xl font-bold text-gray-900">{isAnnual ? '$13.99' : '$19'}</span>
+                      <span className="text-sm text-gray-500">/month</span>
+                    </div>
+                    
+                    <ul className="space-y-1.5 mb-4">
+                      <li className="flex items-center">
+                        <CheckCircle className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700">100 credits/month</span>
+                      </li>
+                      <li className="flex items-center">
+                        <CheckCircle className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700">7-day generation history</span>
+                      </li>
+                      <li className="flex items-center">
+                        <CheckCircle className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700">Email support</span>
+                      </li>
+                    </ul>
+                    
+                    <Button 
+                      onClick={async () => {
+                        const { data: { user } } = await supabase.auth.getUser();
+                        if (!user) {
+                          router.push('/login?returnUrl=/pricing');
+                          return;
+                        }
+                        try {
+                          const response = await fetch('/api/create-checkout-session', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ tier: 'starter', interval: isAnnual ? 'annual' : 'monthly' }),
+                          });
+                          const { url } = await response.json();
+                          window.location.href = url;
+                        } catch (error) {
+                          router.push('/pricing');
+                        }
+                      }}
+                      className="w-full bg-white hover:bg-gray-50 border-gray-300"
+                      variant="outline"
+                    >
+                      Choose Starter
+                    </Button>
+                  </div>
+                
+                  {/* Pro Plan */}
+                  <div className="relative bg-gradient-to-br from-[#FFF8F6] via-white to-[#FFF3E0] rounded-lg border-2 border-[#FF7043] p-4 shadow-md">
+                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#FF7043] to-[#FFA726] text-white px-3 py-1 text-xs">
+                      MOST POPULAR
+                    </Badge>
+                    <div className="flex items-center justify-between mb-2 mt-1">
+                      <h4 className="font-semibold text-gray-900">Pro</h4>
+                      {isAnnual && (
+                        <span className="text-xs font-medium text-gray-500">$360/year</span>
+                      )}
+                    </div>
+                    <div className="mb-3">
+                      <span className="text-2xl font-bold text-gray-900">{isAnnual ? '$29.99' : '$39'}</span>
+                      <span className="text-sm text-gray-500">/month</span>
+                    </div>
+                    
+                    <ul className="space-y-1.5 mb-4">
+                      <li className="flex items-center">
+                        <CheckCircle className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700 font-medium">350 credits/month</span>
+                      </li>
+                      <li className="flex items-center">
+                        <CheckCircle className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700">30-day generation history</span>
+                      </li>
+                      <li className="flex items-center">
+                        <CheckCircle className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700">Priority support</span>
+                      </li>
+                    </ul>
+                    
+                    <Button 
+                      onClick={async () => {
+                        const { data: { user } } = await supabase.auth.getUser();
+                        if (!user) {
+                          router.push('/login?returnUrl=/pricing');
+                          return;
+                        }
+                        try {
+                          const response = await fetch('/api/create-checkout-session', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ tier: 'pro', interval: isAnnual ? 'annual' : 'monthly' }),
+                          });
+                          const { url } = await response.json();
+                          window.location.href = url;
+                        } catch (error) {
+                          router.push('/pricing');
+                        }
+                      }}
+                      className="w-full bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:from-[#FF5722] hover:to-[#FF9800] text-white shadow-sm"
+                    >
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Get Pro Now
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Trust indicators */}
+                <div className="flex items-center justify-center gap-4 pt-2">
+                  <div className="flex items-center gap-1 text-gray-600">
+                    <Shield className="h-3.5 w-3.5" />
+                    <span className="text-xs">Secure</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-gray-600">
+                    <CheckCircle className="h-3.5 w-3.5" />
+                    <span className="text-xs">Instant Access</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-gray-600">
+                    <Info className="h-3.5 w-3.5" />
+                    <span className="text-xs">Cancel Anytime</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Desktop Action Buttons - hidden on mobile */}
           {!isLoading && !error && svgContent && (

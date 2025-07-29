@@ -96,7 +96,7 @@ export function CreditsScarcityModal({ creditsRemaining, onClose }: CreditsScarc
             </Button>
             <Button 
               onClick={handleUpgrade}
-              className="flex-1 bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:from-[#FF6034] hover:to-[#FF9716]"
+              className="flex-1 bg-gradient-to-r from-[#FF7043] to-[#FFA726] hover:from-[#FF6034] hover:to-[#FF9716] text-white"
             >
               Upgrade Now
             </Button>

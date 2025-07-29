@@ -183,6 +183,7 @@ export async function POST(req: NextRequest) {
         if (subError) throw subError;
         
         // Then update user profile with subscription info
+        const billingDay = new Date().getDate();
         const { error: profileError } = await supabaseAdmin
           .from('profiles')
           .update({
@@ -192,6 +193,7 @@ export async function POST(req: NextRequest) {
             monthly_credits: credits,
             monthly_credits_used: 0,
             credits_reset_at: new Date().toISOString(),
+            billing_day: billingDay,
           })
           .eq('id', userId);
         if (profileError) throw profileError;
@@ -256,15 +258,23 @@ export async function POST(req: NextRequest) {
         }
         
         // Update profile with current subscription data
+        const billingDay = event.type === 'customer.subscription.created' ? new Date().getDate() : undefined;
+        const updateData: any = {
+          stripe_customer_id: customerId,
+          subscription_status: subscription.status,
+          subscription_tier: tier,
+          monthly_credits: credits,
+          // Don't reset credits_used on subscription updates
+        };
+        
+        // Only set billing_day on new subscriptions
+        if (billingDay) {
+          updateData.billing_day = billingDay;
+        }
+        
         const { error: profileError } = await supabaseAdmin
           .from('profiles')
-          .update({
-            stripe_customer_id: customerId,
-            subscription_status: subscription.status,
-            subscription_tier: tier,
-            monthly_credits: credits,
-            // Don't reset credits_used on subscription updates
-          })
+          .update(updateData)
           .eq('id', userId);
         if (profileError) {
           logger.error(`Failed to update profile: ${profileError.message}`);
@@ -325,25 +335,37 @@ export async function POST(req: NextRequest) {
         if (invoice.billing_reason === 'subscription_create') {
           break;
         }
-        // Only reset on subscription cycle
+        // Only reset on subscription cycle for monthly subscribers
         if (invoice.billing_reason === 'subscription_cycle' && (invoice as any).subscription) {
           const subscriptionId = typeof (invoice as any).subscription === 'string' 
             ? (invoice as any).subscription 
             : (invoice as any).subscription.id;
+          
+          // Get subscription details to check interval
           const { data: sub } = await supabaseAdmin
             .from('subscriptions')
-            .select('user_id, tier')
+            .select('user_id, tier, stripe_price_id')
             .eq('stripe_subscription_id', subscriptionId)
             .single();
+            
           if (sub) {
-            const { error } = await supabaseAdmin
-              .from('profiles')
-              .update({
-                monthly_credits_used: 0,
-                credits_reset_at: new Date().toISOString(),
-              })
-              .eq('id', sub.user_id);
-            if (error) throw error;
+            // Get price info to determine if monthly or annual
+            const priceInfo = sub.stripe_price_id ? PRICE_TO_TIER[sub.stripe_price_id] : null;
+            const isMonthly = priceInfo?.interval === 'monthly';
+            
+            // Only reset credits for monthly subscribers via webhook
+            if (isMonthly) {
+              const { error } = await supabaseAdmin
+                .from('profiles')
+                .update({
+                  monthly_credits_used: 0,
+                  credits_reset_at: new Date().toISOString(),
+                })
+                .eq('id', sub.user_id);
+              if (error) throw error;
+              
+              logger.info(`Reset monthly credits for user ${sub.user_id} via webhook`);
+            }
           }
         }
         break;
