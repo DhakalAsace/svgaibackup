@@ -37,6 +37,7 @@ module.exports = {
     '/gallery',       // Exclude gallery index
     '/gallery/*',     // Exclude all gallery pages
     '/sitemap',       // Exclude HTML sitemap page (user-facing)
+    '/test-performance', // Test/development page - should not be indexed
   ],
   
   // Robots.txt configuration
@@ -64,6 +65,7 @@ module.exports = {
           '/login',
           '/signup',
           '/gallery/',
+          '/test-performance',
         ],
       },
     ],
